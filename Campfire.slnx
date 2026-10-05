@@ -21,6 +21,8 @@
     <Project Path="tests/Campfire.Storage.Tests/Campfire.Storage.Tests.csproj" />
     <Project Path="tests/Campfire.Templates.Generator.Tests/Campfire.Templates.Generator.Tests.csproj" />
     <Project Path="tests/Campfire.Templates.Tests/Campfire.Templates.Tests.csproj" />
+    <Project Path="tests/Campfire.Vectors/Campfire.Vectors.csproj" />
+    <Project Path="tests/Campfire.Vectors/Tests/Campfire.Vectors.Tests.csproj" />
     <Project Path="tests/Campfire.Web.Tests/Campfire.Web.Tests.csproj" />
   </Folder>
 </Solution>
