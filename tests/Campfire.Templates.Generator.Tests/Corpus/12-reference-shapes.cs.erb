@@ -1,0 +1,12 @@
+<%= tag_list(count, 
+      count) %>
+<div>
+  <%= wrap(() => { %>
+    <%= count %>
+  <% }) %>
+  <%= wrap(() => { -%>
+    <span>x</span>
+  <% }) %>
+</div>
+<% if (flag) { %><%= wrap(() => { %>a<% }) %>
+<% } %>

@@ -1,0 +1,14 @@
+<%= wrap do %>
+  <p>inside</p>
+<% end %>
+  <%= wrap do %>
+    <%= wrap do %><%= name %><% end %>
+  <% end %>
+<%= labelled do |label| %>
+  <%= label %>: <%= count %>
+<% end %>
+<% captured = @output_buffer.capture do %>
+  <b><%= name %></b>
+<% end %>
+[<%= captured %>]
+<% items.each do |item| %><%= wrap do %><%= item %><% end %><% end %>

@@ -1,0 +1,19 @@
+<ul>
+  <% if flag %>
+    <li>yes</li>
+  <% else %>
+    <li>no</li>
+  <% end %>
+<% items.each do |item| %>
+  <li><%= item %></li>
+      <% if item == 2 %>
+    <li>two</li>
+      <% end %>
+<% end %>
+</ul>
+<% if off %>
+hidden
+<% end %>
+<%- if flag -%>
+dash
+<%- end -%>

@@ -1,0 +1,19 @@
+<ul>
+  <% if (flag) { %>
+    <li>yes</li>
+  <% } else { %>
+    <li>no</li>
+  <% } %>
+<% foreach (var item in items) { %>
+  <li><%= item %></li>
+      <% if (item == 2) { %>
+    <li>two</li>
+      <% } %>
+<% } %>
+</ul>
+<% if (off) { %>
+hidden
+<% } %>
+<%- if (flag) { -%>
+dash
+<%- } -%>

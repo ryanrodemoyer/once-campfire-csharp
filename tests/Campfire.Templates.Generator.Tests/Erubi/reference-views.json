@@ -1,0 +1,7550 @@
+{
+  "accounts/_help_contact.html.erb": [
+    [
+      "code",
+      " if owner = User.administrator.first \n"
+    ],
+    [
+      "text",
+      "  <div class=\"txt-align-center margin-block-double full-width\">\n    "
+    ],
+    [
+      "expr",
+      " link_to \"mailto:\\\"#{owner.name}\\\" <#{owner.email_address}>\", class: \"btn center\", title: \"Email #{owner.name}\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"lifebuoy.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span>"
+    ],
+    [
+      "expr",
+      " owner.email_address "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <div class=\"txt-align-center center margin-block txt-subtle\">Campfire&trade; version "
+    ],
+    [
+      "expr",
+      " version_badge "
+    ],
+    [
+      "text",
+      "</div>\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "accounts/_invite.html.erb": [
+    [
+      "text",
+      "<div class=\"flex flex-column align-center gap\">\n"
+    ],
+    [
+      "code",
+      "   url = join_url(Current.account.join_code) \n"
+    ],
+    [
+      "text",
+      "\n  <label class=\"flex flex-column gap full-width\" style=\"--row-gap: 0.5em\">\n    <strong id=\"invite_label\" class=\"invite-label\">Share to invite more people</strong>\n    <span class=\"flex align-center gap input input--actor fill-white\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"person-add.svg\", aria: { hidden: \"true\" }, size: 20, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n      <input type=\"text\" class=\"input\" id=\"invite_url\" value=\""
+    ],
+    [
+      "expr",
+      " url "
+    ],
+    [
+      "text",
+      "\" aria-labelledby=\"invite_label\" readonly>\n    </span>\n  </label>\n\n  <div class=\"flex align-center gap\">\n    "
+    ],
+    [
+      "expr",
+      " link_to_zoom_qr_code(url) do "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Show join link QR code</span>\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"qr-code.svg\", aria: { hidden: \"true\" }, size: 20, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " button_to_copy_to_clipboard(url) do "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Copy join link</span>\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"copy-paste.svg\", aria: { hidden: \"true\" }, size: 20, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " web_share_session_button(url, \"Link to join Campfire\", \"Hit this link to join me in Campfire and start chatting.\") do "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Share join link</span>\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"share.svg\", aria: { hidden: \"true\" }, size: 20, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     if Current.user.can_administer? \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " button_to account_join_code_path, class: \"btn btn--regenerate\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"refresh.svg\", aria: { hidden: \"true\" }, size: 20, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Regenerate join link</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n</div>\n"
+    ]
+  ],
+  "accounts/bots/_bot.html.erb": [
+    [
+      "text",
+      "<li class=\"flex flex-column gap flush fill-shade border-radius pad-block pad-inline-double\">\n  <div class=\"flex align-center gap\">\n    <figure class=\"avatar flex-item--no-shrink\" style=\"--avatar-size: 2.65em;\">\n      "
+    ],
+    [
+      "expr",
+      " avatar_tag bot, loading: :lazy "
+    ],
+    [
+      "text",
+      "\n    </figure>\n\n    <div class=\"min-width\">\n      <div class=\"overflow-ellipsis txt-large\"><strong>"
+    ],
+    [
+      "expr",
+      " bot.name "
+    ],
+    [
+      "text",
+      "</strong></div>\n    </div>\n\n    "
+    ],
+    [
+      "expr",
+      " link_to edit_account_bot_path(bot), class: \"btn flex-item-justify-end\", style: \"view-transition-name: chat-bot-#{ bot.id }\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"pencil.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Edit "
+    ],
+    [
+      "expr",
+      " bot.name "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n\n"
+    ],
+    [
+      "code",
+      "   bot.rooms.without_directs.ordered.each do |room| \n"
+    ],
+    [
+      "text",
+      "    <fieldset class=\"gap max-width pad border border-radius\">\n      <legend class=\"min-width txt-align-start pad-inline\">\n        <strong class=\"overflow-ellipsis\">"
+    ],
+    [
+      "expr",
+      " room_display_name(room) "
+    ],
+    [
+      "text",
+      "</strong>\n      </legend>\n\n"
+    ],
+    [
+      "code",
+      "       curl_text_line = \"curl -d 'Hello!' #{room_bot_messages_url(room, bot.bot_key)}\" \n"
+    ],
+    [
+      "text",
+      "      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"messages-outlined.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n\n        <div class=\"flex-item-grow\">\n          <input type=\"text\" class=\"input full-width fill-white\" value=\""
+    ],
+    [
+      "expr",
+      " curl_text_line "
+    ],
+    [
+      "text",
+      "\" aria-label=\"curl command for posting messages\" readonly>\n        </div>\n\n        <div class=\"txt-small\">\n          "
+    ],
+    [
+      "expr",
+      " button_to_copy_to_clipboard(curl_text_line) do "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"copy-paste.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Copy message command</span>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </div>\n      </div>\n\n"
+    ],
+    [
+      "code",
+      "       curl_upload_line = %[curl -F \"attachment=@/path/to/file\" #{room_bot_messages_url(room, bot.bot_key)}] \n"
+    ],
+    [
+      "text",
+      "      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"attachment.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n\n        <div class=\"flex-item-grow\">\n          <input type=\"text\" class=\"input full-width fill-white\" value=\""
+    ],
+    [
+      "expr",
+      " curl_upload_line "
+    ],
+    [
+      "text",
+      "\" aria-label=\"curl command for posting attachments\" readonly>\n        </div>\n\n        <div class=\"txt-small\">\n          "
+    ],
+    [
+      "expr",
+      " button_to_copy_to_clipboard(curl_upload_line) do "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"copy-paste.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Copy attachment command</span>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </div>\n      </div>\n    </fieldset>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</li>\n"
+    ]
+  ],
+  "accounts/bots/_form.html.erb": [
+    [
+      "text",
+      "<h1 class=\"for-screen-reader\">Chat Bot Setup</h1>\n<label class=\"align-center center avatar__form gap\" data-controller=\"upload-preview\">\n  <div class=\"btn input--file\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"camera.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " form.file_field :avatar, class: \"input\", accept: \"image/*\",\n          data: { upload_preview_target: \"input\", action: \"upload-preview#previewImage\" } "
+    ],
+    [
+      "text",
+      "\n    <span class=\"for-screen-reader\">Upload bot avatar</span>\n  </div>\n\n  <div class=\"avatar input--file txt-xx-large\" style=\"--avatar-size: var(--btn-size);\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag bot.avatar.attached? ? bot.avatar : \"default-bot-avatar.svg\", alt: \"Bot avatar\", size: 48, data: { upload_preview_target: \"image\" } "
+    ],
+    [
+      "text",
+      "\n  </div>\n</label>\n\n<div class=\"flex align-center gap\">\n  "
+    ],
+    [
+      "expr",
+      " translation_button(:bot_name) "
+    ],
+    [
+      "text",
+      "\n  <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n    "
+    ],
+    [
+      "expr",
+      " form.text_field :name, class: \"input\", autocomplete: \"name\", placeholder: \"Name the bot\", autofocus: true, required: true,\n          data: { \"1p-ignore\": true } "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"bot.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n  </label>\n</div>\n\n<div class=\"flex align-center gap\">\n  "
+    ],
+    [
+      "expr",
+      " translation_button(:webhook_url) "
+    ],
+    [
+      "text",
+      "\n  <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n    "
+    ],
+    [
+      "expr",
+      " form.url_field :webhook_url, class: \"input\", placeholder: \"Webhook URL\" "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"web.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n  </label>\n</div>\n\n"
+    ],
+    [
+      "expr",
+      " profile_form_submit_button "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "accounts/bots/edit.html.erb": [
+    [
+      "code",
+      " @page_title = \"Edit bot\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to account_bots_path "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel\" style=\"view-transition-name: chat-bot-"
+    ],
+    [
+      "expr",
+      " @bot.id "
+    ],
+    [
+      "text",
+      "\">\n  "
+    ],
+    [
+      "expr",
+      " form_with model: @bot, url: account_bot_path(@bot), class: \"flex flex-column gap\" do |form| "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " render \"accounts/bots/form\", form: form, bot: @bot "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  <hr class=\"separator full-width margin-block-double\">\n\n  <div class=\"flex align-center gap justify-space-between\">\n    "
+    ],
+    [
+      "expr",
+      " button_to account_bot_path(@bot), method: :delete, class: \"btn txt--small btn--negative\", aria: { label: \"Delete this chat bot\" },\n          data: { turbo_confirm: \"Are you sure you want to permanently remove this bot from the account? This can’t be undone.\" } do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"trash.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"bot.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " button_to account_bot_key_path(@bot), method: :put, class: \"btn full-width txt--small btn--negative\", aria: { label: \"Generate a new key\" },\n          data: { turbo_confirm: \"Are you sure you want to change the bot key? All usage of this bot must be updated.\" } do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"refresh.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"key.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n</section>\n"
+    ]
+  ],
+  "accounts/bots/index.html.erb": [
+    [
+      "code",
+      " @page_title = \"Chat bots\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to edit_account_path "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel panel--wide txt-align-center flex flex-column position-relative\" style=\"view-transition-name: chat-bots\">\n  <div class=\"flex align-center gap\">\n    <div class=\"panel__button\">\n      "
+    ],
+    [
+      "expr",
+      " translation_button(:chat_bots) "
+    ],
+    [
+      "text",
+      "\n    </div>\n    <div class=\"pad-inline-double center\">\n      <h1 class=\"margin-none\">Chat bots</h1>\n      <p class=\"margin-none-block-start\">With Chat bots, other sites and services can post updates directly to Campfire.</p>\n\n      "
+    ],
+    [
+      "expr",
+      " link_to new_account_bot_path, class: \"btn btn--reversed txt-large\", aria: { label: \"Add a chat bot\" } do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"bot.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"add.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n  </div>\n\n  <div class=\"pad-inline pad-block-start \">\n    <menu class=\"flex flex-column gap margin-none pad\">\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"accounts/bots/bot\", collection: @bots "
+    ],
+    [
+      "text",
+      "\n    </menu>\n  </div>\n</section>\n"
+    ]
+  ],
+  "accounts/bots/new.html.erb": [
+    [
+      "code",
+      " @page_title = \"New chat bot\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to account_bots_path "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel\">\n  "
+    ],
+    [
+      "expr",
+      " form_with model: @bot, url: account_bots_path, class: \"flex flex-column gap\" do |form| "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " render \"accounts/bots/form\", form: form, bot: @bot "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</section>\n"
+    ]
+  ],
+  "accounts/custom_styles/edit.html.erb": [
+    [
+      "code",
+      " @page_title = \"Custom styles\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to edit_account_path "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel panel--wide txt-align-center flex flex-column position-relative\" style=\"view-transition-name: custom-styles\">\n  "
+    ],
+    [
+      "expr",
+      " form_with model: @account, url: account_custom_styles_url, class: \"flex flex-column gap\",\n      data: { controller: \"form\", action: \"keydown.ctrl+enter->form#submit keydown.meta+enter->form#submit\" } do |form| "
+    ],
+    [
+      "text",
+      "\n    <div class=\"panel__button\">\n      "
+    ],
+    [
+      "expr",
+      " translation_button(:custom_styles) "
+    ],
+    [
+      "text",
+      "\n    </div>\n\n    <div class=\"pad-inline-double margin-inline\">\n      <h1 class=\"margin-none\">Custom CSS</h1>\n      <p class=\"flex flex-wrap align-center justify-center gap margin-none-block-start\" style=\"--column-gap: 0.5ch; --row-gap: 0\">\n        <span>Add custom CSS styles.</span>\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"alert.svg\", class: \"flex-inline colorize--black\", size: 16, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span>Use Caution: you could break things.</span>\n      </p>\n    </div>\n\n    <label class=\"flex align-start gap flex-item-grow\">\n      "
+    ],
+    [
+      "expr",
+      " form.text_area :custom_styles, class: \"input input--code txt--small\", placeholder: \"Add CSS styles…\",\n            autocomplete: \"off\", spellcheck: \"false\", autocorrect: \"off\", autocapitalize: \"off\",\n            rows: 16, required: false "
+    ],
+    [
+      "text",
+      "\n    </label>\n\n    "
+    ],
+    [
+      "expr",
+      " form.button class: \"btn btn--reversed center txt-large\", type: \"submit\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Save changes</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</section>\n"
+    ]
+  ],
+  "accounts/edit.html.erb": [
+    [
+      "code",
+      " @page_title = \"Account settings\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to_last_room_visited "
+    ],
+    [
+      "text",
+      "\n  </div>\n\n"
+    ],
+    [
+      "code",
+      "   if Current.user.administrator? \n"
+    ],
+    [
+      "text",
+      "    <div class=\"flex align-center gap flex-item-justify-end\">\n      "
+    ],
+    [
+      "expr",
+      " link_to account_bots_path, class: \"btn\", style: \"view-transition-name: chat-bots\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"bot.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Set up chat bots</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " link_to edit_account_custom_styles_path, class: \"btn\", style: \"view-transition-name: custom-styles\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"art.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Custom styles</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel txt-align-center flex flex-column gap\" style=\"view-transition-name: account-settings\">\n"
+    ],
+    [
+      "code",
+      "   if Current.user.can_administer? \n"
+    ],
+    [
+      "text",
+      "    <div class=\"align-center center avatar__form gap\" data-controller=\"upload-preview\">\n      "
+    ],
+    [
+      "expr",
+      " form_with model: @account, method: :patch, class: \"txt--medium\", data: { controller: \"form\" } do |form| "
+    ],
+    [
+      "text",
+      "\n        <label class=\"btn input--file\">\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"camera.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " form.file_field :logo, class: \"input\", accept: \"image/*\",\n                data: { action: \"upload-preview#previewImage change->form#submit\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Upload logo</span>\n        </label>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " form_with model: @account, method: :patch, data: { controller: \"form\" } do |form| "
+    ],
+    [
+      "text",
+      "\n        <label class=\"btn avatar input--file account-logo txt-xx-large\">\n          "
+    ],
+    [
+      "expr",
+      " image_tag fresh_account_logo_path, role: \"presentation\", size: 48, data: { upload_preview_target: \"image\" } "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " form.file_field :logo, class: \"input\", accept: \"image/*\",\n                data: { action: \"upload-preview#previewImage change->form#submit\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Upload logo</span>\n        </label>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "       if @account.logo.attached? \n"
+    ],
+    [
+      "text",
+      "        "
+    ],
+    [
+      "expr",
+      " button_to fresh_account_logo_path, method: :delete, class: \"btn btn--negative txt-small avatar__delete-btn\" do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"minus.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Delete logo</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n\n    "
+    ],
+    [
+      "expr",
+      " form_with model: @account, data: { controller: \"form\" }, class: \"flex flex-column gap\" do |form| "
+    ],
+    [
+      "text",
+      "\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:account_name) "
+    ],
+    [
+      "text",
+      "\n\n        <label class=\"flex align-center gap flex-item-grow\">\n          "
+    ],
+    [
+      "expr",
+      " form.text_field :name, class: \"input txt-large\", autocomplete: \"off\", placeholder: \"Name this account\", autofocus: true,\n                data: { action: \"keydown.enter->form#submit\" } "
+    ],
+    [
+      "text",
+      "\n        </label>\n\n        "
+    ],
+    [
+      "expr",
+      " form.button class: \"btn btn--reversed center\", type: \"submit\" do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Save changes</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <div class=\"margin-block-start pad-block pad-inline-double fill-shade border-radius\">\n      "
+    ],
+    [
+      "expr",
+      " form_with model: @account, method: :put, data: { controller: \"form\" }, class: \"flex align-center gap center\" do |form| "
+    ],
+    [
+      "text",
+      "\n        <div class=\"flex-item-grow flex align-center gap txt-align-start\">\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"crown.svg\", class: \"colorize--black\", aria: { hidden: \"true\" }, size: 18 "
+    ],
+    [
+      "text",
+      " Must be admin to create new rooms\n        </div>\n        "
+    ],
+    [
+      "expr",
+      " form.fields_for :settings, @account.settings do |settings_form| "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " settings_form.hidden_field :restrict_room_creation_to_administrators,\n              value: !Current.account.settings.restrict_room_creation_to_administrators? "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        <label class=\"switch\">\n          <input type=\"checkbox\"\n                class=\"switch__input\"\n                "
+    ],
+    [
+      "expr",
+      " \"checked\" if Current.account.settings.restrict_room_creation_to_administrators? "
+    ],
+    [
+      "text",
+      "\n                data-action=\"change->form#submit\">\n          <span class=\"switch__btn round\"></span>\n          <span class=\"for-screen-reader\">\n            Must be admin to create new rooms\n          </span>\n        </label>\n\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n"
+    ],
+    [
+      "code",
+      "   else \n"
+    ],
+    [
+      "text",
+      "    "
+    ],
+    [
+      "expr",
+      " account_logo_tag style: \"txt-xx-large center\" "
+    ],
+    [
+      "text",
+      "\n    <h1 class=\"flex-item-grow txt-x-large\">"
+    ],
+    [
+      "expr",
+      " @account.name "
+    ],
+    [
+      "text",
+      "</h1>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  <div class=\"margin-block pad-inline pad-block-start fill-shade border-radius\">\n    "
+    ],
+    [
+      "expr",
+      " render \"accounts/invite\" "
+    ],
+    [
+      "text",
+      "\n\n    <hr class=\"margin-block separator full-width\" style=\"--border-style: solid\">\n\n    <menu class=\"flex flex-column gap margin-none pad\">\n      <turbo-frame id=\"account_users\">\n        "
+    ],
+    [
+      "expr",
+      " render partial: \"accounts/users/user\", collection: @administrators, as: :user "
+    ],
+    [
+      "text",
+      "\n\n"
+    ],
+    [
+      "code",
+      "         if @administrators.any? && @members.any? \n"
+    ],
+    [
+      "text",
+      "          <hr class=\"separator full-width\" style=\"--border-style: solid\">\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " render partial: \"accounts/users/user\", collection: @members, as: :user "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " render \"accounts/users/next_page_container\", page: @page.next_param unless @page.last? "
+    ],
+    [
+      "text",
+      "\n      </turbo-frame>\n    </menu>\n  </div>\n</section>\n\n"
+    ],
+    [
+      "code",
+      " content_for :footer do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"txt-align-center center margin-block-double txt-subtle\">Campfire&trade; version "
+    ],
+    [
+      "expr",
+      " version_badge "
+    ],
+    [
+      "text",
+      "</div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "accounts/users/_next_page_container.html.erb": [
+    [
+      "expr",
+      " turbo_frame_tag :next_page_container, loading: :lazy,\n      src: account_users_path(page: page, format: :turbo_stream), class: \"flex center\" do "
+    ],
+    [
+      "text",
+      "\n  <div class=\"spinner center\"></div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "accounts/users/_user.html.erb": [
+    [
+      "text",
+      "<li class=\"flex align-center gap margin-none "
+    ],
+    [
+      "expr",
+      " \"banned\" if user.banned? "
+    ],
+    [
+      "text",
+      "\">\n  <figure class=\"avatar flex-item-no-shrink\" style=\"--avatar-size: 3.75ch;\">\n    "
+    ],
+    [
+      "expr",
+      " avatar_tag user, loading: :lazy "
+    ],
+    [
+      "text",
+      "\n  </figure>\n\n  <div class=\"min-width\">\n    <div class=\"overflow-ellipsis fill-shade\"><strong>"
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</strong></div>\n  </div>\n\n  <hr class=\"separator\" aria-hidden=\"true\">\n\n"
+    ],
+    [
+      "code",
+      "   if Current.user.can_administer? && user.active? \n"
+    ],
+    [
+      "code",
+      "     unless user.bot? \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " form_with model: user, url: account_user_path(user), data: { controller: \"form\" }, method: :patch do | form | "
+    ],
+    [
+      "text",
+      "\n        <label class=\"btn txt-small flex-item-no-shrink\" for=\""
+    ],
+    [
+      "expr",
+      " dom_id(user, :role) "
+    ],
+    [
+      "text",
+      "\">\n          <span class=\"for-screen-reader\">Role: "
+    ],
+    [
+      "expr",
+      " user.administrator? ? \"Administrator\" : \"Member\" "
+    ],
+    [
+      "text",
+      "</span>\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"crown.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " form.check_box :role, { data: { action: \"form#submit\" }, hidden: true, id: dom_id(user, :role), disabled: user == Current.user }, \"administrator\", \"member\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     unless user == Current.user \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " button_to account_user_path(user), method: :delete, class: \"btn txt-small flex-item-no-shrink btn--negative\", data: {\n            turbo_confirm: \"Are you sure you want to permanently remove this person from the account? This can’t be undone.\"} do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"minus.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Delete "
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      "   if user == Current.user \n"
+    ],
+    [
+      "text",
+      "    "
+    ],
+    [
+      "expr",
+      " link_to user_profile_path, class: \"btn txt-small flex-item-no-shrink\", target: \"_top\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"pencil.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">My settings</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</li>\n"
+    ]
+  ],
+  "accounts/users/index.turbo_stream.erb": [
+    [
+      "expr",
+      " turbo_stream.replace :next_page_container, partial: \"accounts/users/user\", collection: @page.records, as: :user "
+    ],
+    [
+      "text",
+      "\n\n"
+    ],
+    [
+      "code",
+      " unless @page.last? \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " turbo_stream.append :account_users, partial: \"accounts/users/next_page_container\", locals: { page: @page.next_param } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "action_text/attachables/_opengraph_embed.html.erb": [
+    [
+      "text",
+      "<figure class=\"attachment attachment--content attachment--og\">\n  <actiontext-opengraph-embed>\n    <div class=\"og-embed gap "
+    ],
+    [
+      "expr",
+      " \"og-embed--twitter-avatar\" if opengraph_embed.twitter_avatar? "
+    ],
+    [
+      "text",
+      "\">\n      <div class=\"og-embed__content\">\n        <div class=\"og-embed__title\">\n          "
+    ],
+    [
+      "expr",
+      " link_to_if opengraph_embed.href.present?, truncate(opengraph_embed.filename, length: 280, omission: \"…\"), opengraph_embed.href, rel: \"noreferrer\", target: \"_blank\" "
+    ],
+    [
+      "text",
+      "\n        </div>\n        <div class=\"og-embed__description\">"
+    ],
+    [
+      "expr",
+      " truncate(opengraph_embed.description.to_s, length: 560, omission: \"…\") "
+    ],
+    [
+      "text",
+      "</div>\n      </div>\n"
+    ],
+    [
+      "code",
+      "       if opengraph_embed.url \n"
+    ],
+    [
+      "text",
+      "        <div class=\"og-embed__image\">\n          "
+    ],
+    [
+      "expr",
+      " tag.img src: opengraph_embed.url, class: \"image center\", alt: \"\" "
+    ],
+    [
+      "text",
+      "\n        </div>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n  </actiontext-opengraph-embed>\n</figure>\n"
+    ]
+  ],
+  "autocompletable/users/_prompt_item.html.erb": [
+    [
+      "text",
+      "<lexxy-prompt-item search=\""
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "\" sgid=\""
+    ],
+    [
+      "expr",
+      " user.attachable_sgid "
+    ],
+    [
+      "text",
+      "\">\n  <template type=\"menu\">\n    <span class=\"autocomplete__item flex align-center gap unpad\">\n      "
+    ],
+    [
+      "expr",
+      " avatar_tag user "
+    ],
+    [
+      "text",
+      "\n      <span class=\"autocompletable__name\">"
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</span>\n    </span>\n  </template>\n  <template type=\"editor\">\n    "
+    ],
+    [
+      "expr",
+      " render \"users/mention\", user: user "
+    ],
+    [
+      "text",
+      "\n  </template>\n</lexxy-prompt-item>\n"
+    ]
+  ],
+  "autocompletable/users/index.html.erb": [
+    [
+      "expr",
+      " render partial: \"autocompletable/users/prompt_item\", collection: @page.records, as: :user "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "first_runs/show.html.erb": [
+    [
+      "code",
+      " @page_title = \"Set up Campfire\" \n"
+    ],
+    [
+      "code",
+      " @body_class = \"signup\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " form_with model: @user, url: first_run_path, class: \"center max-width\" do |form| "
+    ],
+    [
+      "text",
+      "\n  <section class=\"nametag u-relative\">\n    <div class=\"flex justify-center align-center pad-block\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"lanyard.svg\", class: \"nametag__lanyard\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n    </div>\n\n    <div class=\"nametag__inner flex flex-column gap\">\n      <fieldset class=\"flex flex-column center-block\">\n        <legend class=\"txt-large txt-align-center\"><strong>"
+    ],
+    [
+      "expr",
+      " @page_title "
+    ],
+    [
+      "text",
+      "</strong></legend>\n\n        <label class=\"align-center center avatar__form gap\" data-controller=\"upload-preview\">\n          <div class=\"btn input--file\">\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"camera.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " form.file_field :avatar, class: \"input\", accept: \"image/*\",\n                  data: { upload_preview_target: \"input\", action: \"upload-preview#previewImage\" } "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Add your avatar</span>\n          </div>\n\n          <div class=\"btn avatar input--file txt-xx-large\">\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"default-avatar.svg\", aria: { hidden: \"true\" }, data: { upload_preview_target: \"image\" }, alt: \"Add your avatar\" "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Avatar</span>\n          </div>\n        </label>\n      </fieldset>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:user_name) "
+    ],
+    [
+      "text",
+      "\n        <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.text_field :name, class: \"input\", autocomplete: \"name\", placeholder: \"Name\", autofocus: true, required: true,\n                data: { \"1p-ignore\": true } "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"person.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:email_address) "
+    ],
+    [
+      "text",
+      "\n        <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.email_field :email_address, class: \"input\", autocomplete: \"username\", placeholder: \"Email address\", required: true "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"email.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:password) "
+    ],
+    [
+      "text",
+      "\n        <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.password_field :password, class: \"input\", autocomplete: \"new-password\", placeholder: \"Password\", required: true, maxlength: 72 "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"password.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      "
+    ],
+    [
+      "expr",
+      " form.button class: \"btn btn--reversed center txt-large\", type: \"submit\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"arrow-right.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Save</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n  </section>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "layouts/_lightbox.html.erb": [
+    [
+      "text",
+      "<dialog class=\"lightbox\" aria-label=\"Image Viewer (Press escape to close)\" data-lightbox-target=\"dialog\" data-action=\"close->lightbox#reset\">\n  <img src=\"\" class=\"lightbox__image\" data-lightbox-target=\"zoomedImage\" />\n\n  <form method=\"dialog\" class=\"lightbox__btn\">\n    <button class=\"btn\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"remove.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Close image viewer</span>\n    </button>\n  </form>\n\n  <a href=\"\" class=\"lightbox__btn--download btn hide-in-ios-pwa\" data-lightbox-target=\"download\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"download.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n    <span class=\"for-screen-reader\">Download file</span>\n  </a>\n\n  <button class=\"lightbox__btn--share btn\"\n      data-controller=\"web-share\"\n      data-action=\"web-share#share\"\n      data-web-share-files-value=\"\"\n      data-lightbox-target=\"share\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"share.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n    <span class=\"for-screen-reader\">Share file</span>\n  </button>\n</dialog>\n"
+    ]
+  ],
+  "layouts/action_text/contents/_content.html.erb": [
+    [
+      "text",
+      "<div class=\"lexxy-content\">\n  "
+    ],
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "</div>\n"
+    ]
+  ],
+  "layouts/application.html.erb": [
+    [
+      "text",
+      "<!DOCTYPE html>\n<html>\n  <head>\n    "
+    ],
+    [
+      "expr",
+      " page_title_tag "
+    ],
+    [
+      "text",
+      "\n\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content\">\n    <meta name=\"view-transition\" content=\"same-origin\">\n    <meta name=\"color-scheme\" content=\"light dark\">\n    <meta name=\"theme-color\" content=\"#ffffff\" media=\"(prefers-color-scheme: light)\">\n    <meta name=\"theme-color\" content=\"#000000\" media=\"(prefers-color-scheme: dark)\">\n    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n    "
+    ],
+    [
+      "expr",
+      " csrf_meta_tags "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " csp_meta_tag "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " current_user_meta_tags "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " script_aware_action_cable_meta_tag "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " tag.meta name: \"vapid-public-key\", content: Rails.configuration.x.vapid.public_key "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " tag.meta name: \"turbo-prefetch\", content: \"true\" "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " tag.link rel: \"manifest\", href: webmanifest_path(format: :json) "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " tag.link rel: \"icon\", href: fresh_account_logo_path, type: \"image/png\" "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " tag.link rel: \"apple-touch-icon\", href: fresh_account_logo_path "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " stylesheet_link_tag :all, \"data-turbo-track\": \"reload\" "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " custom_styles_tag "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " javascript_importmap_tags "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " yield :head "
+    ],
+    [
+      "text",
+      "\n  </head>\n\n  <body class=\""
+    ],
+    [
+      "expr",
+      " body_classes "
+    ],
+    [
+      "text",
+      "\" data-controller=\"local-time lightbox\">\n    <a href=\"#main-content\" class=\"skip-navigation btn\">Skip to main content</a>\n\n    <nav id=\"nav\">\n      "
+    ],
+    [
+      "expr",
+      " yield :nav "
+    ],
+    [
+      "text",
+      "\n    </nav>\n\n"
+    ],
+    [
+      "code",
+      "     if notice = flash[:notice] || flash[:alert] \n"
+    ],
+    [
+      "text",
+      "      <div class=\"flash\" data-controller=\"element-removal\" data-action=\"animationend->element-removal#remove\">\n        <div class=\"flash__inner shadow\" style=\""
+    ],
+    [
+      "expr",
+      " \"--flash-background: var(--color-negative)\" if flash[:alert] "
+    ],
+    [
+      "text",
+      "\">\n"
+    ],
+    [
+      "code",
+      "           if flash[:alert] \n"
+    ],
+    [
+      "text",
+      "            "
+    ],
+    [
+      "expr",
+      " image_tag \"alert.svg\", aria: { hidden: true }, size: 24, class: \"colorize--white\" "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "           else \n"
+    ],
+    [
+      "text",
+      "            "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: true }, size: 24, class: \"colorize--white\" "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </div>\n        <span class=\"for-screen-reader\" role=\"alert\" aria-atomic=\"true\">"
+    ],
+    [
+      "expr",
+      " notice "
+    ],
+    [
+      "text",
+      "</span>\n      </div>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <main id=\"main-content\">\n      "
+    ],
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "\n\n      <footer id=\"footer\">\n        "
+    ],
+    [
+      "expr",
+      " yield :footer "
+    ],
+    [
+      "text",
+      "\n      </footer>\n    </main>\n\n    <aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n      "
+    ],
+    [
+      "expr",
+      " yield :sidebar "
+    ],
+    [
+      "text",
+      "\n    </aside>\n\n    "
+    ],
+    [
+      "expr",
+      " render \"layouts/lightbox\" "
+    ],
+    [
+      "text",
+      "\n\n    <a href=\"https://once.com\" id=\"app-logo\" target=\"_blank\" aria-label=\"Once software from 37signals home page\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"campfire-icon.png\", alt: \"Campfire logo\", width: 256, height: 216 "
+    ],
+    [
+      "text",
+      "\n    </a>\n  </body>\n</html>\n"
+    ]
+  ],
+  "layouts/mailer.html.erb": [
+    [
+      "text",
+      "<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n    <style>\n      /* Email styles need to be inline */\n    </style>\n  </head>\n\n  <body>\n    "
+    ],
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "\n  </body>\n</html>\n"
+    ]
+  ],
+  "layouts/mailer.text.erb": [
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "messages/_actions.html.erb": [
+    [
+      "code",
+      "\n"
+    ],
+    [
+      "text",
+      "\n<div class=\"message__actions\" data-controller=\"soft-keyboard\">\n  "
+    ],
+    [
+      "expr",
+      " tag.details class: \"position-relative\",\n      data: { controller: \"popup\", action: \"keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside\", popup_orientation_top_class: \"popup-orientation-top\" } do "
+    ],
+    [
+      "text",
+      "\n    <summary class=\"btn message__action-btn message__options-btn\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-horizontal.svg\", size: 20, class: \"colorize--black\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Message options</span>\n    </summary>\n\n    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n      <div class=\"quick-boosts\">\n"
+    ],
+    [
+      "code",
+      "         EmojiHelper::REACTIONS.each do |character, title| \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting), action: \"popup#close\"} do |form| "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " hidden_field_tag \"boost[content]\", character "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " form.button type: \"submit\", title: title, class: \"btn message__action-btn\", data: { emoji: character } do "
+    ],
+    [
+      "text",
+      "\n              <figure class=\"margin-none boost-character\">"
+    ],
+    [
+      "expr",
+      " character "
+    ],
+    [
+      "text",
+      "</figure>\n              <span class=\"for-screen-reader\">"
+    ],
+    [
+      "expr",
+      " title "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "             end \n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " link_to new_message_boost_path(message),\n              class: \"btn message__action-btn message__boost-btn\",\n              data: { turbo_frame: dom_id(message, :new_boost), action: \"soft-keyboard#open popup#close\" } do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"boost.svg\", class: \"colorize--black\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">New boost</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n\n      <div class=\"flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid\">\n"
+    ],
+    [
+      "code",
+      "         if message.content_type.attachment? \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " link_to rails_blob_path(message.attachment, disposition: \"attachment\", only_path: true), class: \"btn message__action-btn center full-width hide-in-ios-pwa\", title: \"Download\", aria: { label: \"Download\" } do "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"download.svg\", class: \"colorize--black\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " tag.button class: \"btn message__action-btn center full-width\",\n              data: { controller: \"web-share\", action: \"web-share#share\", web_share_files_value: rails_blob_path(message.attachment, only_path: true), web_share_title_value: message.attachment.filename.to_s }, title: \"Share\", aria: { label: \"Share\" } do "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"share.svg\", class: \"colorize--black\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "code",
+      "         else \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " tag.button class: \"btn message__action-btn center full-width\", data: { action: \"reply#reply\" }, title: \"Reply\", aria: { label: \"Reply\" } do "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"reply.svg\", class: \"colorize--black\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " tag.button class: \"btn message__action-btn center full-width\", title: \"Copy link\", aria: { label: \"Copy link\" }, data: { controller: \"copy-to-clipboard\", action: \"copy-to-clipboard#copy\", copy_to_clipboard_success_class: \"btn--success\", copy_to_clipboard_content_value: url } do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"link.svg\", class: \"colorize--black\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " link_to edit_room_message_path(message.room, message), class: \"btn message__action-btn center full-width message__edit-btn\",\n              data: { turbo_frame: dom_id(message, :edit) }, title: \"Edit\", aria: { label: \"Edit\"} do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"pencil.svg\", class: \"colorize--black\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n    </div>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</div>\n"
+    ]
+  ],
+  "messages/_message.html.erb": [
+    [
+      "code",
+      "\n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "\n"
+    ],
+    [
+      "code",
+      " cache [ message, \"presentation-v3\" ] do \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " message_tag message do "
+    ],
+    [
+      "text",
+      "\n    <h2 class=\"message__day-separator\">"
+    ],
+    [
+      "expr",
+      " local_datetime_tag message.created_at, style: :date "
+    ],
+    [
+      "text",
+      "</h2>\n\n    <figure class=\"avatar message__avatar\">\n      "
+    ],
+    [
+      "expr",
+      " avatar_tag message.creator "
+    ],
+    [
+      "text",
+      "\n    </figure>\n\n    <turbo-frame id=\""
+    ],
+    [
+      "expr",
+      " dom_id(message, :edit) "
+    ],
+    [
+      "text",
+      "\">\n      <div class=\"message__body\">\n        <div class=\"message__body-content\">\n          <div class=\"message__meta\">\n            <h3 class=\"message__heading\">\n              <span class=\"message__author\" title=\""
+    ],
+    [
+      "expr",
+      " message.creator.title "
+    ],
+    [
+      "text",
+      "\">\n                <strong data-reply-target=\"author\">"
+    ],
+    [
+      "expr",
+      " message.creator.name "
+    ],
+    [
+      "text",
+      "</strong>\n              </span>\n              "
+    ],
+    [
+      "expr",
+      " link_to message_timestamp(message, class: \"message__timestamp\"), room_at_message_path(message.room, message), target: \"_top\",\n                    class: \"message__permalink\" "
+    ],
+    [
+      "text",
+      "\n              <span class=\"message__room\">\n                "
+    ],
+    [
+      "expr",
+      " link_to room_display_name(message.room, for_user: nil), room_at_message_path(message.room, message), target: \"_top\", data: { reply_target: \"link\" } "
+    ],
+    [
+      "text",
+      "\n              </span>\n            </h3>\n            "
+    ],
+    [
+      "expr",
+      " render \"messages/actions\", message: message, url: room_at_message_url(message.room, message) "
+    ],
+    [
+      "text",
+      "\n          </div>\n          "
+    ],
+    [
+      "expr",
+      " render \"messages/presentation\", message: message "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " render \"messages/boosts/boosts\", message: message "
+    ],
+    [
+      "text",
+      "\n        </div>\n      </div>\n    </turbo-frame>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "messages/_presentation.html.erb": [
+    [
+      "text",
+      "<div id=\""
+    ],
+    [
+      "expr",
+      " dom_id(message, :presentation) "
+    ],
+    [
+      "text",
+      "\" dir=\"auto\" data-reply-target=\"body\" data-messages-target=\"body\">\n  "
+    ],
+    [
+      "expr",
+      " message_presentation(message) "
+    ],
+    [
+      "text",
+      "\n</div>\n"
+    ]
+  ],
+  "messages/_template.html.erb": [
+    [
+      "text",
+      "<script type=\"text/template\" data-messages-target=\"template\">\n  <div class=\"message message--me $messageClasses$\"\n      id=\"message_$clientMessageId$\"\n      data-format-message-target=\"message\"\n      data-user-id=\""
+    ],
+    [
+      "expr",
+      " Current.user.id "
+    ],
+    [
+      "text",
+      "\"\n      data-message-timestamp=\"$messageTimestamp$\"\n      data-messages-target=\"message\">\n    <div class=\"message__day-separator\"><time class=\"message__timestamp\" datetime=\"$messageDatetime$\" data-local-time-target=\"date\"></time></div>\n\n    <figure class=\"avatar message__avatar\">\n      "
+    ],
+    [
+      "expr",
+      " avatar_tag Current.user "
+    ],
+    [
+      "text",
+      "\n    </figure>\n\n    <div class=\"message__body\">\n      <div class=\"message__body-content\">\n        <div class=\"message__meta\">\n          <h3 class=\"message__heading\">\n            <span class=\"message__author\"><strong>"
+    ],
+    [
+      "expr",
+      " Current.user.name "
+    ],
+    [
+      "text",
+      "</strong></span>\n            <span class=\"message__permalink\"><time class=\"message__timestamp\" datetime=\"$messageDatetime$\" data-local-time-target=\"time\"></time></span>\n          </h3>\n          <div class=\"message__actions\">\n            <div class=\"position-relative\">\n              <span class=\"btn message__action-btn message__options-btn\">\n                "
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-horizontal.svg\", class: \"colorize--black\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n                <span class=\"for-screen-reader\">Message options</span>\n              </span>\n            </div class=\"position-relative\">\n          </div>\n        </div>\n        $body$\n      </div>\n    </div>\n  </div>\n</script>\n"
+    ]
+  ],
+  "messages/_unrenderable.html.erb": [
+    [
+      "text",
+      "<div class=\"message message--formatted message--failed center\">\n  <div class=\"message__body\">\n    <div class=\"message__body-content txt-align-center\">\n      Failed to load message content\n    </div>\n  </div>\n</div>\n"
+    ]
+  ],
+  "messages/boosts/_boost.html.erb": [
+    [
+      "code",
+      " cache boost do \n"
+    ],
+    [
+      "text",
+      "  <div id=\""
+    ],
+    [
+      "expr",
+      " dom_id(boost) "
+    ],
+    [
+      "text",
+      "\"\n      class=\"boost boost-item flex-inline postion--relative max-width align-center fill-white gap\"\n      data-controller=\"boost-delete\" data-boost-delete-perform-class=\"boost--deleting\" data-boost-delete-reveal-class=\"expanded\" data-boost-delete-booster-id-value=\""
+    ],
+    [
+      "expr",
+      " boost.booster.id "
+    ],
+    [
+      "text",
+      "\">\n    <figure class=\"avatar boost__avatar flex-item-no-shrink\">\n      "
+    ],
+    [
+      "expr",
+      " avatar_tag boost.booster, aria: { label: \"#{boost.booster.name} boosted #{boost.content}\" } "
+    ],
+    [
+      "text",
+      "\n    </figure>\n\n    "
+    ],
+    [
+      "expr",
+      " tag.span boost.content, role: \"button\",\n          class: [ \"txt-small\", { \"txt-medium\": boost.content.all_emoji? } ],\n          data: { action: \"click->boost-delete#reveal keydown.enter->boost-delete#reveal:prevent\", boost_delete_target: \"content\" } "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " button_to message_boost_path(boost.message, boost), method: :delete, data: { action: \"boost-delete#perform\", boost_delete_target: \"button\" },\n          class: \"btn btn--negative flex-item-justify-end boost__delete\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"minus.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Delete this boost</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n  <span id=\"delete_boost_accessible_label\" class=\"for-screen-reader\">Press enter to delete this boost</span>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "messages/boosts/_boosts.html.erb": [
+    [
+      "expr",
+      " turbo_frame_tag message, :boosting do "
+    ],
+    [
+      "text",
+      "\n  <div class=\"boosts flex flex-wrap align-center gap full-width\" style=\"--column-gap: 0.4ch; --row-gap: 0\"\n      data-controller=\"turbo-streaming\" data-action=\"turbo:submit-start->turbo-streaming#unsubscribe\">\n    <div class=\"flex-inline flex-wrap gap\" id=\""
+    ],
+    [
+      "expr",
+      " dom_id(message, :boosts) "
+    ],
+    [
+      "text",
+      "\" data-turbo-streaming-target=\"container\">\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"messages/boosts/boost\", collection: message.boosts.ordered, cached: true "
+    ],
+    [
+      "text",
+      "\n    </div>\n\n    "
+    ],
+    [
+      "expr",
+      " turbo_frame_tag message, :new_boost do "
+    ],
+    [
+      "text",
+      "\n      <div class=\"flex-inline message__boost-inline\" data-controller=\"soft-keyboard\">\n        "
+    ],
+    [
+      "expr",
+      " link_to new_message_boost_path(message), class: \"boost__action txt-small btn\", action: \"soft-keyboard#open\" do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"boost.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Add a boost</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "messages/boosts/index.html.erb": [
+    [
+      "expr",
+      " render \"messages/boosts/boosts\", message: @message "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "messages/boosts/new.html.erb": [
+    [
+      "expr",
+      " turbo_frame_tag dom_id(@message, :new_boost) do "
+    ],
+    [
+      "text",
+      "\n  <div class=\"boost flex-inline postion--relative max-width fill-white\" style=\"--column-gap: var(--inline-space-half)\">\n    "
+    ],
+    [
+      "expr",
+      " form_with model: [ @message, Boost.new ], class: \"boost__form flex align-center gap expanded\",\n          data: { controller: \"form scroll-into-view\", turbo_frame: dom_id(@message, :boosting), action: \"keydown.esc->form#cancel\" } do |form| "
+    ],
+    [
+      "text",
+      "\n      <label class=\"boost__form-label flex gap\" style=\"--column-gap: 0.7ch;\" role=\"button\" tabindex=\"0\" aria-label=\"Add a boost\">\n        <figure class=\"avatar boost__avatar flex-item-no-shrink\">\n          "
+    ],
+    [
+      "expr",
+      " avatar_tag Current.user "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">"
+    ],
+    [
+      "expr",
+      " Current.user.name "
+    ],
+    [
+      "text",
+      "</span>\n        </figure>\n\n        "
+    ],
+    [
+      "expr",
+      " form.text_field :content, id: nil, autofocus: true, autocomplete: \"off\", autocorrect: \"off\", maxlength: 16,\n              required: true, pattern: /\\S+.*/, data: { boost_form_target: \"input\" }, class: \"input input--boost txt-small\" "
+    ],
+    [
+      "text",
+      "\n      </label>\n\n      "
+    ],
+    [
+      "expr",
+      " form.button class: \"btn btn--reversed\", type: \"submit\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Submit</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " link_to message_boosts_path(@message), data: { turbo_frame: dom_id(@message, :boosts), form_target: \"cancel\" }, class: \"btn btn--negative\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"minus.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Cancel</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "messages/create.turbo_stream.erb": [
+    [
+      "expr",
+      " turbo_stream.append dom_id(@message.room, :messages), @message "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "messages/destroy.turbo_stream.erb": [
+    [
+      "expr",
+      " turbo_stream.remove @message "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "messages/edit.html.erb": [
+    [
+      "text",
+      "<turbo-frame id=\""
+    ],
+    [
+      "expr",
+      " dom_id(@message, :edit) "
+    ],
+    [
+      "text",
+      "\">\n  <div class=\"message__body position-relative\" data-controller=\"scroll-into-view\">\n    <div class=\"message__body-content message__body-content--editing gap\">\n"
+    ],
+    [
+      "code",
+      "       if @message.content_type.attachment? \n"
+    ],
+    [
+      "text",
+      "        "
+    ],
+    [
+      "expr",
+      " message_attachment_presentation(@message) "
+    ],
+    [
+      "text",
+      "\n\n        <div class=\"message__edit-btns flex align-center justify-space-between gap full-width pad-block-start-half\">\n          "
+    ],
+    [
+      "expr",
+      " button_tag class: \"btn btn--negative center margin-block-end\", type: \"submit\",\n                form: dom_id(@message, :delete_form), data: { turbo_confirm: \"Are you sure you want to delete this message?\" } do "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"trash.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Delete message</span>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </div>\n"
+    ],
+    [
+      "code",
+      "       else \n"
+    ],
+    [
+      "text",
+      "        <div class=\"composer--edit composer--rich-text\">\n          "
+    ],
+    [
+      "expr",
+      " form_with model: @message, url: room_message_path(@room, @message), id: dom_id(@message, :form), data: {\n                controller: \"form\", action: \"lexxy:file-accept->form#preventAttachment keydown.esc->form#cancel keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent\" } do |form| "
+    ],
+    [
+      "text",
+      "\n            <div class=\"full-width input input--actor min-width fill-white\">\n              "
+    ],
+    [
+      "expr",
+      " form.rich_text_area :body,\n                    value: editable_body(@message),\n                    rows: 1,\n                    class: \"input lexxy-content\",\n                    aria: { multiline: \"true\", label: \"Edit message\" },\n                    autofocus: true,\n                    \"permitted-attachment-types\": \"application/vnd.campfire.mention application/vnd.actiontext.opengraph-embed\",\n                    data: { action: rich_text_data_actions } do "
+    ],
+    [
+      "text",
+      "\n                "
+    ],
+    [
+      "expr",
+      " mention_prompt_tag @room "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "               end \n"
+    ],
+    [
+      "text",
+      "            </div>\n\n            "
+    ],
+    [
+      "expr",
+      " link_to \"Close editor and discard changes\", room_message_path(@room, @message), data: { form_target: \"cancel\" }, hidden: true "
+    ],
+    [
+      "text",
+      "\n\n            <div class=\"message__edit-btns flex align-center justify-space-between gap full-width pad-block-start-half\">\n              "
+    ],
+    [
+      "expr",
+      " button_tag type: \"submit\", class: \"btn btn--reversed\" do "
+    ],
+    [
+      "text",
+      "\n                "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n                <span class=\"for-screen-reader\">Save changes</span>\n"
+    ],
+    [
+      "code",
+      "               end \n"
+    ],
+    [
+      "text",
+      "\n              "
+    ],
+    [
+      "expr",
+      " button_tag class: \"btn btn--negative\", type: \"submit\", form: dom_id(@message, :delete_form),\n                      data: { turbo_confirm: \"Are you sure you want to delete this message?\" } do "
+    ],
+    [
+      "text",
+      "\n                "
+    ],
+    [
+      "expr",
+      " image_tag \"trash.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n                <span class=\"for-screen-reader\">Delete message</span>\n"
+    ],
+    [
+      "code",
+      "               end \n"
+    ],
+    [
+      "text",
+      "            </div>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </div>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n\n    <div class=\"message__actions flex flex-wrap\">\n      "
+    ],
+    [
+      "expr",
+      " link_to room_message_path(@room, @message), class: \"message__action-btn message__edit-close-btn txt-small btn btn--borderless\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"remove.svg\", class: \"colorize--black\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Close editor and discard changes</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n\n    "
+    ],
+    [
+      "expr",
+      " form_with url: room_message_path(@message.room, @message), method: :delete, id: dom_id(@message, :delete_form), data: { turbo_frame: dom_id(@message, :edit) } "
+    ],
+    [
+      "text",
+      "\n  </div>\n</turbo-frame>\n"
+    ]
+  ],
+  "messages/index.html.erb": [
+    [
+      "expr",
+      " render partial: \"messages/message\", collection: @messages, cached: true "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "messages/room_not_found.html.erb": [
+    [
+      "text",
+      "<turbo-frame id=\"composer-frame\">\n  <span class=\"composer__input input input--actor shake margin-block-end txt-negative txt-align-center\" style=\"--input-border-color: var(--color-negative)\">\n      <span>This room was deleted.</span>\n  </span>\n</turbo-frame>\n"
+    ]
+  ],
+  "messages/show.html.erb": [
+    [
+      "expr",
+      " render @message "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "pwa/_browser_settings.html.erb": [
+    [
+      "code",
+      " unless (platform.safari? || platform.chrome?) && platform.ios? \n"
+    ],
+    [
+      "text",
+      "  <details class=\"notifications-help\" data-notifications-target=\"details\">\n    <summary class=\"btn\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"external/web.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n      <strong>Check your "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      " settings</strong>\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"disclosure.svg\", aria: { hidden: \"true\" }, size: 10, class: \"disclosure\" "
+    ],
+    [
+      "text",
+      "\n    </summary>\n\n"
+    ],
+    [
+      "code",
+      "     case\n      when platform.firefox? && platform.android? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"lock.svg\", alt: \"the View site information button\", size: 20 "
+    ],
+    [
+      "text",
+      "</em> in the address bar.</li>\n          <li>Tap <em>Notification</em> to change to <em>Allowed</em>.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.edge? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "        <h2 class=\"txt-normal txt-medium margin-block-start\">Turn on notifications for this website.</h2>\n        <ol>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"lock.svg\", alt: \"the View site information button\", size: 20 "
+    ],
+    [
+      "text",
+      "</em> left of the address bar.</li>\n          <li>Under <em>Permissions for this site &gt; Notifications</em>, choose <em>Allow</em>.</li>\n        </ol>\n        <h2 class=\"txt-normal txt-medium margin-block-start\">Turn on notifications for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      ".</h2>\n        <ol>\n"
+    ],
+    [
+      "code",
+      "           if platform.windows? \n"
+    ],
+    [
+      "text",
+      "            <li>Click <em>Start</em>, then <em>Settings</em>.</li>\n            <li>Go to <em>System &gt; Notification</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> <em>ON</em> for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      ".</li>\n"
+    ],
+    [
+      "code",
+      "           else \n"
+    ],
+    [
+      "text",
+      "            <li>Click <em aria-label=\"the Apple menu\"></em> in the top left.</li>\n            <li>Click <em>System Settings…</em>.</li>\n            <li>Click <em>Notifications</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      "</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow notifications</em>.</li>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.firefox? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "        <h2 class=\"txt-normal txt-medium margin-block-start\">Turn on notifications for this website.</h2>\n        <ol>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      "</em> in the top left.</li>\n          <li>Click <em>Settings…</em>.</li>\n          <li>Click <em>Privacy & Security</em> in the sidebar.</li>\n          <li>Scroll down to <em>Permissions</em>.</li>\n          <li>Click <em>Settings</em> next to <em>Notifications</em>.</li>\n          <li>Select <em>Allow</em> next to <em>"
+    ],
+    [
+      "expr",
+      " root_url "
+    ],
+    [
+      "text",
+      "</em>.</li>\n        </ol>\n\n        <h2 class=\"txt-normal txt-medium margin-block-start\">Turn on notifications for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      ".</h2>\n        <ol>\n"
+    ],
+    [
+      "code",
+      "           if platform.windows? \n"
+    ],
+    [
+      "text",
+      "            <li>Click <em>Start</em>, then <em>Settings</em>.</li>\n            <li>Go to <em>System &gt; Notification</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the toggle button\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> <em>ON</em> for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      ".</li>\n"
+    ],
+    [
+      "code",
+      "           else \n"
+    ],
+    [
+      "text",
+      "            <li>Click <em aria-label=\"the Apple menu\"></em> in the top left.</li>\n            <li>Click <em>System Settings…</em>.</li>\n            <li>Click <em>Notifications</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      "</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow notifications</em>.</li>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.chrome? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "        <h2 class=\"txt-normal txt-medium margin-block-start\">Turn on notifications for this website.</h2>\n        <ol>\n          <li>Click the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/sliders.svg\", alt: \"View site information\", size: 20 "
+    ],
+    [
+      "text",
+      "</em> icon in the address bar.</li>\n          <li>Click <em>Site Settings</em>.</li>\n          <li>Ensure notifications are <em>Allowed</em>.</li>\n        </ol>\n\n        <h2 class=\"txt-normal txt-medium margin-block-start\">Turn on notifications for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      ".</h2>\n        <ol>\n"
+    ],
+    [
+      "code",
+      "           if platform.windows? \n"
+    ],
+    [
+      "text",
+      "            <li>Click <em>Start</em>, then <em>Settings</em>.</li>\n            <li>Go to <em>System &gt; Notification</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> <em>ON</em> for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      ".</li>\n"
+    ],
+    [
+      "code",
+      "           else \n"
+    ],
+    [
+      "text",
+      "            <li>Click <em aria-label=\"the Apple menu\"></em> in the top left.</li>\n            <li>Click <em>System Settings…</em>.</li>\n            <li>Click <em>Notifications</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      "</em>.</li>\n            <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow notifications</em>.</li>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.chrome? && platform.android? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Tap the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-vertical.svg\", alt: \"More options\", size: 16 "
+    ],
+    [
+      "text",
+      "</em> menu button.</li>\n          <li>Tap <em>Settings</em>.</li>\n          <li>Tap <em>Notifications</em>.</li>\n          <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      " notifications</em>.</li>\n          <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> next to <em>Web apps</em>.</li>\n          <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"notification-bell-alert.svg\", alt: \"the notification bell\", size: 16 "
+    ],
+    [
+      "text",
+      "</em> and select <em>Allow</em>.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.safari? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      "</em> in the top left.</li>\n          <li>Click <em>Settings…</em>.</li>\n          <li>Click the <em>Websites</em> tab.</li>\n          <li>Click <em>Notifications</em> in the sidebar.</li>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " root_url "
+    ],
+    [
+      "text",
+      "</em> in the list.</li>\n          <li>Select <em>Allow</em>.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       else \n"
+    ],
+    [
+      "text",
+      "        <p>Ensure notifications are enabled for <em>"
+    ],
+    [
+      "expr",
+      " root_url "
+    ],
+    [
+      "text",
+      "</em> in your web browser settings.</p>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </details>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "pwa/_install_instructions.html.erb": [
+    [
+      "code",
+      " unless platform.chrome? || (platform.firefox? && !platform.android?) \n"
+    ],
+    [
+      "text",
+      "  <details class=\"notifications-help pwa__instructions hide-in-pwa\" data-controller=\"pwa-install\" data-pwa-install-prompting-class=\"pwa--can-install\" data-notifications-target=\"details\">\n    <summary class=\"btn\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"external/install.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n      <strong>Install Campfire as a web app.</strong>\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"disclosure.svg\", aria: { hidden: \"true\" }, size: 10, class: \"disclosure\" "
+    ],
+    [
+      "text",
+      "\n    </summary>\n\n"
+    ],
+    [
+      "code",
+      "     case\n      when platform.edge? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"install-edge.svg\", alt: \"the app available - install Campfire chat button\", size: 16 "
+    ],
+    [
+      "text",
+      "</em>in the address bar.</li>\n          <li>Click <em>Install</em>.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.chrome? && platform.android? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Tap the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-vertical.svg\", alt: \"More options\", size: 16 "
+    ],
+    [
+      "text",
+      "</em> menu button.</li>\n          <li>Tap <em>Install app</em> in the menu.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.firefox? && platform.android? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Tap the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-vertical.svg\", alt: \"More options\", size: 16 "
+    ],
+    [
+      "text",
+      "</em> menu button.</li>\n          <li>Tap <em>Install</em> in the menu.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       when platform.safari? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "        <ol>\n          <li>Click <em>File</em> in the top left.</li>\n          <li>Click <em>Add to Dock…</em>.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       when (platform.safari? || platform.chrome?) && platform.ios? \n"
+    ],
+    [
+      "text",
+      "        <p>To receive push notifications in "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      " for "
+    ],
+    [
+      "expr",
+      " platform.operating_system "
+    ],
+    [
+      "text",
+      ", you must install Campfire as a web app.</p>\n        <ol>\n          <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/share.svg\", alt: \"the share button\", size: 20 "
+    ],
+    [
+      "text",
+      "</em></li>\n          <li>Tap <em>Add to Home Screen</em>.</li>\n        </ol>\n"
+    ],
+    [
+      "code",
+      "       else \n"
+    ],
+    [
+      "text",
+      "        <p>Some platforms require you to install Campfire as a web app to receive push notifications.</p>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <div class=\"margin-block-start txt-align-center pwa__installer\">\n      <hr class=\"separator margin-block\">\n      <button class=\"btn btn--reversed center\" data-action=\"pwa-install#promptInstall\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"external/install.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        Install now\n      </button>\n    </div>\n  </details>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "pwa/_system_settings.html.erb": [
+    [
+      "text",
+      "<details class=\"notifications-help hide-in-browser\" data-notifications-target=\"details\">\n  <summary class=\"btn\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"external/gear.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n    <strong>Check your "
+    ],
+    [
+      "expr",
+      " platform.operating_system "
+    ],
+    [
+      "text",
+      " settings</strong>\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"disclosure.svg\", aria: { hidden: \"true\" }, size: 10, class: \"disclosure\" "
+    ],
+    [
+      "text",
+      "\n  </summary>\n\n"
+    ],
+    [
+      "code",
+      "   case\n    when platform.firefox? && platform.android? \n"
+    ],
+    [
+      "text",
+      "      <ol>\n        <li>Tap the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-vertical.svg\", alt: \"More options\", size: 16 "
+    ],
+    [
+      "text",
+      "</em> menu button.</li>\n        <li>Tap <em>Settings</em>.</li>\n        <li>Tap <em>Notifications</em>.</li>\n        <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the toggle button\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      " notifications</em>.</li>\n      </ol>\n"
+    ],
+    [
+      "code",
+      "     when platform.edge? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "      <ol>\n        <li>Click <em>Start</em>, then <em>Settings</em>.</li>\n        <li>Go to <em>System &gt; Notification</em>.</li>\n        <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the toggle button\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> <em>ON</em> for Campfire.</li>\n      </ol>\n"
+    ],
+    [
+      "code",
+      "     when (platform.firefox? || platform.chrome?) && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "      <ol>\n"
+    ],
+    [
+      "code",
+      "         if platform.windows? \n"
+    ],
+    [
+      "text",
+      "          <li>Click <em>Start</em>, then <em>Settings</em>.</li>\n          <li>Go to <em>System &gt; Notification</em>.</li>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the toggle button\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> <em>ON</em> for Campfire.</li>\n"
+    ],
+    [
+      "code",
+      "         else \n"
+    ],
+    [
+      "text",
+      "          <li>Click <em aria-label=\"the Apple menu\"></em> in the top left.</li>\n          <li>Click <em>System Settings…</em>.</li>\n          <li>Click <em>Notifications</em>.</li>\n          <li>Click <em>Campfire</em>.</li>\n          <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the allow notifications switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow notifications</em>.</li>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </ol>\n"
+    ],
+    [
+      "code",
+      "     when platform.safari? && platform.desktop? \n"
+    ],
+    [
+      "text",
+      "      <ol>\n        <li>Click <em aria-label=\"the Apple menu\"></em> in the top left.</li>\n        <li>Click <em>System Settings…</em>.</li>\n        <li>Click <em>Notifications</em>.</li>\n        <li>Click <em>Campfire</em>.</li>\n        <li>Click <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the allow notifications switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow notifications</em>.</li>\n      </ol>\n"
+    ],
+    [
+      "code",
+      "     when (platform.safari? || platform.chrome?) && platform.ios? \n"
+    ],
+    [
+      "text",
+      "      <ol>\n        <li>Open the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/gear.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "</em> Settings app.</li>\n        <li>Scroll to and tap <em>Campfire</em>.</li>\n        <li>Tap <em>Notifications</em>.</li>\n        <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the allow notifications switch button\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow Notifications</em>.</li>\n      </ol>\n"
+    ],
+    [
+      "code",
+      "     when platform.chrome? && platform.android? \n"
+    ],
+    [
+      "text",
+      "      <ol>\n        <li>Open the <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/gear.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "</em> Settings app.</li>\n        <li>Tap <em>Notifications</em>.</li>\n        <li>Tap <em>App notifications</em>.</li>\n        <li>Scroll to <em>Campfire</em>.</li>\n        <li>Tap <em>"
+    ],
+    [
+      "expr",
+      " image_tag \"external/switch.svg\", alt: \"the switch\", size: 22 "
+    ],
+    [
+      "text",
+      "</em> to <em>Allow Notifications</em>.</li>\n      </ol>\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "text",
+      "      <p>Ensure notifications are allowed for "
+    ],
+    [
+      "expr",
+      " platform.browser.capitalize "
+    ],
+    [
+      "text",
+      " in your system settings.</p>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</details>\n"
+    ]
+  ],
+  "pwa/manifest.json.erb": [
+    [
+      "text",
+      "{\n  \"name\": \""
+    ],
+    [
+      "expr",
+      " Current.account&.name || \"Campfire\" "
+    ],
+    [
+      "text",
+      "\",\n  \"icons\": [\n    {\n      \"src\": \""
+    ],
+    [
+      "expr",
+      " fresh_account_logo_path(size: :small) "
+    ],
+    [
+      "text",
+      "\",\n      \"type\": \"image/png\",\n      \"sizes\": \"192x192\"\n    },\n    {\n      \"src\": \""
+    ],
+    [
+      "expr",
+      " fresh_account_logo_path "
+    ],
+    [
+      "text",
+      "\",\n      \"type\": \"image/png\",\n      \"sizes\": \"512x512\"\n    },\n    {\n      \"src\": \""
+    ],
+    [
+      "expr",
+      " fresh_account_logo_path "
+    ],
+    [
+      "text",
+      "\",\n      \"type\": \"image/png\",\n      \"sizes\": \"512x512\",\n      \"purpose\": \"maskable\"\n    }\n  ],\n  \"start_url\": \"/\",\n  \"display\": \"standalone\",\n  \"scope\": \"/\",\n  \"description\": \"A chat app from the makers of Basecamp and HEY.\",\n  \"categories\": [\"social\", \"business\", \"productivity\"],\n  \"theme_color\": \"#ffffff\",\n  \"background_color\": \"#ffffff\",\n  \"shortcuts\": [\n    {\n      \"name\": \"New chat room\",\n      \"description\": \"Open Campfire and start a new chat room\",\n      \"url\": \"rooms/opens/new\",\n      \"icons\": [{ \"src\": \""
+    ],
+    [
+      "expr",
+      " image_url(\"add.svg\") "
+    ],
+    [
+      "text",
+      "\", \"sizes\": \"any\" }]\n    },\n    {\n      \"name\": \"My profile\",\n      \"description\": \"Open Campfire and view your profile\",\n      \"url\": \"/users/me/profile\",\n      \"icons\": [{ \"src\": \""
+    ],
+    [
+      "expr",
+      " image_url(\"person.svg\") "
+    ],
+    [
+      "text",
+      "\", \"sizes\": \"any\" }]\n    }\n  ],\n  \"screenshots\": [\n    {\n      \"src\": \""
+    ],
+    [
+      "expr",
+      " image_url(\"screenshots/android-chat.png\") "
+    ],
+    [
+      "text",
+      "\",\n      \"sizes\": \"1080x2400\",\n      \"form_factor\": \"narrow\",\n      \"label\": \"Campfire is an installable, self-hosted group chat system.\"\n    },\n    {\n      \"src\": \""
+    ],
+    [
+      "expr",
+      " image_url(\"screenshots/android-sidebar.png\") "
+    ],
+    [
+      "text",
+      "\",\n      \"sizes\": \"1080x2400\",\n      \"form_factor\": \"narrow\",\n      \"label\": \"Easily invite people. Make rooms. @mentions, DMs, and mobile support.\"\n    },\n    {\n      \"src\": \""
+    ],
+    [
+      "expr",
+      " image_url(\"screenshots/android-dark-mode.png\") "
+    ],
+    [
+      "text",
+      "\",\n      \"sizes\": \"1080x2400\",\n      \"form_factor\": \"narrow\",\n      \"label\": \"Full support for dark mode, customizable to your brand.\"\n    }\n  ]\n}\n"
+    ]
+  ],
+  "rooms/closeds/_form.html.erb": [
+    [
+      "expr",
+      " render layout: \"rooms/layouts/form\", locals: { room: room } do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " user_filter_menu_tag do "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     if Current.user.can_administer?(room) \n"
+    ],
+    [
+      "text",
+      "      <li class=\"flex align-center gap margin-none\">\n        <figure class=\"avatar flex-item-no-shrink\" style=\"--avatar-border-radius: 0; --avatar-size: 4ch;\">\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"everyone.svg\", aria: { hidden: \"true\" }, class: \"colorize--black\", style: \"background-color: transparent\" "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Everyone</span>\n        </figure>\n\n        <div class=\"min-width\">\n          <div class=\"overflow-ellipsis fill-shade\"><strong>Everyone</strong></div>\n        </div>\n\n        <hr class=\"separator\" aria-hidden=\"true\">\n\n        "
+    ],
+    [
+      "expr",
+      " link_to type_change_path, class: \"btn--faux flex-inline\", tabindex: \"-1\", data: { turbo_action: \"replace\" } do "
+    ],
+    [
+      "text",
+      "\n          <label for=\"room_type\" class=\"switch\">\n            <input type=\"checkbox\" id=\"room_type\" class=\"switch__input\">\n            <span class=\"switch__btn round\"></span>\n            <span class=\"for-screen-reader\">Give everyone access to this room</span>\n          </label>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </li>\n\n      <hr class=\"separator full-width\" style=\"--border-style: solid\">\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " user_filter_search_tag if selected_users.count +  unselected_users.count > 20 "
+    ],
+    [
+      "text",
+      "\n\n    <div data-filter-target=\"list\" contents>\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"rooms/closeds/user\", collection: selected_users, locals: { room: room, selected: true } "
+    ],
+    [
+      "text",
+      "\n\n"
+    ],
+    [
+      "code",
+      "       if selected_users.any? && unselected_users.any? \n"
+    ],
+    [
+      "text",
+      "        <hr class=\"separator full-width\" style=\"--border-style: solid\">\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"rooms/closeds/user\", collection: unselected_users, locals: { room: room, selected: false } "
+    ],
+    [
+      "text",
+      "\n    </div>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/closeds/_user.html.erb": [
+    [
+      "text",
+      "<li class=\"flex align-center gap margin-none\" data-value=\""
+    ],
+    [
+      "expr",
+      " user.name.downcase "
+    ],
+    [
+      "text",
+      "\">\n  <figure class=\"avatar flex-item-no-shrink\" style=\"--avatar-size: 4ch;\">\n    "
+    ],
+    [
+      "expr",
+      " avatar_tag user, loading: :lazy "
+    ],
+    [
+      "text",
+      "\n  </figure>\n\n  <div class=\"min-width\">\n    <div class=\"overflow-ellipsis fill-shade\"><strong>"
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</strong></div>\n  </div>\n\n  <hr class=\"separator\" aria-hidden=\"true\">\n\n"
+    ],
+    [
+      "code",
+      "   if Current.user.can_administer?(room) \n"
+    ],
+    [
+      "code",
+      "     if user == Current.user && room.new_record? \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " hidden_field_tag \"user_ids[]\", user.id, id: nil "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", size: 20, class: \"colorize--black flex-item-no-shrink\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "text",
+      "      <label class=\"switch flex-item-no-shrink\">\n        "
+    ],
+    [
+      "expr",
+      " check_box_tag \"user_ids[]\", user.id, selected, class: \"switch__input\", id: nil "
+    ],
+    [
+      "text",
+      "\n        <span class=\"switch__btn round\"></span>\n        <span class=\"for-screen-reader\">Give "
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      " access to this room</span>\n      </label>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</li>\n"
+    ]
+  ],
+  "rooms/closeds/edit.html.erb": [
+    [
+      "expr",
+      " render layout: \"rooms/layouts/edit\", locals: { room: @room } do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render \"rooms/closeds/form\", \n        room: @room, selected_users: @selected_users, unselected_users: @unselected_users, type_change_path: edit_rooms_open_path(@room) "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/closeds/new.html.erb": [
+    [
+      "expr",
+      " render layout: \"rooms/layouts/new\" do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render \"rooms/closeds/form\", room: @room, selected_users: [], unselected_users: @users, type_change_path: new_rooms_open_path "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/directs/edit.html.erb": [
+    [
+      "code",
+      " @page_title = \"Edit settings for #{room_display_name(@room)}\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to_last_room_visited "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<div class=\"panel txt-align-center\">\n  <section class=\"directs--edit margin-block-end\">\n"
+    ],
+    [
+      "code",
+      "     users = @room.users.many? ? @room.users.without(Current.user) : @room.users \n"
+    ],
+    [
+      "code",
+      "     users.each do | user | \n"
+    ],
+    [
+      "text",
+      "      <div class=\"member flex flex-column gap fill-shade pad border-radius\">\n        <figure class=\"avatar center\" style=\"--avatar-border-radius: 10ch; --avatar-size: 10ch;\" >\n          "
+    ],
+    [
+      "expr",
+      " avatar_tag user, loading: :lazy "
+    ],
+    [
+      "text",
+      "\n        </figure>\n\n        <strong>"
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</strong>\n      </div>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </section>\n\n  "
+    ],
+    [
+      "expr",
+      " button_to rooms_direct_url(@room), method: :delete, class: \"btn btn--negative center\", aria: { label: \"Delete Ping\" },\n      data: { turbo_confirm: \"Are you sure you want to delete this ping and all messages in it? This can’t be undone.\" } do "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"trash.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n    Ping\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</div>\n"
+    ]
+  ],
+  "rooms/directs/new.html.erb": [
+    [
+      "text",
+      "<turbo-frame id=\"direct_rooms_control\" target=\"_top\">\n  <div class=\"directs directs--new flex flex-column gap\">\n    "
+    ],
+    [
+      "expr",
+      " form_with model: @room, class: \"flex gap flex-item-grow\", data: {\n          controller: \"form\", action: \"keydown.esc->form#cancel\" } do |form| "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " link_to user_sidebar_path, class: \"btn flex-item-no-shrink\", data: { turbo_frame: \"user_sidebar\", form_target: \"cancel\" } do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"arrow-left.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Cancel changes</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      <section class=\"autocomplete__container unpad input input--actor\">\n        <div class=\"autocomplete__input input flex flex-wrap position-relative flex-item-grow\"\n            data-controller=\"autocomplete\" data-autocomplete-url-value=\""
+    ],
+    [
+      "expr",
+      " autocompletable_users_path "
+    ],
+    [
+      "text",
+      "\">\n          <select name=\"user_ids[]\" data-autocomplete-target=\"select\" data-template-id=\"autocompletable-user\" multiple=\"true\" hidden required></select>\n\n          "
+    ],
+    [
+      "expr",
+      " render \"users/autocompletables/template\" "
+    ],
+    [
+      "text",
+      "\n\n          "
+    ],
+    [
+      "expr",
+      " form.text_field \"user_ids_input\",\n                autocomplete: \"off\", autocorrect: \"off\", \"data-1p-ignore\": \"true\", class: \"autocomplete__input input flex flex-wrap position-relative\",\n                data: { autocomplete_target: \"input\", action: \"input->autocomplete#search keydown->autocomplete#didPressKey\" } "
+    ],
+    [
+      "text",
+      "\n        </div>\n      </section>\n\n      "
+    ],
+    [
+      "expr",
+      " button_tag class: \"btn btn--reversed flex-item-no-shrink\", type: \"submit\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Start Ping</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <span class=\"txt-small translucent pad-inline-half center\">Type names to ping someone…</span>\n  </div>\n</turbo-frame>\n"
+    ]
+  ],
+  "rooms/involvements/_bell.html.erb": [
+    [
+      "text",
+      "<span>\n  <span class=\"button_to_change_notifying\"\n      data-controller=\"notifications\" data-notifications-subscriptions-url-value=\""
+    ],
+    [
+      "expr",
+      " user_push_subscriptions_path "
+    ],
+    [
+      "text",
+      "\" data-notifications-attention-class=\"btn--pulsing\">\n    "
+    ],
+    [
+      "expr",
+      " turbo_frame_tag dom_id(room, :involvement), data: {\n          controller: \"turbo-frame\", action: \"notifications:ready@window->turbo-frame#load\", turbo_frame_url_param: room_involvement_path(room) } do "
+    ],
+    [
+      "text",
+      "\n      <button class=\"btn\" data-action=\"click->notifications#attemptToSubscribe\" data-notifications-target=\"bell\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"notification-bell-loading.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"notification-bell-alert.svg\", size: 20, aria: { hidden: \"true\" }, hidden: true "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Notification settings for this "
+    ],
+    [
+      "expr",
+      " room.direct? ? \"Ping\" : \"room\" "
+    ],
+    [
+      "text",
+      "</span>\n      </button>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <dialog data-notifications-target=\"notAllowedNotice\" class=\"dialog pad center center-block border-radius border shadow\" style=\"--inline-space: var(--block-space)\">\n      <div class=\"flex flex-column txt-align-center\">\n        <span class=\"btn btn--faux center txt-x-large\">\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"notification-bell-alert.svg\", size: 48, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Notifications alert</span>\n        </span>\n\n        <section>\n          <h1 class=\"txt-large margin-none\">Notifications aren’t allowed</h1>\n          <div class=\"txt-align-start margin-block-start\">\n            "
+    ],
+    [
+      "expr",
+      " render partial: \"pwa/browser_settings\" "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " render partial: \"pwa/system_settings\" "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " render partial: \"pwa/install_instructions\" "
+    ],
+    [
+      "text",
+      "\n          </div>\n        </section>\n\n        <form method=\"dialog\" class=\"flex align-center gap center\">\n          <button class=\"btn dialog__close\" autofocus=\"true\">\n            <span class=\"for-screen-reader\">Close</span>\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"remove.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          </button>\n        </form>\n      </div>\n    </dialog>\n  </span>\n</span>\n"
+    ]
+  ],
+  "rooms/involvements/show.html.erb": [
+    [
+      "expr",
+      " turbo_frame_for_involvement_tag @room do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " button_to_change_involvement @room, @involvement "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/layouts/_edit.html.erb": [
+    [
+      "code",
+      " @page_title = \"Edit settings for #{room.name}\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to_last_room_visited "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel txt-align-center\" style=\"view-transition-name: edit-room-"
+    ],
+    [
+      "expr",
+      " room.id "
+    ],
+    [
+      "text",
+      "\">\n  "
+    ],
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "\n</section>\n\n"
+    ],
+    [
+      "code",
+      " if Current.user.can_administer?(@room) \n"
+    ],
+    [
+      "text",
+      "  <section class=\"panel txt-align-center\">\n    "
+    ],
+    [
+      "expr",
+      " button_to_delete_room room "
+    ],
+    [
+      "text",
+      "\n  </section>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/layouts/_form.html.erb": [
+    [
+      "expr",
+      " form_with model: room do |form| "
+    ],
+    [
+      "text",
+      "\n  <div class=\"flex align-center gap\">\n"
+    ],
+    [
+      "code",
+      "     if Current.user.can_administer?(room) \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " translation_button(:room_name) "
+    ],
+    [
+      "text",
+      "\n\n      <label class=\"flex-item-grow txt-large\">\n        "
+    ],
+    [
+      "expr",
+      " form.text_field :name, name: \"room[name]\", id: \"room_name\", class: \"input full-width\",\n              required: true, autofocus: true, placeholder: \"Name the room\",\n              data: { turbo_permanent: true, action: \"keydown.enter->form#submit:prevent\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Name this room</span>\n      </label>\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "text",
+      "      <h1 class=\"flex-item-grow txt-x-large\">\n        "
+    ],
+    [
+      "expr",
+      " room.name "
+    ],
+    [
+      "text",
+      "\n      </h1>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n\n  <hr class=\"margin-block borderless\">\n\n  <section class=\"room-access margin-block pad-inline fill-shade border-radius\">\n    "
+    ],
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "\n  </section>\n\n  "
+    ],
+    [
+      "expr",
+      " submit_room_button_tag if Current.user.can_administer?(room) "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/layouts/_new.html.erb": [
+    [
+      "code",
+      " @page_title = \"New chat room\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to_last_room_visited "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel txt-align-center\" style=\"view-transition-name: "
+    ],
+    [
+      "expr",
+      " local_assigns[:view_transition_name] || \"new-room\" "
+    ],
+    [
+      "text",
+      "\">\n  "
+    ],
+    [
+      "expr",
+      " yield "
+    ],
+    [
+      "text",
+      "\n</section>\n"
+    ]
+  ],
+  "rooms/opens/_form.html.erb": [
+    [
+      "expr",
+      " render layout: \"rooms/layouts/form\", locals: { room: room } do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " user_filter_menu_tag do "
+    ],
+    [
+      "text",
+      "\n    <li class=\"flex align-center gap margin-none\">\n      <figure class=\"avatar flex-item-no-shrink\" style=\"--avatar-border-radius: 0; --avatar-size: 4ch;\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"everyone.svg\", aria: { hidden: \"true\" }, class: \"colorize--black\", style: \"background-color: transparent\" "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Everyone</span>\n      </figure>\n\n      <div class=\"min-width\">\n        <div class=\"overflow-ellipsis fill-shade\"><strong>Everyone</strong></div>\n      </div>\n\n      <hr class=\"separator\" aria-hidden=\"true\">\n\n"
+    ],
+    [
+      "code",
+      "       if Current.user.can_administer?(room) \n"
+    ],
+    [
+      "text",
+      "        "
+    ],
+    [
+      "expr",
+      " link_to type_change_path, class: \"btn--faux flex-inline\", tabindex: \"-1\", data: { turbo_action: \"replace\" } do "
+    ],
+    [
+      "text",
+      "\n          <label for=\"room_type\" class=\"switch\">\n            <input type=\"checkbox\" id=\"room_type\" class=\"switch__input\" checked=\"checked\">\n            <span class=\"switch__btn round\"></span>\n            <span class=\"for-screen-reader\">Give only some access to this room</span>\n          </label>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </li>\n\n    <hr class=\"separator full-width\" style=\"--border-style: solid\">\n\n    "
+    ],
+    [
+      "expr",
+      " user_filter_search_tag if users.count > 20 "
+    ],
+    [
+      "text",
+      "\n\n    <div data-filter-target=\"list\" contents>\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"rooms/opens/user\", collection: users, locals: { room: room } "
+    ],
+    [
+      "text",
+      "\n    </div>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/opens/_user.html.erb": [
+    [
+      "text",
+      "<li class=\"flex align-center gap margin-none\" data-value=\""
+    ],
+    [
+      "expr",
+      " user.name.downcase "
+    ],
+    [
+      "text",
+      "\">\n  <figure class=\"avatar flex-item-no-shrink\" style=\"--avatar-size: 4ch;\">\n    "
+    ],
+    [
+      "expr",
+      " avatar_tag user, loading: :lazy "
+    ],
+    [
+      "text",
+      "\n  </figure>\n\n  <div class=\"min-width\">\n    <div class=\"overflow-ellipsis fill-shade\"><strong>"
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</strong></div>\n  </div>\n\n  <hr class=\"separator\" aria-hidden=\"true\">\n\n"
+    ],
+    [
+      "code",
+      "   if Current.user.can_administer?(room) \n"
+    ],
+    [
+      "text",
+      "    "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", size: 20, class: \"colorize--black flex-item-no-shrink\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</li>\n"
+    ]
+  ],
+  "rooms/opens/edit.html.erb": [
+    [
+      "expr",
+      " render layout: \"rooms/layouts/edit\", locals: { room: @room } do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render \"rooms/opens/form\", room: @room, users: @users, type_change_path: edit_rooms_closed_path(@room) "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/opens/new.html.erb": [
+    [
+      "expr",
+      " render layout: \"rooms/layouts/new\" do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render \"rooms/opens/form\", room: @room, users: @users, type_change_path: new_rooms_closed_path "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/refreshes/show.turbo_stream.erb": [
+    [
+      "expr",
+      " turbo_stream.append dom_id(@room, :messages) do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render partial: \"messages/message\", collection: @new_messages, cached: true "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end if @new_messages.any? \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " @updated_messages.each do |message| \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " turbo_stream.replace dom_id(message), partial: \"messages/message\", locals: { message: message } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/show.html.erb": [
+    [
+      "code",
+      " @page_title = room_display_name(@room) \n"
+    ],
+    [
+      "code",
+      " @body_class = \"sidebar\" \n"
+    ],
+    [
+      "code",
+      " content_for :head do \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " turbo_exempts_page_from_preview "
+    ],
+    [
+      "text",
+      "\n  <meta name=\"current-room-id\" content=\""
+    ],
+    [
+      "expr",
+      " @room.id "
+    ],
+    [
+      "text",
+      "\">\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " render \"rooms/show/nav\", room: @room "
+    ],
+    [
+      "text",
+      "\n\n"
+    ],
+    [
+      "code",
+      " content_for :sidebar, sidebar_turbo_frame_tag(src: user_sidebar_path) \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " message_area_tag(@room) do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render \"messages/template\" "
+    ],
+    [
+      "text",
+      "\n\n  "
+    ],
+    [
+      "expr",
+      " messages_tag(@room) do "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " render \"rooms/show/invitation\", room: @room "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " render partial: \"messages/message\", collection: @messages, cached: true "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " turbo_stream_from @room, :messages, channel: \"RoomMessagesChannel\" "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " button_to_jump_to_newest_message "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " render \"rooms/show/composer\", room: @room "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "rooms/show/_composer.html.erb": [
+    [
+      "code",
+      " content_for :footer do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"composer flex align-end gap position-relative\"\n      data-controller=\"typing-notifications\" data-typing-notifications-active-class=\"typing-indicator--active\">\n    "
+    ],
+    [
+      "expr",
+      " link_to searches_path, class: \"btn flex-item-no-shrink margin-block-end composer__context-btn\", style: \"view-transition-name: input-switcher\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"search.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Search</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <turbo-frame id=\"composer-frame\">\n      "
+    ],
+    [
+      "expr",
+      " composer_form_tag(room) do |form| "
+    ],
+    [
+      "text",
+      "\n        <fieldset data-composer-target=\"fields\" contents>\n          <div class=\"flex flex-column\">\n            <div class=\"composer__filelist flex flex--align-center gap flex-wrap\" data-composer-target=\"fileList\"></div>\n\n            <div class=\"flex composer__input input input--actor fill-white min-width\" style=\"--input-border-radius: 1.3rem\">\n              <div class=\"flex align-end gap full-width\">\n                "
+    ],
+    [
+      "expr",
+      " image_tag \"messages-outlined.svg\", size: 22, aria: { hidden: \"true\" }, class: \"composer__input-hint colorize--black\", style: \"view-transition-name: input-btn;\" "
+    ],
+    [
+      "text",
+      "\n\n                <div class=\"flex flex-column flex-item-grow min-width gap\">\n                  "
+    ],
+    [
+      "expr",
+      " form.rich_text_area :body,\n                        rows: 1,\n                        class: \"input lexxy-content\",\n                        style: \"order: -1\",\n                        aria: { multiline: \"true\", label: \"Write a message\" },\n                        \"permitted-attachment-types\": \"application/vnd.campfire.mention application/vnd.actiontext.opengraph-embed\",\n                        data: {\n                          controller: \"unfurl\",\n                          action: \"#{rich_text_data_actions} lexxy:change->composer#saveDraft lexxy:insert-link->unfurl#unfurl\",\n                          composer_target: \"text\" } do "
+    ],
+    [
+      "text",
+      "\n                    "
+    ],
+    [
+      "expr",
+      " mention_prompt_tag room "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "                   end \n"
+    ],
+    [
+      "text",
+      "                </div>\n\n                <label class=\"btn btn--borderless txt-small flex-item-no-shrink composer__attachment-btn input--file\">\n                  "
+    ],
+    [
+      "expr",
+      " image_tag \"attachment.svg\", size: 22, class: \"colorize--black\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n                  <input type=\"file\" data-action=\"composer#filePicked\" multiple />\n                  <span class=\"for-screen-reader\">Attach a file</span>\n                </label>\n\n                <button class=\"btn btn--borderless txt-small flex-item-no-shrink composer__rich-text-btn\" type=\"button\" data-action=\"composer#toggleToolbar\">\n                  "
+    ],
+    [
+      "expr",
+      " image_tag \"text-options.svg\", size: 20, class: \"colorize--black\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n                  <span class=\"for-screen-reader\">Rich text</span>\n                </button>\n\n                "
+    ],
+    [
+      "expr",
+      " form.button name: \"send\", type: \"submit\", data: { action: \"composer#submit\" },\n                      class: \"btn btn--reversed flex-item-no-shrink txt-small\" do "
+    ],
+    [
+      "text",
+      "\n                  "
+    ],
+    [
+      "expr",
+      " image_tag \"arrow-up.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n                  <span class=\"for-screen-reader\">Send Message</span>\n"
+    ],
+    [
+      "code",
+      "                 end \n"
+    ],
+    [
+      "text",
+      "              </div>\n            </div>\n          </div>\n        </fieldset>\n\n        <div class=\"typing-indicator gap txt-small align-center flex-inline\" data-typing-notifications-target=\"indicator\">\n          <div class=\"typing-indicator__author spinner\" data-typing-notifications-target=\"author\"></div>\n        </div>\n\n        "
+    ],
+    [
+      "expr",
+      " form.hidden_field :client_message_id, data: { composer_target: \"clientid\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </turbo-frame>\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/show/_invitation.html.erb": [
+    [
+      "code",
+      " if @room == Room.original && !@room.messages.paged? \n"
+    ],
+    [
+      "text",
+      "  <div id=\"system_welcome\" class=\"message message--formatted txt-align-center center\">\n    <div class=\"message__body center\">\n      <div class=\"message__body-content position-relative\">\n        "
+    ],
+    [
+      "expr",
+      " account_logo_tag style: \"center margin-block-end txt-large\" "
+    ],
+    [
+      "text",
+      "\n        <div class=\"flex align-center gap\">\n          <div class=\"system-welcome--translation\">\n            "
+    ],
+    [
+      "expr",
+      " translation_button(:invite_message) "
+    ],
+    [
+      "text",
+      "\n          </div>\n          <p>\n            <strong>Welcome to Campfire</strong><br>\n            To invite people to chat, share the join link below.\n          </p>\n        </div>\n        "
+    ],
+    [
+      "expr",
+      " render \"accounts/invite\" "
+    ],
+    [
+      "text",
+      "\n      </div>\n    </div>\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "rooms/show/_nav.html.erb": [
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " account_logo_tag if Current.account.logo.attached? "
+    ],
+    [
+      "text",
+      "\n\n  "
+    ],
+    [
+      "expr",
+      " tag.span class: \"btn btn--reversed btn--faux room--current\" do "
+    ],
+    [
+      "text",
+      "\n    <h1 class=\"room__contents txt-medium overflow-ellipsis\">\n"
+    ],
+    [
+      "code",
+      "       if room.direct? \n"
+    ],
+    [
+      "text",
+      "        <span class=\"for-screen-reader\">Ping with</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " room_display_name(room) "
+    ],
+    [
+      "text",
+      "\n    </h1>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " link_to_edit_room(room) do "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"menu-dots-horizontal.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n    <span class=\"for-screen-reader\">Settings for this "
+    ],
+    [
+      "expr",
+      " room.direct? ? \"Ping\" : \"room\" "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " render \"rooms/involvements/bell\", room: room "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "searches/index.html.erb": [
+    [
+      "code",
+      " @page_title = \"Search\" \n"
+    ],
+    [
+      "code",
+      " @body_class = \"sidebar searches\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "code",
+      "   if @query \n"
+    ],
+    [
+      "text",
+      "    <div class=\"searches__query flex align-center gap pad-block-start-half\">\n      "
+    ],
+    [
+      "expr",
+      " tag.div class: \"btn btn--reversed btn--faux align-center gap txt-nowrap\" do "
+    ],
+    [
+      "text",
+      "\n        <span class=\"overflow-ellipsis\">“"
+    ],
+    [
+      "expr",
+      " @query "
+    ],
+    [
+      "text",
+      "”</span>\n        <span class=\"flex-item-no-shrink\">"
+    ],
+    [
+      "expr",
+      " @messages.count "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  <div class=\"searches__recents align-center gap pad-block-half overflow-y overflow-hide-scrollbar\">\n"
+    ],
+    [
+      "code",
+      "     @recent_searches.each do |search| \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " link_to searches_path(q: search.query), class: \"align-center gap room btn txt-nowrap\" do "
+    ],
+    [
+      "text",
+      "\n        <span class=\"overflow-ellipsis\">“"
+    ],
+    [
+      "expr",
+      " search.query "
+    ],
+    [
+      "text",
+      "”</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     if @recent_searches.any? \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " button_to clear_searches_url, method: :delete, class: \"btn searches__btn\",\n              data: { turbo_confirm: \"Are you sure you want to clear your recent searches?\" } do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"broom.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Clear recent searches</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :sidebar do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar\">\n"
+    ],
+    [
+      "code",
+      "     @recent_searches.each do |search| \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " link_to searches_path(q: search.query), class: \"align-center gap room btn txt-nowrap\" do "
+    ],
+    [
+      "text",
+      "\n        <span class=\"overflow-ellipsis\">“"
+    ],
+    [
+      "expr",
+      " search.query "
+    ],
+    [
+      "text",
+      "”</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     if @recent_searches.any? \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " button_to clear_searches_url, method: :delete, class: \"btn searches__btn\",\n              data: { turbo_confirm: \"Are you sure you want to clear your recent searches?\" } do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"broom.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Clear recent searches</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<div id=\"message-area\" class=\"message-area\">\n  <div class=\"message-area--empty min-width center\">\n    <figure class=\"center pad\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"search.svg\", aria: { hidden: \"true\" }, class: \"colorize--black translucent\" "
+    ],
+    [
+      "text",
+      "\n    </figure>\n  </div>\n\n  "
+    ],
+    [
+      "expr",
+      " search_results_tag do "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " render partial: \"messages/message\", collection: @messages, cached: true "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</div>\n\n"
+    ],
+    [
+      "code",
+      " content_for :footer do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"composer flex align-end gap\">\n    "
+    ],
+    [
+      "expr",
+      " link_to room_path(@return_to_room),\n            class: \"btn flex-item-no-shrink margin-block-end\", style: \"view-transition-name: input-switcher; --btn-border-radius: 0.5em\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"arrow-left.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Exit search </span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " form_with url: searches_path, class: \"margin-block flex-item-grow contain flex align-center gap\",\n          data: { controller: \"form\", action: \"keydown.esc->form#cancel\" } do |form| "
+    ],
+    [
+      "text",
+      "\n      <div class=\"composer__input flex align-center flex-item-grow gap full-width input input--actor min-width\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"search.svg\", size: 20, aria: { hidden: \"true\" }, class: \"composer__input-hint colorize--black\", style: \"view-transition-name: input-btn;\" "
+    ],
+    [
+      "text",
+      "\n\n        "
+    ],
+    [
+      "expr",
+      " form.text_field :q, value: params[:q], class: \"searches__input input flex-item-grow\", role: \"searchbox\", aria: { label: \"search\" }, autofocus: true, required: true "
+    ],
+    [
+      "text",
+      "\n\n        "
+    ],
+    [
+      "expr",
+      " link_to searches_path, data: { form_target: \"cancel\" }, role: \"button\", class: \"searches__reset\" do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"remove.svg\", aria: { hidden: \"true\" }, size: 14, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Clear search field</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " form.button type: \"submit\", class: \"btn btn--reversed flex-item-no-shrink txt-small\", style: \"--btn-border-radius: 0.5em\" do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"arrow-up.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Search</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "sessions/incompatible_browser.html.erb": [
+    [
+      "code",
+      " @page_title = platform.apple_messages? ? \"Campfire\" : \"Unsupported browser\" \n"
+    ],
+    [
+      "text",
+      "\n<div class=\"panel center\">\n  <header>\n    <h1 class=\"txt-x-large txt-tight-lines txt-align-center margin-none-block-start margin-block-end\">\n      Upgrade to a supported web browser\n    </h1>\n    <div class=\"flex align-start gap\">\n      "
+    ],
+    [
+      "expr",
+      " translation_button(:incompatible_browser_messsage) "
+    ],
+    [
+      "text",
+      "\n      <p class=\"margin-none-block-start\">Campfire requires a modern web browser. Please use one of the browsers listed below and make sure auto-updates are enabled.</p>\n    </div>\n  </header>\n\n  <div class=\"browser-list flex align-center flex-wrap gap justify-center margin-block\">\n"
+    ],
+    [
+      "code",
+      "     AllowBrowser::VERSIONS.each do |browser, version| \n"
+    ],
+    [
+      "code",
+      "       next unless version \n"
+    ],
+    [
+      "text",
+      "\n      <div class=\"browser flex flex-column\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"browsers/#{browser}.svg\", aria: { hidden: \"true\" }, class: \"center\" "
+    ],
+    [
+      "text",
+      "\n        <div class=\"flex flex-column align-center margin-block-start-half\">\n          <strong>"
+    ],
+    [
+      "expr",
+      " browser.capitalize "
+    ],
+    [
+      "text",
+      "</strong>\n          <span> "
+    ],
+    [
+      "expr",
+      " version "
+    ],
+    [
+      "text",
+      "+</span>\n        </div>\n      </div>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n</div>\n"
+    ]
+  ],
+  "sessions/new.html.erb": [
+    [
+      "code",
+      " @page_title = \"Sign in\" \n"
+    ],
+    [
+      "code",
+      " turbo_page_requires_reload \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"txt-align-center\">\n  <div class=\"panel "
+    ],
+    [
+      "expr",
+      " \"shake\" if flash[:alert] "
+    ],
+    [
+      "text",
+      "\">\n    "
+    ],
+    [
+      "expr",
+      " account_logo_tag style: \"center margin-block-end txt-xx-large\" "
+    ],
+    [
+      "text",
+      "\n\n    "
+    ],
+    [
+      "expr",
+      " form_with url: session_url, class: \"flex flex-column gap\" do |form| "
+    ],
+    [
+      "text",
+      "\n      <fieldset class=\"flex flex-column gap center-block upad\">\n        <legend class=\"txt-large txt-align-center\"><strong>"
+    ],
+    [
+      "expr",
+      " Current.account.name "
+    ],
+    [
+      "text",
+      "</strong></legend>\n\n        <div class=\"flex align-center gap\">\n          "
+    ],
+    [
+      "expr",
+      " translation_button(:email_address) "
+    ],
+    [
+      "text",
+      "\n          <label class=\"flex align-center gap input input--actor txt-large\">\n            "
+    ],
+    [
+      "expr",
+      " form.email_field :email_address, required: true, class: \"input\", autofocus: true, autocomplete: \"username\", placeholder: \"Enter your email address\", value: params[:email_address] "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"email.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n          </label>\n        </div>\n\n        <div class=\"flex align-center gap\">\n          "
+    ],
+    [
+      "expr",
+      " translation_button(:password) "
+    ],
+    [
+      "text",
+      "\n          <label class=\"flex align-center gap input input--actor txt-large\">\n            "
+    ],
+    [
+      "expr",
+      " form.password_field :password, required: true, class: \"input\", autocomplete: \"current-password\", placeholder: \"Enter your password\", maxlength: 72 "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"password.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n          </label>\n        </div>\n\n        "
+    ],
+    [
+      "expr",
+      " form.button class: \"btn btn--reversed center txt-large\", type: \"submit\", name: \"log_in\" do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"arrow-right.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          <span class=\"for-screen-reader\">Go</span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </fieldset>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n\n  "
+    ],
+    [
+      "expr",
+      " render \"accounts/help_contact\" "
+    ],
+    [
+      "text",
+      "\n</section>\n"
+    ]
+  ],
+  "sessions/transfers/show.html.erb": [
+    [
+      "expr",
+      " auto_submit_form_with method: :put "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "users/_ban_button.html.erb": [
+    [
+      "code",
+      " if user.active? \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " button_to user_ban_path(user), method: :post,\n        class: \"btn full-width\",\n        data: { turbo_confirm: \"Are you sure you want to ban this user? This will log them out, delete their messages, and block their IP addresses.\" } do "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"cancel.svg\", aria: { hidden: \"true\", label: \"Ban #{@user.name}\" } "
+    ],
+    [
+      "text",
+      "\n    <span>Ban "
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " else \n"
+    ],
+    [
+      "text",
+      "  "
+    ],
+    [
+      "expr",
+      " button_to user_ban_path(user), method: :delete,\n        class: \"btn btn--negative full-width\",\n        data: { turbo_confirm: \"Are you sure you want to remove the ban on this user?\" } do "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"cancel.svg\", aria: { hidden: \"true\", label: \"Remove Ban #{@user.name}\" } "
+    ],
+    [
+      "text",
+      "\n    <span>Remove ban</span>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "users/_mention.html.erb": [
+    [
+      "code",
+      "\n\n\n"
+    ],
+    [
+      "text",
+      "<span class=\"mention\" sgid=\""
+    ],
+    [
+      "expr",
+      " user.attachable_sgid "
+    ],
+    [
+      "text",
+      "\">"
+    ],
+    [
+      "expr",
+      " avatar_tag user "
+    ],
+    [
+      "text",
+      " "
+    ],
+    [
+      "expr",
+      " user.name "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ]
+  ],
+  "users/autocompletables/_template.html.erb": [
+    [
+      "text",
+      "<template id=\"autocompletable-user\">\n  <div class=\"autocomplete__pill max-width\" data-value=\"\" tabindex=\"0\">\n    <img class=\"avatar flex-item-no-shrink\" data-content=\"avatar\" src=\"\" />\n    <span class=\"autocomplete-field__selected-value-text overflow-ellipsis flex-item-grow\" data-content=\"label\"></span>\n\n    <button type=\"button\" data-action=\"autocomplete#remove:prevent\" data-value=\"\" tabindex=\"-1\" class=\"btn btn--plain txt-small translucent flex-item-no-shrink\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"remove-circle.svg\", aria: { hidden: \"true\" }, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Remove <span data-content=\"screenReaderLabel\"></span></span>\n    </button>\n  </div>\n</template>\n"
+    ]
+  ],
+  "users/avatars/show.svg.erb": [
+    [
+      "text",
+      "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\""
+    ],
+    [
+      "expr",
+      " avatar_background_color(@user) "
+    ],
+    [
+      "text",
+      "\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      "
+    ],
+    [
+      "expr",
+      "raw 'textLength=\"85%\" lengthAdjust=\"spacingAndGlyphs\"' if @user.initials.size >= 3 "
+    ],
+    [
+      "text",
+      "\n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      "
+    ],
+    [
+      "expr",
+      " @user.initials "
+    ],
+    [
+      "text",
+      "\n    </text>\n  </g>\n</svg>\n"
+    ]
+  ],
+  "users/new.html.erb": [
+    [
+      "code",
+      " @page_title = \"Sign up\" \n"
+    ],
+    [
+      "code",
+      " @body_class = \"signup\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-end\">\n    "
+    ],
+    [
+      "expr",
+      " link_to new_session_path, class: \"btn flex-item-justify-end\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"login-keys.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Sign in</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " form_with model: @user, url: join_path(params[:join_code]), class: \"center\" do |form| "
+    ],
+    [
+      "text",
+      "\n  <section class=\"nametag u-relative\">\n    <div class=\"flex justify-center align-center pad-block\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"lanyard.svg\", class: \"nametag__lanyard\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n    </div>\n\n    <div class=\"nametag__inner flex flex-column gap\">\n      <fieldset class=\"flex flex-column center-block\">\n        <legend class=\"txt-align-center flex gap\">\n          "
+    ],
+    [
+      "expr",
+      " account_logo_tag "
+    ],
+    [
+      "text",
+      "\n          <strong class=\"txt-large\">"
+    ],
+    [
+      "expr",
+      " Current.account.name "
+    ],
+    [
+      "text",
+      "</strong>\n        </legend>\n\n        <label class=\"align-center center avatar__form gap\" data-controller=\"upload-preview\">\n          <div class=\"btn input--file\">\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"camera.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n            "
+    ],
+    [
+      "expr",
+      " form.file_field :avatar, class: \"input\", accept: \"image/*\",\n                  data: { upload_preview_target: \"input\", action: \"upload-preview#previewImage\" } "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Upload avatar</span>\n          </div>\n\n          <div class=\"btn avatar input--file txt-xx-large\">\n            "
+    ],
+    [
+      "expr",
+      " image_tag @user.avatar.attached? ? @user.avatar : \"default-avatar.svg\", aria: { hidden: \"true\" }, data: { upload_preview_target: \"image\" } "
+    ],
+    [
+      "text",
+      "\n            <span class=\"for-screen-reader\">Avatar</span>\n          </div>\n        </label>\n      </fieldset>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:user_name) "
+    ],
+    [
+      "text",
+      "\n        <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.text_field :name, class: \"input\", autocomplete: \"name\", placeholder: \"Name\", autofocus: true, required: true,\n                data: { \"1p-ignore\": true } "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"person.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:email_address) "
+    ],
+    [
+      "text",
+      "\n        <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.email_field :email_address, class: \"input\", autocomplete: \"username\", placeholder: \"Email address\", required: true "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"email.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:password) "
+    ],
+    [
+      "text",
+      "\n        <label class=\"flex align-center gap flex-item-grow txt-large input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.password_field :password, class: \"input\", autocomplete: \"new-password\", placeholder: \"Password\", required: true, maxlength: 72 "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"password.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      "
+    ],
+    [
+      "expr",
+      " form.button class: \"btn btn--reversed center txt-large\", type: \"submit\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"check.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Save</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n  </section>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " render \"accounts/help_contact\" "
+    ],
+    [
+      "text",
+      "\n"
+    ]
+  ],
+  "users/profiles/_membership.html.erb": [
+    [
+      "text",
+      "<li class=\"flex align-center gap margin-none min-width membership-item\">\n  "
+    ],
+    [
+      "expr",
+      " link_to room_path(membership.room), class: \"overflow-ellipsis fill-shade txt-primary txt-undecorated\" do "
+    ],
+    [
+      "text",
+      "\n    <strong>"
+    ],
+    [
+      "expr",
+      " room_display_name(membership.room) "
+    ],
+    [
+      "text",
+      "</strong>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  <hr class=\"separator\" aria-hidden=\"true\">\n\n  <span class=\"txt-small\">\n    "
+    ],
+    [
+      "expr",
+      " turbo_frame_tag dom_id(membership.room, :involvement) do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " button_to_change_involvement(membership.room, membership.involvement) "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </span>\n</li>\n"
+    ]
+  ],
+  "users/profiles/_transfer.html.erb": [
+    [
+      "code",
+      " url = session_transfer_url(user.transfer_id) \n"
+    ],
+    [
+      "text",
+      "\n<fieldset>\n  <legend class=\"gap\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"laptop.svg\", aria: { hidden: \"true\" }, size: 36, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"transfer.svg\", aria: { hidden: \"true\" }, size: 36, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " image_tag \"mobile-phone.svg\", aria: { hidden: \"true\" }, size: 36, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n  </legend>\n\n\n  <div class=\"flex flex-column gap\">\n"
+    ],
+    [
+      "code",
+      "     if Current.user != user \n"
+    ],
+    [
+      "text",
+      "      <div class=\"flex align-center gap justify-center\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"crown.svg\", size: 16, aria: { hidden: \"true\" }, class: \"flex-item-no-shrink colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        <label for=\"session_transfer_url\">Share to get them back into their account</label>\n      </div>\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "text",
+      "      <label for=\"session_transfer_url\" class=\"for-screen-reader\">Use this link to login automatically on another device</label>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <input type=\"text\" class=\"input\" value=\""
+    ],
+    [
+      "expr",
+      " url "
+    ],
+    [
+      "text",
+      "\" id=\"session_transfer_url\" readonly>\n\n    <div class=\"flex align-center center gap\">\n      "
+    ],
+    [
+      "expr",
+      " link_to_zoom_qr_code(url) do "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Show auto-login QR code</span>\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"qr-code.svg\", aria: { hidden: \"true\" }, size: 20, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " button_to_copy_to_clipboard(url) do "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Copy auto-login link</span>\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"copy-paste.svg\", aria: { hidden: \"true\" }, size: 20, class: \"flex-item-no-shrink colorize--black\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " web_share_session_button(url, \"Your sign-in link\", \"This is your own private sign-in URL, DO NOT SHARE IT. Use it to sign-in on another device or if you get locked out.\") do "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Share auto-login link</span>\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"share.svg\", aria: { hidden: \"true\" }, size: 20, class: \"flex-item-no-shrink colorize--black\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n  </div>\n</fieldset>\n"
+    ]
+  ],
+  "users/profiles/show.html.erb": [
+    [
+      "code",
+      " @page_title = @user.name \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back "
+    ],
+    [
+      "text",
+      "\n  </div>\n\n  <div class=\"flex-item-justify-end\">\n    "
+    ],
+    [
+      "expr",
+      " form_with url: session_path, method: :delete, data: { controller: \"sessions\" } do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " hidden_field_tag :push_subscription_endpoint, nil, data: { sessions_target: \"pushSubscriptionEndpoint\" } "
+    ],
+    [
+      "text",
+      "\n\n      <button class=\"btn\" data-action=\"sessions#logout:prevent\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"logout.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Log out</span>\n      </button>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel flex flex-column gap\" style=\"view-transition-name: avatar-"
+    ],
+    [
+      "expr",
+      " @user.id "
+    ],
+    [
+      "text",
+      "\">\n  "
+    ],
+    [
+      "expr",
+      " render partial: \"pwa/install_instructions\" "
+    ],
+    [
+      "text",
+      "\n\n  <div class=\"align-center center avatar__form gap\" data-controller=\"upload-preview\">\n    "
+    ],
+    [
+      "expr",
+      " profile_form_with @user, class:\"txt-medium\" do |form| "
+    ],
+    [
+      "text",
+      "\n      <label class=\"btn input--file\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"camera.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " form.file_field :avatar, id: \"file\", class: \"input\", accept: \"image/*\",\n            data: { upload_preview_target: \"input\", action: \"upload-preview#previewImage change->form#submit\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Upload avatar</span>\n      </label>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " profile_form_with @user do |form| "
+    ],
+    [
+      "text",
+      "\n      <label class=\"btn avatar input--file txt-xx-large\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag fresh_user_avatar_path(@user), aria: { hidden: \"true\" }, size: 300, data: { upload_preview_target: \"image\" } "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " form.file_field :avatar, id: \"file\", class: \"input\", accept: \"image/*\",\n            data: { upload_preview_target: \"input\", action: \"upload-preview#previewImage change->form#submit\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Avatar</span>\n      </label>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     if @user.avatar.attached? \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " button_to user_avatar_path(@user), method: :delete, class: \"btn btn--negative txt-small avatar__delete-btn\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"minus.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Delete avatar</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n\n  "
+    ],
+    [
+      "expr",
+      " profile_form_with @user do |form| "
+    ],
+    [
+      "text",
+      "\n    <div class=\"flex flex-column gap\">\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:user_name) "
+    ],
+    [
+      "text",
+      "\n\n        <label class=\"flex align-center gap flex-item-grow input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.text_field :name, class: \"input txt-large \", autocomplete: \"name\", placeholder: \"Enter your name\",\n                autofocus: true, required: true,  data: { \"1p-ignore\": true } "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"person.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:email_address) "
+    ],
+    [
+      "text",
+      "\n\n        <label class=\"flex align-center gap flex-item-grow input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.email_field :email_address, class: \"input txt-large\", value: @user.email_address, autocomplete: \"username\",\n                placeholder: \"Enter your email address\", required: false "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"email.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-center gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:update_password) "
+    ],
+    [
+      "text",
+      "\n\n        <label class=\"flex align-center gap flex-item-grow input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.password_field :password, class: \"input txt-large\", autocomplete: \"new-password\", placeholder: \"Change password\",\n                required: false, maxlength: 72 "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"password.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      <div class=\"flex align-start gap\">\n        "
+    ],
+    [
+      "expr",
+      " translation_button(:bio) "
+    ],
+    [
+      "text",
+      "\n\n        <label class=\"flex align--center gap flex-item--grow input input--actor\">\n          "
+    ],
+    [
+      "expr",
+      " form.text_area :bio, class: \"input txt-large\", placeholder: \"A few words about yourself…\", maxlength: 200,\n                rows: 3, required: false "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"bio.svg\", aria: { hidden: \"true\" }, size: 24, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n        </label>\n      </div>\n\n      "
+    ],
+    [
+      "expr",
+      " profile_form_submit_button "
+    ],
+    [
+      "text",
+      "\n    </div>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "\n  <div class=\"margin-block pad-inline pad-block fill-shade border-radius\">\n    <menu class=\"flex flex-column gap margin-none pad\">\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"users/profiles/membership\", collection: @shared_memberships "
+    ],
+    [
+      "text",
+      "\n\n"
+    ],
+    [
+      "code",
+      "       if @direct_memberships.any? && @shared_memberships.any? \n"
+    ],
+    [
+      "text",
+      "        <hr class=\"separator full-width\" style=\"--border-style: solid\">\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"users/profiles/membership\", collection: @direct_memberships "
+    ],
+    [
+      "text",
+      "\n    </menu>\n  </div>\n\n  "
+    ],
+    [
+      "expr",
+      " render \"users/profiles/transfer\", user: @user "
+    ],
+    [
+      "text",
+      "\n\n"
+    ],
+    [
+      "code",
+      "   if Rails.env.development? \n"
+    ],
+    [
+      "text",
+      "    <fieldset>\n      <legend>\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"key.svg\", aria: { hidden: \"true\" }, size: 36, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n      </legend>\n      "
+    ],
+    [
+      "expr",
+      " link_to \"Push Notifications Dev Mode\", user_push_subscriptions_url, class: \"btn txt-small center\" "
+    ],
+    [
+      "text",
+      "\n    </fieldset>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "text",
+      "</section>\n"
+    ]
+  ],
+  "users/push_subscriptions/_push_subscription.html.erb": [
+    [
+      "text",
+      "<li class=\"flex flex-column margin-none membership-item\">\n  <span class=\"overflow-ellipsis txt-primary txt-undecorated\">\n"
+    ],
+    [
+      "code",
+      "     agent = UserAgent.parse(push_subscription.user_agent) \n"
+    ],
+    [
+      "text",
+      "    <strong>"
+    ],
+    [
+      "expr",
+      " agent.browser "
+    ],
+    [
+      "text",
+      " "
+    ],
+    [
+      "expr",
+      " agent.version "
+    ],
+    [
+      "text",
+      " on "
+    ],
+    [
+      "expr",
+      " agent.platform "
+    ],
+    [
+      "text",
+      "</strong><br>\n  </span>\n\n  <span class=\"flex align-start gap txt-small\">\n    <span>"
+    ],
+    [
+      "expr",
+      " push_subscription.endpoint "
+    ],
+    [
+      "text",
+      "</span>\n\n    <span class=\"flex align-center gap\">\n      "
+    ],
+    [
+      "expr",
+      " button_to user_push_subscription_test_notifications_path(push_subscription), class: \"btn btn--reversed\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"notification-bell-everything.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Send test notification</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " button_to user_push_subscription_path(push_subscription), method: :delete, class: \"btn btn--negative\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"minus.svg\", aria: { hidden: \"true\" }, size: 20 "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Delete subscription</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </span>\n  </span>\n</li>\n"
+    ]
+  ],
+  "users/push_subscriptions/index.html.erb": [
+    [
+      "code",
+      " @page_title = \"Push notification subscriptions\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back_to_last_room_visited "
+    ],
+    [
+      "text",
+      "\n  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel panel--wide flex flex-column gap\">\n  <h1 class=\"txt-align-center txt-large margin-none\">Push Notification Subscriptions</h1>\n  <div class=\"pad-inline fill-shade border-radius\" id=\"push_subscriptions\">\n    <menu class=\"pad flex flex-column gap\">\n      "
+    ],
+    [
+      "expr",
+      " render partial: \"users/push_subscriptions/push_subscription\", collection: @push_subscriptions "
+    ],
+    [
+      "text",
+      "\n    </menu>\n  </div>\n</section>\n"
+    ]
+  ],
+  "users/show.html.erb": [
+    [
+      "code",
+      " @page_title = @user.name \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :nav do \n"
+    ],
+    [
+      "text",
+      "  <div class=\"flex-item-justify-start\">\n    "
+    ],
+    [
+      "expr",
+      " link_back "
+    ],
+    [
+      "text",
+      "\n  </div>\n\n  <div class=\"flex align-center gap flex-item-justify-end\">\n"
+    ],
+    [
+      "code",
+      "     if Current.user == @user \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " link_to user_profile_path, class: \"btn\" do "
+    ],
+    [
+      "text",
+      "\n        "
+    ],
+    [
+      "expr",
+      " image_tag \"pencil.svg\", aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n        <span class=\"for-screen-reader\">Edit my profile</span>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ],
+    [
+      "text",
+      "\n<section class=\"panel txt-align-center\">\n  <div class=\"flex flex-column gap "
+    ],
+    [
+      "expr",
+      " \"banned\" if @user.banned? "
+    ],
+    [
+      "text",
+      "\">\n    <div class=\"avatar txt-xx-large center\" style=\"background: white\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag fresh_user_avatar_path(@user), alt: \"Profile avatar\", class: \"avatar\" "
+    ],
+    [
+      "text",
+      "\n    </div>\n\n"
+    ],
+    [
+      "code",
+      "     if @user.bot? \n"
+    ],
+    [
+      "text",
+      "      <div class=\"pad-double--inline push--inline push--block-start\">\n"
+    ],
+    [
+      "code",
+      "         if @user.active? \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " button_to_direct_room_with @user"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         else \n"
+    ],
+    [
+      "text",
+      "          <div>"
+    ],
+    [
+      "expr",
+      " @user.name "
+    ],
+    [
+      "text",
+      " is no longer on this account</div>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "code",
+      "       unless @user.deactivated? \n"
+    ],
+    [
+      "text",
+      "        <div class=\"flex flex-column gap\" style=\"--row-gap: calc(var(--block-space) / 3)\">\n          <h1 class=\"txt-x-large txt-tight-lines margin-none\">"
+    ],
+    [
+      "expr",
+      " @user.name "
+    ],
+    [
+      "text",
+      "</h1>\n"
+    ],
+    [
+      "code",
+      "           if Current.user.can_administer? \n"
+    ],
+    [
+      "text",
+      "            <div>"
+    ],
+    [
+      "expr",
+      " mail_to @user.email_address "
+    ],
+    [
+      "text",
+      "</div>\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "text",
+      "          <div>"
+    ],
+    [
+      "expr",
+      " @user.bio "
+    ],
+    [
+      "text",
+      "</div>\n        </div>\n\n"
+    ],
+    [
+      "code",
+      "         if @user.active? \n"
+    ],
+    [
+      "text",
+      "          <div class=\"pad-inline-double margin-inline margin-block-start\">\n            "
+    ],
+    [
+      "expr",
+      " button_to rooms_directs_path(user_ids: [ @user.id ]), class: \"btn btn--reversed full-width txt-large\" do "
+    ],
+    [
+      "text",
+      "\n              "
+    ],
+    [
+      "expr",
+      " image_tag \"messages.svg\", aria: { hidden: \"true\", label: \"Ping #{@user.name}\" } "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "             end \n"
+    ],
+    [
+      "text",
+      "          </div>\n\n"
+    ],
+    [
+      "code",
+      "           if Current.user.can_administer? \n"
+    ],
+    [
+      "text",
+      "            <hr class=\"margin-block-start borderless\">\n\n            "
+    ],
+    [
+      "expr",
+      " render \"users/profiles/transfer\", user: @user "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "           end \n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         if Current.user.can_administer? && Current.user != @user \n"
+    ],
+    [
+      "text",
+      "          <div class=\"margin-block-start\">\n            "
+    ],
+    [
+      "expr",
+      " render \"users/ban_button\", user: @user "
+    ],
+    [
+      "text",
+      "\n          </div>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "code",
+      "       else \n"
+    ],
+    [
+      "text",
+      "        <div>\n          <h1 class=\"txt-x-large margin-none\">"
+    ],
+    [
+      "expr",
+      " @user.name "
+    ],
+    [
+      "text",
+      "</h1>\n          <div>"
+    ],
+    [
+      "expr",
+      " @user.name "
+    ],
+    [
+      "text",
+      " is no longer on this account</div>\n        </div>\n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n</section>\n"
+    ]
+  ],
+  "users/sidebars/rooms/_direct.html.erb": [
+    [
+      "code",
+      " cache membership do \n"
+    ],
+    [
+      "code",
+      "   members = membership.room.users.without(membership.user).presence || [ membership.user ] \n"
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " link_to_room membership.room, class: [ \"direct\", \"unread\": membership.unread? ], id: dom_id(membership.room, :list),\n        data: { sorted_list_number: membership.room.updated_at.to_fs(:epoch) } do "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     if members.many? \n"
+    ],
+    [
+      "text",
+      "      <div class=\"avatar__group\">\n"
+    ],
+    [
+      "code",
+      "         members.first(4).each do |member| \n"
+    ],
+    [
+      "text",
+      "          <span class=\"avatar\">\n            "
+    ],
+    [
+      "expr",
+      " image_tag fresh_user_avatar_path(member), size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n          </span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "text",
+      "      <span class=\"avatar\">\n        "
+    ],
+    [
+      "expr",
+      " image_tag fresh_user_avatar_path(members.first), size: 48, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      </span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    <span class=\"direct__author flex align-center gap max-width min-width border-radius txt-small\">\n      <span class=\"txt-nowrap overflow-ellipsis\">\n        <span class=\"for-screen-reader\">Ping with</span>\n"
+    ],
+    [
+      "code",
+      "         if members.many? \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " members.map { |member| member.name.split(' ')[0, 3].map { |str| str[0].capitalize }.join }.to_sentence(two_words_connector: '+') "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         else \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " members.first.name.split(' ')[0] "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </span>\n    </span>\n"
+    ],
+    [
+      "code",
+      "   end \n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "users/sidebars/rooms/_direct_placeholder.html.erb": [
+    [
+      "expr",
+      " button_to rooms_directs_path(user_ids: [ user.id ]), class: \"direct borderless fill-transparent unpad\" do "
+    ],
+    [
+      "text",
+      "\n  <span class=\"avatar\">\n    "
+    ],
+    [
+      "expr",
+      " image_tag fresh_user_avatar_path(user), aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n  </span>\n\n  <span class=\"direct__author flex align-center gap max-width min-width border-radius txt-small\">\n    <span class=\"txt-nowrap overflow-ellipsis\">\n      <span class=\"for-screen-reader\">Start a ping with</span>\n      "
+    ],
+    [
+      "expr",
+      " user.name.split(' ')[0] "
+    ],
+    [
+      "text",
+      "\n    </span>\n  </span>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "users/sidebars/rooms/_shared.html.erb": [
+    [
+      "expr",
+      " link_to_room room,\n      id: dom_id(room, :list), data: { sorted_list_name: room.name },\n      style: \"--column-gap: 0.5em\", class: [ \"align-center gap room btn txt-nowrap\", \"unread\": local_assigns[:unread] ] do "
+    ],
+    [
+      "text",
+      "\n  <span class=\"overflow-ellipsis\">"
+    ],
+    [
+      "expr",
+      " room.name "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "users/sidebars/show.html.erb": [
+    [
+      "expr",
+      " sidebar_turbo_frame_tag do "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " turbo_stream_from :rooms "
+    ],
+    [
+      "text",
+      "\n  "
+    ],
+    [
+      "expr",
+      " turbo_stream_from Current.user, :rooms "
+    ],
+    [
+      "text",
+      "\n\n  <div class=\"sidebar__container overflow-y overflow-hide-scrollbar\"\n      data-controller=\"badge-dot\"\n      data-badge-dot-unread-class=\"unread\"\n      data-action=\"rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize\">\n    <turbo-frame id=\"direct_rooms_control\" target=\"_top\">\n      <div class=\"directs gap overflow-x overflow-hide-scrollbar\">\n        "
+    ],
+    [
+      "expr",
+      " link_to new_rooms_direct_path, class: \"direct direct__new\", data: { turbo_frame: \"_self\" } do "
+    ],
+    [
+      "text",
+      "\n          <span class=\"avatar avatar--icon\">\n            "
+    ],
+    [
+      "expr",
+      " image_tag \"messages-add.svg\", size: 20, aria: { hidden: \"true\" }, class: \"colorize--black\" "
+    ],
+    [
+      "text",
+      "\n          </span>\n\n          <span class=\"direct__author flex max-width min-width border-radius pad-inline-half\">\n            <span class=\"for-screen-reader\">New</span>\n            <span class=\"txt-small overflow-clip\">Ping</span>\n          </span>\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "\n        <div id=\"direct_rooms\" contents data-controller=\"sorted-list\" data-action=\"rooms-list:unread@window->sorted-list#updateItem\">\n          "
+    ],
+    [
+      "expr",
+      " render partial: \"users/sidebars/rooms/direct\", collection: @direct_memberships, as: :membership, cached: true "
+    ],
+    [
+      "text",
+      "\n        </div>\n\n        <div contents>\n          "
+    ],
+    [
+      "expr",
+      " render partial: \"users/sidebars/rooms/direct_placeholder\", collection: @direct_placeholder_users, as: :user "
+    ],
+    [
+      "text",
+      "\n        </div>\n      </div>\n    </turbo-frame>\n\n    <div class=\"rooms position-relative flex flex-column gap\">\n      <div id=\"shared_rooms\" contents data-controller=\"sorted-list\">\n"
+    ],
+    [
+      "code",
+      "         @other_memberships.each do |membership| \n"
+    ],
+    [
+      "text",
+      "          "
+    ],
+    [
+      "expr",
+      " render \"users/sidebars/rooms/shared\", room: membership.room, unread: membership.unread? "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "text",
+      "      </div>\n\n"
+    ],
+    [
+      "code",
+      "       if Current.user.administrator? || !Current.account.settings.restrict_room_creation_to_administrators? \n"
+    ],
+    [
+      "text",
+      "        "
+    ],
+    [
+      "expr",
+      " link_to new_rooms_open_path, class: \"rooms__new-btn btn room align-center gap txt-reversed\", aria: { label: \"New Chat Room\" } do "
+    ],
+    [
+      "text",
+      "\n          "
+    ],
+    [
+      "expr",
+      " image_tag \"add.svg\", size: 20, aria: { hidden: \"true\" }, style: \"view-transition-name: new-room\" "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "         end \n"
+    ],
+    [
+      "code",
+      "       end \n"
+    ],
+    [
+      "text",
+      "    </div>\n\n    <button class=\"btn sidebar__toggle\" data-action=\"toggle-class#toggle\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"menu.svg\", size: 20, aria: { hidden: \"true\" } "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Open menu</span>\n    </button>\n  </div>\n\n  <div class=\"flex align-end sidebar__tools gap justify-end\">\n    "
+    ],
+    [
+      "expr",
+      " link_to user_profile_path, class: \"btn avatar flex-item-no-shrink sidebar__tool\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag fresh_user_avatar_path(Current.user), size: 48, aria: { hidden: \"true\" }, style: \"view-transition-name: avatar-#{Current.user.id}\" "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">My Settings</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "\n    "
+    ],
+    [
+      "expr",
+      " link_to edit_account_path, class: \"btn align-center gap txt-reversed sidebar__tool\" do "
+    ],
+    [
+      "text",
+      "\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"settings.svg\", size: 20, aria: { hidden: \"true\" }, style: \"view-transition-name: account-settings\" "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">Account Settings</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </div>\n"
+    ],
+    [
+      "code",
+      " end \n"
+    ]
+  ],
+  "welcome/show.html.erb": [
+    [
+      "code",
+      " @page_title = \"No rooms yet\" \n"
+    ],
+    [
+      "code",
+      " @body_class = \"sidebar\" \n"
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      " content_for :sidebar, sidebar_turbo_frame_tag(src: user_sidebar_path) \n"
+    ],
+    [
+      "text",
+      "\n<div id=\"message-area\" class=\"message-area\">\n  <div class=\"message-area--empty min-width center\">\n    <figure class=\"center pad\">\n      "
+    ],
+    [
+      "expr",
+      " image_tag \"messages-empty.svg\", aria: { hidden: \"true\" }, class: \"colorize--black translucent\" "
+    ],
+    [
+      "text",
+      "\n      <span class=\"for-screen-reader\">"
+    ],
+    [
+      "expr",
+      " Current.user.name "
+    ],
+    [
+      "text",
+      "</span>\n    </figure>\n  </div>\n</div>\n"
+    ]
+  ]
+}
