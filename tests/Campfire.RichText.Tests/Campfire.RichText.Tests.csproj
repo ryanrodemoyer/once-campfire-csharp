@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Campfire.RichText/Campfire.RichText.csproj" />
+    <ProjectReference Include="../Campfire.Vectors/Campfire.Vectors.csproj" />
   </ItemGroup>
 
 </Project>
