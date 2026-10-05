@@ -50,6 +50,14 @@ def validate
   owners = Hash.new { |hash, key| hash[key] = [] }
   TASKS.each { |id, task| Array(task["owns"]).each { |path| owners[path] << id } }
   owners.each { |path, ids| errors << "#{path} owned by #{ids.join(', ')}" if ids.size > 1 }
+  # Globs must not overlap either: Controllers/Users* would also claim Controllers/Users/Sidebars*.
+  claims = TASKS.flat_map { |id, task| Array(task["owns"]).map { |path| [ id, path ] } }
+  claims.combination(2).each do |(a, path_a), (b, path_b)|
+    next if a == b
+    if overlaps?(path_a, path_b)
+      errors << "#{a} owns #{path_a}, which overlaps #{b}'s #{path_b}"
+    end
+  end
   begin
     topological_order
   rescue => error
@@ -57,6 +65,15 @@ def validate
   end
   errors
 end
+
+# A sample path each pattern could match: wildcards become a letter, directories gain a file.
+def sample(path) = path.gsub("*", "x").then { |p| p.end_with?("/") ? "#{p}x" : p }
+def pattern_matches?(pattern, path)
+  regex = Regexp.escape(pattern).gsub("\\*", "[^/]*")
+  regex = pattern.end_with?("/") ? "\\A#{regex}" : "\\A#{regex}\\z"
+  path.match?(Regexp.new(regex))
+end
+def overlaps?(a, b) = pattern_matches?(a, sample(b)) || pattern_matches?(b, sample(a))
 
 def topological_order
   state = {}
@@ -313,7 +330,8 @@ when "validate"
   end
 when "ready"
   priority = tails
-  ready.each { |id| puts "%-5s %-2s %s%s  (priority %d)" % [ id, TASKS[id]["size"], TASKS[id]["title"], TASKS[id]["bench"] ? " ⚡" : "", priority[id] ] }
+  numbers = issue_numbers
+  ready.each { |id| puts "%-5s %-5s %-2s %s%s  (priority %d)" % [ id, numbers[id] ? "##{numbers[id]}" : "", TASKS[id]["size"], TASKS[id]["title"], TASKS[id]["bench"] ? " ⚡" : "", priority[id] ] }
 when "show"
   task = TASKS.fetch(argument) { abort "unknown task #{argument}" }
   puts task.to_yaml

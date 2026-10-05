@@ -254,10 +254,25 @@ plans/bin/plan ready        # claimable tasks, highest critical-path priority fi
 plans/bin/plan show R01     # full task card: deliverables, refs, acceptance, dependents
 ```
 
-A task is claimable when every dependency has a `plans/status/<ID>.md` on `main`. For orchestration
-through GitHub, `plans/bin/plan issues` emits one issue payload per task, with acceptance criteria
-as a checklist and labels for lane, milestone, size and bench. An agent claims a task by assigning
-the issue to itself.
+A task is claimable when every dependency has a `plans/status/<ID>.md` on `main`. Every task has a
+GitHub issue (#1–#79, mapped in [`issues.json`](issues.json)), with its acceptance criteria as a
+checklist and labels for lane, milestone, size, `bench` and `human`. An agent claims a task by
+assigning its issue to itself or commenting that it has started.
+
+### Merging without a human in the loop
+
+One task is one PR, and PRs merge themselves:
+
+- `main` is protected: merging requires `bin/check` (and, once they exist, the replay gates) to pass,
+  but not a human approval.
+- Each agent opens its PR with `Closes #<issue>` and turns on auto-merge (squash). A green PR
+  merges itself, which closes the issue and unblocks its dependents.
+- A red PR stays with its agent until it is green; a conflicted PR merges `main` in. Nobody waits
+  on a person.
+- Only issues labelled `human` need a person: B05 (the final benchmark needs real hardware) and
+  X02 (anything public under the owner's name). The orchestrator never assigns those.
+- F01–F03 come before CI exists, so they're reviewed and merged by the owner once; everything after
+  them is gated by CI instead.
 
 ### Rules for every agent
 
