@@ -1,124 +1,54 @@
 #!/usr/bin/env bash
-set -eo pipefail
+# Prepare a checkout for development: the pinned .NET SDK, both references, and NuGet packages.
+# Safe to run repeatedly; each step is skipped when it is already done.
+set -euo pipefail
 
-# Prefer app executables
-app_root="$(
-  cd "$(dirname "$0")/.."
-  pwd
-)"
-export PATH="$app_root/bin:$PATH"
+cd "$(dirname "$0")/.."
 
-REDIS_PORT=6379
-REDIS_HOST=localhost
+pinned=$(sed -nE 's/.*"version": *"([^"]+)".*/\1/p' global.json)
+channel=$(echo "$pinned" | cut -d. -f1-2)
 
-if [ "$RAILS_ENV" = "production" ]; then
-  echo "RAILS_ENV is production; bailing out"
-  exit 1
-fi
-
-# Install gum if needed
-if ! command -v gum &>/dev/null; then
-  echo
-  echo "▸ Installing gum"
-  if command -v pacman &>/dev/null; then
-    sudo pacman -S --noconfirm gum
-  elif command -v brew &>/dev/null; then
-    brew install gum
-  else
-    echo "Please install gum: https://github.com/charmbracelet/gum"
-    exit 1
-  fi
-  echo
-fi
-
-step() {
-  local step_name="$1"
-  shift
-
-  gum style --foreground 208 --bold "▸ $step_name"
-  gum style --foreground 240 "$*"
-
-  "$@"
-
-  local exit_code=$?
-  echo
-  return $exit_code
+# dotnet refuses to start here unless an installed SDK satisfies global.json's version and rollForward.
+have_pinned_sdk() {
+  command -v dotnet >/dev/null && dotnet --version >/dev/null 2>&1
 }
 
-redis_running() {
-  nc -z "$REDIS_HOST" "$REDIS_PORT" 2>/dev/null
+install_sdk_from_apt() {
+  command -v apt-get >/dev/null || return 1
+  local sudo=""
+  [ "$(id -u)" -eq 0 ] || sudo="sudo -n"
+  # Ubuntu 24.04+ packages the SDK itself. Microsoft's download hosts are blocked in Claude Code
+  # cloud sessions, so this is the path that works there.
+  $sudo apt-get install -y -q "dotnet-sdk-${channel}" >/dev/null 2>&1 ||
+    { $sudo apt-get update -q >/dev/null && $sudo apt-get install -y -q "dotnet-sdk-${channel}" >/dev/null; }
 }
 
-echo
-gum style --foreground 214 "    )  "
-gum style --foreground 208 "   ) \\  campfire"
-gum style --foreground 202 "  ( ( ("
-gum style --foreground 94  "  .^^^."
-echo
+install_sdk_from_microsoft() {
+  local script
+  script=$(mktemp)
+  curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$script"
+  bash "$script" --jsonfile global.json --install-dir "$HOME/.dotnet" --no-path
+  rm -f "$script"
+  export PATH="$HOME/.dotnet:$PATH"
+  export DOTNET_ROOT="$HOME/.dotnet"
+}
 
-# Install dependencies
-if command -v brew &>/dev/null; then
-  step "Installing packages" brew install sqlite ffmpeg mise
-elif command -v pacman &>/dev/null; then
-  packages=(sqlite ffmpeg mise)
-  if ! pacman -Q "${packages[@]}" >/dev/null 2>&1; then
-    step "Installing packages" sudo pacman -S --noconfirm --needed "${packages[@]}"
-  fi
-elif command -v apt &>/dev/null; then
-  step "Installing packages" sudo apt-get install --no-install-recommends -y libsqlite3-0 ffmpeg
+if [ -x "$HOME/.dotnet/dotnet" ]; then
+  export PATH="$HOME/.dotnet:$PATH"
 fi
 
-if ! command -v mise &>/dev/null; then
-  echo "Couldn't install mise"
-  echo "Install mise using your package manager or via:"
-  echo "https://mise.jdx.dev/installing-mise.html"
-  exit 1
+if have_pinned_sdk; then
+  echo "== .NET SDK $(dotnet --version) already installed"
+else
+  echo "== Installing a .NET SDK matching global.json ($pinned)"
+  install_sdk_from_apt 2>/dev/null && have_pinned_sdk || install_sdk_from_microsoft
+  have_pinned_sdk || { echo "No installed .NET SDK satisfies global.json ($pinned)" >&2; exit 1; }
 fi
 
-step "Installing Ruby" mise install --yes
-eval "$(mise hook-env)"
+echo "== Checking out references"
+git submodule update --init --recursive
 
-bundle config set --local auto_install true
-step "Installing RubyGems" bundle install
+echo "== Restoring packages"
+dotnet restore Campfire.slnx --nologo -v quiet
 
-# Prepare database
-if [[ $* == *--reset* ]]; then
-  rm -rf ./storage/{db,files}
-  step "Resetting the database" rails db:reset
-fi
-step "Preparing the database" rails db:prepare
-
-# Start Redis if not running
-if ! redis_running; then
-  if command -v docker &>/dev/null; then
-    if docker ps -aq -f name=campfire-redis | grep -q .; then
-      step "Starting Redis" docker start campfire-redis
-    else
-      step "Setting up Redis" docker run -d --name campfire-redis -p "$REDIS_PORT:$REDIS_PORT" redis:7
-    fi
-  else
-    echo "Couldn't start Redis"
-    echo "Install either docker or redis and then run this command again"
-    exit 1
-  fi
-fi
-
-# Install GitHub Actions linting tools
-for tool in actionlint shellcheck zizmor; do
-  if ! command -v "$tool" &> /dev/null; then
-    if command -v brew &> /dev/null; then
-      step "Installing $tool" brew install "$tool"
-    elif command -v pacman &> /dev/null; then
-      step "Installing $tool" sudo pacman -S --noconfirm "$tool"
-    else
-      echo "Error: install $tool manually" >&2
-      exit 1
-    fi
-  fi
-done
-
-step "Cleaning up logs and tempfiles" rails log:clear tmp:clear
-
-step "Restarting services" rails restart
-
-gum style --foreground 46 "✓ Done (${SECONDS} sec)"
+echo "== Done. Run bin/check before pushing."

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Campfire.Cable/Campfire.Cable.csproj" />
+    <ProjectReference Include="../Campfire.Jobs/Campfire.Jobs.csproj" />
+    <ProjectReference Include="../Campfire.Templates/Campfire.Templates.csproj" />
+    <ProjectReference Include="../Campfire.Templates.Generator/Campfire.Templates.Generator.csproj"
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

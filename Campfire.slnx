@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Campfire.Cable/Campfire.Cable.csproj" />
+    <Project Path="src/Campfire.Data/Campfire.Data.csproj" />
+    <Project Path="src/Campfire.Jobs/Campfire.Jobs.csproj" />
+    <Project Path="src/Campfire.RailsCompat/Campfire.RailsCompat.csproj" />
+    <Project Path="src/Campfire.RichText/Campfire.RichText.csproj" />
+    <Project Path="src/Campfire.Server/Campfire.Server.csproj" />
+    <Project Path="src/Campfire.Storage/Campfire.Storage.csproj" />
+    <Project Path="src/Campfire.Templates.Generator/Campfire.Templates.Generator.csproj" />
+    <Project Path="src/Campfire.Templates/Campfire.Templates.csproj" />
+    <Project Path="src/Campfire.Web/Campfire.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Campfire.Cable.Tests/Campfire.Cable.Tests.csproj" />
+    <Project Path="tests/Campfire.Data.Tests/Campfire.Data.Tests.csproj" />
+    <Project Path="tests/Campfire.Jobs.Tests/Campfire.Jobs.Tests.csproj" />
+    <Project Path="tests/Campfire.RailsCompat.Tests/Campfire.RailsCompat.Tests.csproj" />
+    <Project Path="tests/Campfire.RichText.Tests/Campfire.RichText.Tests.csproj" />
+    <Project Path="tests/Campfire.Server.Tests/Campfire.Server.Tests.csproj" />
+    <Project Path="tests/Campfire.Storage.Tests/Campfire.Storage.Tests.csproj" />
+    <Project Path="tests/Campfire.Templates.Generator.Tests/Campfire.Templates.Generator.Tests.csproj" />
+    <Project Path="tests/Campfire.Templates.Tests/Campfire.Templates.Tests.csproj" />
+    <Project Path="tests/Campfire.Web.Tests/Campfire.Web.Tests.csproj" />
+  </Folder>
+</Solution>

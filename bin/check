@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Every local check CI runs: task graph, formatting, build, tests. Runs them all and exits non-zero
+# if any failed, so one run reports every problem.
+set -uo pipefail
+
+cd "$(dirname "$0")/.."
+
+[ -x "$HOME/.dotnet/dotnet" ] && export PATH="$HOME/.dotnet:$PATH"
+export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
+
+failed=()
+
+step() {
+  local name=$1
+  shift
+  echo "== $name"
+  if ! "$@"; then
+    failed+=("$name")
+    echo "!! $name failed"
+  fi
+}
+
+step "plan" plans/bin/plan validate
+step "restore" dotnet restore Campfire.slnx --nologo -v quiet
+step "format" dotnet format Campfire.slnx --verify-no-changes --no-restore
+step "build" dotnet build Campfire.slnx -c Release --no-restore --nologo -v quiet
+step "test" dotnet test Campfire.slnx -c Release --no-build --nologo
+
+if [ ${#failed[@]} -gt 0 ]; then
+  echo "bin/check failed: ${failed[*]}" >&2
+  exit 1
+fi
+echo "bin/check passed"

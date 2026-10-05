@@ -1,0 +1,1194 @@
+# Task graph for the C# port of Campfire.
+#
+# This file is the source of truth for scope and ordering. `plans/bin/plan` validates it
+# (unique ids, known deps, no cycles), computes waves and the critical path, lists tasks that
+# are ready to claim, and regenerates plans/dag.md. Completion is recorded per task in
+# plans/status/<ID>.md, never by editing this file, so parallel agents don't conflict.
+#
+# Fields
+#   id         stable identifier; lane prefix + number
+#   title      short imperative name
+#   lane       work stream (see `lanes`)
+#   milestone  earliest milestone that needs it (see `milestones`)
+#   size       S (<~500 LOC, ~0.5 agent-day), M (~500-1500, ~1 day), L (~1500-3000, ~2 days)
+#   deps       ids that must be done first (hard dependencies only)
+#   bench      true if it is on the path to the five README benchmark workloads
+#   owns       paths this task creates or is the owner of; other tasks don't edit them
+#   refs       reference sources to read (reference/ = Rails, reference-rust/ = Rust port)
+#   deliver    what the task produces
+#   accept     acceptance criteria; each one must be evidenced in plans/status/<ID>.md
+
+lanes:
+  F:  Foundation
+  V:  Oracle (reference app, seed, vectors)
+  C:  Rails compatibility core
+  D:  Data
+  R:  Rich text
+  S:  Storage and media
+  W:  Web layer
+  A:  Accounts and auth features
+  M:  Rooms and messages features
+  RT: Realtime (Action Cable)
+  I:  Integrations and jobs
+  P:  Packaging and operations
+  Q:  Parity and QA gates
+  VS: Vertical slice gate
+  B:  Benchmarks and performance
+  X:  Launch
+
+milestones:
+  M0: Foundation (repo, toolchain, oracle, vectors)
+  M1: Vertical slice (Rails cookie works, room renders, post + broadcast, Rails boots on C# data)
+  M2: Benchmark five (room, messages, sidebar, search, post at HTML parity; first internal numbers)
+  M3: Feature complete (every route implemented)
+  M4: Parity gates green (replay, screens, cable, state, security)
+  M5: Optimized, measured, published
+
+tasks:
+  # ---------------------------------------------------------------- Foundation
+  - id: F01
+    title: Restructure repo around pinned references
+    lane: F
+    milestone: M0
+    size: S
+    deps: []
+    owns: [.gitmodules, reference/, reference-rust/, AGENTS.md, CLAUDE.md]
+    refs: [reference-rust/AGENTS.md, once-campfire-go/AGENTS.md]
+    deliver: >
+      Move the Rails app out of the repo root into submodule reference/ pinned to
+      basecamp/once-campfire@345e637 and add reference-rust/ pinned to
+      basecamp/once-campfire-rust@ccece30. Keep plans/. Write AGENTS.md/CLAUDE.md with the
+      port rules from plans/csharp-port.md (never edit reference*, tests beside code, oracle
+      over intuition, never benchmark an incomplete response). Replace README.md with a short
+      "work in progress, see plans/" stub; X01 owns its final content.
+    accept:
+      - git submodule update --init --recursive yields both references at the pinned SHAs
+      - Repo root has no Rails app code left; plans/ intact
+      - AGENTS.md and CLAUDE.md state the swarm rules and the task-claim protocol
+
+  - id: F02
+    title: Scaffold the .NET solution
+    lane: F
+    milestone: M0
+    size: M
+    deps: [F01]
+    owns: [Campfire.slnx, global.json, Directory.Build.props, Directory.Packages.props, .editorconfig, src/*/*.csproj, tests/*/*.csproj]
+    refs: [plans/csharp-port.md#stack, plans/csharp-port.md#repository-layout]
+    deliver: >
+      .NET 10 (LTS) solution pinned via global.json with the projects listed in the layout
+      section, central package management, nullable + warnings-as-errors + analyzers,
+      xUnit v3 test projects beside each library, and an empty Campfire.Server that serves
+      /up -> 200.
+    accept:
+      - dotnet build -c Release and dotnet test pass with zero warnings
+      - Project reference graph matches the layout section (no cycles, Web does not reference Server)
+      - dotnet format --verify-no-changes passes
+
+  - id: F03
+    title: CI and agent dev environment
+    lane: F
+    milestone: M0
+    size: S
+    deps: [F02]
+    owns: [.github/workflows/, bin/check, bin/setup, .claude/]
+    refs: [once-campfire-go/bin/check]
+    deliver: >
+      bin/setup (installs the pinned .NET SDK, inits submodules), bin/check (format, build,
+      test, plans/bin/plan validate), a GitHub Actions workflow running bin/check on PRs, and
+      a Claude Code SessionStart hook so cloud agent sessions boot with the SDK installed.
+    accept:
+      - A fresh cloud session can run bin/check without manual setup
+      - CI runs on PRs and fails on a planted format error and a planted cycle in tasks.yaml
+
+  - id: F04
+    title: Frontend assets and importmap, byte for byte
+    lane: F
+    milestone: M0
+    size: M
+    deps: [F02]
+    owns: [assets/, bin/build-assets, src/Campfire.Web/Assets/]
+    refs: [reference/app/assets, reference/app/javascript, reference/config/importmap.rb, reference/Gemfile.lock, reference-rust/crates/assets]
+    deliver: >
+      Script that assembles the exact frontend from pinned sources (app JS/CSS/images/sounds,
+      vendored Turbo, Stimulus, Lexxy, Action Cable client, request.js, highlight.js at the
+      Gemfile.lock versions) with Propshaft-compatible digested filenames, an asset manifest,
+      and the importmap JSON. Static serving with far-future immutable caching.
+    accept:
+      - Every /assets/* path the reference emits for the seed pages exists with identical bytes
+      - Generated importmap JSON equals the reference's javascript_importmap_tags output
+      - No Ruby or Node needed at build time
+
+  # ---------------------------------------------------------------- Oracle
+  - id: V01
+    title: Reference app runner in production mode
+    lane: V
+    milestone: M0
+    size: M
+    deps: [F01, V03]
+    owns: [parity/bin/reference, parity/docker/, compose.parity.yml]
+    refs: [reference-rust/parity/bin/reference, reference-rust/parity/docker, reference/Dockerfile]
+    deliver: >
+      Build and run the pinned Rails app as campfire-reference:app in production mode (CSRF,
+      caching and show_exceptions on), plus a compose file that runs reference and candidate
+      side by side on identical copies of a seed. Reuse the Rust port's tooling where possible.
+    accept:
+      - parity/bin/reference build && up serves /up and a logged-in room page
+      - Candidate slot accepts any image exposing port 3000 with the same env contract
+      - The imported vector generators (reference-tools/) run against this reference and reproduce vectors/
+
+  - id: V02
+    title: Shared parity and benchmark seed
+    lane: V
+    milestone: M0
+    size: S
+    deps: [V01]
+    owns: [parity/bin/seed, parity/.seed/]
+    refs: [reference-rust/parity/bin/seed, reference-rust/reference-tools/storage/generate.rb]
+    deliver: >
+      Generate the default seed (SQLite db/, storage files/, labels.json) with the reference
+      app, identical to the one the Rust/Go benchmarks use, and record its hashes.
+    accept:
+      - labels.json contains rooms.watercooler, messages.busy_060, emails.david, passwords.all
+      - Seed hashes recorded in parity/.seed/SEED.sha256 and reproducible across two runs
+
+  - id: V03
+    title: Golden vectors and C# loader
+    lane: V
+    milestone: M0
+    size: M
+    deps: [F02]
+    owns: [vectors/, reference-tools/, tests/Campfire.Vectors/]
+    refs: [reference-rust/vectors, reference-rust/reference-tools]
+    deliver: >
+      Import the Rust port's reference-generated vectors (rails_compat, ruby_core,
+      campfire_routes, campfire_sessions, campfire_user_agents, storage, rich text cases,
+      opengraph, webhook) with their generator scripts, plus a tiny test library that loads
+      them as typed theory data for xUnit.
+    accept:
+      - Committed vectors are byte-identical to reference-rust/vectors at the pinned SHA (hash manifest)
+      - Vector loader exposes each family as MemberData for xUnit theories
+
+  # ---------------------------------------------------------------- Rails compatibility
+  - id: C01
+    title: Rails crypto primitives
+    lane: C
+    milestone: M0
+    size: M
+    deps: [V03]
+    owns: [src/Campfire.RailsCompat/Crypto/]
+    refs: [reference-rust/crates/rails_compat, vectors/rails_compat.json]
+    deliver: >
+      ActiveSupport KeyGenerator (PBKDF2 with Rails' iterations/digests), MessageVerifier,
+      MessageEncryptor (AES-256-GCM), the _rails envelope (purpose, expiry), JSON and the
+      Marshal subset the vectors require, secure compare. BCL crypto only.
+    accept:
+      - All rails_compat crypto vectors pass in both directions (verify Rails output, produce Rails-verifiable output)
+      - Wrong purpose, expired and tampered inputs are rejected
+
+  - id: C02
+    title: Cookie jar, session store and flash
+    lane: C
+    milestone: M1
+    size: M
+    deps: [C01]
+    owns: [src/Campfire.RailsCompat/Cookies/, src/Campfire.RailsCompat/Session/]
+    refs: [reference/app/controllers/concerns/authentication.rb, reference/config/initializers/session_store.rb, vectors/campfire_sessions.json]
+    deliver: >
+      Signed permanent session_token cookie (HttpOnly, SameSite=Lax), encrypted
+      _campfire_session cookie store (CSRF secret, return_to_after_authenticating, flash),
+      cookie deletion semantics.
+    accept:
+      - Cookies issued by the reference authenticate on C#, and C#-issued cookies authenticate on the reference
+      - Flash survives exactly one redirect, matching Rails
+
+  - id: C03
+    title: CSRF protection
+    lane: C
+    milestone: M1
+    size: M
+    deps: [C02]
+    owns: [src/Campfire.RailsCompat/Csrf/]
+    refs: [reference/app/controllers/application_controller.rb, vectors/rails_compat.json]
+    deliver: >
+      Masked authenticity tokens, per-form tokens where Rails emits them, the
+      authenticity_token param and X-CSRF-Token header, Origin/Sec-Fetch-Site checks, and
+      the bot-key exemption hook.
+    accept:
+      - A form rendered by the reference submits successfully to C# and vice versa
+      - Missing, bad-mask and cross-origin requests are rejected with the reference status
+
+  - id: C04
+    title: Signed IDs, GlobalID/SGID, Turbo stream names
+    lane: C
+    milestone: M1
+    size: M
+    deps: [C01]
+    owns: [src/Campfire.RailsCompat/GlobalId/, src/Campfire.RailsCompat/SignedIds/]
+    refs: [reference/app/models/user/transferable.rb, reference/lib/rails_ext/action_text_attachables.rb, vectors/rails_compat.json]
+    deliver: >
+      Signed IDs (avatar no expiry, transfer 4h), GlobalID/SGID parse and generate,
+      Turbo.signed_stream_verifier_key derivation and signed stream names, and the
+      User-only invalid-SGID fallback including Marshal-era payloads.
+    accept:
+      - All signed-id, sgid and stream-name vectors pass
+      - A tampered SGID for any model other than User is rejected (named test)
+
+  - id: C05
+    title: Rails params parser
+    lane: C
+    milestone: M1
+    size: M
+    deps: [V03]
+    owns: [src/Campfire.RailsCompat/Params/]
+    refs: [vectors/rails_compat.json]
+    deliver: >
+      Nested params from query, urlencoded, multipart (streaming to temp files) and JSON
+      bodies; _method override; a permit/require helper mirroring strong params.
+    accept:
+      - Params vectors parse to identical trees
+      - Multipart uploads stream without buffering the whole body in memory
+
+  - id: C06
+    title: Ruby and ActiveSupport formatting helpers
+    lane: C
+    milestone: M0
+    size: M
+    deps: [V03]
+    owns: [src/Campfire.RailsCompat/Ruby/, src/Campfire.RailsCompat/Formatting/]
+    refs: [reference/config/initializers/time_formats.rb, reference/lib/rails_ext/string.rb, reference/app/helpers/time_helper.rb, vectors/ruby_core.json]
+    deliver: >
+      ERB::Util HTML escaping, to_fs formats (incl. :number), ISO8601 with Rails precision,
+      SQLite timestamp text format, time_ago/local time helpers, truncate, pluralize,
+      parameterize, number helpers, string extensions, inflections used by the app.
+    accept:
+      - ruby_core vectors pass
+      - Timestamp round trip Rails -> SQLite -> C# -> SQLite -> Rails is lossless
+
+  - id: C07
+    title: Browser and platform detection
+    lane: C
+    milestone: M1
+    size: S
+    deps: [V03]
+    owns: [src/Campfire.RailsCompat/UserAgent/]
+    refs: [reference/app/controllers/concerns/allow_browser.rb, reference/app/controllers/concerns/set_platform.rb, reference/app/models/application_platform.rb, vectors/campfire_user_agents.json]
+    deliver: allow_browser version gates and ApplicationPlatform classification.
+    accept:
+      - All 385 user-agent vectors classify identically
+
+  # ---------------------------------------------------------------- Data
+  - id: D01
+    title: SQLite infrastructure
+    lane: D
+    milestone: M0
+    size: M
+    deps: [F02]
+    owns: [src/Campfire.Data/Sqlite/, src/Campfire.Data/Schema/]
+    refs: [reference/db/schema.rb, reference/db/migrate, reference/config/database.yml, reference-rust/crates/db]
+    deliver: >
+      Microsoft.Data.Sqlite with bundled SQLite + FTS5; WAL, foreign keys, 5s busy timeout,
+      immediate transactions; one writer (bounded queue) + reader pool; prepared statement
+      cache; db:prepare that creates the exact Rails schema, writes schema_migrations and
+      ar_internal_metadata, and rejects databases with missing migrations.
+    accept:
+      - sqlite3 .schema of a C#-prepared DB equals the reference's after normalizing
+      - The seed DB opens read/write; concurrent readers don't block the writer
+
+  - id: D02
+    title: Domain records and queries
+    lane: D
+    milestone: M1
+    size: L
+    deps: [D01, C06]
+    owns: [src/Campfire.Data/Records/, src/Campfire.Data/Queries/]
+    refs: [reference/app/models]
+    deliver: >
+      Records and query methods for Account, User (role/status enums, bots), Session, Room
+      STI (Rooms::Open/Closed/Direct), Membership (involvement, connectable), Message,
+      Boost, Ban, Search, Push::Subscription, Webhook, ActionText rich text rows and Active
+      Storage rows. Hand-written SQL, no ORM. Every type the features need is defined here
+      first, so feature tasks only add queries.
+    accept:
+      - STI names, enum integers, involvement strings and polymorphic record_type values match the seed
+      - Ported model tests from reference/test/models for scopes and queries pass
+
+  - id: D03
+    title: Lifecycle callbacks and domain event seams
+    lane: D
+    milestone: M1
+    size: M
+    deps: [D02]
+    owns: [src/Campfire.Data/Lifecycle/, src/Campfire.Data/Events/]
+    refs: [reference/app/models/message.rb, reference/app/models/message/broadcasts.rb, reference/app/models/boost.rb, reference/app/models/user.rb, reference/app/models/user/bannable.rb, reference-rust/reference-tools/campfire/callbacks.rb]
+    deliver: >
+      Ordered, transactional side effects: message create touches room, updates unread
+      memberships, indexes FTS after commit, enqueues push and webhook; boost touches message;
+      user create grants open-room memberships; deactivate/ban destroys sessions. Defines the
+      seams IBroadcaster, IJobQueue and IConnectionRevoker so M/RT/I lanes build in parallel.
+    accept:
+      - Callback vectors (order, transaction boundaries) match the reference
+      - In-memory fakes for each seam make the M lane testable without RT/I
+
+  - id: D04
+    title: Message search
+    lane: D
+    milestone: M2
+    size: M
+    deps: [D02, R05]
+    bench: true
+    owns: [src/Campfire.Data/Search/]
+    refs: [reference/app/models/message/searchable.rb, reference/app/controllers/searches_controller.rb, reference/app/models/search.rb]
+    deliver: >
+      FTS5 message_search_index maintenance from rich-text plain text, Unicode-aware query
+      preprocessing, result ordering, recent-searches bookkeeping.
+    accept:
+      - Random query corpus (incl. FTS syntax errors and mixed scripts) returns the same ids or same error behavior as the reference
+
+  - id: D05
+    title: Message pagination
+    lane: D
+    milestone: M1
+    size: S
+    deps: [D02]
+    bench: true
+    owns: [src/Campfire.Data/Pagination/]
+    refs: [reference/app/models/message/pagination.rb]
+    deliver: Timestamp-based last_page/before/after (40 per page) and page_around (up to 81).
+    accept:
+      - Page boundaries on the seed match the reference for every busy_* label
+
+  # ---------------------------------------------------------------- Rich text
+  - id: R01
+    title: Nokogiri-compatible HTML parse and serialize
+    lane: R
+    milestone: M1
+    size: L
+    deps: [F02, V03]
+    owns: [src/Campfire.RichText/Html/]
+    refs: [reference-rust/crates/richtext, once-campfire-go/internal/html]
+    deliver: >
+      HTML5 fragment parsing (AngleSharp or a port of the Go tree-builder fork if AngleSharp
+      diverges) and a serializer that matches Nokogiri's output: attribute order and quoting,
+      entity escaping, void elements, whitespace.
+    accept:
+      - Round-trip output of every rich text corpus body equals the reference's to_html
+
+  - id: R02
+    title: Sanitizer pipeline
+    lane: R
+    milestone: M1
+    size: L
+    deps: [R01, C06]
+    owns: [src/Campfire.RichText/Sanitize/]
+    refs: [reference/app/helpers/content_filters, reference/lib/rails_ext/action_text_allowed_tags.rb, reference/lib/rails_ext/actiontext_opengraph_embeds.rb, reference/app/helpers/rich_text_helper.rb]
+    deliver: >
+      RemoveSoloUnfurledLinkText -> SanitizeTags (drop disallowed elements with contents) ->
+      SanitizeAttributes -> Action Text sanitizer allowlist -> auto_link re-sanitization;
+      opengraph embed URL constraints relative to request host.
+    accept:
+      - Independent security assertions hold on all outputs - no script, no on* attributes, no javascript URLs, no style outside the allowlist
+      - Sanitized output matches the reference on the rich text vectors
+
+  - id: R03
+    title: Attachment rendering - mentions and embeds
+    lane: R
+    milestone: M1
+    size: M
+    deps: [R02, C04, D02]
+    bench: true
+    owns: [src/Campfire.RichText/Attachments/]
+    refs: [reference/lib/rails_ext/action_text_attachables.rb, reference/app/views/users/_mention.html.erb, reference/app/views/action_text, reference/app/views/layouts/action_text]
+    deliver: >
+      action-text-attachment resolution for display - User mentions via SGID (incl. the
+      User-only fallback), opengraph embeds, content attachments - and the rendered output
+      the message partial embeds.
+    accept:
+      - Display output of every seed message body equals the reference
+
+  - id: R05
+    title: Plain text and edit round trip
+    lane: R
+    milestone: M1
+    size: M
+    deps: [R03]
+    owns: [src/Campfire.RichText/PlainText/, src/Campfire.RichText/Editing/]
+    refs: [reference/app/helpers/rich_text_helper.rb, reference/app/models/message/searchable.rb, reference/app/models/webhook.rb]
+    deliver: >
+      to_plain_text (search index, push and webhook bodies, recipient-mention removal) and the
+      Lexxy edit rebuild so Trix-era mentions and embeds survive editing.
+    accept:
+      - Stored -> display -> edit -> save -> display -> plain text -> search index cycle matches the reference
+      - Webhook plain body with recipient mentions removed matches
+
+  - id: R04
+    title: Rich text gate and differential fuzzing
+    lane: R
+    milestone: M4
+    size: M
+    deps: [R05]
+    owns: [tests/Campfire.RichText.Fuzz/]
+    refs: [vectors/, reference-rust/reference-tools/richtext]
+    deliver: >
+      All six outputs across the 658 reference cases plus a differential fuzzer (OWASP XSS
+      corpus, malformed nesting, huge inputs, Unicode edge cases, every SGID variant)
+      against the reference sanitizer.
+    accept:
+      - 658/658 cases equal on all six outputs
+      - 1M fuzz iterations with zero disagreements and zero security-assertion failures
+
+  # ---------------------------------------------------------------- Storage and media
+  - id: S01
+    title: Active Storage core
+    lane: S
+    milestone: M1
+    size: M
+    deps: [D01, C04]
+    bench: true
+    owns: [src/Campfire.Storage/Blobs/]
+    refs: [reference/config/initializers/active_storage.rb, vectors/storage.json]
+    deliver: >
+      Blob/attachment rows, disk layout storage/files/ab/cd/<key>, base64 MD5 checksums,
+      key generation, signed blob ids and blob URL generation, transactional attach on upload.
+    accept:
+      - Signed blob ids and URLs generated for seed blobs equal the reference
+      - A blob written by C# is readable by the reference (checksum, key, metadata)
+
+  - id: S05
+    title: Active Storage HTTP endpoints
+    lane: S
+    milestone: M3
+    size: M
+    deps: [S01, S02, W02]
+    owns: [src/Campfire.Web/Controllers/ActiveStorage/]
+    refs: [reference/config/initializers/active_storage_authentication.rb, reference/app/controllers/concerns/active_storage_authentication.rb, reference/test/controllers/active_storage_authentication_test.rb]
+    deliver: >
+      /rails/active_storage/* blob and representation redirect and proxy endpoints with ranges
+      and content disposition; authenticated direct uploads and disk PUT; public signed downloads.
+    accept:
+      - Signed URLs from the reference resolve on C# and vice versa
+      - Ranged and HEAD requests match the reference; unauthenticated uploads are rejected
+
+  - id: S02
+    title: Variant keys and representation URLs
+    lane: S
+    milestone: M1
+    size: M
+    deps: [S01]
+    bench: true
+    owns: [src/Campfire.Storage/Variants/]
+    refs: [vectors/storage.json, reference/app/models/message/attachment.rb, reference/app/models/user/avatar.rb]
+    deliver: >
+      variation_digest (SHA1 of the Ruby Marshal dump of the transformation) for :thumb,
+      avatar :square and video poster previews; variant_records reuse; representation URL
+      generation without doing image work.
+    accept:
+      - Every variant digest vector passes; existing variant_records are reused, never regenerated
+
+  - id: S03
+    title: Media processing
+    lane: S
+    milestone: M3
+    size: L
+    deps: [S02]
+    owns: [src/Campfire.Storage/Media/]
+    refs: [reference/config/initializers/vips.rb, once-campfire-go/internal/storage]
+    deliver: >
+      NetVips (libvips 8.16.1) variants matching ruby-vips defaults (orientation, metadata
+      stripping, Q), ffmpeg 7.1.5 video posters with Active Storage's argv, blob analysis
+      (dimensions, duration, analyzed/identified), MIME detection, loader restrictions.
+    accept:
+      - Byte-identical outputs to the reference for the media golden set inside the pinned toolchain container
+
+  - id: S04
+    title: QR code SVG
+    lane: S
+    milestone: M3
+    size: S
+    deps: [V03]
+    owns: [src/Campfire.Web/QrCode/]
+    refs: [reference/app/controllers/qr_code_controller.rb, reference-rust/reference-tools/campfire/rqrcode.rb]
+    deliver: RQRCode-identical QR matrix and SVG geometry (version, ECC level, mask).
+    accept:
+      - SVG bytes equal the reference for the rqrcode vectors
+
+  # ---------------------------------------------------------------- Web layer
+  - id: W01
+    title: Ordered router, full route table and URL helpers
+    lane: W
+    milestone: M1
+    size: L
+    deps: [C05, V03]
+    bench: true
+    owns: [src/Campfire.Web/Routing/, src/Campfire.Web/Routes.g.cs]
+    refs: [reference/config/routes.rb, vectors/campfire_routes.json]
+    deliver: >
+      A Rails-ordered segment router on raw Kestrel (first match wins, (.:format) suffix,
+      nested and scoped routes, @:message_id, :bot_key scope, defaults like user_id=me),
+      generated from campfire_routes.json with every route bound to a stub that returns 501
+      until its feature task implements it. URL helpers for every named and direct route
+      (fresh_account_logo, fresh_user_avatar). Format negotiation (html, turbo_stream, json,
+      svg), HEAD, Turbo-Frame detection, 404/422/500 pages.
+    accept:
+      - Route recognition and generation vectors pass (all route contracts)
+      - Feature tasks implement handlers in their own files without editing Routing/
+
+  - id: W02
+    title: Controller pipeline and Current
+    lane: W
+    milestone: M1
+    size: L
+    deps: [W01, C03, C07, D02]
+    bench: true
+    owns: [src/Campfire.Web/Pipeline/]
+    refs: [reference/app/controllers/application_controller.rb, reference/app/controllers/concerns]
+    deliver: >
+      Request context (Current account/user/session/request), ordered before-actions with
+      only/except/skip semantics (set_current_request, block_banned_requests, allow_browser,
+      set_platform, authentication with session lookup/resume/last_active_at refresh and
+      return_to, authorization, deny_bots, version headers, room_scoped, tracked_room_visit),
+      respond_to, redirect_to with flash, fresh_when/ETag/304.
+    accept:
+      - Auth edge matrix (no cookie, expired session, bot key on non-bot route, bad CSRF, banned IP, non-admin) matches reference status and location
+
+  - id: W03
+    title: Rails view helper library and layout
+    lane: W
+    milestone: M1
+    size: L
+    deps: [W01, W04, F04, C03, C04, C06]
+    bench: true
+    owns: [src/Campfire.Web/Helpers/*, src/Campfire.Web/Helpers/Rails/, src/Campfire.Web/Views/layouts/]
+    refs: [reference/app/helpers, reference/app/views/layouts]
+    deliver: >
+      tag builder attribute serialization, content_for/yield, form_with and field helpers,
+      link_to/button_to, image_tag/asset_path, turbo_frame_tag, turbo_stream tags,
+      turbo_stream_from (signed names), csrf_meta_tags, javascript_importmap_tags, the
+      application layout, and the app's own small helpers (avatars, emoji, translations,
+      version, forms, clipboard).
+    accept:
+      - Each helper's output equals golden output from the reference's helpers
+      - The application layout renders byte-identically for an empty page body
+
+  - id: W04
+    title: Erubi-compatible template compiler
+    lane: W
+    milestone: M0
+    size: L
+    deps: [F02]
+    owns: [src/Campfire.Templates/, src/Campfire.Templates.Generator/]
+    refs: [reference/app/views, plans/csharp-port.md#templates]
+    deliver: >
+      A C# source generator that compiles .erb.cs templates (ERB syntax with C# expressions)
+      with Erubi's exact trim semantics into methods writing UTF-8 to an IBufferWriter, with
+      HTML-safe string semantics (SafeString vs escaped). Templates keep the same relative
+      path as the reference ERB file. Fallback plan if the spike fails, RazorSlices.
+    accept:
+      - Whitespace corpus (every trim/indent pattern used in reference/app/views) renders byte-identically to Erubi
+      - Zero reflection at render time; Native AOT compatible
+
+  # ---------------------------------------------------------------- Accounts and auth
+  - id: A01
+    title: First run, sign in/out, welcome
+    lane: A
+    milestone: M1
+    size: M
+    deps: [W02, W03, D03]
+    bench: true
+    owns: [src/Campfire.Web/Controllers/FirstRuns*, src/Campfire.Web/Controllers/Sessions*, src/Campfire.Web/Controllers/Welcome*, src/Campfire.Web/Views/first_runs/, src/Campfire.Web/Views/sessions/*, src/Campfire.Web/Views/welcome/]
+    refs: [reference/app/controllers/first_runs_controller.rb, reference/app/controllers/sessions_controller.rb, reference/app/controllers/welcome_controller.rb, reference/app/models/first_run.rb]
+    deliver: First run wizard, sessions new/create/destroy (bcrypt, rate limits), incompatible browser page, welcome redirect logic.
+    accept:
+      - The benchmark login flow (GET /session/new, POST /session -> 302 + session_token) works with CSRF on
+      - Ported controller tests pass with CSRF enabled
+
+  - id: A02
+    title: Session transfers and profile
+    lane: A
+    milestone: M3
+    size: S
+    deps: [A01]
+    owns: [src/Campfire.Web/Controllers/Sessions/Transfers*, src/Campfire.Web/Controllers/Users/Profiles*, src/Campfire.Web/Views/sessions/transfers/, src/Campfire.Web/Views/users/profiles/]
+    refs: [reference/app/controllers/sessions/transfers_controller.rb, reference/app/controllers/users/profiles_controller.rb]
+    deliver: Transfer links (4h signed ids) and profile show/update.
+    accept:
+      - A transfer link minted on Rails works on C# and vice versa
+
+  - id: A03
+    title: Join, users, account settings, logo, custom styles
+    lane: A
+    milestone: M3
+    size: M
+    deps: [A01, S03]
+    owns: [src/Campfire.Web/Controllers/Users*, src/Campfire.Web/Controllers/Accounts*, src/Campfire.Web/Controllers/Accounts/JoinCodes*, src/Campfire.Web/Controllers/Accounts/Logos*, src/Campfire.Web/Controllers/Accounts/CustomStyles*, src/Campfire.Web/Views/users/*, src/Campfire.Web/Views/accounts/*, src/Campfire.Web/Views/accounts/custom_styles/]
+    refs: [reference/app/controllers/users_controller.rb, reference/app/controllers/accounts_controller.rb, reference/app/controllers/accounts, reference/app/models/account]
+    deliver: Join by code, users#show, join code regeneration, account edit/update, logo show/destroy, custom styles.
+    accept:
+      - Ported controller tests pass; logo variants byte-identical
+
+  - id: A04
+    title: Account user admin and bans
+    lane: A
+    milestone: M3
+    size: M
+    deps: [A03, I01]
+    owns: [src/Campfire.Web/Controllers/Accounts/Users*, src/Campfire.Web/Controllers/Users/Bans*, src/Campfire.Web/Views/accounts/users/]
+    refs: [reference/app/controllers/accounts/users_controller.rb, reference/app/controllers/users/bans_controller.rb, reference/app/jobs/remove_banned_content_job.rb]
+    deliver: User index with geared_pagination Link/X-Total-Count headers and turbo_stream next page, role change, deactivate, ban/unban with content removal.
+    accept:
+      - Pagination headers and turbo_stream bodies match the reference
+
+  - id: A05
+    title: Bots admin
+    lane: A
+    milestone: M3
+    size: M
+    deps: [A03]
+    owns: [src/Campfire.Web/Controllers/Accounts/Bots*, src/Campfire.Web/Views/accounts/bots/]
+    refs: [reference/app/controllers/accounts/bots_controller.rb, reference/app/controllers/accounts/bots, reference/app/models/user/bot.rb]
+    deliver: Bot CRUD, key regeneration, webhook URL management.
+    accept:
+      - Ported controller tests pass; bot keys in the reference format
+
+  - id: A06
+    title: Avatars
+    lane: A
+    milestone: M3
+    size: M
+    deps: [S03, W03]
+    owns: [src/Campfire.Web/Controllers/Users/Avatars*, src/Campfire.Web/Views/users/avatars/]
+    refs: [reference/app/controllers/users/avatars_controller.rb, reference/app/views/users/avatars/show.svg.erb, reference/app/helpers/users/avatars_helper.rb]
+    deliver: Uploaded avatar variants, generated initials SVG, avatar tokens, caching headers, destroy.
+    accept:
+      - SVG and image bytes equal the reference for seed users
+
+  - id: A07
+    title: Push subscriptions UI
+    lane: A
+    milestone: M3
+    size: S
+    deps: [A01, I02]
+    owns: [src/Campfire.Web/Controllers/Users/PushSubscriptions*, src/Campfire.Web/Views/users/push_subscriptions/]
+    refs: [reference/app/controllers/users/push_subscriptions_controller.rb, reference/app/controllers/users/push_subscriptions]
+    deliver: Subscription index/create/destroy and test notification.
+    accept:
+      - Ported controller tests pass; test notification reaches a local push endpoint
+
+  - id: A08
+    title: PWA, QR, health and autocomplete
+    lane: A
+    milestone: M3
+    size: M
+    deps: [W02, W03, S04]
+    owns: [src/Campfire.Web/Controllers/Pwa*, src/Campfire.Web/Controllers/QrCode*, src/Campfire.Web/Controllers/Autocompletable/, src/Campfire.Web/Views/pwa/, src/Campfire.Web/Views/autocompletable/, src/Campfire.Web/Views/users/autocompletables/]
+    refs: [reference/app/controllers/pwa_controller.rb, reference/app/controllers/qr_code_controller.rb, reference/app/controllers/autocompletable/users_controller.rb]
+    deliver: webmanifest, service worker, QR code, /up, autocompletable users (HTML and JSON).
+    accept:
+      - Responses match the reference body and header shape
+
+  # ---------------------------------------------------------------- Rooms and messages
+  - id: M01
+    title: Sidebar
+    lane: M
+    milestone: M2
+    size: M
+    deps: [W02, W03, D02]
+    bench: true
+    owns: [src/Campfire.Web/Controllers/Users/Sidebars*, src/Campfire.Web/Views/users/sidebars/]
+    refs: [reference/app/controllers/users/sidebars_controller.rb, reference/app/views/users/sidebars, reference/app/helpers/users/sidebar_helper.rb]
+    deliver: /users/me/sidebar with direct and shared rooms, unread state and placeholders.
+    accept:
+      - Normalized HTML equals the reference for every seed user
+
+  - id: M02
+    title: Message rendering
+    lane: M
+    milestone: M1
+    size: L
+    deps: [R03, S02, W03]
+    bench: true
+    owns: [src/Campfire.Web/Views/messages/_*, src/Campfire.Web/Helpers/Messages/]
+    refs: [reference/app/views/messages, reference/app/helpers/messages_helper.rb, reference/app/helpers/messages/attachment_presentation.rb, reference/app/helpers/emoji_helper.rb, reference/app/models/sound.rb]
+    deliver: >
+      _message, _presentation, _actions, _template, _unrenderable and boost partials;
+      attachment presentation (image/video/file), emoji-only detection, /play sounds,
+      bot styling, edited state, and the message JSON partial.
+    accept:
+      - Every message in the seed renders to the reference's normalized HTML
+
+  - id: M03
+    title: Room page
+    lane: M
+    milestone: M1
+    size: M
+    deps: [M02, D05, W02]
+    bench: true
+    owns: [src/Campfire.Web/Controllers/Rooms*, src/Campfire.Web/Views/rooms/show*, src/Campfire.Web/Views/rooms/show/]
+    refs: [reference/app/controllers/rooms_controller.rb, reference/app/views/rooms/show.html.erb, reference/app/views/rooms/show]
+    deliver: rooms#index redirect, rooms#show and the @message deep link with nav, composer, invitation and last-room tracking.
+    accept:
+      - /rooms/<watercooler> and deep links match the reference normalized HTML
+
+  - id: M04
+    title: Messages index, pagination and refresh
+    lane: M
+    milestone: M1
+    size: M
+    deps: [M02, D05, W02]
+    bench: true
+    owns: [src/Campfire.Web/Controllers/Messages/Index*, src/Campfire.Web/Controllers/Rooms/Refreshes*, src/Campfire.Web/Views/messages/index*, src/Campfire.Web/Views/rooms/refreshes/]
+    refs: [reference/app/controllers/messages_controller.rb, reference/app/controllers/rooms/refreshes_controller.rb]
+    deliver: messages#index with before/after/around, room_not_found, rooms/refresh turbo stream.
+    accept:
+      - /rooms/<id>/messages?before=<busy_060> equals the reference
+
+  - id: M05
+    title: Create, edit and delete messages
+    lane: M
+    milestone: M1
+    size: L
+    deps: [M02, R05, D03, W02]
+    bench: true
+    owns: [src/Campfire.Web/Controllers/Messages/Write*, src/Campfire.Web/Views/messages/create*, src/Campfire.Web/Views/messages/destroy*, src/Campfire.Web/Views/messages/edit*, src/Campfire.Web/Views/messages/show*]
+    refs: [reference/app/controllers/messages_controller.rb, reference/app/javascript/models/file_uploader.js]
+    deliver: Create (HTML and turbo_stream, multipart XHR attachments, client_message_id), show/edit/update/destroy with permissions; fires domain events through D03 seams.
+    accept:
+      - State differential after create/edit/delete equals the reference
+      - The benchmark's POST returns the reference status and turbo_stream body shape
+
+  - id: M06
+    title: Boosts
+    lane: M
+    milestone: M3
+    size: S
+    deps: [M05]
+    owns: [src/Campfire.Web/Controllers/Messages/Boosts*, src/Campfire.Web/Views/messages/boosts/*]
+    refs: [reference/app/controllers/messages/boosts_controller.rb, reference/app/models/boost.rb]
+    deliver: Boost index/new/create/destroy with message touch and broadcasts.
+    accept:
+      - Ported controller tests pass
+
+  - id: M07
+    title: Room CRUD, settings and involvement
+    lane: M
+    milestone: M3
+    size: L
+    deps: [M03, D03]
+    owns: [src/Campfire.Web/Controllers/Rooms/Opens*, src/Campfire.Web/Controllers/Rooms/Closeds*, src/Campfire.Web/Controllers/Rooms/Directs*, src/Campfire.Web/Controllers/Rooms/Settings*, src/Campfire.Web/Controllers/Rooms/Involvements*, src/Campfire.Web/Views/rooms/opens/, src/Campfire.Web/Views/rooms/closeds/, src/Campfire.Web/Views/rooms/directs/, src/Campfire.Web/Views/rooms/layouts/, src/Campfire.Web/Views/rooms/involvements/]
+    refs: [reference/app/controllers/rooms, reference/app/views/rooms]
+    deliver: New/create/edit/update for open, closed and direct rooms, rooms#destroy, settings, involvement bell.
+    accept:
+      - Ported controller tests pass; membership state differential equals the reference
+
+  - id: M08
+    title: Search pages
+    lane: M
+    milestone: M2
+    size: M
+    deps: [D04, M02, W02]
+    bench: true
+    owns: [src/Campfire.Web/Controllers/Searches*, src/Campfire.Web/Views/searches/]
+    refs: [reference/app/controllers/searches_controller.rb, reference/app/views/searches, reference/app/helpers/searches_helper.rb]
+    deliver: Search index/create/clear with result rendering and highlighting.
+    accept:
+      - /searches?q=coffee equals the reference normalized HTML
+
+  - id: M09
+    title: Link unfurling endpoint
+    lane: M
+    milestone: M3
+    size: S
+    deps: [I03, W02]
+    owns: [src/Campfire.Web/Controllers/UnfurlLinks*]
+    refs: [reference/app/controllers/unfurl_links_controller.rb]
+    deliver: unfurl_link#create returning opengraph metadata.
+    accept:
+      - Ported controller tests pass, including private-network rejection
+
+  # ---------------------------------------------------------------- Realtime
+  - id: RT01
+    title: Action Cable server
+    lane: RT
+    milestone: M1
+    size: L
+    deps: [W02]
+    owns: [src/Campfire.Cable/Server/, src/Campfire.Cable/PubSub/]
+    refs: [reference/app/channels/application_cable, reference-rust/crates/cable]
+    deliver: >
+      /cable WebSocket (actioncable-v1-json), welcome, 3s pings, subscribe confirm/reject,
+      identifiers, perform, disconnect with reconnect; cookie-authenticated connections;
+      in-process pub/sub with bounded per-connection queues, lag disconnect with reconnect,
+      shared serialized payloads per broadcast, optional permessage-deflate.
+    accept:
+      - Frame sequences for connect/subscribe/ping/disconnect equal the reference
+
+  - id: RT02
+    title: Turbo streams channel and broadcasts
+    lane: RT
+    milestone: M1
+    size: M
+    deps: [RT01, C04, M02]
+    owns: [src/Campfire.Cable/Turbo/, src/Campfire.Web/Broadcasts/]
+    refs: [reference/app/channels/concerns/room_streams_are_authorized.rb, reference/config/initializers/turbo_streams_authorization.rb, reference/app/helpers/broadcasts_helper.rb, reference/app/models/message/broadcasts.rb]
+    deliver: Turbo::StreamsChannel with signed names and the RoomStreamsAreAuthorized guard; IBroadcaster implementation rendering append/replace/remove streams.
+    accept:
+      - A message posted by user A reaches user B's socket with the reference payload
+      - A leaked signed room stream name is rejected for a non-member (named test)
+
+  - id: RT03
+    title: App channels, presence and unread fanout
+    lane: RT
+    milestone: M3
+    size: L
+    deps: [RT02, D03]
+    owns: [src/Campfire.Cable/Channels/]
+    refs: [reference/app/channels, reference/app/models/membership/connectable.rb]
+    deliver: room, room_messages, presence, heartbeat, typing_notifications, read_rooms and unread_rooms channels; connections/connected_at bookkeeping; unread fanout.
+    accept:
+      - Cable replay for every channel equals the reference
+      - Unread fanout to 1000 members matches the reference payload
+
+  - id: RT04
+    title: Revocation and disconnects
+    lane: RT
+    milestone: M3
+    size: M
+    deps: [RT03]
+    owns: [src/Campfire.Cable/Revocation/]
+    refs: [reference/app/models/user/bannable.rb, reference/app/models/membership.rb]
+    deliver: IConnectionRevoker - membership removal, deactivation and ban disconnect with reconnect; per-publication authorization.
+    accept:
+      - Named subscribe -> revoke -> deliver -> reconnect test passes for every channel including Turbo
+
+  # ---------------------------------------------------------------- Integrations and jobs
+  - id: I01
+    title: In-process job runner
+    lane: I
+    milestone: M3
+    size: S
+    deps: [D03]
+    owns: [src/Campfire.Jobs/Runner/, src/Campfire.Jobs/RemoveBannedContent*]
+    refs: [reference/app/jobs]
+    deliver: IJobQueue implementation - enqueue after commit, bounded queues, per-type concurrency, graceful drain; RemoveBannedContentJob.
+    accept:
+      - Shutdown drains in-flight jobs within the deadline; a full queue logs and rejects instead of growing
+
+  - id: I02
+    title: Web Push
+    lane: I
+    milestone: M3
+    size: L
+    deps: [I01, I04]
+    owns: [src/Campfire.Jobs/WebPush/]
+    refs: [reference/lib/web_push, reference/config/initializers/web_push.rb, reference/config/initializers/vapid.rb, reference/app/models/room/message_pusher.rb, reference/app/jobs/room/push_message_job.rb]
+    deliver: VAPID ES256 JWT, RFC 8291 aes128gcm encryption, connection pool, endpoint restrictions and IP pinning, 404/410 subscription removal, MessagePusher recipient rules.
+    accept:
+      - Encrypted payload decrypts with a reference test receiver; recipient sets match the reference
+
+  - id: I03
+    title: Open Graph fetching
+    lane: I
+    milestone: M3
+    size: M
+    deps: [I04, R01]
+    owns: [src/Campfire.Jobs/OpenGraph/]
+    refs: [reference/app/models/opengraph]
+    deliver: Restricted fetch (pinned IP, redirect re-check, 5MB and 10-redirect caps) and metadata extraction.
+    accept:
+      - All 90 opengraph vectors pass
+
+  - id: I04
+    title: Private network guard and restricted HTTP client
+    lane: I
+    milestone: M3
+    size: S
+    deps: [F02]
+    owns: [src/Campfire.Jobs/RestrictedHttp/]
+    refs: [reference/lib/restricted_http/private_network_guard.rb]
+    deliver: DNS resolution through the guard, IP pinning via SocketsHttpHandler.ConnectCallback, per-policy clients (opengraph, web push); webhooks get an unrestricted client by design.
+    accept:
+      - Private, loopback, link-local, mapped-v6 and DNS-rebinding cases are rejected
+
+  - id: I05
+    title: Bot API and webhooks
+    lane: I
+    milestone: M3
+    size: L
+    deps: [M05, M06, I01]
+    owns: [src/Campfire.Web/Controllers/Messages/ByBots*, src/Campfire.Web/Controllers/Messages/Boosts/ByBots*, src/Campfire.Jobs/Webhooks/, src/Campfire.Web/Views/messages/by_bots/, src/Campfire.Web/Views/messages/boosts/by_bots/]
+    refs: [reference/app/controllers/messages/by_bots_controller.rb, reference/app/controllers/messages/boosts/by_bots_controller.rb, reference/app/controllers/concerns/raw_request_body.rb, reference/app/models/webhook.rb, reference/app/jobs/bot/webhook_job.rb]
+    deliver: Bot message/boost API (raw bodies, multipart, pagination headers, status/Location), webhook job (7s timeout, text vs attachment replies).
+    accept:
+      - All 19 webhook vectors pass; bot API replay equals the reference
+
+  # ---------------------------------------------------------------- Packaging and operations
+  - id: P01
+    title: Container image and CLI
+    lane: P
+    milestone: M1
+    size: M
+    deps: [D01, W01]
+    owns: [Dockerfile, src/Campfire.Server/Program.cs, src/Campfire.Server/Cli/]
+    refs: [reference/Dockerfile, reference/bin/boot, once-campfire-go/Dockerfile]
+    deliver: >
+      Multi-stage image (non-root uid 1000, /rails/storage layout), env contract
+      (SECRET_KEY_BASE, VAPID_*, DISABLE_SSL, TLS_DOMAIN, storage paths), db:prepare on boot,
+      `campfire server|db:prepare|backup` CLI, internal listener on :3000.
+    accept:
+      - Image boots on a copy of the seed and serves /up and the login page
+
+  - id: P02
+    title: Pinned media toolchain in the image
+    lane: P
+    milestone: M3
+    size: M
+    deps: [P01, S03]
+    owns: [docker/toolchain/]
+    refs: [once-campfire-go/Dockerfile]
+    deliver: libvips 8.16.1 and ffmpeg 7.1.5 built or pinned in the image, for amd64 and arm64.
+    accept:
+      - Media byte-golden tests pass inside the image on both architectures
+
+  - id: P03
+    title: Public front server
+    lane: P
+    milestone: M4
+    size: L
+    deps: [P01]
+    owns: [src/Campfire.Server/Front/]
+    refs: [reference/Procfile, reference/config/deploy.yml]
+    deliver: >
+      Ship Thruster in front first (zero-risk parity), then optionally a native Kestrel front
+      end - HTTP/2, TLS with ACME reusing Thruster's certificate cache, gzip/brotli, graceful
+      shutdown.
+    accept:
+      - Behind Thruster the image is a drop-in for ONCE deploys
+      - If native, ACME works against a local Pebble CA including restart with the CA offline
+
+  - id: P04
+    title: Backup and restore hooks
+    lane: P
+    milestone: M4
+    size: S
+    deps: [P01]
+    owns: [hooks/, src/Campfire.Server/Backup/]
+    refs: [reference/hooks, reference/script/admin/prepare-backup]
+    deliver: SQLite online backup against a live writer behind the `campfire backup` command P01 stubs; pre-backup and post-restore hooks.
+    accept:
+      - Backup during a write load restores to a consistent DB that both C# and Rails boot
+
+  # ---------------------------------------------------------------- Parity and QA
+  - id: Q01
+    title: HTTP replay and normalized diff harness
+    lane: Q
+    milestone: M1
+    size: L
+    deps: [V02, P01]
+    owns: [parity/replay/, parity/normalize/]
+    refs: [reference-rust/parity/capture/normalize.ts, reference-rust/reference-tools/campfire/controllers_a/replay.py]
+    deliver: >
+      Scripted sessions against reference and candidate; status, header-shape and
+      normalized-HTML diffs with typed masks (sgid, signed id, csrf) and decoded timestamps;
+      runnable per route family so each feature task can gate itself.
+    accept:
+      - Ruby-vs-Ruby run reports zero diffs
+      - A planted defect (missing class, off-by-one page size) is detected
+
+  - id: Q02
+    title: Route coverage gate
+    lane: Q
+    milestone: M3
+    size: M
+    deps: [Q01, A02, A04, A05, A06, A07, A08, M06, M07, M08, M09, I05, S05]
+    owns: [parity/route-coverage.json]
+    refs: [vectors/campfire_routes.json]
+    deliver: Every route/verb/format replayed; declared-but-unimplemented actions classified as expected 404s; no 501 stubs left.
+    accept:
+      - route-coverage.json shows 100% of route contracts exercised and passing
+
+  - id: Q03
+    title: State differential and Rails-on-C#-data
+    lane: Q
+    milestone: M1
+    size: M
+    deps: [Q01, D03]
+    owns: [parity/state/]
+    refs: [reference-rust/reference-tools/db/differential.sh, reference-rust/reference-tools/storage/dump_tables.rb]
+    deliver: Normalized DB and storage-tree dumps diffed after every mutating scenario; boots the reference on C#-written state and runs its tests against it.
+    accept:
+      - Rails reads, edits, deletes and searches a message the C# app wrote
+
+  - id: Q04
+    title: Screen parity
+    lane: Q
+    milestone: M4
+    size: L
+    deps: [Q02, RT04]
+    owns: [parity/screens/]
+    refs: [reference-rust/parity/SCREENS.md, reference-rust/parity/capture]
+    deliver: Rust port's Playwright inventory against the C# candidate - lean gate (Chromium desktop and phone, light and dark, HTML + live DOM + a11y tree + subresources + cable frames) and a Firefox/WebKit smoke set.
+    accept:
+      - Lean gate passes with an empty allowlist, or every remaining entry is listed in README known differences
+
+  - id: Q05
+    title: Cable replay
+    lane: Q
+    milestone: M4
+    size: M
+    deps: [RT04, Q01]
+    owns: [parity/cable/]
+    refs: [reference-rust/parity/capture/network.ts]
+    deliver: Raw WebSocket clients diff frame sequences per channel, including revocation and lag disconnect.
+    accept:
+      - Every channel sequence equals the reference
+
+  - id: Q06
+    title: Cross-server continuity
+    lane: Q
+    milestone: M4
+    size: S
+    deps: [Q01, A02]
+    owns: [parity/continuity/]
+    refs: [plans/csharp-port.md#compatibility-contracts]
+    deliver: Sign in on Rails and continue on C#; render forms on one, submit to the other; transfer links across servers.
+    accept:
+      - All continuity scenarios pass in both directions
+
+  - id: Q07
+    title: Ported system tests as Playwright workflows
+    lane: Q
+    milestone: M4
+    size: M
+    deps: [Q02, RT04]
+    owns: [tests/workflows/]
+    refs: [reference/test/system]
+    deliver: The reference Capybara system tests rewritten as Playwright workflows run against both servers.
+    accept:
+      - All workflows pass against both reference and candidate
+
+  - id: Q08
+    title: Security review
+    lane: Q
+    milestone: M4
+    size: M
+    deps: [R04, RT04, I02, I03, I05, C03]
+    owns: [plans/security-review.md]
+    refs: [reference/SECURITY.md]
+    deliver: Review of sanitizer, CSRF, cookies, cable authorization, SSRF guards, bot API auth and upload handling, with fixes landed by the owning lanes.
+    accept:
+      - No open high or critical findings
+
+  # ---------------------------------------------------------------- Vertical slice
+  - id: VS01
+    title: Vertical slice gate
+    lane: VS
+    milestone: M1
+    size: S
+    deps: [A01, M03, M05, RT02, Q03]
+    bench: true
+    owns: [plans/status/VS01.md]
+    refs: [reference-rust/plans/rust-conversion.md]
+    deliver: >
+      End-to-end demonstration - a Rails-issued cookie authenticates on C#, the room renders,
+      a message is posted, the broadcast reaches a second user, and Rails boots on the
+      database C# just wrote and edits, deletes and searches that message.
+    accept:
+      - Recorded demo script passes in CI; decisions (template engine, router, data layer) confirmed or revised with evidence
+
+  # ---------------------------------------------------------------- Benchmarks
+  - id: B01
+    title: Benchmark harness integration
+    lane: B
+    milestone: M1
+    size: M
+    deps: [V02, P01]
+    bench: true
+    owns: [bench/bin/, bench/lib/, bench/README.md, bench/results/harness-*]
+    refs: [reference-rust/bench/run, reference-rust/bench/loadgen, once-campfire-go/bench/application, reference/bench]
+    deliver: >
+      Add a `csharp` app to the Rust benchmark runner (same seed, CPU pinning, alternating
+      sequential runs, response validation, 1/16/64 concurrency, cable and upload suites)
+      and a report script producing the README table format.
+    accept:
+      - bench/run --apps reference,csharp completes on /up-only and records raw JSON under bench/results/
+
+  - id: B02
+    title: First internal numbers for the five workloads
+    lane: B
+    milestone: M2
+    size: S
+    deps: [B01, VS01, M01, M04, M08, Q01]
+    bench: true
+    owns: [bench/results/first-*]
+    refs: [README.md benchmark table]
+    deliver: Room, messages, sidebar, search and post measured against Rails on the same box, with replay parity proven for exactly those responses first.
+    accept:
+      - Every measured response is HTTP 200 and replay-equal to the reference; results labelled internal
+
+  - id: B03
+    title: Performance round
+    lane: B
+    milestone: M5
+    size: L
+    deps: [B02, Q02]
+    owns: [plans/perf-log.md]
+    refs: [once-campfire-go/bench/results/fragment-cache.md, reference-rust/plans/perf-attribution.md]
+    deliver: >
+      Profile-guided optimization (dotnet-trace, dotnet-counters, allocation profiling) -
+      message fragment cache, pooled UTF-8 writers, prepared statements, fewer DB hops,
+      Server GC/DATAS settings. Every change keeps all parity gates green.
+    accept:
+      - Each optimization lands with before/after numbers and a green replay gate
+
+  - id: B04
+    title: Runtime configuration matrix including Native AOT
+    lane: B
+    milestone: M5
+    size: M
+    deps: [B02, P01]
+    owns: [bench/results/runtime-*]
+    refs: [plans/csharp-port.md#benchmark-protocol]
+    deliver: JIT (Dynamic PGO) vs ReadyToRun vs Native AOT, Server GC vs workstation, measured for throughput, p99, startup and memory.
+    accept:
+      - A documented choice of runtime configuration for the final run, with data
+
+  - id: B05
+    title: Final benchmark on reference-class hardware
+    lane: B
+    milestone: M5
+    size: M
+    deps: [B03, B04, Q04, Q05, Q07, Q08, P02, P03, P04]
+    owns: [bench/results/final-*]
+    refs: [README.md benchmark table]
+    deliver: >
+      Human-run on a 16+ thread machine - 4 hardware threads per app, 16 concurrent clients,
+      at least 3 alternating repetitions, Rails measured on the same box. Raw samples, hashes,
+      toolchains and limitations recorded.
+    accept:
+      - Results include the Rails column measured on the same hardware; reproduction instructions verified by a second run
+
+  # ---------------------------------------------------------------- Launch
+  - id: X01
+    title: README, known differences and implementation record
+    lane: X
+    milestone: M5
+    size: S
+    deps: [B05]
+    owns: [README.md, plans/csharp-conversion.md]
+    refs: [once-campfire-go/README.md]
+    deliver: README with run/validate/benchmark instructions, results table, known differences; implementation record.
+    accept:
+      - Every claim in the README links to a gate result or raw benchmark record
+
+  - id: X02
+    title: Upstream PR and announcement
+    lane: X
+    milestone: M5
+    size: S
+    deps: [X01]
+    owns: [plans/announcement.md]
+    refs: [README.md]
+    deliver: >
+      Human-gated - PR to basecamp/once-campfire adding a C# column (numbers measured with
+      their protocol, ideally re-run by them), and an announcement post draft.
+    accept:
+      - Maintainer-facing PR text and announcement drafted and approved by the human owner

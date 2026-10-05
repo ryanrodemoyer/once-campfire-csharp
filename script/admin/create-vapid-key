@@ -1,7 +1,0 @@
-#!/usr/bin/env ruby
-require File.expand_path("../../config/environment", File.dirname(__FILE__))
-
-vapid_key = WebPush.generate_key
-
-puts "PRIVATE KEY : #{vapid_key.private_key}"
-puts "PUBLIC KEY  : #{vapid_key.public_key}"

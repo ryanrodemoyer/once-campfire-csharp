@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>campfire</AssemblyName>
+    <RootNamespace>Campfire.Server</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Campfire.Web/Campfire.Web.csproj" />
+  </ItemGroup>
+
+</Project>
