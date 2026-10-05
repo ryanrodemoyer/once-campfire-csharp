@@ -297,8 +297,10 @@ One task is one PR, and PRs merge themselves:
 
 ### Orchestrator
 
-A Claude Code routine, "Campfire C# swarm orchestrator", runs every hour at :54 in a fresh cloud
-session. Each run:
+A long-lived cloud session, "swarm: orchestrator", holds the standing procedure. A Claude Code
+routine, "Campfire C# swarm orchestrator (hourly)", wakes it every hour at :01. A routine-fired
+fresh session would start without the repository or the GitHub and session tools; a session
+started with the repository as its source has all three. Each run:
 
 1. **Stops if paused**: when any open issue carries the `pause-swarm` label.
 2. **Reconciles work in flight.** For each issue labelled `in-progress`, it finds the worker
