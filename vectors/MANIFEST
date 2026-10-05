@@ -1,0 +1,26 @@
+# Golden vectors imported by reference-tools/import.sh from basecamp/once-campfire-rust@ccece30e8e160d8c3e05bf395ee55ee35962093b.
+# sha256  path under vectors/  source path under reference-rust/
+268b41e9c3c17ff73d58810f23bebb50dbc4c23095799b93c88d79fa24050874  campfire_routes.json  vectors/campfire_routes.json
+062f7de6a7cdb6cd6858047b2347205cc616cea4ed69b631cf083b5f0a70abe8  campfire_sessions.json  vectors/campfire_sessions.json
+2eea58cd75ef6112d1d468d1904787e04411317dc20a90ece54b58486c314522  campfire_user_agents.json  vectors/campfire_user_agents.json
+4d5eb13617567e6dbd1974d880709d2a0d898cf4abc9ee66a6b432fb66a2c809  rails_compat.json  vectors/rails_compat.json
+82242a6dd069a65bb2e8e08cac58c5ea1913fa8d97247fed620517660032d88c  ruby_core.json  vectors/ruby_core.json
+9fcd5f3e43d7d97cc39588239e44d319fffe95739d0aad55cc95bff2d37befa1  storage.json  vectors/storage.json
+07517843aa8c2cf63becf47d7927b60f31ea5195fb7466d129a2375e89ee1800  rqrcode.json  crates/campfire/src/controllers/qr_code/testdata/rqrcode.json
+648b3ff916436a9a63e31d918e8e6a73b23d27613e086df51cd0f00d69d54846  richtext/inputs.yml  crates/richtext/tests/corpus/inputs.yml
+00f9a13ce4b0a817df2ec41a4af17aa5a0aa0ac284a7656980517273b3f290d1  richtext/expected.json  crates/richtext/tests/corpus/expected.json
+3c720323b002c77f700d0f07f31b25c3097396cfcd8cd109d44b96ef7e7bfdec  opengraph/cases.json  crates/campfire/src/integrations/testdata/opengraph_cases.json
+962c85fe8ddc2eb49a5565cb88226345dc6b27729779cec4ad08f5ddca6db010  opengraph/expected.json  crates/campfire/src/integrations/testdata/opengraph_expected.json
+536205ddf68d394e7a6e774cb40baaa4b2fd1ac7dc9ab8f5edd2c500507dbb5e  webhook/cases.json  crates/campfire/src/integrations/testdata/webhook_cases.json
+d33de6da3734f0b46e6345a63a431611cf511fad4e4be9ef781bb94b0791ee04  webhook/expected.json  crates/campfire/src/integrations/testdata/webhook_expected.json
+e1229db9bf54715acfed155e4513ace66b3e961e74190d7ca3e04d79fffde87b  storage/alpha-centuri-poster-from-key.webp  vectors/storage/alpha-centuri-poster-from-key.webp
+e1229db9bf54715acfed155e4513ace66b3e961e74190d7ca3e04d79fffde87b  storage/alpha-centuri-poster.webp  vectors/storage/alpha-centuri-poster.webp
+eae9cdc9dae94aa8042a3bef1ff142818e0d0883016bd599555cc13deea8eff4  storage/alpha-centuri-preview-webp.webp  vectors/storage/alpha-centuri-preview-webp.webp
+57f272b82b06593ab72d04dc1c1108558c9981f271bf3574016c3bb55751d6e2  storage/alpha-centuri-preview_image.jpg  vectors/storage/alpha-centuri-preview_image.jpg
+f3170eb79d6a06fe6bccd8dbf1aed7e6003ec9c4d283933eff800e7808d72603  storage/black_hole-logo-large.png  vectors/storage/black_hole-logo-large.png
+cc9cf32cd452d0986689a660f4926278f84d6ca5025b104758f2bfbb12413572  storage/black_hole-logo-small.png  vectors/storage/black_hole-logo-small.png
+b83abe479559cd6ea61e5abc721de0c178be118a02580f4551ac99c3a2287527  storage/black_hole-thumb.jpg  vectors/storage/black_hole-thumb.jpg
+0a46b9801e48695ec9a95aa6636e354bebf6d6db189ec43cc7804d6395921eae  storage/earth-avatar.webp  vectors/storage/earth-avatar.webp
+36439f1e5a8bd210f9162f9933e8ebeef6fe00658e5f7596dfa37ed2708265d0  storage/earth-thumb.png  vectors/storage/earth-thumb.png
+03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de  storage/moon-avatar.webp  vectors/storage/moon-avatar.webp
+e862029b2398043281a748f77485525f8ae3c3d951db21c0ce806f2488216246  storage/moon-thumb.jpg  vectors/storage/moon-thumb.jpg

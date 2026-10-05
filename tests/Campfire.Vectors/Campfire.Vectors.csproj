@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Loads the golden vectors under vectors/ as typed xUnit theory data. Test projects reference
+       this library; its own tests live in Tests/. -->
+
+  <ItemGroup>
+    <Compile Remove="Tests/**" />
+    <None Remove="Tests/**" />
+    <EmbeddedResource Remove="Tests/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.extensibility.core" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
