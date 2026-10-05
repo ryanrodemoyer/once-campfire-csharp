@@ -1,0 +1,21 @@
+#!/bin/sh
+# Entrypoint for the campfire-reference parity image.
+#
+# FAKETIME   libfaketime spec: "@2026-03-02 16:00:00" starts the clock at that instant and lets it
+#            tick; "2026-03-02 16:00:00" freezes it there. Monotonic clocks stay real.
+# PARITY_REDIS=1  start a throwaway Redis first (for `reference exec`, which doesn't run bin/boot).
+set -e
+
+if [ -n "$FAKETIME" ]; then
+  # In place of jemalloc (the image's LD_PRELOAD), not alongside it: the two deadlock at startup.
+  # The allocator affects memory use, not behavior.
+  export LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1
+  export FAKETIME_DONT_FAKE_MONOTONIC=1
+  export FAKETIME_DONT_RESET=1
+fi
+
+if [ -n "$PARITY_REDIS" ]; then
+  redis-server --daemonize yes --save "" --appendonly no --logfile /dev/null --pidfile /tmp/parity-redis.pid
+fi
+
+exec "$@"

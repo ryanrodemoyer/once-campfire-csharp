@@ -1,0 +1,453 @@
+#!/usr/bin/env bash
+# Run the reference (Rails) app for the parity harness. Ported from the Rust port's
+# reference-rust/parity/bin/reference, with the same interface.
+#
+#   parity/bin/reference build                      build the campfire-reference image (or native app)
+#   parity/bin/reference up   [--seed NAME] [--port N] [--time ISO8601 [--freeze]]
+#   parity/bin/reference down [--port N | --all [--everyone]]
+#   parity/bin/reference logs [--port N] [-f]
+#   parity/bin/reference ps   [--everyone]
+#   parity/bin/reference exec   [OPTIONS] [--] CMD...        run a command in /rails
+#   parity/bin/reference runner [OPTIONS] SCRIPT.rb [ARGS]   bin/rails runner on a repo file
+#   parity/bin/reference path FILE                    the runtime's view of a path inside the repo
+#
+# `up` starts an instance on a fresh copy of parity/.seed/NAME (default: default) listening on
+# 127.0.0.1:N (default 3100). Instances are independent, so several can run side by side on
+# different ports. --time starts the server clock at that instant via libfaketime and lets it tick;
+# with --freeze it stays at that instant.
+# Instances are labelled with their owner, PARITY_OWNER (default: the Claude Code session,
+# CLAUDE_CODE_SESSION_ID, else the user), and `down --all` and `ps` only touch the caller's own;
+# --everyone takes them all. `down --port N` stops that port's instance whoever started it.
+# Containers are limited to PARITY_CPUS (default 2) CPUs and run one Puma worker and one Resque
+# worker.
+#
+# exec/runner OPTIONS:
+#   --port N        run inside the instance already up on port N
+#   --seed NAME     otherwise run in a throwaway instance on a copy of that seed (default: an empty
+#                   storage dir with no database; use --seed first_run for an empty schema)
+#   --storage DIR   use DIR ({db,storage}) as the instance storage in place, and keep it
+#   --time ISO8601 [--freeze]
+# exec/runner get RAILS_LOG_LEVEL=warn (override with -e RAILS_LOG_LEVEL=info), a private Redis,
+# and PARITY_WORK pointing at the repo root. `runner` maps SCRIPT (a path inside the repo) to the
+# runtime's view of it, so `reference runner reference-tools/foo.rb > vectors/foo.json` works
+# in both runtimes.
+#
+# Every instance runs in production mode with the fixed environment in parity/.env.reference:
+# CSRF protection, caching and show_exceptions are all on, as in a real install.
+#
+# Runtimes: PARITY_RUNTIME=docker (the canonical one) or native (the reference checkout run with the
+# host's Ruby, Redis and libfaketime, built into parity/.seed/.native). Default: docker when the
+# Docker daemon is reachable, native otherwise. Native output is NOT canonical: libvips/ffmpeg
+# versions differ from the image, so generated media bytes differ. The native runtime needs Ruby
+# at reference/.ruby-version, found on PATH or through rbenv.
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+PARITY=$ROOT/parity
+SEEDS=${PARITY_SEED_DIR:-$PARITY/.seed}
+INSTANCES=$SEEDS/.instances
+NATIVE=${PARITY_NATIVE_DIR:-$PARITY/.seed/.native}
+IMAGE=${PARITY_IMAGE:-campfire-reference}
+ENV_FILE=$PARITY/.env.reference
+DEFAULT_PORT=3100
+OWNER=${PARITY_OWNER:-${CLAUDE_CODE_SESSION_ID:-$(id -un)}}
+
+die() { echo "reference: $*" >&2; exit 1; }
+log() { echo "reference: $*" >&2; }
+
+runtime() {
+  if [ -n "${PARITY_RUNTIME:-}" ]; then
+    echo "$PARITY_RUNTIME"
+  elif docker info >/dev/null 2>&1; then
+    echo docker
+  else
+    echo native
+  fi
+}
+RUNTIME=$(runtime)
+case "$RUNTIME" in docker|native) ;; *) die "unknown PARITY_RUNTIME=$RUNTIME" ;; esac
+
+# ---------------------------------------------------------------------------------------------
+# Options
+
+SEED="" PORT="" TIME="" FREEZE="" STORAGE="" FOLLOW="" ALL="" EVERYONE="" EXTRA_ENV=()
+
+parse_options() {
+  REST=()
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --seed)    SEED=$2; shift 2 ;;
+      --port)    PORT=$2; shift 2 ;;
+      --time)    TIME=$2; shift 2 ;;
+      --freeze)  FREEZE=1; shift ;;
+      --storage) STORAGE=$2; shift 2 ;;
+      -e)        EXTRA_ENV+=("$2"); shift 2 ;;
+      -f|--follow) FOLLOW=1; shift ;;
+      --all)     ALL=1; shift ;;
+      --everyone) EVERYONE=1; shift ;;
+      --)        shift; REST+=("$@"); break ;;
+      *)         REST+=("$@"); break ;;
+    esac
+  done
+}
+
+# freeze_note: with the clock frozen, Puma's cluster master loop never sees time pass and spins at
+# 100% CPU, so --freeze runs Puma in single mode (WEB_CONCURRENCY=0). Workers are an operational
+# detail; responses are the same.
+
+# libfaketime spec for --time: "@" starts the clock at that instant and lets it tick; without it the
+# clock is frozen there (--freeze).
+faketime_spec() {
+  [ -n "$TIME" ] || return 0
+  local t
+  t=$(date -u -d "$TIME" '+%Y-%m-%d %H:%M:%S') || die "can't parse --time $TIME"
+  if [ -n "$FREEZE" ]; then echo "$t"; else echo "@$t"; fi
+}
+
+# ---------------------------------------------------------------------------------------------
+# Storage: every instance gets its own {db,storage} directory, copied from a built seed.
+
+copy_seed_into() {
+  local seed=$1 dir=$2
+  mkdir -p "$dir/db" "$dir/storage"
+  if [ -n "$seed" ]; then
+    [ -f "$SEEDS/$seed/db/production.sqlite3" ] || die "seed '$seed' isn't built: parity/bin/seed build $seed"
+    cp -a --reflink=auto "$SEEDS/$seed/db/." "$dir/db/"
+    cp -a --reflink=auto "$SEEDS/$seed/storage/." "$dir/storage/"
+  fi
+}
+
+instance_dir() { echo "$INSTANCES/$1"; }
+
+wait_until_up() {
+  local port=$1 check_alive=$2
+  for _ in $(seq 1 240); do
+    if curl -fsS -o /dev/null "http://127.0.0.1:$port/up" 2>/dev/null; then
+      return 0
+    fi
+    $check_alive "$port" || { logs_tail "$port"; die "instance on port $port exited during boot"; }
+    sleep 0.25
+  done
+  logs_tail "$port"
+  die "instance on port $port didn't come up within 60s"
+}
+
+# ---------------------------------------------------------------------------------------------
+# Docker runtime
+
+docker_name() { echo "campfire-reference-$1"; }
+
+docker_build() {
+  log "building campfire-reference:app from reference/Dockerfile"
+  docker build -t campfire-reference:app -f "$ROOT/reference/Dockerfile" \
+    --build-arg APP_VERSION=parity --build-arg GIT_REVISION="$(git -C "$ROOT/reference" rev-parse HEAD)" \
+    "$ROOT/reference"
+  log "building $IMAGE from parity/docker/Dockerfile"
+  docker build -t "$IMAGE" -f "$PARITY/docker/Dockerfile" \
+    --build-context fixtures="$ROOT/reference/test/fixtures" \
+    "$PARITY/docker"
+}
+
+docker_env_args() {
+  local spec; spec=$(faketime_spec)
+  printf '%s\n' --env-file "$ENV_FILE"
+  if [ -n "$spec" ]; then printf '%s\n' -e "FAKETIME=$spec"; fi
+  if [ -n "$FREEZE" ]; then printf '%s\n' -e WEB_CONCURRENCY=0; fi # see freeze_note
+  local e; for e in "${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}"; do printf '%s\n' -e "$e"; done
+}
+
+docker_alive() { [ "$(docker inspect -f '{{.State.Running}}' "$(docker_name "$1")" 2>/dev/null)" = "true" ]; }
+
+docker_up() {
+  local port=$1 seed=$2 dir; dir=$(instance_dir "$port")
+  docker rm -f "$(docker_name "$port")" >/dev/null 2>&1 || true
+  rm -rf "$dir"; copy_seed_into "$seed" "$dir"
+  local args=(); mapfile -t args < <(docker_env_args)
+  docker run -d --name "$(docker_name "$port")" \
+    --label parity.seed="$seed" --label parity.port="$port" --label parity.owner="$OWNER" \
+    --cpus "${PARITY_CPUS:-2}" \
+    --user "$(id -u):$(id -g)" \
+    -p "127.0.0.1:$port:80" \
+    "${args[@]}" \
+    -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" \
+    -v "$ROOT:/work:ro" \
+    "$IMAGE" >/dev/null
+  wait_until_up "$port" docker_alive
+}
+
+docker_down() {
+  local port=$1
+  docker rm -f "$(docker_name "$port")" >/dev/null 2>&1 || true
+  rm -rf "$(instance_dir "$port")"
+}
+
+# The caller's instances (every instance with --everyone).
+docker_ports() {
+  local owner=(); [ -n "$EVERYONE" ] || owner=(--filter "label=parity.owner=$OWNER")
+  docker ps -a --filter label=parity.port "${owner[@]}" --format '{{.Label "parity.port"}}'
+}
+
+docker_logs() {
+  if [ -n "$FOLLOW" ]; then docker logs -f "$(docker_name "$1")"; else docker logs "$(docker_name "$1")"; fi
+}
+
+docker_exec() {
+  local tty=(); if [ -t 0 ] && [ -t 1 ]; then tty=(-t); fi
+  if [ -n "$PORT" ]; then
+    local e envs=(-e RAILS_LOG_LEVEL=warn -e PARITY_WORK=/work)
+    for e in "${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}"; do envs+=(-e "$e"); done
+    docker exec -i "${tty[@]+"${tty[@]}"}" "${envs[@]}" "$(docker_name "$PORT")" "$@"
+    return
+  fi
+
+  local dir keep=""
+  if [ -n "$STORAGE" ]; then dir=$(realpath -m "$STORAGE"); keep=1; mkdir -p "$dir/db" "$dir/storage"
+  else dir=$(instance_dir "exec-$$-$RANDOM"); copy_seed_into "$SEED" "$dir"; fi
+
+  local args=(); mapfile -t args < <(docker_env_args)
+  local status=0
+  docker run --rm -i "${tty[@]+"${tty[@]}"}" \
+    --cpus "${PARITY_CPUS:-2}" \
+    --user "$(id -u):$(id -g)" \
+    -e RAILS_LOG_LEVEL=warn "${args[@]}" -e PARITY_REDIS=1 -e PARITY_WORK=/work \
+    -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" \
+    -v "$ROOT:/work" \
+    "$IMAGE" "$@" || status=$?
+  [ -n "$keep" ] || rm -rf "$dir"
+  return $status
+}
+
+# ---------------------------------------------------------------------------------------------
+# Native runtime: the reference checkout copied to $NATIVE/app, gems in $NATIVE/bundle, and
+# libfaketime (and Redis, unless the host has one) built from source into $NATIVE/{bin,lib}. Each instance is a hardlinked
+# copy of the app (so Rails.root, and therefore storage/, is per instance).
+
+REDIS_VERSION=7.2.7
+FAKETIME_VERSION=0.9.10
+
+# The bin directory of a Ruby matching reference/.ruby-version: rbenv's if it has that version,
+# else whatever ruby is on PATH.
+native_ruby_bin() {
+  local want; want=$(cat "$ROOT/reference/.ruby-version")
+  if command -v rbenv >/dev/null && rbenv prefix "$want" >/dev/null 2>&1; then
+    echo "$(rbenv prefix "$want")/bin"
+  else
+    dirname "$(command -v ruby)"
+  fi
+}
+
+native_bundle_bin() {
+  if command -v bundle >/dev/null; then dirname "$(command -v bundle)"; else echo "$(ruby -e 'print Gem.user_dir')/bin"; fi
+}
+
+native_env() {
+  set -a; # shellcheck disable=SC1090
+  . "$ENV_FILE"; set +a
+  export BUNDLE_PATH=$NATIVE/bundle BUNDLE_DEPLOYMENT=1 BUNDLE_WITHOUT=development
+  PATH="$(native_ruby_bin):$PATH"
+  export PATH="$NATIVE/bin:$(native_bundle_bin):$PATH"
+  export TZ=UTC PARITY_WORK=$ROOT
+  unset BUNDLE_GEMFILE
+  local spec; spec=$(faketime_spec)
+  if [ -n "$FREEZE" ]; then export WEB_CONCURRENCY=0; fi # see freeze_note
+  if [ -n "$spec" ]; then
+    export FAKETIME="$spec" FAKETIME_DONT_FAKE_MONOTONIC=1 FAKETIME_DONT_RESET=1
+    export PARITY_LD_PRELOAD=$NATIVE/lib/libfaketime.so.1
+  else
+    export PARITY_LD_PRELOAD=""
+  fi
+  # exec/runner default to quiet logs: production logs to stdout, which scripts use for output.
+  if [ "${1:-}" = exec ]; then export RAILS_LOG_LEVEL=warn; fi
+  local e; for e in "${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}"; do export "${e?}"; done
+}
+
+# A source tree at a tag: a git clone, since some networks allow git but not GitHub's tarballs.
+fetch_tag() {
+  local repo=$1 tag=$2 dir=$3
+  [ -d "$dir" ] || git -c advice.detachedHead=false clone -q --depth 1 --branch "$tag" "$repo" "$dir"
+}
+
+native_build() {
+  local want; want=$(cat "$ROOT/reference/.ruby-version")
+  PATH="$(native_ruby_bin):$PATH" ruby -e "exit(RUBY_VERSION == '$want')" || log "warning: host Ruby $(ruby -e 'print RUBY_VERSION') != reference $want"
+  mkdir -p "$NATIVE"/{bin,lib,src}
+
+  log "syncing reference/ into $NATIVE/app"
+  rsync -a --delete --exclude=/.git --exclude='/storage/*' --exclude='/tmp/*' --exclude='/log/*' \
+    --exclude=/.bundle --exclude=/public/assets "$ROOT/reference/" "$NATIVE/app/"
+
+  log "bundle install"
+  ( cd "$NATIVE/app" && native_env && bundle install -j8 --quiet )
+
+  log "assets:precompile"
+  ( cd "$NATIVE/app" && native_env && SECRET_KEY_BASE_DUMMY=1 bin/rails assets:precompile >/dev/null )
+
+  # Redis' version doesn't reach the app's responses, so the host's will do.
+  if [ ! -x "$NATIVE/bin/redis-server" ] && ! command -v redis-server >/dev/null; then
+    log "building redis $REDIS_VERSION"
+    ( cd "$NATIVE/src" && fetch_tag https://github.com/redis/redis.git "$REDIS_VERSION" "redis-$REDIS_VERSION" &&
+      make -C "redis-$REDIS_VERSION" -j8 BUILD_TLS=no MALLOC=libc >/dev/null && cp "redis-$REDIS_VERSION/src/redis-server" "$NATIVE/bin/" )
+  fi
+
+  if [ ! -f "$NATIVE/lib/libfaketime.so.1" ]; then
+    log "building libfaketime $FAKETIME_VERSION"
+    # Without FAKE_PTHREAD: see parity/docker/Dockerfile
+    ( cd "$NATIVE/src" && fetch_tag https://github.com/wolfcw/libfaketime.git "v$FAKETIME_VERSION" "libfaketime-$FAKETIME_VERSION" &&
+      sed -i 's/-Werror //' "libfaketime-$FAKETIME_VERSION/src/Makefile" &&
+      make -C "libfaketime-$FAKETIME_VERSION/src" FAKETIME_COMPILE_CFLAGS="-UFAKE_PTHREAD" libfaketime.so.1 >/dev/null &&
+      cp "libfaketime-$FAKETIME_VERSION/src/libfaketime.so.1" "$NATIVE/lib/" )
+  fi
+}
+
+# A hardlinked copy of the app with its own tmp/, log/ and storage/.
+native_instance_app() {
+  local dir=$1
+  [ -d "$NATIVE/app/public/assets" ] || die "native app isn't built: PARITY_RUNTIME=native parity/bin/reference build"
+  mkdir -p "$dir"
+  rsync -a --link-dest="$NATIVE/app/" --exclude='/storage/*' --exclude='/tmp/*' --exclude='/log/*' \
+    "$NATIVE/app/" "$dir/app/"
+  mkdir -p "$dir/app/tmp/pids" "$dir/app/log"
+  # storage/{db,files} are the instance's {db,storage}
+  rm -rf "$dir/app/storage"; mkdir -p "$dir/app/storage"
+  ln -s ../../db "$dir/app/storage/db"
+  ln -s ../../storage "$dir/app/storage/files"
+}
+
+native_pid() { cat "$(instance_dir "$1")/pid" 2>/dev/null || true; }
+native_alive() { local pid; pid=$(native_pid "$1"); [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; }
+
+native_up() {
+  local port=$1 seed=$2 dir; dir=$(instance_dir "$port")
+  native_down "$port"
+  copy_seed_into "$seed" "$dir"
+  native_instance_app "$dir"
+
+  local redis_port=$((port + 20000))
+  # Replace (not edit: it's a hardlink) the Procfile so each instance has its own Redis port.
+  rm -f "$dir/app/Procfile"
+  cat > "$dir/app/Procfile" <<EOF
+web: bundle exec thrust bin/start-app
+redis: redis-server --port $redis_port --bind 127.0.0.1 --save "" --appendonly no
+workers: FORK_PER_JOB=false INTERVAL=0.1 bundle exec resque-pool
+EOF
+  rm -f "$dir/app/config/resque-pool.yml"
+  cp "$PARITY/docker/resque-pool.yml" "$dir/app/config/resque-pool.yml"
+  cp "$PARITY/docker/parity_action_cable.rb" "$dir/app/config/initializers/parity_action_cable.rb"
+  echo "$seed" > "$dir/seed"
+  echo "$OWNER" > "$dir/owner"
+  (
+    cd "$dir/app"
+    native_env
+    export HTTP_PORT=$port TARGET_PORT=$((port + 10000)) REDIS_URL=redis://127.0.0.1:$redis_port
+    export LD_PRELOAD=$PARITY_LD_PRELOAD
+    setsid bin/boot >> "$dir/boot.log" 2>&1 < /dev/null &
+    echo $! > "$dir/pid"
+  )
+  wait_until_up "$port" native_alive
+}
+
+native_down() {
+  local port=$1 pid dir; dir=$(instance_dir "$port"); pid=$(native_pid "$port")
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    kill -TERM -- "-$pid" 2>/dev/null || true
+    for _ in $(seq 1 40); do kill -0 "$pid" 2>/dev/null || break; sleep 0.25; done
+    kill -KILL -- "-$pid" 2>/dev/null || true
+  fi
+  rm -rf "$dir"
+}
+
+native_ports() {
+  local d; for d in "$INSTANCES"/*/; do
+    [ -f "$d/pid" ] || continue
+    [ -n "$EVERYONE" ] || [ "$(cat "$d/owner" 2>/dev/null)" = "$OWNER" ] || continue
+    basename "$d"
+  done 2>/dev/null || true
+}
+
+native_logs() {
+  local log; log="$(instance_dir "$1")/boot.log"
+  if [ -n "$FOLLOW" ]; then tail -n 200 -f "$log"; else cat "$log"; fi
+}
+
+native_free_port() { ruby -rsocket -e 'puts Addrinfo.tcp("127.0.0.1", 0).bind { |s| s.local_address.ip_port }'; }
+
+native_exec() {
+  local dir status=0
+  if [ -n "$PORT" ]; then
+    dir=$(instance_dir "$PORT")
+    native_alive "$PORT" || die "no instance up on port $PORT"
+    ( cd "$dir/app" && native_env exec && export REDIS_URL=redis://127.0.0.1:$((PORT + 20000)) &&
+      LD_PRELOAD=$PARITY_LD_PRELOAD "$@" ) || status=$?
+    return $status
+  fi
+
+  if [ -n "$STORAGE" ]; then
+    dir=$(instance_dir "exec-$$-$RANDOM")
+    local storage; storage=$(realpath -m "$STORAGE"); mkdir -p "$storage/db" "$storage/storage"
+    mkdir -p "$dir"; ln -s "$storage/db" "$dir/db"; ln -s "$storage/storage" "$dir/storage"
+  else
+    dir=$(instance_dir "exec-$$-$RANDOM"); copy_seed_into "$SEED" "$dir"
+  fi
+  native_instance_app "$dir"
+
+  local redis_port; redis_port=$(native_free_port)
+  PATH="$NATIVE/bin:$PATH" redis-server --port "$redis_port" --bind 127.0.0.1 --save "" --appendonly no --logfile /dev/null &
+  local redis_pid=$!
+  ( cd "$dir/app" && native_env exec && export REDIS_URL=redis://127.0.0.1:$redis_port &&
+    LD_PRELOAD=$PARITY_LD_PRELOAD "$@" ) || status=$?
+  kill "$redis_pid" 2>/dev/null || true; wait "$redis_pid" 2>/dev/null || true
+  rm -rf "$dir"
+  return $status
+}
+
+# ---------------------------------------------------------------------------------------------
+
+logs_tail() { FOLLOW="" "${RUNTIME}_logs" "$1" 2>&1 | tail -n 40 >&2 || true; }
+
+# Path inside the repo -> the runtime's view of it.
+work_path() {
+  local abs; abs=$(realpath -m "$1")
+  case "$abs" in "$ROOT"/*) ;; *) die "$1 is outside the repo" ;; esac
+  if [ "$RUNTIME" = docker ]; then echo "/work/${abs#"$ROOT"/}"; else echo "$abs"; fi
+}
+
+cmd=${1:-help}; shift || true
+parse_options "$@"
+set -- "${REST[@]+"${REST[@]}"}"
+
+case "$cmd" in
+  build)
+    "${RUNTIME}_build" ;;
+  up)
+    port=${PORT:-$DEFAULT_PORT} seed=${SEED:-default}
+    "${RUNTIME}_up" "$port" "$seed"
+    echo "http://127.0.0.1:$port  (seed: $seed, runtime: $RUNTIME${TIME:+, time: $(faketime_spec)})" ;;
+  down)
+    if [ -n "$ALL" ]; then
+      for p in $("${RUNTIME}_ports"); do "${RUNTIME}_down" "$p"; done
+    else
+      "${RUNTIME}_down" "${PORT:-$DEFAULT_PORT}"
+    fi ;;
+  logs)
+    "${RUNTIME}_logs" "${PORT:-$DEFAULT_PORT}" ;;
+  ps)
+    for p in $("${RUNTIME}_ports"); do
+      if "${RUNTIME}_alive" "$p"; then echo "$p up"; else echo "$p down"; fi
+    done ;;
+  exec)
+    [ $# -gt 0 ] || die "exec needs a command"
+    "${RUNTIME}_exec" "$@" ;;
+  runner)
+    [ $# -gt 0 ] || die "runner needs a script"
+    script=$(work_path "$1"); shift
+    "${RUNTIME}_exec" bin/rails runner "$script" "$@" ;;
+  path)
+    [ $# -gt 0 ] || die "path needs a file"
+    work_path "$1" ;;
+  runtime)
+    echo "$RUNTIME" ;;
+  help|-h|--help)
+    sed -n '2,/^set -euo/p' "$0" | sed '$d; s/^# \{0,1\}//' ;;
+  *)
+    die "unknown command $cmd (try help)" ;;
+esac

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Redis without libfaketime: Debian's redis-server links jemalloc, which recurses into libfaketime's
+# clock_gettime at startup and never accepts connections. Redis' own clock doesn't reach the app.
+unset LD_PRELOAD FAKETIME
+exec /usr/bin/redis-server "$@"

@@ -1,0 +1,3 @@
+# Parity instances run one Resque worker. The reference config sizes the pool at half the CPU count,
+# which multiplied across several instances on one machine starves everything else.
+default: 1

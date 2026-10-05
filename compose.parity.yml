@@ -1,0 +1,86 @@
+# The reference (Rails) and a candidate side by side, each on its own fresh copy of the same parity
+# seed, with the same environment, CPU cap and storage layout.
+#
+#   parity/bin/reference build                       # the campfire-reference image (Docker)
+#   CANDIDATE_IMAGE=campfire-csharp:app docker compose -f compose.parity.yml up -d
+#   curl http://127.0.0.1:3100/up http://127.0.0.1:3200/up
+#   docker compose -f compose.parity.yml down -v
+#
+# The candidate slot takes any image that keeps the reference's contract:
+#   * serves the app on port 3000 (the reference's Puma port, behind Thruster on 80)
+#   * reads the environment in parity/.env.reference (RAILS_ENV=production, SECRET_KEY_BASE,
+#     VAPID_*, DISABLE_SSL, ...) and FAKETIME, a libfaketime spec it may ignore
+#   * keeps its database in /rails/storage/db and its files in /rails/storage/files, as uid 1000
+#
+# Settings (environment or .env):
+#   PARITY_SEED      seed under parity/.seed/ to copy for both apps (default: default)
+#   REFERENCE_PORT   host port for the reference (default 3100, as parity/bin/reference up)
+#   CANDIDATE_PORT   host port for the candidate (default 3200)
+#   REFERENCE_IMAGE  default campfire-reference
+#   CANDIDATE_IMAGE  required
+#   PARITY_CPUS      CPU cap per app (default 2)
+#   PARITY_FAKETIME  e.g. "@2026-03-02 16:00:00" (see parity/docker/entrypoint)
+#
+# Every `up` recopies the seed over both apps' volumes before they start, so a run never sees state
+# left behind by the previous one.
+name: campfire-parity
+
+x-app: &app
+  env_file: parity/.env.reference
+  environment:
+    FAKETIME: ${PARITY_FAKETIME:-}
+  cpus: ${PARITY_CPUS:-2}
+  depends_on:
+    seed:
+      condition: service_completed_successfully
+
+services:
+  seed:
+    image: ${REFERENCE_IMAGE:-campfire-reference}
+    user: "0:0"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        test -f /seed/db/production.sqlite3 || { echo "seed isn't built: parity/bin/seed build $${PARITY_SEED}" >&2; exit 1; }
+        for app in reference candidate; do
+          rm -rf /$$app/db/* /$$app/files/*
+          cp -a /seed/db/. /$$app/db/
+          cp -a /seed/storage/. /$$app/files/
+          chown -R 1000:1000 /$$app/db /$$app/files
+        done
+    environment:
+      PARITY_SEED: ${PARITY_SEED:-default}
+    volumes:
+      - ./parity/.seed/${PARITY_SEED:-default}:/seed:ro
+      - reference-db:/reference/db
+      - reference-files:/reference/files
+      - candidate-db:/candidate/db
+      - candidate-files:/candidate/files
+
+  reference:
+    <<: *app
+    image: ${REFERENCE_IMAGE:-campfire-reference}
+    ports:
+      - "127.0.0.1:${REFERENCE_PORT:-3100}:3000"
+    volumes:
+      - reference-db:/rails/storage/db
+      - reference-files:/rails/storage/files
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:3000/up"]
+      interval: 1s
+      retries: 120
+
+  candidate:
+    <<: *app
+    image: ${CANDIDATE_IMAGE:?set CANDIDATE_IMAGE to the image under test}
+    ports:
+      - "127.0.0.1:${CANDIDATE_PORT:-3200}:3000"
+    volumes:
+      - candidate-db:/rails/storage/db
+      - candidate-files:/rails/storage/files
+
+volumes:
+  reference-db:
+  reference-files:
+  candidate-db:
+  candidate-files:
