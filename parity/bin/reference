@@ -176,9 +176,11 @@ docker_up() {
 }
 
 docker_down() {
-  local port=$1
+  local port=$1 dir; dir=$(instance_dir "$port")
   docker rm -f "$(docker_name "$port")" >/dev/null 2>&1 || true
-  rm -rf "$(instance_dir "$port")"
+  # A pid file means a native instance owns the directory: leave it for PARITY_RUNTIME=native down.
+  [ -f "$dir/pid" ] && die "port $port is a native instance: PARITY_RUNTIME=native $0 down --port $port"
+  rm -rf "$dir"
 }
 
 # The caller's instances (every instance with --everyone).

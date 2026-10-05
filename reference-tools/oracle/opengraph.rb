@@ -9,7 +9,7 @@ require "zlib"
 require "base64"
 
 dir = File.expand_path("../../vectors/opengraph", __dir__)
-out = ENV.fetch("OUT", dir)
+output_dir = ENV.fetch("OUT", dir)
 spec = JSON.parse(File.read(File.join(dir, "cases.json")))
 
 $lookups = []
@@ -95,4 +95,4 @@ results = spec["cases"].map do |c|
   { name: c["name"], url: c["url"], response: response, lookups: $lookups, requests: $requests }
 end
 
-File.write(File.join(out, "expected.json"), JSON.pretty_generate(results) + "\n")
+File.write(File.join(output_dir, "expected.json"), JSON.pretty_generate(results) + "\n")

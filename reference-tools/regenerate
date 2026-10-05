@@ -6,8 +6,9 @@
 #
 # Families: rails_compat ruby_core routes sessions user_agents rqrcode storage richtext opengraph
 # webhook (default: all). Output goes to tmp/vectors/ (OUT=<dir inside the repo> to change it); the
-# committed vectors are never touched. Prints one line per vector file (same, DIFFERS or missing)
-# and exits non-zero if any differs.
+# committed vectors are never touched. Prints one line per vector file: same, varies (equal but for
+# values that change on every run), media (native libvips/ffmpeg output), DIFFERS or missing;
+# see compare.rb. Exits non-zero if any differs.
 #
 # `sessions` needs the default seed (parity/bin/seed build default) and is skipped without it.
 # The media bytes in storage/ are only canonical from the Docker image (see parity/bin/reference).
@@ -25,6 +26,14 @@ at() { "$REFERENCE" path "$1"; }
 # Runs a reference-tools script under `bin/rails runner`, quietly.
 runner() { "$REFERENCE" runner -e RAILS_LOG_LEVEL=fatal "$@"; }
 
+# Same, on a fresh database loaded from db/schema.rb: with_schema [-e K=V ...] SCRIPT
+with_schema() {
+  local env=()
+  while [ "$1" = -e ]; do env+=(-e "$2"); shift 2; done
+  "$REFERENCE" exec -e RAILS_LOG_LEVEL=fatal "${env[@]+"${env[@]}"}" -- \
+    bash -c "bin/rails db:schema:load >/dev/null && bin/rails runner $(at "$1")"
+}
+
 generate() {
   case "$1" in
     rails_compat) VECTORS_DIR="$OUT" "$TOOLS/run.sh" "$TOOLS/rails_compat_vectors.rb" >/dev/null ;;
@@ -32,7 +41,7 @@ generate() {
     routes)       runner "$TOOLS/campfire/routes.rb" > "$OUT/campfire_routes.json" ;;
     user_agents)  runner "$TOOLS/campfire/user_agents.rb" > "$OUT/campfire_user_agents.json" ;;
     sessions)
-      if [ ! -f "$ROOT/parity/.seed/default/db/production.sqlite3" ]; then
+      if [ ! -f "${PARITY_SEED_DIR:-$ROOT/parity/.seed}/default/db/production.sqlite3" ]; then
         log "skipping sessions: no default seed (parity/bin/seed build default)"; return 0
       fi
       runner --seed default "$TOOLS/campfire/session_cookies.rb" > "$OUT/campfire_sessions.json" ;;
@@ -44,31 +53,20 @@ generate() {
         bash -c "bin/rails db:prepare >/dev/null && bin/rails runner $(at "$TOOLS/storage/generate.rb")" >/dev/null ;;
     richtext)
       mkdir -p "$OUT/richtext"
-      "$REFERENCE" exec -e RAILS_LOG_LEVEL=error \
-        -e "RICHTEXT_INPUT=$(at "$ROOT/vectors/richtext/inputs.yml")" -e "RICHTEXT_OUTPUT=$(at "$OUT/richtext/expected.json")" -- \
-        bash -c "bin/rails db:schema:load >/dev/null && bin/rails runner $(at "$TOOLS/richtext/generate.rb")" >/dev/null ;;
+      # The committed corpus has the default 400 fuzz cases and no mutation cases.
+      with_schema -e RICHTEXT_MUTATION_CASES=0 -e "RICHTEXT_INPUT=$(at "$ROOT/vectors/richtext/inputs.yml")" \
+        -e "RICHTEXT_OUTPUT=$(at "$OUT/richtext/expected.json")" "$TOOLS/richtext/generate.rb" >/dev/null ;;
     opengraph|webhook)
       mkdir -p "$OUT/$1"
-      runner -e "OUT=$(at "$OUT/$1")" "$TOOLS/oracle/$1.rb" >/dev/null ;;
+      with_schema -e "OUT=$(at "$OUT/$1")" "$TOOLS/oracle/$1.rb" >/dev/null ;;
     *) log "unknown family $1 (one of: ${ALL[*]})"; exit 2 ;;
   esac
 }
 
-# Compares what was generated with the committed vectors, file by file (MANIFEST lists them all).
-# Inputs to the generators (inputs.yml, cases.json) aren't regenerated.
+# Compares what was generated with the committed vectors, file by file (see compare.rb). Runs in the
+# reference's runtime, so the host needs no Ruby.
 compare() {
-  local differs=0 path
-  while read -r _ path _; do
-    case "$path" in */inputs.yml|*/cases.json) continue ;; esac
-    if [ ! -e "$OUT/$path" ]; then
-      echo "missing  $path"
-    elif cmp -s "$OUT/$path" "$ROOT/vectors/$path"; then
-      echo "same     $path"
-    else
-      echo "DIFFERS  $path"; differs=1
-    fi
-  done < <(grep -v '^#' "$ROOT/vectors/MANIFEST")
-  return $differs
+  "$REFERENCE" exec -- ruby "$(at "$TOOLS/compare.rb")" "$(at "$ROOT/vectors")" "$(at "$OUT")" "$("$REFERENCE" runtime)"
 }
 
 [ $# -gt 0 ] || set -- "${ALL[@]}"

@@ -9,7 +9,7 @@ require "zlib"
 require "base64"
 
 dir = File.expand_path("../../vectors/webhook", __dir__)
-out = ENV.fetch("OUT", dir)
+output_dir = ENV.fetch("OUT", dir)
 cases = JSON.parse(File.read(File.join(dir, "cases.json")))
 
 $requests = []
@@ -65,4 +65,4 @@ results = cases.map do |c|
   outcome.merge("name" => c["name"], "requests" => $requests.map { |r| r.except(:body).merge(body: r[:body]) })
 end
 
-File.write(File.join(out, "expected.json"), JSON.pretty_generate(results) + "\n")
+File.write(File.join(output_dir, "expected.json"), JSON.pretty_generate(results) + "\n")

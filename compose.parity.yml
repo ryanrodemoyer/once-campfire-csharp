@@ -13,7 +13,8 @@
 #   * keeps its database in /rails/storage/db and its files in /rails/storage/files, as uid 1000
 #
 # Settings (environment or .env):
-#   PARITY_SEED      seed under parity/.seed/ to copy for both apps (default: default)
+#   PARITY_SEED      seed to copy for both apps (default: default)
+#   PARITY_SEED_DIR  where seeds live (default: parity/.seed, as for parity/bin/reference)
 #   REFERENCE_PORT   host port for the reference (default 3100, as parity/bin/reference up)
 #   CANDIDATE_PORT   host port for the candidate (default 3200)
 #   REFERENCE_IMAGE  default campfire-reference
@@ -51,7 +52,7 @@ services:
     environment:
       PARITY_SEED: ${PARITY_SEED:-default}
     volumes:
-      - ./parity/.seed/${PARITY_SEED:-default}:/seed:ro
+      - ${PARITY_SEED_DIR:-./parity/.seed}/${PARITY_SEED:-default}:/seed:ro
       - reference-db:/reference/db
       - reference-files:/reference/files
       - candidate-db:/candidate/db
