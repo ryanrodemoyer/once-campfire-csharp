@@ -29,6 +29,8 @@ enum InsertionMode
     AfterAfterFrameset,
 }
 
+// Copyright 2010 Google Inc., 2017-2018 Craig Barnes. Apache License 2.0; see LICENSE in this directory.
+
 /// <summary>
 /// A port of Gumbo's tree construction (gumbo-parser/src/parser.c, nokogiri 1.19.4), building
 /// straight into <see cref="HtmlNode"/>s. Gumbo predates parts of today's WHATWG algorithm (its

@@ -6,6 +6,9 @@ namespace Campfire.RichText.Html.Gumbo;
 // tokenizer Nokogiri::HTML5 uses. It follows the C state by state, quirks included: input is
 // re-read from a mark to emit characters, attribute values take the raw input of a character
 // reference that isn't one, and positions and parse errors are left out.
+//
+// Copyright 2010 Google Inc., 2017-2018 Craig Barnes, 2018 Stephen Checkoway. Apache License 2.0;
+// see LICENSE in this directory.
 
 enum TokenType
 {
