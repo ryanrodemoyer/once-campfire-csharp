@@ -1,5 +1,6 @@
 using System.Text;
 using Campfire.Web.Assets;
+using Microsoft.AspNetCore.Http;
 
 namespace Campfire.Web.Tests.Assets;
 
@@ -121,6 +122,33 @@ public sealed class StaticFilesTests
         {
             directory.Delete(recursive: true);
         }
+    }
+
+    [Fact]
+    public async Task An_http_request_is_answered_with_the_static_response()
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Method = "GET";
+        context.Request.Path = "/robots.txt";
+        context.Request.Headers.Range = "bytes=0-9";
+        context.Response.Body = new MemoryStream();
+
+        Assert.True(await Static.TryServeAsync(context));
+
+        Assert.Equal(206, context.Response.StatusCode);
+        Assert.Equal("bytes 0-9/99", context.Response.Headers.ContentRange.ToString());
+        Assert.Equal(StaticFiles.CacheControl, context.Response.Headers.CacheControl.ToString());
+        Assert.Equal(10, context.Response.Body.Length);
+    }
+
+    [Fact]
+    public async Task An_http_request_for_an_unknown_path_falls_through()
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Method = "GET";
+        context.Request.Path = "/rooms";
+
+        Assert.False(await Static.TryServeAsync(context));
     }
 
     [Theory]
