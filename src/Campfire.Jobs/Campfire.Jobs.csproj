@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../Campfire.RichText/Campfire.RichText.csproj" />
+    <ProjectReference Include="../Campfire.Storage/Campfire.Storage.csproj" />
+  </ItemGroup>
+
+</Project>

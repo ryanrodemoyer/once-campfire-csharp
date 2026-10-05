@@ -1,0 +1,136 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "Campfire.Web/1.0.0": {
+        "dependencies": {
+          "Campfire.Cable": "1.0.0",
+          "Campfire.Jobs": "1.0.0",
+          "Campfire.Templates": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.Web.dll": {}
+        }
+      },
+      "Campfire.Cable/1.0.0": {
+        "dependencies": {
+          "Campfire.RichText": "1.0.0",
+          "Campfire.Storage": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.Cable.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.Data/1.0.0": {
+        "dependencies": {
+          "Campfire.RailsCompat": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.Data.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.Jobs/1.0.0": {
+        "dependencies": {
+          "Campfire.RichText": "1.0.0",
+          "Campfire.Storage": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.Jobs.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.RailsCompat/1.0.0": {
+        "runtime": {
+          "Campfire.RailsCompat.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.RichText/1.0.0": {
+        "dependencies": {
+          "Campfire.Data": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.RichText.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.Storage/1.0.0": {
+        "dependencies": {
+          "Campfire.Data": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.Storage.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.Templates/1.0.0": {
+        "runtime": {
+          "Campfire.Templates.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Campfire.Web/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.Cable/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.Jobs/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.RailsCompat/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.RichText/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.Storage/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.Templates/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

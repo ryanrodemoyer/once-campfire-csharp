@@ -1,0 +1,55 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "Campfire.RichText/1.0.0": {
+        "dependencies": {
+          "Campfire.Data": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.RichText.dll": {}
+        }
+      },
+      "Campfire.Data/1.0.0": {
+        "dependencies": {
+          "Campfire.RailsCompat": "1.0.0"
+        },
+        "runtime": {
+          "Campfire.Data.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Campfire.RailsCompat/1.0.0": {
+        "runtime": {
+          "Campfire.RailsCompat.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Campfire.RichText/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Campfire.RailsCompat/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
