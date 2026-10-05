@@ -1,0 +1,322 @@
+#!/usr/bin/env ruby
+# Query and validate the C# port task graph in plans/tasks.yaml.
+#
+#   plans/bin/plan validate            check ids, deps, owners and acyclicity (exit 1 on error)
+#   plans/bin/plan ready               tasks whose deps are all done, highest priority first
+#   plans/bin/plan show ID             one task with its deps and dependents
+#   plans/bin/plan waves               topological waves (what can run in parallel)
+#   plans/bin/plan critical [ID]       weighted longest path overall, or ending at ID
+#   plans/bin/plan simulate N          list-schedule the graph on N agents; prints makespan
+#   plans/bin/plan dag                 regenerate plans/dag.md (Mermaid + tables)
+#   plans/bin/plan issues              JSON array of GitHub issue payloads, one per task
+#
+# A task is done when plans/status/<ID>.md exists (see plans/status/README.md).
+require "yaml"
+require "json"
+
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
+
+PLANS = File.expand_path("..", __dir__)
+DATA = YAML.load_file(File.join(PLANS, "tasks.yaml"))
+TASKS = DATA.fetch("tasks").to_h { |task| [ task.fetch("id"), task ] }
+LANES = DATA.fetch("lanes")
+MILESTONES = DATA.fetch("milestones")
+WEIGHT = { "S" => 1, "M" => 2, "L" => 4 }          # relative effort, for paths and priorities
+DAYS = { "S" => 0.5, "M" => 1.0, "L" => 2.0 }      # agent-days, for the schedule simulation
+
+def done?(id) = File.exist?(File.join(PLANS, "status", "#{id}.md"))
+def deps(id) = TASKS.fetch(id).fetch("deps")
+def dependents(id) = TASKS.keys.select { |other| deps(other).include?(id) }
+def weight(id) = WEIGHT.fetch(TASKS.fetch(id).fetch("size"))
+
+def validate
+  errors = []
+  ids = DATA.fetch("tasks").map { |task| task["id"] }
+  errors << "duplicate ids: #{ids.tally.select { |_, n| n > 1 }.keys.join(', ')}" if ids.uniq.size != ids.size
+  TASKS.each do |id, task|
+    %w[title lane milestone size deps owns refs deliver accept].each do |field|
+      errors << "#{id}: missing #{field}" unless task.key?(field)
+    end
+    errors << "#{id}: unknown lane #{task['lane']}" unless LANES.key?(task["lane"])
+    errors << "#{id}: unknown milestone #{task['milestone']}" unless MILESTONES.key?(task["milestone"])
+    errors << "#{id}: unknown size #{task['size']}" unless WEIGHT.key?(task["size"])
+    Array(task["deps"]).each { |dep| errors << "#{id}: unknown dep #{dep}" unless TASKS.key?(dep) }
+    Array(task["deps"]).each do |dep|
+      next unless TASKS.key?(dep) && TASKS[dep]["milestone"] > task["milestone"]
+      errors << "#{id} (#{task['milestone']}) depends on #{dep} from a later milestone (#{TASKS[dep]['milestone']})"
+    end
+  end
+  owners = Hash.new { |hash, key| hash[key] = [] }
+  TASKS.each { |id, task| Array(task["owns"]).each { |path| owners[path] << id } }
+  owners.each { |path, ids| errors << "#{path} owned by #{ids.join(', ')}" if ids.size > 1 }
+  begin
+    topological_order
+  rescue => error
+    errors << error.message
+  end
+  errors
+end
+
+def topological_order
+  state = {}
+  order = []
+  visit = lambda do |id, path|
+    raise "cycle: #{(path + [ id ]).join(' -> ')}" if state[id] == :visiting
+    return if state[id] == :done
+    state[id] = :visiting
+    deps(id).each { |dep| visit.(dep, path + [ id ]) }
+    state[id] = :done
+    order << id
+  end
+  TASKS.each_key { |id| visit.(id, []) }
+  order
+end
+
+def levels
+  topological_order.each_with_object({}) do |id, level|
+    level[id] = deps(id).map { |dep| level[dep] + 1 }.max || 0
+  end
+end
+
+# Longest weighted path ending at each task (inclusive), with predecessor links.
+def longest_paths
+  topological_order.each_with_object({}) do |id, best|
+    pred = deps(id).max_by { |dep| best[dep][:length] }
+    best[id] = { length: weight(id) + (pred ? best[pred][:length] : 0), pred: pred }
+  end
+end
+
+# Longest weighted path starting at each task: its scheduling priority.
+def tails
+  topological_order.reverse.each_with_object({}) do |id, tail|
+    tail[id] = weight(id) + (dependents(id).map { |other| tail[other] }.max || 0)
+  end
+end
+
+def critical_path(target = nil)
+  best = longest_paths
+  id = target || best.max_by { |_, value| value[:length] }.first
+  path = []
+  while id
+    path.unshift(id)
+    id = best[id][:pred]
+  end
+  path
+end
+
+def ready
+  priority = tails
+  TASKS.keys.reject { |id| done?(id) }.select { |id| deps(id).all? { |dep| done?(dep) } }
+    .sort_by { |id| [ -priority[id], TASKS[id]["bench"] ? 0 : 1, id ] }
+end
+
+def simulate(agents)
+  priority = tails
+  finish = {}
+  running = []
+  pending = TASKS.keys.reject { |id| done?(id) }
+  TASKS.each_key { |id| finish[id] = 0.0 if done?(id) }
+  clock = 0.0
+  peak = 0
+  until pending.empty? && running.empty?
+    available = pending.select { |id| deps(id).all? { |dep| finish[dep] && finish[dep] <= clock } }
+      .sort_by { |id| [ -priority[id], id ] }
+    available.first([ agents - running.size, 0 ].max).each do |id|
+      running << [ id, clock + DAYS.fetch(TASKS[id]["size"]) ]
+      pending.delete(id)
+    end
+    peak = [ peak, running.size ].max
+    raise "deadlock: #{pending.join(', ')}" if running.empty?
+    clock = running.map(&:last).min
+    running.select { |_, ends| ends <= clock }.each { |id, ends| finish[id] = ends }
+    running.reject! { |_, ends| ends <= clock }
+  end
+  { agents: agents, makespan_days: clock, peak_parallel: peak, work_days: TASKS.values.sum { |t| DAYS[t["size"]] } }
+end
+
+def label(id) = "#{id}: #{TASKS[id]['title']}"
+
+def mermaid
+  critical = critical_path
+  critical_edges = critical.each_cons(2).to_a
+  lines = [ "flowchart LR" ]
+  MILESTONES.each do |milestone, name|
+    lines << "  subgraph #{milestone}[\"#{milestone} · #{name.sub(/ \(.*/, '')}\"]"
+    lines << "    direction TB"
+    TASKS.each_value.select { |task| task["milestone"] == milestone }.each do |task|
+      title = task["title"].gsub('"', "'").gsub("#", "#35;")
+      lines << "    #{task['id']}[\"#{task['id']} #{title}<br/><small>#{task['size']}</small>\"]"
+    end
+    lines << "  end"
+  end
+  edges = []
+  TASKS.each_key { |id| deps(id).each { |dep| edges << [ dep, id ] } }
+  edges.each { |from, to| lines << "  #{from} --> #{to}" }
+  critical_indices = edges.each_index.select { |index| critical_edges.include?(edges[index]) }
+  lines << "  linkStyle #{critical_indices.join(',')} stroke:#d6336c,stroke-width:3px" unless critical_indices.empty?
+  MILESTONES.each_key { |milestone| lines << "  style #{milestone} fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3" }
+  lines << "  classDef bench fill:#fff3bf,stroke:#f08c00,color:#000"
+  lines << "  classDef critical stroke:#d6336c,stroke-width:3px"
+  lines << "  classDef done fill:#d3f9d8,stroke:#2f9e44,color:#000"
+  bench = TASKS.keys.select { |id| TASKS[id]["bench"] }
+  lines << "  class #{bench.join(',')} bench" unless bench.empty?
+  lines << "  class #{critical.join(',')} critical"
+  finished = TASKS.keys.select { |id| done?(id) }
+  lines << "  class #{finished.join(',')} done" unless finished.empty?
+  lines.join("\n")
+end
+
+def lane_mermaid
+  edges = Hash.new(0)
+  TASKS.each_key do |id|
+    deps(id).each do |dep|
+      from, to = TASKS[dep]["lane"], TASKS[id]["lane"]
+      edges[[ from, to ]] += 1 unless from == to
+    end
+  end
+  lines = [ "flowchart LR" ]
+  LANES.each do |lane, name|
+    count = TASKS.values.count { |task| task["lane"] == lane }
+    lines << "  #{lane}[\"#{lane} · #{name}<br/><small>#{count} tasks</small>\"]"
+  end
+  edges.each { |(from, to), count| lines << "  #{from} -->|#{count}| #{to}" }
+  lines.join("\n")
+end
+
+def write_dag
+  level = levels
+  critical = critical_path
+  bench_path = critical_path("B02")
+  best = longest_paths
+  waves = level.group_by { |_, value| value }.sort.map { |wave, pairs| [ wave, pairs.map(&:first).sort ] }
+  sims = [ 1, 4, 8, 12, 16 ].map { |n| simulate(n) }
+  out = []
+  out << "# C# port task DAG"
+  out << ""
+  out << "Generated by `plans/bin/plan dag` from [tasks.yaml](tasks.yaml). Don't edit by hand."
+  out << ""
+  out << "#{TASKS.size} tasks in #{LANES.size} lanes and #{MILESTONES.size} milestones. Nodes are grouped by milestone and labelled with size"
+  out << "(S ≈ ½ agent-day, M ≈ 1, L ≈ 2). Pink edges and borders are the critical path; yellow nodes are on"
+  out << "the path to the five README benchmark workloads."
+  out << ""
+  out << "## Lane overview"
+  out << ""
+  out << "Edge labels count the task-level dependencies between lanes."
+  out << ""
+  out << "```mermaid"
+  out << lane_mermaid
+  out << "```"
+  out << ""
+  out << "## Full task graph"
+  out << ""
+  out << "```mermaid"
+  out << mermaid
+  out << "```"
+  out << ""
+  out << "## Critical path"
+  out << ""
+  out << "Weighted length #{best[critical.last][:length]} (S=1, M=2, L=4), about #{critical.sum { |id| DAYS[TASKS[id]['size']] }} days of strictly sequential work:"
+  out << ""
+  out << critical.map { |id| "`#{id}`" }.join(" → ")
+  out << ""
+  out << "**Path to first benchmark numbers (B02)**, about #{bench_path.sum { |id| DAYS[TASKS[id]['size']] }} days:"
+  out << ""
+  out << bench_path.map { |id| "`#{id}`" }.join(" → ")
+  out << ""
+  out << "## Waves"
+  out << ""
+  out << "A task's wave is the length of its longest dependency chain. Every task in a wave can run in"
+  out << "parallel once the previous waves are done; in practice `plans/bin/plan ready` starts each task as"
+  out << "soon as its own dependencies are done, without waiting for the whole wave."
+  out << ""
+  out << "| Wave | Width | Tasks |"
+  out << "|---:|---:|---|"
+  waves.each { |wave, ids| out << "| #{wave} | #{ids.size} | #{ids.map { |id| "`#{id}`" }.join(' ')} |" }
+  out << ""
+  out << "## Swarm sizing"
+  out << ""
+  out << "List scheduling by critical-path priority, assuming each task takes its nominal size and merges"
+  out << "immediately. Real throughput will be lower: review, integration and rework aren't modelled."
+  out << ""
+  out << "| Agents | Calendar days to finish | Peak parallel |"
+  out << "|---:|---:|---:|"
+  sims.each { |sim| out << "| #{sim[:agents]} | #{sim[:makespan_days]} | #{sim[:peak_parallel]} |" }
+  out << ""
+  out << "Total work: #{sims.first[:work_days]} agent-days."
+  out << ""
+  out << "## Task index"
+  out << ""
+  out << "| ID | Task | Lane | Milestone | Size | Depends on |"
+  out << "|---|---|---|---|---|---|"
+  topological_order.sort_by { |id| [ level[id], id ] }.each do |id|
+    task = TASKS[id]
+    mark = task["bench"] ? " ⚡" : ""
+    out << "| `#{id}` | #{task['title']}#{mark} | #{task['lane']} | #{task['milestone']} | #{task['size']} | #{task['deps'].map { |d| "`#{d}`" }.join(' ')} |"
+  end
+  out << ""
+  out << "⚡ on the path to the five benchmark workloads."
+  File.write(File.join(PLANS, "dag.md"), out.join("\n") + "\n")
+end
+
+def issues
+  TASKS.values.map do |task|
+    body = []
+    body << task["deliver"].strip
+    body << ""
+    body << "**Depends on:** #{task['deps'].empty? ? 'nothing' : task['deps'].join(', ')}"
+    body << "**Blocks:** #{dependents(task['id']).join(', ').then { |s| s.empty? ? 'nothing' : s }}"
+    body << "**Lane / milestone / size:** #{task['lane']} · #{task['milestone']} · #{task['size']}"
+    body << ""
+    body << "**Owns:**"
+    task["owns"].each { |path| body << "- `#{path}`" }
+    body << ""
+    body << "**Read first:**"
+    task["refs"].each { |ref| body << "- `#{ref}`" }
+    body << ""
+    body << "**Acceptance:**"
+    task["accept"].each { |criterion| body << "- [ ] #{criterion}" }
+    body << ""
+    body << "Done = merged PR + `plans/status/#{task['id']}.md` with evidence for each criterion."
+    labels = [ "port", "lane:#{task['lane']}", "milestone:#{task['milestone']}", "size:#{task['size']}" ]
+    labels << "bench" if task["bench"]
+    { title: "[#{task['id']}] #{task['title']}", body: body.join("\n"), labels: labels }
+  end
+end
+
+command, argument = ARGV
+case command
+when "validate"
+  errors = validate
+  if errors.empty?
+    puts "ok: #{TASKS.size} tasks, #{TASKS.values.sum { |t| t['deps'].size }} dependencies, acyclic"
+  else
+    puts errors
+    exit 1
+  end
+when "ready"
+  priority = tails
+  ready.each { |id| puts "%-5s %-2s %s%s  (priority %d)" % [ id, TASKS[id]["size"], TASKS[id]["title"], TASKS[id]["bench"] ? " ⚡" : "", priority[id] ] }
+when "show"
+  task = TASKS.fetch(argument) { abort "unknown task #{argument}" }
+  puts task.to_yaml
+  puts "dependents: #{dependents(argument).join(', ')}"
+  puts "status: #{done?(argument) ? 'done' : (deps(argument).all? { |d| done?(d) } ? 'ready' : 'blocked')}"
+when "waves"
+  levels.group_by { |_, value| value }.sort.each { |wave, pairs| puts "#{wave}: #{pairs.map(&:first).sort.join(' ')}" }
+when "critical"
+  path = critical_path(argument)
+  puts path.map { |id| label(id) }
+  puts "weighted length: #{longest_paths[path.last][:length]}"
+when "simulate"
+  puts JSON.pretty_generate(simulate(Integer(argument || 8)))
+when "dag"
+  abort validate.join("\n") unless validate.empty?
+  write_dag
+  puts "wrote plans/dag.md"
+when "issues"
+  puts JSON.pretty_generate(issues)
+else
+  puts File.read(__FILE__).lines.drop(1).take_while { |line| line.start_with?("#") }.map { |line| line.sub(/^# ?/, "") }
+  exit(command ? 1 : 0)
+end
