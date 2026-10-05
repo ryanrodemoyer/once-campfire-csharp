@@ -40,7 +40,8 @@ public sealed partial class MultipartParser
     readonly List<Part> parts = [];
 
     // The StringScanner: data[0..length) with the scan position at pos.
-    byte[] data = new byte[BufferSize];
+    // Room for one read plus what's kept between reads, so the buffer isn't regrown per read.
+    byte[] data = new byte[2 * BufferSize];
     int length;
     int pos;
     long? totalBytesRead;
@@ -174,7 +175,7 @@ public sealed partial class MultipartParser
         }
         if (data.Length - length < BufferSize)
         {
-            Array.Resize(ref data, length + BufferSize);
+            Array.Resize(ref data, Math.Max(2 * data.Length, length + BufferSize));
         }
         var read = await reader.ReadAsync(data.AsMemory(length, BufferSize), cancellationToken).ConfigureAwait(false);
         if (read == 0)
