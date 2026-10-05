@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Prepare a checkout for development: the pinned .NET SDK, both references, and NuGet packages.
+# Safe to run repeatedly; each step is skipped when it is already done.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+pinned=$(sed -nE 's/.*"version": *"([^"]+)".*/\1/p' global.json)
+channel=$(echo "$pinned" | cut -d. -f1-2)
+
+# dotnet refuses to start here unless an installed SDK satisfies global.json's version and rollForward.
+have_pinned_sdk() {
+  command -v dotnet >/dev/null && dotnet --version >/dev/null 2>&1
+}
+
+install_sdk_from_apt() {
+  command -v apt-get >/dev/null || return 1
+  local sudo=""
+  [ "$(id -u)" -eq 0 ] || sudo="sudo -n"
+  # Ubuntu 24.04+ packages the SDK itself. Microsoft's download hosts are blocked in Claude Code
+  # cloud sessions, so this is the path that works there.
+  $sudo apt-get install -y -q "dotnet-sdk-${channel}" >/dev/null 2>&1 ||
+    { $sudo apt-get update -q >/dev/null && $sudo apt-get install -y -q "dotnet-sdk-${channel}" >/dev/null; }
+}
+
+install_sdk_from_microsoft() {
+  local script
+  script=$(mktemp)
+  curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$script"
+  bash "$script" --jsonfile global.json --install-dir "$HOME/.dotnet" --no-path
+  rm -f "$script"
+  export PATH="$HOME/.dotnet:$PATH"
+  export DOTNET_ROOT="$HOME/.dotnet"
+}
+
+if [ -x "$HOME/.dotnet/dotnet" ]; then
+  export PATH="$HOME/.dotnet:$PATH"
+fi
+
+if have_pinned_sdk; then
+  echo "== .NET SDK $(dotnet --version) already installed"
+else
+  echo "== Installing a .NET SDK matching global.json ($pinned)"
+  install_sdk_from_apt 2>/dev/null && have_pinned_sdk || install_sdk_from_microsoft
+  have_pinned_sdk || { echo "No installed .NET SDK satisfies global.json ($pinned)" >&2; exit 1; }
+fi
+
+echo "== Checking out references"
+git submodule update --init --recursive
+
+echo "== Restoring packages"
+dotnet restore Campfire.slnx --nologo -v quiet
+
+echo "== Done. Run bin/check before pushing."
