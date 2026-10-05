@@ -8,7 +8,7 @@
 #   plans/bin/plan critical [ID]       weighted longest path overall, or ending at ID
 #   plans/bin/plan simulate N          list-schedule the graph on N agents; prints makespan
 #   plans/bin/plan dag                 regenerate plans/dag.md (Mermaid + tables)
-#   plans/bin/plan issues              JSON array of GitHub issue payloads, one per task
+#   plans/bin/plan issues [START]      JSON GitHub issue payloads in wave order; START predicts numbers
 #
 # A task is done when plans/status/<ID>.md exists (see plans/status/README.md).
 require "yaml"
@@ -259,28 +259,45 @@ def write_dag
   File.write(File.join(PLANS, "dag.md"), out.join("\n") + "\n")
 end
 
-def issues
-  TASKS.values.map do |task|
+# Task -> GitHub issue number, recorded once the issues exist.
+ISSUES_FILE = File.join(PLANS, "issues.json")
+def issue_numbers = File.exist?(ISSUES_FILE) ? JSON.parse(File.read(ISSUES_FILE)) : {}
+
+# Issues in wave order, so every "Blocked by" points at an issue created earlier. With `start`,
+# numbers not yet in issues.json are predicted as start + position.
+def issues(start = nil)
+  level = levels
+  order = TASKS.keys.sort_by { |id| [ level[id], id ] }
+  numbers = issue_numbers
+  order.each_with_index { |id, index| numbers[id] ||= start + index if start }
+  ref = ->(id) { numbers[id] ? "##{numbers[id]} (#{id})" : id }
+  order.map do |id|
+    task = TASKS[id]
+    blocks = dependents(id)
     body = []
     body << task["deliver"].strip
     body << ""
-    body << "**Depends on:** #{task['deps'].empty? ? 'nothing' : task['deps'].join(', ')}"
-    body << "**Blocks:** #{dependents(task['id']).join(', ').then { |s| s.empty? ? 'nothing' : s }}"
-    body << "**Lane / milestone / size:** #{task['lane']} · #{task['milestone']} · #{task['size']}"
+    body << "**Blocked by:** #{task['deps'].empty? ? 'nothing, ready to start' : task['deps'].map(&ref).join(', ')}"
+    body << "**Blocks:** #{blocks.empty? ? 'nothing' : blocks.map(&ref).join(', ')}"
+    body << "**Lane · milestone · size:** #{LANES[task['lane']]} · #{task['milestone']} #{MILESTONES[task['milestone']].sub(/ \(.*/, '')} · #{task['size']}#{task['bench'] ? ' · ⚡ on the benchmark path' : ''}"
     body << ""
-    body << "**Owns:**"
+    body << "### Owns (only this task edits these)"
     task["owns"].each { |path| body << "- `#{path}`" }
     body << ""
-    body << "**Read first:**"
-    task["refs"].each { |ref| body << "- `#{ref}`" }
+    body << "### Read first"
+    task["refs"].each { |r| body << "- `#{r}`" }
     body << ""
-    body << "**Acceptance:**"
+    body << "### Acceptance"
     task["accept"].each { |criterion| body << "- [ ] #{criterion}" }
     body << ""
-    body << "Done = merged PR + `plans/status/#{task['id']}.md` with evidence for each criterion."
+    body << "### Working this issue"
+    body << "Run `plans/bin/plan show #{id}` for the full card and follow the swarm rules in `plans/csharp-port.md` (Running the swarm)."
+    body << "Branch `port/#{id}-<slug>`, PR titled `[#{id}] #{task['title']}` with `Closes ##{numbers[id] || '<this issue>'}`."
+    body << "Done = PR merged with `plans/status/#{id}.md` containing evidence for every acceptance item."
     labels = [ "port", "lane:#{task['lane']}", "milestone:#{task['milestone']}", "size:#{task['size']}" ]
     labels << "bench" if task["bench"]
-    { title: "[#{task['id']}] #{task['title']}", body: body.join("\n"), labels: labels }
+    labels << "human" if %w[B05 X02].include?(id)
+    { id: id, number: numbers[id], title: "[#{id}] #{task['title']}", body: body.join("\n"), labels: labels }
   end
 end
 
@@ -315,7 +332,7 @@ when "dag"
   write_dag
   puts "wrote plans/dag.md"
 when "issues"
-  puts JSON.pretty_generate(issues)
+  puts JSON.pretty_generate(issues(argument && Integer(argument)))
 else
   puts File.read(__FILE__).lines.drop(1).take_while { |line| line.start_with?("#") }.map { |line| line.sub(/^# ?/, "") }
   exit(command ? 1 : 0)
