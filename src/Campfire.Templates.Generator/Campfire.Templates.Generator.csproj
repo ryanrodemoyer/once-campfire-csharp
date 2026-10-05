@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Campfire.Templates.Generator.Tests" />
+  </ItemGroup>
+
 </Project>

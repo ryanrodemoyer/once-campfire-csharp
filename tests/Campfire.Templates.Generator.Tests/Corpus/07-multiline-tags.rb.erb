@@ -1,0 +1,11 @@
+<div><%= [ name,
+  count ].join(" ") %></div>
+<%= [ name,
+  count ].join(" ") %>
+<% if flag &&
+      count > 1 %>
+  multi
+<% end %>
+<%= tag_list(
+  count,
+  count) %>

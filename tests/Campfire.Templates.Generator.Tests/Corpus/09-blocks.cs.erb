@@ -1,0 +1,14 @@
+<%= wrap(() => { %>
+  <p>inside</p>
+<% }) %>
+  <%= wrap(() => { %>
+    <%= wrap(() => { %><%= name %><% }) %>
+  <% }) %>
+<%= labelled(label => { %>
+  <%= label %>: <%= count %>
+<% }) %>
+<% var captured = w.Capture(() => { %>
+  <b><%= name %></b>
+<% }); %>
+[<%= captured %>]
+<% foreach (var item in items) { %><%= wrap(() => { %><%= item %><% }) %><% } %>

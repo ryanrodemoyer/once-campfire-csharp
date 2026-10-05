@@ -1,0 +1,12 @@
+<%= tag_list count, 
+      count %>
+<div>
+  <%= wrap do %>
+    <%= count %>
+  <% end %>
+  <%= wrap do -%>
+    <span>x</span>
+  <% end %>
+</div>
+<% if flag %><%= wrap do %>a<% end %>
+<% end %>
