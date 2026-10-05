@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Assembles the frontend exactly as the reference's `bin/rails assets:precompile` does, with no Ruby
+# or Node: Propshaft-digested assets, public/assets/.manifest.json and the import map, written to
+# artifacts/assets (or the directory given). See assets/README.md.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if [ -x "$HOME/.dotnet/dotnet" ]; then
+  export PATH="$HOME/.dotnet:$PATH"
+fi
+export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
+
+exec dotnet run assets/build-assets.cs -- "$PWD" "${1:-artifacts/assets}"
