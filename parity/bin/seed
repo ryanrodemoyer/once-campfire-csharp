@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Build parity seeds with the reference app. Ported from the Rust port's reference-rust/parity/bin/seed,
+# with the same interface, building the Rust port's seed scripts unchanged so the C#, Rust and Go
+# benchmarks all run on the same data.
+#
+#   parity/bin/seed build [NAME...]   build the named seeds (default: all), then record their hashes
+#   parity/bin/seed list              list seeds and whether they're built
+#   parity/bin/seed hash [NAME...]    print the hash manifest of built seeds (default: default)
+#   parity/bin/seed verify            check the built seeds against parity/.seed/SEED.sha256
+#
+# Each seed lands in parity/.seed/NAME/{db/production.sqlite3, storage/, labels.json}. The database is
+# prepared by the reference app (db:prepare, i.e. schema.rb) and filled by
+# reference-rust/parity/seeds/NAME.rb running under bin/rails runner, so every row, attachment,
+# variant and preview is Ruby's.
+#
+# parity/.seed/SEED.sha256 (committed) holds a sha256 for every file in the recorded seeds. The
+# database is hashed as its SQL dump (the line for db/production.sqlite3.sql): SQLite leaves
+# wall-clock timestamps from build time in freed pages, so the file's bytes change on every build
+# while every row stays the same. Every other file is hashed as is. `build` rewrites the lines for
+# the seeds it built; set SEED_RECORD=0 to leave the file alone.
+# Uses the same runtime as parity/bin/reference (PARITY_RUNTIME=docker|native). Media bytes
+# (variants, previews) depend on the runtime's libvips/ffmpeg, so record hashes from Docker.
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+SEEDS=${PARITY_SEED_DIR:-$ROOT/parity/.seed}
+SCRIPTS=$ROOT/reference-rust/parity/seeds
+REFERENCE=$ROOT/parity/bin/reference
+MANIFEST=$ROOT/parity/.seed/SEED.sha256
+
+all_seeds() {
+  local f; for f in "$SCRIPTS"/*.rb; do basename "$f" .rb; done | grep -vx build
+}
+
+build() {
+  local name=$1 tmp=$SEEDS/.build-$1
+  [ -f "$SCRIPTS/$name.rb" ] || { echo "seed: no reference-rust/parity/seeds/$name.rb" >&2; exit 1; }
+  echo "seed: building $name" >&2
+  rm -rf "$tmp"; mkdir -p "$tmp/db" "$tmp/storage"
+
+  "$REFERENCE" exec --storage "$tmp" -- bin/rails db:prepare
+  "$REFERENCE" runner --storage "$tmp" "$SCRIPTS/build.rb" "$name"
+
+  rm -f "$tmp/db/production.sqlite3-wal" "$tmp/db/production.sqlite3-shm"
+  mv "$tmp/db/labels.json" "$tmp/labels.json"
+  rm -rf "${SEEDS:?}/$name"
+  mv "$tmp" "$SEEDS/$name"
+  echo "seed: $name -> ${SEEDS#"$ROOT"/}/$name ($(du -sh "$SEEDS/$name" | cut -f1))" >&2
+}
+
+# The database's rows and schema as SQL, in a stable order.
+sql_dump() {
+  python3 -c 'import sqlite3, sys; print("\n".join(sqlite3.connect(f"file:{sys.argv[1]}?immutable=1", uri=True).iterdump()))' "$1"
+}
+
+# sha256sum lines for every file in the named seeds, paths relative to the seed directory.
+hashes() {
+  local name db
+  for name in "$@"; do
+    db=$name/db/production.sqlite3
+    [ -f "$SEEDS/$db" ] || { echo "seed: $name isn't built: $0 build $name" >&2; exit 1; }
+    {
+      echo "$(sql_dump "$SEEDS/$db" | sha256sum | cut -d' ' -f1)  $db.sql"
+      (cd "$SEEDS" && find "$name" -type f ! -path "$db" -print0 | xargs -0 sha256sum)
+    } | LC_ALL=C sort -k2
+  done
+}
+
+# Replace the named seeds' lines in SEED.sha256, keeping the others.
+record() {
+  local names=("$@") kept="" pattern
+  pattern="^[0-9a-f]{64}  ($(IFS='|'; echo "${names[*]}"))/"
+  [ -f "$MANIFEST" ] && kept=$(grep -Ev "$pattern" "$MANIFEST" || true)
+  { [ -z "$kept" ] || echo "$kept"; hashes "${names[@]}"; } | LC_ALL=C sort -k2 > "$MANIFEST.tmp"
+  mv "$MANIFEST.tmp" "$MANIFEST"
+  echo "seed: recorded ${names[*]} in ${MANIFEST#"$ROOT"/}" >&2
+}
+
+# Every seed recorded in SEED.sha256 must be built with exactly the recorded files.
+verify() {
+  [ -f "$MANIFEST" ] || { echo "seed: no ${MANIFEST#"$ROOT"/}" >&2; exit 1; }
+  local names
+  mapfile -t names < <(sed -E 's/^[0-9a-f]{64}  ([^/]+)\/.*/\1/' "$MANIFEST" | sort -u)
+  if diff -u --label "${MANIFEST#"$ROOT"/}" --label built "$MANIFEST" <(hashes "${names[@]}" | LC_ALL=C sort -k2); then
+    echo "seed: ${names[*]} match ${MANIFEST#"$ROOT"/}" >&2
+  else
+    echo "seed: built seeds differ from ${MANIFEST#"$ROOT"/}" >&2; exit 1
+  fi
+}
+
+case "${1:-}" in
+  build)
+    shift
+    names=("$@"); [ ${#names[@]} -gt 0 ] || mapfile -t names < <(all_seeds)
+    for name in "${names[@]}"; do build "$name"; done
+    [ "${SEED_RECORD:-1}" = 0 ] || record "${names[@]}" ;;
+  list)
+    for name in $(all_seeds); do
+      if [ -f "$SEEDS/$name/db/production.sqlite3" ]; then echo "$name built"; else echo "$name -"; fi
+    done ;;
+  hash)
+    shift
+    names=("$@"); [ ${#names[@]} -gt 0 ] || names=(default)
+    hashes "${names[@]}" ;;
+  verify)
+    verify ;;
+  *)
+    sed -n '2,/^set -euo/p' "$0" | sed '$d; s/^# \{0,1\}//'; exit 1 ;;
+esac
