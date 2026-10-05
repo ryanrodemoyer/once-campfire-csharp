@@ -1,14 +1,16 @@
 # Oracle for crates/campfire/src/integrations/opengraph: replays opengraph_cases.json against the
 # reference's UnfurlLinksController#create logic with fake DNS and a local server standing in for
 # the fake public IPs, and records the response plus every DNS lookup and HTTP request made.
-#   parity/bin/reference runner crates/campfire/src/integrations/testdata/oracle/opengraph.rb
-# It writes ../opengraph_expected.json (the app logs to stdout).
+#   parity/bin/reference runner reference-tools/oracle/opengraph.rb
+# It reads vectors/opengraph/cases.json and writes expected.json next to it, or into $OUT (the app
+# logs to stdout).
 require "socket"
 require "zlib"
 require "base64"
 
-dir = File.expand_path("..", __dir__)
-spec = JSON.parse(File.read(File.join(dir, "opengraph_cases.json")))
+dir = File.expand_path("../../vectors/opengraph", __dir__)
+output_dir = ENV.fetch("OUT", dir)
+spec = JSON.parse(File.read(File.join(dir, "cases.json")))
 
 $lookups = []
 $requests = []
@@ -93,4 +95,4 @@ results = spec["cases"].map do |c|
   { name: c["name"], url: c["url"], response: response, lookups: $lookups, requests: $requests }
 end
 
-File.write(File.join(dir, "opengraph_expected.json"), JSON.pretty_generate(results) + "\n")
+File.write(File.join(output_dir, "expected.json"), JSON.pretty_generate(results) + "\n")

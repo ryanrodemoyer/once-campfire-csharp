@@ -1,14 +1,16 @@
 # Oracle for crates/campfire/src/integrations/webhook: runs Webhook#deliver against a local
 # server for each reply in webhook_cases.json, with the message, payload and replies stubbed
 # out, and records the request as sent and what the webhook did with the response.
-#   parity/bin/reference runner crates/campfire/src/integrations/testdata/oracle/webhook.rb
-# It writes ../webhook_expected.json (the app logs to stdout).
+#   parity/bin/reference runner reference-tools/oracle/webhook.rb
+# It reads vectors/webhook/cases.json and writes expected.json next to it, or into $OUT (the app
+# logs to stdout).
 require "socket"
 require "zlib"
 require "base64"
 
-dir = File.expand_path("..", __dir__)
-cases = JSON.parse(File.read(File.join(dir, "webhook_cases.json")))
+dir = File.expand_path("../../vectors/webhook", __dir__)
+output_dir = ENV.fetch("OUT", dir)
+cases = JSON.parse(File.read(File.join(dir, "cases.json")))
 
 $requests = []
 server = TCPServer.new("127.0.0.1", 0)
@@ -63,4 +65,4 @@ results = cases.map do |c|
   outcome.merge("name" => c["name"], "requests" => $requests.map { |r| r.except(:body).merge(body: r[:body]) })
 end
 
-File.write(File.join(dir, "webhook_expected.json"), JSON.pretty_generate(results) + "\n")
+File.write(File.join(output_dir, "expected.json"), JSON.pretty_generate(results) + "\n")

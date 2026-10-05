@@ -13,7 +13,11 @@ rescue => e
   { "error" => e.class.name }
 end
 
-seeds = YAML.load_file(File.join(ENV.fetch("PARITY_WORK", Dir.pwd), "parity/seeds/user_agents.yml")).values
+# The seed's user agents: parity/seeds/ once this repository has its own, else the Rust port's.
+work = ENV.fetch("PARITY_WORK", Dir.pwd)
+seeds_file = [ "parity/seeds/user_agents.yml", "reference-rust/parity/seeds/user_agents.yml" ]
+  .map { |path| File.join(work, path) }.find { |path| File.exist?(path) }
+seeds = YAML.load_file(seeds_file).values
 
 corpus = seeds + [
   nil, "", "   ", "\t",

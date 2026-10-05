@@ -125,7 +125,7 @@ tasks:
     milestone: M0
     size: M
     deps: [F01, V03]
-    owns: [parity/bin/reference, parity/docker/, compose.parity.yml]
+    owns: [parity/bin/reference, parity/docker/, parity/.env.reference, compose.parity.yml]
     refs: [reference-rust/parity/bin/reference, reference-rust/parity/docker, reference/Dockerfile]
     deliver: >
       Build and run the pinned Rails app as campfire-reference:app in production mode (CSRF,
