@@ -1,6 +1,6 @@
 # .NET build output
-bin/Debug/
-bin/Release/
+**/bin/Debug/
+**/bin/Release/
 obj/
 artifacts/
 TestResults/
