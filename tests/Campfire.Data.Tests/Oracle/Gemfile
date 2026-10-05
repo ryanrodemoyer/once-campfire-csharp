@@ -1,0 +1,7 @@
+# Active Record at the exact Rails revision reference/Gemfile.lock pins, plus the sqlite3 gem it
+# locks. Enough to run the reference's db:prepare (schema load) and fixture loading without the app.
+source "https://rubygems.org"
+
+gem "activerecord", git: "https://github.com/rails/rails.git", ref: "1a02651ac37fb64b4de2a2b73461d86acf9c98fb"
+gem "sqlite3", "2.9.6"
+gem "bcrypt"
