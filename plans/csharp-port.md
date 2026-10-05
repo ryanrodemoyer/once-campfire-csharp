@@ -295,22 +295,35 @@ One task is one PR, and PRs merge themselves:
    replay result for their route family.
 7. **Never benchmark** anything before B02, and never publish numbers before B05.
 
-### Orchestrator loop
+### Orchestrator
 
-A human or a lead agent runs this loop:
+A Claude Code routine, "Campfire C# swarm orchestrator", runs every hour at :54 in a fresh cloud
+session. Each run:
 
-1. `plans/bin/plan ready`, then assign the top N tasks to idle agents, putting critical-path
-   tasks (the highest priority numbers) on the strongest agents.
-2. Review and merge PRs. After each merge, check whether `plans/bin/plan ready` has grown and
-   assign again.
-3. Once Q01 lands, run the full replay against `main` nightly and file regressions against the
-   owning task's lane.
-4. If a task turns out larger than its size, split it in `tasks.yaml` (new ids, same lane),
-   regenerate `dag.md`, and keep going. The graph is expected to evolve; `plans/bin/plan validate`
-   in CI keeps it acyclic and conflict-free.
+1. **Stops if paused**: when any open issue carries the `pause-swarm` label.
+2. **Reconciles work in flight.** For each issue labelled `in-progress`, it finds the worker
+   session named in the issue's latest "Claimed by swarm session" comment, then:
+   - closes out tasks whose status file has landed on `main`;
+   - turns on auto-merge for green PRs;
+   - tells the worker to fix PRs that are red, conflicted or behind `main`;
+   - retries tasks whose worker died without a PR. After three failed attempts it labels the issue
+     `needs-human` and stops retrying.
+3. **Dispatches** ready tasks, in `plans/bin/plan ready` order, to new worker sessions, keeping
+   at most 8 in progress. Each worker gets the task card, the rules in `AGENTS.md`, and a designated
+   `port/<ID>-<slug>` branch. It sees its PR through to merge.
+4. **Rewrites the dashboard**, issue #85 ("Swarm status"), with progress, work in flight,
+   `needs-human` items and what's queued. It updates the body instead of commenting, to keep
+   notifications quiet.
 
-Each agent can be a separate Claude Code cloud session on this repo. The orchestrator can create
-them with a task card as the prompt: `plans/bin/plan show <ID>` plus this section.
+It never touches issues labelled `human` (B05, X02).
+
+To steer the swarm by hand: add `pause-swarm` to any issue to pause it; remove `in-progress` from
+an issue to have it re-dispatched; add `needs-human` to take a task off the swarm's list.
+
+Once Q01 lands, the replay gate runs in CI on every PR, so regressions are caught before merge.
+If a task turns out larger than its size, its worker splits it in `tasks.yaml` (new ids, same
+lane) and regenerates `dag.md`. `plans/bin/plan validate` in CI keeps the graph acyclic and
+free of ownership conflicts.
 
 ## Benchmark protocol
 
