@@ -5,7 +5,7 @@ public static class Program
     public static async Task Main(string[] args)
     {
         await using var app = Build(args);
-        await app.RunAsync();
+          await app.RunAsync();
     }
 
     // Requests go to a raw RequestDelegate, not MVC or minimal-API endpoints. The ordered

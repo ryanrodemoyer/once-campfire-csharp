@@ -51,7 +51,7 @@ tasks:
     lane: F
     milestone: M0
     size: S
-    deps: []
+    deps: [F03]
     owns: [.gitmodules, reference/, reference-rust/, AGENTS.md, CLAUDE.md]
     refs: [reference-rust/AGENTS.md, once-campfire-go/AGENTS.md]
     deliver: >
