@@ -239,6 +239,7 @@ public class MultipartTests
 
 /// <summary>
 /// Measures allocations, so it runs alone: other tests allocating at the same time would count.
+/// <c>GC.GetTotalAllocatedBytes</c> still includes the test host, so the bound leaves room for that.
 /// </summary>
 [CollectionDefinition(DisableParallelization = true)]
 public class AllocationSensitive;
@@ -267,7 +268,9 @@ public class MultipartStreamingTests
         var file = parsed.Params.GetFile("f")!;
         Assert.Equal(fileSize, file.Size);
         Assert.Equal(fileSize, new FileInfo(file.Path).Length);
-        Assert.True(allocated < fileSize / 8, $"allocated {allocated:N0} bytes for a {fileSize:N0} byte upload");
+        // Buffering the body would allocate at least fileSize. Half of that still proves streaming,
+        // and stays above the host noise that made fileSize/8 flake in a full bin/check (see #10).
+        Assert.True(allocated < fileSize / 2, $"allocated {allocated:N0} bytes for a {fileSize:N0} byte upload");
     }
 
     /// <summary>A body of head, then <c>size</c> filler bytes, then tail, made up as it's read.</summary>

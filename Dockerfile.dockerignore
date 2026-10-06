@@ -1,0 +1,17 @@
+# The image's build context (see Dockerfile): only the sources it copies, without local build output.
+*
+!global.json
+!Directory.Build.props
+!Directory.Packages.props
+!.editorconfig
+!src/
+!assets/
+!reference/
+**/bin/Debug/
+**/bin/Release/
+**/obj/
+reference/.git
+reference/test/
+reference/log/
+reference/tmp/
+reference/storage/
