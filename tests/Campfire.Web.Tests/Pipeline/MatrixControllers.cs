@@ -45,9 +45,9 @@ class MatrixController : ApplicationController
 // reference/app/controllers/welcome_controller.rb
 sealed class WelcomeController : MatrixController
 {
-    static readonly ControllerCallbacks<WelcomeController> callbacks = Callbacks.For<WelcomeController>();
+    static readonly ControllerCallbacks<WelcomeController> Chain = Callbacks.For<WelcomeController>();
 
-    public static readonly RequestDelegate Show = Action(callbacks, async (WelcomeController c) =>
+    public static readonly RequestDelegate Show = Action(Chain, async (WelcomeController c) =>
     {
         var userId = c.Current.User!.Id;
         if ((await c.ReadAsync(session => Rooms.ForUser(session, userId))).Count > 0)
@@ -65,14 +65,14 @@ sealed class WelcomeController : MatrixController
 // reference/app/controllers/rooms_controller.rb
 sealed class RoomsController : MatrixController
 {
-    static readonly ControllerCallbacks<RoomsController> callbacks = Callbacks.For<RoomsController>()
+    static readonly ControllerCallbacks<RoomsController> Chain = Callbacks.For<RoomsController>()
         .Before("set_room", c => c.SetRoomAsync(), only: ["show", "destroy"])
         .Before("ensure_can_administer", c => c.EnsureCanAdministerRoom(), only: ["destroy"])
         .Before("remember_last_room_visited", c => c.RememberLastRoomVisited(c.room!.Id), only: ["show"]);
 
     Room? room;
 
-    public static readonly RequestDelegate Show = Action(callbacks, MatrixControllers.Unreached);
+    public static readonly RequestDelegate Show = Action(Chain, MatrixControllers.Unreached);
 
     async ValueTask SetRoomAsync()
     {
@@ -97,10 +97,10 @@ sealed class RoomsController : MatrixController
 // reference/app/controllers/accounts/join_codes_controller.rb
 sealed class JoinCodesController : MatrixController
 {
-    static readonly ControllerCallbacks<JoinCodesController> callbacks = Callbacks.For<JoinCodesController>()
+    static readonly ControllerCallbacks<JoinCodesController> Chain = Callbacks.For<JoinCodesController>()
         .EnsureCanAdminister();
 
-    public static readonly RequestDelegate Create = Action(callbacks, async (JoinCodesController c) =>
+    public static readonly RequestDelegate Create = Action(Chain, async (JoinCodesController c) =>
     {
         var account = (await c.Current.AccountAsync())!;
         var now = c.Now;
@@ -112,12 +112,12 @@ sealed class JoinCodesController : MatrixController
 // reference/app/controllers/users_controller.rb
 sealed class UsersController : MatrixController
 {
-    static readonly ControllerCallbacks<UsersController> callbacks = Callbacks.For<UsersController>()
+    static readonly ControllerCallbacks<UsersController> Chain = Callbacks.For<UsersController>()
         .RequireUnauthenticatedAccess(only: ["new", "create"])
         .Before("set_user", MatrixControllers.Unreached, only: ["show"])
         .Before("verify_join_code", c => c.VerifyJoinCodeAsync(), only: ["new", "create"]);
 
-    public static readonly RequestDelegate New = Action(callbacks, MatrixControllers.Unreached);
+    public static readonly RequestDelegate New = Action(Chain, MatrixControllers.Unreached);
 
     async ValueTask VerifyJoinCodeAsync()
     {
@@ -131,11 +131,11 @@ sealed class UsersController : MatrixController
 // reference/app/controllers/first_runs_controller.rb
 sealed class FirstRunsController : MatrixController
 {
-    static readonly ControllerCallbacks<FirstRunsController> callbacks = Callbacks.For<FirstRunsController>()
+    static readonly ControllerCallbacks<FirstRunsController> Chain = Callbacks.For<FirstRunsController>()
         .AllowUnauthenticatedAccess()
         .Before("prevent_repeats", c => c.PreventRepeatsAsync());
 
-    public static readonly RequestDelegate Show = Action(callbacks, MatrixControllers.Unreached);
+    public static readonly RequestDelegate Show = Action(Chain, MatrixControllers.Unreached);
 
     async ValueTask PreventRepeatsAsync()
     {
@@ -149,7 +149,7 @@ sealed class FirstRunsController : MatrixController
 // reference/app/controllers/messages_controller.rb and messages/by_bots_controller.rb
 sealed class ByBotsController : MatrixController
 {
-    static readonly ControllerCallbacks<ByBotsController> callbacks = Callbacks.For<ByBotsController>()
+    static readonly ControllerCallbacks<ByBotsController> Chain = Callbacks.For<ByBotsController>()
         // MessagesController: include RoomScoped, then its own callbacks.
         .Before("set_room", c => c.SetRoomAsync())
         .Before("set_room", c => c.SetRoomAsync(), except: ["create"])
@@ -164,7 +164,7 @@ sealed class ByBotsController : MatrixController
 
     Room? room;
 
-    public static readonly RequestDelegate Create = Action(callbacks, MatrixControllers.Unreached);
+    public static readonly RequestDelegate Create = Action(Chain, MatrixControllers.Unreached);
 
     // Messages::ByBotsController#set_room
     async ValueTask SetRoomAsync()
@@ -190,12 +190,12 @@ sealed class ByBotsController : MatrixController
 // reference/app/controllers/rooms/involvements_controller.rb
 sealed class InvolvementsController : MatrixController
 {
-    static readonly ControllerCallbacks<InvolvementsController> callbacks = Callbacks.For<InvolvementsController>()
+    static readonly ControllerCallbacks<InvolvementsController> Chain = Callbacks.For<InvolvementsController>()
         .Before("set_room", async c => c.Room = await RoomScoped.FindRoomAsync(c));
 
     public (Membership Membership, Room Room)? Room { get; private set; }
 
-    public static readonly RequestDelegate Show = Action(callbacks, MatrixControllers.Unreached);
+    public static readonly RequestDelegate Show = Action(Chain, MatrixControllers.Unreached);
 
-    public static readonly RequestDelegate Update = Action(callbacks, MatrixControllers.Unreached);
+    public static readonly RequestDelegate Update = Action(Chain, MatrixControllers.Unreached);
 }

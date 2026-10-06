@@ -15,7 +15,7 @@ namespace Campfire.Web.Pipeline;
 /// </summary>
 public sealed class CookieSession
 {
-    const string SessionIdKey = "session_id";
+    const string sessionIdKey = "session_id";
 
     readonly CookieJar cookies;
     readonly SessionConfig config;
@@ -36,7 +36,7 @@ public sealed class CookieSession
     public bool IsLoaded => loaded;
 
     /// <summary><c>session.exists?</c>: the request's cookie holds a session with an id.</summary>
-    public bool Exists => CookieData()?[SessionIdKey] is not null;
+    public bool Exists => CookieData()?[sessionIdKey] is not null;
 
     /// <summary><c>session.id</c> (its public id), loading the session.</summary>
     public string Id
@@ -44,7 +44,7 @@ public sealed class CookieSession
         get
         {
             LoadForWrite();
-            return data[SessionIdKey]!.GetValue<string>();
+            return data[sessionIdKey]!.GetValue<string>();
         }
     }
 
@@ -104,7 +104,7 @@ public sealed class CookieSession
     /// </summary>
     public void Reset()
     {
-        cookieData = new JsonObject { [SessionIdKey] = GenerateSessionId() };
+        cookieData = new JsonObject { [sessionIdKey] = GenerateSessionId() };
         cookieRead = true;
         loaded = false;
         LoadForWrite();
@@ -130,7 +130,7 @@ public sealed class CookieSession
                 value[key] = node.DeepClone();
             }
         }
-        value[SessionIdKey] = data[SessionIdKey]!.DeepClone();
+        value[sessionIdKey] = data[sessionIdKey]!.DeepClone();
         cookies.Encrypted.Set(config.Key, value, new CookieOptions
         {
             Expires = now.AddYears(config.ExpireAfterYears),
@@ -160,9 +160,9 @@ public sealed class CookieSession
     void Load()
     {
         data = CookieData() is { } stored ? (JsonObject)stored.DeepClone() : [];
-        if (data[SessionIdKey] is null)
+        if (data[sessionIdKey] is null)
         {
-            data[SessionIdKey] = GenerateSessionId();
+            data[sessionIdKey] = GenerateSessionId();
         }
         loaded = true;
     }
