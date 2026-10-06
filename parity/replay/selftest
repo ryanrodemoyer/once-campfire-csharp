@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Checks the replay harness against two reference instances on fresh copies of the same seed:
+
+  1. Ruby vs Ruby: every chosen family must report zero differences.
+  2. Planted defects: the second instance is put behind parity/replay/defects.py, one defect at a
+     time, and each must be reported as the expected kind of difference.
+
+    parity/bin/reference up --seed default --port 3100 --time 2026-03-02T16:00:00Z
+    parity/bin/reference up --seed default --port 3101 --time 2026-03-02T16:00:00Z
+    parity/replay/selftest http://127.0.0.1:3100 http://127.0.0.1:3101
+
+Read-only families only, so both instances stay on the seed's state and can be reused.
+Exits 0 when the clean run is clean and every defect was caught.
+"""
+
+import io
+import os
+import re
+import socket
+import sys
+
+sys.dont_write_bytecode = True
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import defects  # noqa: E402
+import replay  # noqa: E402
+from families import FAMILIES  # noqa: E402
+
+CLEAN = ["sessions:anon", "account:read", "users:read", "rooms:read", "messages:read", "searches:read", "pwa"]
+
+# (defect, families to replay, the difference kind that must show up, a pattern its detail must match)
+PLANTED = [
+    ("missing-class:message--emoji", ["messages:read"], "body", "message--emoji"),
+    ("missing-class:message--emoji", ["rooms:read"], "body", "message--emoji"),
+    ("missing-class:btn", ["account:read"], "body", "btn"),
+    ("page-size:-1", ["messages:read"], "body", r'^-\s*<div class="message'),
+    ("page-size:+1", ["messages:read"], "body", r'^\+\s*<div class="message'),
+    ("page-size:-1", ["rooms:read"], "body", r'^-\s*<div class="message'),
+    ("page-size:-1", ["users:read"], "body", r"^-\s*\}"),
+    ("header:x-frame-options", ["sessions:anon"], "header-shape", "x-frame-options"),
+    ("status:/up=503", ["sessions:anon"], "status", "200 != 503"),
+]
+
+
+def replay_families(reference, candidate, names):
+    out = io.StringIO()
+    run = replay.Run(reference, candidate, out=out)
+    for name in names:
+        run.family = name
+        FAMILIES[name].fn(run)
+    return run, out.getvalue()
+
+
+def free_port():
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+def main(reference, other):
+    ok = True
+    run, log = replay_families(reference, other, CLEAN)
+    failures = run.failures()
+    print(f"Ruby vs Ruby: {len(run.results) - len(failures)} matched, {len(failures)} differed ({', '.join(CLEAN)})")
+    if failures:
+        ok = False
+        print(log)
+
+    for spec, names, kind, evidence in PLANTED:
+        port = free_port()
+        proxy = defects.serve(port, other, spec)
+        try:
+            run, log = replay_families(reference, f"http://127.0.0.1:{port}", names)
+        finally:
+            proxy.shutdown()
+        caught = [r for r in run.failures() if any(d["kind"] == kind and re.search(evidence, d["detail"], re.M) for d in r["differences"])]
+        unexpected = [r for r in run.failures() if r not in caught]
+        print(f"{'caught' if caught else 'MISSED'} {spec:32} in {','.join(names):14} {len(caught)} responses with a {kind} difference"
+              + (f", first: {caught[0]['name']}" if caught else ""))
+        if unexpected:
+            print(f"  and {len(unexpected)} responses differed some other way, first: {unexpected[0]['name']}: {unexpected[0]['differences'][0]}")
+        ok = ok and bool(caught)
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print(__doc__.strip())
+        sys.exit(64)
+    sys.exit(main(sys.argv[1], sys.argv[2]))
