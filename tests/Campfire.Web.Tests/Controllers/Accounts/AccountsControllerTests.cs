@@ -71,6 +71,9 @@ public sealed partial class AccountsControllerTests : IDisposable
             var logoVariant = LogoVariantCases.Contains(name);
             if (logoVariant && !LibVips.IsAvailable)
             {
+                // Without libvips, the reference's rows stand in for the variant, so the ids of
+                // later rows still line up.
+                ApplyChanges(sample["changes"]!.AsObject());
                 continue;
             }
             app.Seams.Clear();
@@ -377,6 +380,38 @@ public sealed partial class AccountsControllerTests : IDisposable
             state[table] = rows;
         }
         return state;
+    }
+
+    // Writes a case's recorded changes: each row as the reference left it, or gone.
+    void ApplyChanges(JsonObject changes)
+    {
+        using var connection = app.Open();
+        foreach (var (table, rows) in changes)
+        {
+            foreach (var change in rows!.AsArray())
+            {
+                using var command = connection.CreateCommand();
+                if (change!["row"] is JsonObject row)
+                {
+                    var columns = row.Select(column => column.Key).ToList();
+                    command.CommandText = $"INSERT OR REPLACE INTO {table} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", columns.Select((_, i) => $"@p{i}"))})";
+                    for (var i = 0; i < columns.Count; i++)
+                    {
+                        command.Parameters.AddWithValue($"@p{i}", row[columns[i]] is JsonValue value ? value.GetValue<JsonElement>().ValueKind switch
+                        {
+                            JsonValueKind.Number => value.GetValue<JsonElement>().GetInt64(),
+                            _ => value.GetValue<JsonElement>().GetString(),
+                        } : DBNull.Value);
+                    }
+                }
+                else
+                {
+                    command.CommandText = $"DELETE FROM {table} WHERE id = @id";
+                    command.Parameters.AddWithValue("@id", change["id"]!.GetValue<long>());
+                }
+                command.ExecuteNonQuery();
+            }
+        }
     }
 
     // The generator's `changes`: per table, each row that differs, by id, with its new values
