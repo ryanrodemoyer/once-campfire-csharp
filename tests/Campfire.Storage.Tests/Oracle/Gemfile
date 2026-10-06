@@ -1,0 +1,13 @@
+# Active Storage at the exact Rails revision reference/Gemfile.lock pins, plus the sqlite3 gem it
+# locks. Enough to boot a bare Rails app on a C#-written database and storage directory.
+source "https://rubygems.org"
+
+git "https://github.com/rails/rails.git", ref: "1a02651ac37fb64b4de2a2b73461d86acf9c98fb" do
+  gem "railties"
+  gem "activestorage"
+end
+gem "sqlite3", "2.9.6"
+gem "i18n", "1.14.7"
+gem "marcel", "1.1.0"
+gem "json", "2.21.2"
+gem "rack", "3.2.6"
