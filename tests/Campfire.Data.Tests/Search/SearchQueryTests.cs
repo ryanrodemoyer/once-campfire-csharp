@@ -8,8 +8,9 @@ namespace Campfire.Data.Tests.Searching;
 // SearchQuery, SearchesController#query's port.
 public partial class SearchQueryTests
 {
-    // Oracle/search_word.rb generated WordRanges from Ruby 3.3; reference-rust's table came from
-    // the reference image's Ruby 3.4.10. Both are Unicode 15.0.0, and the tables are the same.
+    // Oracle/search_word.rb generated WordRanges from a Ruby 3.4.10 built from its tag;
+    // reference-rust's table came from the reference image's. Ruby 3.3's differs (no U+200C,
+    // U+200D), so this pins the version too.
     [Fact]
     public void Word_ranges_are_the_reference_rubys()
     {
@@ -18,7 +19,7 @@ public partial class SearchQueryTests
         var expected = RustRange().Matches(rust)
             .SelectMany(match => new[] { Hex(match.Groups[1].Value), Hex(match.Groups[2].Value) })
             .ToArray();
-        Assert.Equal(770 * 2, expected.Length);
+        Assert.Equal(771 * 2, expected.Length);
         Assert.Equal(expected, WordRanges.Pairs.ToArray());
     }
 
