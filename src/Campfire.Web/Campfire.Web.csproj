@@ -5,6 +5,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Views/**/*.erb.cs" />
+    <AdditionalFiles Include="Views/**/*.erb.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../Campfire.Cable/Campfire.Cable.csproj" />
     <ProjectReference Include="../Campfire.Jobs/Campfire.Jobs.csproj" />
     <ProjectReference Include="../Campfire.Templates/Campfire.Templates.csproj" />
