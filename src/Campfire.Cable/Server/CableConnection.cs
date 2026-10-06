@@ -21,7 +21,7 @@ namespace Campfire.Cable.Server;
 internal sealed class CableConnection<TUser> : IFrameSink
     where TUser : class
 {
-    static readonly Frame welcome = new(CableProtocol.Welcome());
+    static readonly Frame WelcomeFrame = new(CableProtocol.Welcome());
 
     readonly CableServer<TUser> server;
     readonly WebSocket socket;
@@ -70,7 +70,7 @@ internal sealed class CableConnection<TUser> : IFrameSink
             return;
         }
 
-        Deliver(welcome);
+        Deliver(WelcomeFrame);
         server.Register(this);
         try
         {
