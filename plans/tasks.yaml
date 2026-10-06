@@ -706,7 +706,7 @@ tasks:
     size: L
     deps: [R03, S02, W03]
     bench: true
-    owns: [src/Campfire.Web/Views/messages/_*, src/Campfire.Web/Helpers/Messages/]
+    owns: [src/Campfire.Web/Views/messages/_*, src/Campfire.Web/Views/messages/boosts/_*, src/Campfire.Web/Helpers/Messages/]
     refs: [reference/app/views/messages, reference/app/helpers/messages_helper.rb, reference/app/helpers/messages/attachment_presentation.rb, reference/app/helpers/emoji_helper.rb, reference/app/models/sound.rb]
     deliver: >
       _message, _presentation, _actions, _template, _unrenderable and boost partials;
@@ -761,7 +761,7 @@ tasks:
     milestone: M3
     size: S
     deps: [M05]
-    owns: [src/Campfire.Web/Controllers/Messages/Boosts*, src/Campfire.Web/Views/messages/boosts/*]
+    owns: [src/Campfire.Web/Controllers/Messages/Boosts*, src/Campfire.Web/Views/messages/boosts/index*, src/Campfire.Web/Views/messages/boosts/new*]
     refs: [reference/app/controllers/messages/boosts_controller.rb, reference/app/models/boost.rb]
     deliver: Boost index/new/create/destroy with message touch and broadcasts.
     accept:
