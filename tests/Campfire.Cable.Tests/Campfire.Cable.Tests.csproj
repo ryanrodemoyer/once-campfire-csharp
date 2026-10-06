@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Campfire.Cable/Campfire.Cable.csproj" />
+    <ProjectReference Include="../Campfire.Vectors/Campfire.Vectors.csproj" />
   </ItemGroup>
 
 </Project>

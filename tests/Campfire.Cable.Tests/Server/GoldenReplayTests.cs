@@ -20,7 +20,7 @@ namespace Campfire.Cable.Tests.Server;
 /// </remarks>
 public sealed class GoldenReplayTests
 {
-    const string Cookie = "session_token=replay";
+    const string cookie = "session_token=replay";
 
     sealed record Exchange(string Step, List<string> Frames);
 
@@ -142,11 +142,11 @@ public sealed class GoldenReplayTests
                 switch (step)
                 {
                     case Connect { OriginOk: false } connect:
-                        var refused = await app.UpgradeRequestAsync("http://evil.example", connect.Cookie ? Cookie : null);
+                        var refused = await app.UpgradeRequestAsync("http://evil.example", connect.Cookie ? cookie : null);
                         frames = [$"http {refused.Status} {refused.Body}"];
                         break;
                     case Connect connect:
-                        client = await app.ConnectAsync(connect.Cookie ? Cookie : null);
+                        client = await app.ConnectAsync(connect.Cookie ? cookie : null);
                         frames = [$"upgrade 101 protocol={client.Protocol}", .. await client.CollectAsync()];
                         break;
                     case HttpGet:
@@ -183,7 +183,7 @@ public sealed class GoldenReplayTests
     {
         public ValueTask<CableIdentity<User>?> ConnectAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            if (request.Headers.Cookie.ToString() != Cookie)
+            if (request.Headers.Cookie.ToString() != cookie)
             {
                 return ValueTask.FromResult<CableIdentity<User>?>(null);
             }

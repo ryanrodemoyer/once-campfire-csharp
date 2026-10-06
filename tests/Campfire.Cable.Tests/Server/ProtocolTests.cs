@@ -12,7 +12,7 @@ namespace Campfire.Cable.Tests.Server;
 /// </summary>
 public sealed class ProtocolTests
 {
-    const string Welcome = """{"type":"welcome"}""";
+    const string welcome = """{"type":"welcome"}""";
 
     static string Identifier(JsonObject value) => RailsJson.Generate(value);
 
@@ -48,7 +48,7 @@ public sealed class ProtocolTests
         Assert.Equal(404, status);
 
         using var client = await app.ConnectAsync("session_token=1", app.Origin.Replace("http://", "https://", StringComparison.Ordinal));
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public sealed class ProtocolTests
     {
         await using var app = await StartAsync(TestConfig with { AllowedRequestOrigins = ["https://chat.example"] });
         using var client = await app.ConnectAsync("session_token=1", "https://chat.example");
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public sealed class ProtocolTests
         await using var app = await StartAsync();
         using var client = await app.ConnectAsync("session_token=1");
         Assert.Equal("actioncable-v1-json", client.Protocol);
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class ProtocolTests
     {
         await using var app = await StartAsync();
         using var client = await app.ConnectAsync("session_token=1");
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
 
         var room = Room(1);
         await client.SubscribeAsync(room);
@@ -346,7 +346,7 @@ public sealed class ProtocolTests
     {
         await using var app = await StartAsync();
         using var client = await app.ConnectAsync("session_token=1");
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
         var started = DateTime.UtcNow;
         var ping = JsonNode.Parse(await client.NextAsync(pings: true))!.AsObject();
         Assert.True(DateTime.UtcNow - started <= TimeSpan.FromMilliseconds(3100));
@@ -360,7 +360,7 @@ public sealed class ProtocolTests
     {
         await using var app = await StartAsync();
         using var client = await app.ConnectAsync("session_token=1");
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
         await client.Socket.CloseOutputAsync(WebSocketCloseStatus.EndpointUnavailable, null, TestContext.Current.CancellationToken);
         Assert.Equal("close Some((1001, \"\"))", await client.NextAsync());
     }
@@ -370,7 +370,7 @@ public sealed class ProtocolTests
     {
         await using var app = await StartAsync(TestConfig with { MaxMessageBytes = 1024 });
         using var client = await app.ConnectAsync("session_token=1");
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
         await client.SendAsync(new string('x', 2048));
         Assert.Equal("close Some((1009, \"\"))", await client.NextAsync());
     }
@@ -380,7 +380,7 @@ public sealed class ProtocolTests
     {
         await using var app = await StartAsync();
         using var client = await app.ConnectAsync("session_token=1");
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
         for (var nonce = 0; nonce < 64; nonce++)
         {
             var heartbeat = Identifier(new JsonObject { ["channel"] = "HeartbeatChannel", ["nonce"] = nonce });
@@ -391,7 +391,7 @@ public sealed class ProtocolTests
         await client.SubscribeAsync(Identifier(new JsonObject { ["channel"] = "HeartbeatChannel", ["nonce"] = 64 }));
         await client.AssertSilentAsync();
         using var other = await app.ConnectAsync("session_token=2");
-        Assert.Equal(Welcome, await other.NextAsync());
+        Assert.Equal(welcome, await other.NextAsync());
         await other.SubscribeAsync(Identifier(new JsonObject { ["channel"] = "HeartbeatChannel", ["pad"] = new string('x', 5000) }));
         await other.AssertSilentAsync();
     }
@@ -424,7 +424,7 @@ public sealed class ProtocolTests
         await socket.ConnectAsync(app.Url, TestContext.Current.CancellationToken);
         Assert.StartsWith("permessage-deflate", socket.HttpResponseHeaders!["Sec-WebSocket-Extensions"].Single(), StringComparison.Ordinal);
         using var client = new CableClient(socket);
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
 
         var room = Room(1);
         await client.SubscribeAsync(room);
@@ -448,7 +448,7 @@ public sealed class ProtocolTests
         // No subprotocol offered, none chosen; the server still speaks the JSON protocol.
         Assert.Null(socket.SubProtocol);
         using var client = new CableClient(socket);
-        Assert.Equal(Welcome, await client.NextAsync());
+        Assert.Equal(welcome, await client.NextAsync());
     }
 
     // A tiny app on top of the cable server.
