@@ -4,4 +4,8 @@
     <ProjectReference Include="../Campfire.Data/Campfire.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NetVips" />
+  </ItemGroup>
+
 </Project>
