@@ -93,6 +93,27 @@ def token_in(form, action):
     return match.group(1)
 
 
+def parse_cookie(cookie):
+    """Set-Cookie into (name, value, [(attribute, value)]), attribute names lowercased."""
+    parts = [p.strip() for p in cookie.split(";")]
+    name, _, value = parts[0].partition("=")
+    attributes = []
+    for part in parts[1:]:
+        key, _, val = part.partition("=")
+        attributes.append((key.strip().lower(), val.strip()))
+    return name.strip(), value, attributes
+
+
+def is_deletion(cookie):
+    """cookies.delete: an empty value, Max-Age=0 or an Expires in the past (Rack uses 1970).
+    Only attributes count: a signed value can contain "1970" by chance."""
+    _, value, attributes = parse_cookie(cookie)
+    for key, val in attributes:
+        if (key == "max-age" and val == "0") or (key == "expires" and "1970" in val):
+            return True
+    return value == ""
+
+
 class Browser:
     """One server's user agent: a cookie jar and a client IP (Rails reads X-Forwarded-For from a
     local proxy, so rate limits and bans see it)."""
@@ -115,12 +136,11 @@ class Browser:
         finally:
             conn.close()
         for cookie in reply.set_cookies():
-            name, _, value = cookie.split(";")[0].partition("=")
-            lowered = cookie.lower()
-            if value == "" or "max-age=0" in lowered or "1970" in lowered:
-                self.cookies.pop(name.strip(), None)
+            name, value, _ = parse_cookie(cookie)
+            if is_deletion(cookie):
+                self.cookies.pop(name, None)
             else:
-                self.cookies[name.strip()] = value
+                self.cookies[name] = value
         return reply
 
     def get(self, path, headers=None):
@@ -248,19 +268,14 @@ def http_date(value, options):
 def cookie_shape(cookie):
     """name, value type and sorted attributes (with values, except expiry instants, which depend on
     when each server answered)."""
-    parts = [p.strip() for p in cookie.split(";")]
-    name, _, value = parts[0].partition("=")
-    attributes = []
-    for part in parts[1:]:
-        key, sep, val = part.partition("=")
-        key = key.lower()
+    name, value, attributes = parse_cookie(cookie)
+    deleted = is_deletion(cookie)
+    shown = []
+    for key, val in attributes:
         if key == "expires":
-            val = "«time»"
-        elif key == "max-age" and val != "0":
-            val = "«seconds»" if not val.isdigit() else val
-        attributes.append(f"{key}={val}" if sep else key)
-    deleted = value == "" or "max-age=0" in cookie.lower() or "1970" in cookie
-    return f"{name} {'(deleted)' if deleted else cookie_value_type(value)}: {'; '.join(sorted(attributes))}"
+            val = "«past»" if deleted else "«time»"
+        shown.append(f"{key}={val}" if val else key)
+    return f"{name} {'(deleted)' if deleted else cookie_value_type(value)}: {'; '.join(sorted(shown))}"
 
 
 def cookie_value_type(value):

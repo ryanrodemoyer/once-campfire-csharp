@@ -84,6 +84,11 @@ def main():
     families = select(args.family, args.seed, args.read_only)
     if not families:
         raise SystemExit(f"replay: no families for seed {args.seed} match {args.family!r}")
+    for base in (args.reference, args.candidate):
+        try:
+            replay.Browser(base, "127.0.0.1").get("/up")
+        except OSError as error:
+            raise SystemExit(f"replay: {base} isn't answering ({error})")
     run = replay.Run(args.reference, args.candidate, seed=args.seed, ignored_headers=args.ignore_header, capture=args.capture)
     run.options.frozen_clock = args.frozen_clock
     run.options.keep_asset_digests = args.keep_asset_digests
