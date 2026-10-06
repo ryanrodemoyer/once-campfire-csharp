@@ -36,7 +36,7 @@ public partial class View
     }
 
     /// <summary><c>form_with model: user</c> in <c>accounts/users/_user</c>: the role its check box reads.</summary>
-    static FormModel AccountUserFormModel(User user) =>
+    internal static FormModel AccountUserFormModel(User user) =>
         new(new(User.ModelName, user.Id), true, new Dictionary<string, object?>
         {
             ["role"] = user.Role.ToString().ToLowerInvariant(),
