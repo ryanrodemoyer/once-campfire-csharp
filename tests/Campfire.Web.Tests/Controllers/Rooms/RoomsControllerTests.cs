@@ -61,8 +61,8 @@ public sealed partial class RoomsControllerTests : IDisposable
 
         // A deep link renders the page around its message.
         var deepLink = cases["a deep link"]["body"]!.GetValue<string>();
-        Assert.Contains("id=\"message_933434560\"", deepLink, StringComparison.Ordinal);
-        Assert.DoesNotContain("id=\"message_136976342\"", deepLink, StringComparison.Ordinal);
+        Assert.Contains("data-message-id=\"933434560\"", deepLink, StringComparison.Ordinal);
+        Assert.DoesNotContain("data-message-id=\"136976342\"", deepLink, StringComparison.Ordinal);
 
         Assert.Equal(302, cases["a room the member isn't in"]["status"]!.GetValue<int>());
     }
@@ -92,7 +92,7 @@ public sealed partial class RoomsControllerTests : IDisposable
                 have = string.Join(',', have.Split(',').Where(part => part != "Accept-Encoding"));
                 have = have.Length == 0 ? null : have;
             }
-            if (want != have)
+            if (!SameHeader(name, want, have))
             {
                 yield return $"{name} {have ?? "(none)"}, expected {want ?? "(none)"}";
             }
@@ -111,6 +111,17 @@ public sealed partial class RoomsControllerTests : IDisposable
         {
             yield return $"body differs: {FirstDifference(wantBody, haveBody)}";
         }
+    }
+
+    static bool SameHeader(string name, string? want, string? have)
+    {
+        // Rails' error pages (PublicExceptions) spell the charset "UTF-8"; W01's ErrorPages
+        // writes "utf-8" (reported on #22).
+        if (name == "content-type" && want is not null && want.EndsWith("charset=UTF-8", StringComparison.Ordinal))
+        {
+            return string.Equals(want, have, StringComparison.OrdinalIgnoreCase);
+        }
+        return want == have;
     }
 
     // CSRF tokens are masked with random bytes, so they read as placeholders.

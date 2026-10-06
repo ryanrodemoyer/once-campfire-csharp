@@ -62,7 +62,7 @@ public sealed class RoomsController : ApplicationController
                 Accounts.First(session)?.JoinCode,
                 Platform);
             var body = RenderString(w => view.RoomsShow(w, page));
-            return RenderLayout(view, body);
+            return RenderLayout(view, body, Request.IsTurboFrameRequest);
         }).ConfigureAwait(false);
         Render(html, MimeType.Html.Value);
     }
@@ -143,11 +143,20 @@ public sealed class RoomsController : ApplicationController
 
     RenderContext RichTextContext(SqliteSession session) => new(new DatabaseAttachables(session, App.Keys, Now), RequestUrl.Host);
 
-    // The page is rendered first, so its content_for calls are in place for the layout.
-    static ReadOnlyMemory<byte> RenderLayout(View view, string page)
+    // The page is rendered first, so its content_for calls are in place for the layout:
+    // turbo-rails' `layout -> { "turbo_rails/frame" if turbo_frame_request? }`, else the
+    // application layout.
+    static ReadOnlyMemory<byte> RenderLayout(View view, string page, bool turboFrame)
     {
         var buffer = new ArrayBufferWriter<byte>();
-        view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(page));
+        if (turboFrame)
+        {
+            view.TurboRailsFrameLayout(new HtmlWriter(buffer), new SafeString(page));
+        }
+        else
+        {
+            view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(page));
+        }
         return buffer.WrittenMemory;
     }
 

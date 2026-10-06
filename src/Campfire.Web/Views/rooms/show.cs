@@ -25,6 +25,17 @@ public partial class View
     public partial void RoomsShowInvitation(HtmlWriter w, RoomPage page);
 
     /// <summary>
+    /// ActionView's <c>capture</c> of a block whose output is blank: it yields the block's value
+    /// instead, which for an ERB block is the last text it appended (<paramref name="lastText"/>).
+    /// So an empty room's <c>messages_tag</c> holds just a newline.
+    /// </summary>
+    static void CaptureOrLastText(HtmlWriter w, string lastText, Action body)
+    {
+        var output = w.Capture(body);
+        w.AppendRaw(RubyValues.IsBlank(output.ToString()) ? lastText : output.ToString());
+    }
+
+    /// <summary>
     /// turbo-rails' <c>turbo_exempts_page_from_preview</c>: <c>provide :head</c> of the
     /// <c>turbo-cache-control</c> meta tag, so it outputs nothing where it is called.
     /// </summary>

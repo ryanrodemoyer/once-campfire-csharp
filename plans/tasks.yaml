@@ -557,7 +557,7 @@ tasks:
     size: L
     deps: [W01, W04, F04, C03, C04, C06]
     bench: true
-    owns: [src/Campfire.Web/Helpers/*, src/Campfire.Web/Helpers/Rails/, src/Campfire.Web/Views/layouts/]
+    owns: [src/Campfire.Web/Helpers/*, src/Campfire.Web/Helpers/Rails/, src/Campfire.Web/Views/layouts/*, src/Campfire.Web/Views/layouts/action_text/]
     refs: [reference/app/helpers, reference/app/views/layouts]
     deliver: >
       tag builder attribute serialization, content_for/yield, form_with and field helpers,
@@ -722,7 +722,7 @@ tasks:
     size: M
     deps: [M02, D05, W02]
     bench: true
-    owns: [src/Campfire.Web/Controllers/Rooms*, src/Campfire.Web/Views/rooms/show*, src/Campfire.Web/Views/rooms/show/, src/Campfire.Web/Views/rooms/involvements/_bell*, src/Campfire.Web/Views/accounts/_invite*, src/Campfire.Web/Views/pwa/_*]
+    owns: [src/Campfire.Web/Controllers/Rooms*, src/Campfire.Web/Views/rooms/show*, src/Campfire.Web/Views/rooms/show/, src/Campfire.Web/Views/layouts/turbo_rails/, src/Campfire.Web/Views/rooms/involvements/_bell*, src/Campfire.Web/Views/accounts/_invite*, src/Campfire.Web/Views/pwa/_*]
     refs: [reference/app/controllers/rooms_controller.rb, reference/app/views/rooms/show.html.erb, reference/app/views/rooms/show]
     deliver: rooms#index redirect, rooms#show and the @message deep link with nav, composer, invitation and last-room tracking.
     accept:
