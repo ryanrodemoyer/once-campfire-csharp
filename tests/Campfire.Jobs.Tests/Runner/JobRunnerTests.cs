@@ -39,22 +39,24 @@ public sealed class JobRunnerTests
     }
 
     [Fact]
-    public async Task Enqueue_performs_the_job_with_its_handler_off_the_callers_thread()
+    public async Task Enqueue_returns_at_once_and_the_job_runs_in_the_background()
     {
         var log = new Log();
         await using var runner = new JobRunner(log.Writer);
-        var performed = new TaskCompletionSource<(TestJob, int)>(TaskCreationOptions.RunContinuationsAsynchronously);
-        runner.Register<TestJob>((job, _) =>
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var performed = new TaskCompletionSource<TestJob>(TaskCreationOptions.RunContinuationsAsynchronously);
+        runner.Register<TestJob>(async (job, _) =>
         {
-            performed.SetResult((job, Environment.CurrentManagedThreadId));
-            return Task.CompletedTask;
+            await release.Task;
+            performed.SetResult(job);
         });
 
+        // Enqueue returns while the job is still waiting to finish, so it didn't run inline.
         runner.Enqueue(new TestJob(7));
+        Assert.False(performed.Task.IsCompleted);
+        release.SetResult();
 
-        var (job, thread) = await performed.Task.WaitAsync(Patience, Cancellation);
-        Assert.Equal(new TestJob(7), job);
-        Assert.NotEqual(Environment.CurrentManagedThreadId, thread);
+        Assert.Equal(new TestJob(7), await performed.Task.WaitAsync(Patience, Cancellation));
         await Eventually(() => log.At(JobLogLevel.Information).Count == 1);
         Assert.StartsWith("Performed TestJob (7) in ", log.At(JobLogLevel.Information)[0], StringComparison.Ordinal);
     }
