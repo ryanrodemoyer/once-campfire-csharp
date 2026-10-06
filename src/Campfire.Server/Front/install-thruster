@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Installs Thruster, the reference's public front server (reference/Procfile: `thrust
+# bin/start-app`), exactly as the reference image gets it: the `thrust` binary from the thruster
+# gem that reference/Gemfile.lock pins, for the image's architecture. thruster.sha256 holds the
+# gems' checksums, from rubygems.org; a gem that doesn't match is refused.
+#
+#   install-thruster <amd64|arm64> <destination>
+#
+# Thruster listens on HTTP_PORT (80) and, with TLS_DOMAIN, on HTTPS_PORT (443) with Let's Encrypt
+# certificates cached in STORAGE_PATH (./storage/thruster). It runs the app with PORT set to
+# TARGET_PORT (3000), proxies to it, relays SIGINT and SIGTERM, and exits with the app's status.
+set -euo pipefail
+
+if [ $# -ne 2 ]; then
+  echo "usage: install-thruster <amd64|arm64> <destination>" >&2
+  exit 64
+fi
+
+case "$1" in
+  amd64 | x86_64) platform=x86_64-linux ;;
+  arm64 | aarch64) platform=aarch64-linux ;;
+  *) echo "install-thruster: unsupported architecture $1" >&2; exit 64 ;;
+esac
+
+here=$(cd "$(dirname "$0")" && pwd)
+gem=$(awk -v suffix="-$platform.gem" 'substr($2, length($2) - length(suffix) + 1) == suffix { print $2 }' "$here/thruster.sha256")
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+
+curl -fsSL --retry 3 -o "$work/$gem" "https://rubygems.org/downloads/$gem"
+(cd "$work" && grep -F "  $gem" "$here/thruster.sha256" | sha256sum -c --quiet -)
+
+tar -xf "$work/$gem" -C "$work" data.tar.gz
+tar -xzf "$work/data.tar.gz" -C "$work" "exe/$platform/thrust"
+install -D -m 755 "$work/exe/$platform/thrust" "$2"
