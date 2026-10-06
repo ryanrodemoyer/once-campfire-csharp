@@ -27,6 +27,15 @@ sealed class TestDatabase : IDisposable
         return database;
     }
 
+    // A copy of the parity seed's database (`parity/bin/seed build default`), which
+    // Oracle/queries.rb ran the reference's queries on.
+    public static TestDatabase FromParitySeed()
+    {
+        var database = new TestDatabase();
+        File.Copy(Oracle("parity-seed.sqlite3"), database.Path);
+        return database;
+    }
+
     public void Dispose()
     {
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
