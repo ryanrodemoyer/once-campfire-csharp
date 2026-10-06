@@ -15,17 +15,17 @@ namespace Campfire.Web.Tests.Controllers.Accounts;
 /// </summary>
 public sealed class AccountsReferenceTests : IDisposable
 {
-    const string David = "DavidSessionToken0000001";
-    const string Kevin = "KevinSessionToken0000002";
-    const string JoinCode = "CRMu-l8Ge-KB9B";
+    const string david = "DavidSessionToken0000001";
+    const string kevin = "KevinSessionToken0000002";
+    const string joinCode = "CRMu-l8Ge-KB9B";
 
     readonly MessagesApp app = new(
         new DateTimeOffset(2026, 3, 2, 16, 0, 0, TimeSpan.Zero),
         [
             "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) " +
-                $"VALUES (900001, 127326141, '{David}', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
+                $"VALUES (900001, 127326141, '{david}', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
             "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) " +
-                $"VALUES (900002, 712064548, '{Kevin}', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
+                $"VALUES (900002, 712064548, '{kevin}', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
         ]);
 
     Dictionary<string, string> SignedOut()
@@ -38,19 +38,19 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Show()
     {
-        Assert.Equal(200, (await app.SendAsync("GET", "/users/127326141", app.SignedIn(David, "text/html"))).Status);
+        Assert.Equal(200, (await app.SendAsync("GET", "/users/127326141", app.SignedIn(david, "text/html"))).Status);
     }
 
     [Fact]
     public async Task New()
     {
-        Assert.Equal(200, (await app.SendAsync("GET", $"/join/{JoinCode}", SignedOut())).Status);
+        Assert.Equal(200, (await app.SendAsync("GET", $"/join/{joinCode}", SignedOut())).Status);
     }
 
     [Fact]
     public async Task New_does_not_allow_a_signed_in_user()
     {
-        var response = await app.SendAsync("GET", $"/join/{JoinCode}", app.SignedIn(David));
+        var response = await app.SendAsync("GET", $"/join/{joinCode}", app.SignedIn(david));
         Assert.Equal(302, response.Status);
         Assert.Equal("http://campfire.test/", response.Headers.Location.ToString());
     }
@@ -65,7 +65,7 @@ public sealed class AccountsReferenceTests : IDisposable
     public async Task Create()
     {
         var users = Count("users");
-        var response = await app.SendAsync("POST", $"/join/{JoinCode}", SignedOut(),
+        var response = await app.SendAsync("POST", $"/join/{joinCode}", SignedOut(),
             "user%5Bname%5D=New+Person&user%5Bemail_address%5D=new%4037signals.com&user%5Bpassword%5D=secret123456");
 
         Assert.Equal(302, response.Status);
@@ -84,7 +84,7 @@ public sealed class AccountsReferenceTests : IDisposable
     public async Task Creating_a_new_user_with_an_existing_email_address_will_redirect_to_login_screen()
     {
         var users = Count("users");
-        var response = await app.SendAsync("POST", $"/join/{JoinCode}", SignedOut(),
+        var response = await app.SendAsync("POST", $"/join/{joinCode}", SignedOut(),
             "user%5Bname%5D=Another+David&user%5Bemail_address%5D=david%4037signals.com&user%5Bpassword%5D=secret123456");
 
         Assert.Equal(users, Count("users"));
@@ -94,13 +94,13 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Edit()
     {
-        Assert.Equal(200, (await app.SendAsync("GET", "/account/edit", app.SignedIn(David, "text/html"))).Status);
+        Assert.Equal(200, (await app.SendAsync("GET", "/account/edit", app.SignedIn(david, "text/html"))).Status);
     }
 
     [Fact]
     public async Task Edit_groups_administrators_separately_from_members_with_a_divider()
     {
-        var response = await app.SendAsync("GET", "/account/edit", app.SignedIn(David, "text/html"));
+        var response = await app.SendAsync("GET", "/account/edit", app.SignedIn(david, "text/html"));
 
         Assert.Equal(200, response.Status);
         var frame = response.Body[response.Body.IndexOf("<turbo-frame id=\"account_users\">", StringComparison.Ordinal)..];
@@ -120,7 +120,7 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Update()
     {
-        var response = await app.SendAsync("PUT", "/account", app.SignedIn(David), "account%5Bname%5D=Different");
+        var response = await app.SendAsync("PUT", "/account", app.SignedIn(david), "account%5Bname%5D=Different");
 
         Assert.Equal("http://campfire.test/account/edit", response.Headers.Location.ToString());
         Assert.Equal("Different", app.Scalar("SELECT name FROM accounts"));
@@ -129,7 +129,7 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Non_admins_cannot_update()
     {
-        var response = await app.SendAsync("PUT", "/account", app.SignedIn(Kevin), "account%5Bname%5D=Different");
+        var response = await app.SendAsync("PUT", "/account", app.SignedIn(kevin), "account%5Bname%5D=Different");
 
         Assert.Equal(403, response.Status);
         Assert.Equal("37signals", app.Scalar("SELECT name FROM accounts"));
@@ -138,7 +138,7 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Update_without_a_csrf_token_is_rejected()
     {
-        var headers = app.SignedIn(David);
+        var headers = app.SignedIn(david);
         headers.Remove("X-CSRF-Token");
         Assert.Equal(422, (await app.SendAsync("PUT", "/account", headers, "account%5Bname%5D=Different")).Status);
         Assert.Equal("37signals", app.Scalar("SELECT name FROM accounts"));
@@ -183,7 +183,7 @@ public sealed class AccountsReferenceTests : IDisposable
     {
         await UploadLogo("moon.jpg", "image/jpeg");
 
-        var response = await app.SendAsync("DELETE", "/account/logo", app.SignedIn(David));
+        var response = await app.SendAsync("DELETE", "/account/logo", app.SignedIn(david));
 
         Assert.Equal("http://campfire.test/account/edit", response.Headers.Location.ToString());
         Assert.Equal(0L, app.Scalar("SELECT COUNT(*) FROM active_storage_attachments WHERE record_type = 'Account'"));
@@ -192,13 +192,13 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Custom_styles_edit()
     {
-        Assert.Equal(200, (await app.SendAsync("GET", "/account/custom_styles/edit", app.SignedIn(David, "text/html"))).Status);
+        Assert.Equal(200, (await app.SendAsync("GET", "/account/custom_styles/edit", app.SignedIn(david, "text/html"))).Status);
     }
 
     [Fact]
     public async Task Custom_styles_update()
     {
-        var response = await app.SendAsync("PUT", "/account/custom_styles", app.SignedIn(David),
+        var response = await app.SendAsync("PUT", "/account/custom_styles", app.SignedIn(david),
             "account%5Bcustom_styles%5D=%3Aroot+%7B+--color-text%3A+red%3B+%7D");
 
         Assert.Equal("http://campfire.test/account/custom_styles/edit", response.Headers.Location.ToString());
@@ -208,7 +208,7 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Non_admins_cannot_update_custom_styles()
     {
-        var response = await app.SendAsync("PUT", "/account/custom_styles", app.SignedIn(Kevin),
+        var response = await app.SendAsync("PUT", "/account/custom_styles", app.SignedIn(kevin),
             "account%5Bcustom_styles%5D=%3Aroot+%7B+--color-text%3A+red%3B+%7D");
         Assert.Equal(403, response.Status);
     }
@@ -217,8 +217,8 @@ public sealed class AccountsReferenceTests : IDisposable
     public async Task Custom_styles_are_not_escaped_into_markup_beyond_the_style_tag()
     {
         // An independent check: the stored CSS is written raw only inside <style>, as Rails does.
-        await app.SendAsync("PUT", "/account/custom_styles", app.SignedIn(David), "account%5Bcustom_styles%5D=body+%7B+color%3A+red+%7D");
-        var page = await app.SendAsync("GET", "/account/custom_styles/edit", app.SignedIn(David, "text/html"));
+        await app.SendAsync("PUT", "/account/custom_styles", app.SignedIn(david), "account%5Bcustom_styles%5D=body+%7B+color%3A+red+%7D");
+        var page = await app.SendAsync("GET", "/account/custom_styles/edit", app.SignedIn(david, "text/html"));
         Assert.Contains("<style data-turbo-track=\"reload\">body { color: red }</style>", page.Body, StringComparison.Ordinal);
         Assert.Contains(">\nbody { color: red }</textarea>", page.Body, StringComparison.Ordinal);
     }
@@ -226,18 +226,18 @@ public sealed class AccountsReferenceTests : IDisposable
     [Fact]
     public async Task Create_new_join_code()
     {
-        var response = await app.SendAsync("POST", "/account/join_code", app.SignedIn(David));
+        var response = await app.SendAsync("POST", "/account/join_code", app.SignedIn(david));
 
         Assert.Equal("http://campfire.test/account/edit", response.Headers.Location.ToString());
-        Assert.NotEqual(JoinCode, app.Scalar("SELECT join_code FROM accounts"));
+        Assert.NotEqual(joinCode, app.Scalar("SELECT join_code FROM accounts"));
         Assert.Matches("^[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}$", (string)app.Scalar("SELECT join_code FROM accounts")!);
     }
 
     [Fact]
     public async Task Only_administrators_can_create_new_join_codes()
     {
-        Assert.Equal(403, (await app.SendAsync("POST", "/account/join_code", app.SignedIn(Kevin))).Status);
-        Assert.Equal(JoinCode, app.Scalar("SELECT join_code FROM accounts"));
+        Assert.Equal(403, (await app.SendAsync("POST", "/account/join_code", app.SignedIn(kevin))).Status);
+        Assert.Equal(joinCode, app.Scalar("SELECT join_code FROM accounts"));
     }
 
     async Task UploadLogo(string filename, string contentType)
@@ -246,7 +246,7 @@ public sealed class AccountsReferenceTests : IDisposable
         var head = Encoding.UTF8.GetBytes($"--{boundary}\r\nContent-Disposition: form-data; name=\"account[logo]\"; filename=\"{filename}\"\r\nContent-Type: {contentType}\r\n\r\n");
         var file = File.ReadAllBytes(Path.Combine(Vectors.VectorFiles.Root, "reference/test/fixtures/files", filename));
         var tail = Encoding.UTF8.GetBytes($"\r\n--{boundary}--\r\n");
-        var (status, _, _) = await SendBytesAsync("PATCH", "/account", app.SignedIn(David), [.. head, .. file, .. tail], $"multipart/form-data; boundary={boundary}");
+        var (status, _, _) = await SendBytesAsync("PATCH", "/account", app.SignedIn(david), [.. head, .. file, .. tail], $"multipart/form-data; boundary={boundary}");
         Assert.Equal(302, status);
     }
 
@@ -278,7 +278,7 @@ public sealed class AccountsReferenceTests : IDisposable
     }
 
     async Task<(int Status, IHeaderDictionary Headers, byte[] Body)> GetLogoAsync(string target) =>
-        await SendBytesAsync("GET", target, app.SignedIn(David));
+        await SendBytesAsync("GET", target, app.SignedIn(david));
 
     // `assert_valid_png_response size:`: a PNG whose IHDR says it's size × size.
     static void AssertValidPng((int Status, IHeaderDictionary Headers, byte[] Body) response, int size)
