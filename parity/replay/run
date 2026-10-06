@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+"""Replays route families against the reference and a candidate and reports every difference.
+
+    parity/replay/run REFERENCE_URL CANDIDATE_URL [options]
+    parity/replay/run --list [--seed NAME]
+
+Both servers must run on fresh copies of the same seed, with the parity environment
+(parity/.env.reference), for example:
+
+    parity/bin/reference up --seed default --port 3100 --time 2026-03-02T16:00:00Z
+    parity/bin/reference up --seed default --port 3101 --time 2026-03-02T16:00:00Z
+    parity/replay/run http://127.0.0.1:3100 http://127.0.0.1:3101            # Ruby vs Ruby
+
+    CANDIDATE_IMAGE=campfire-csharp:app docker compose -f compose.parity.yml up -d
+    parity/replay/run http://127.0.0.1:3100 http://127.0.0.1:3200 --family messages:read
+
+Options:
+    --family A,B      only these families (default: every family for the seed); a name ending in
+                      ":" picks a group, e.g. "rooms:" is rooms:read and rooms
+    --seed NAME       the seed both servers run on (default: default); picks labels and families
+    --read-only       skip the families that write
+    --frozen-clock    both servers run with --freeze: decode times written during the run too
+    --keep-asset-digests  compare Propshaft digests instead of masking them
+    --ignore-header H a header to leave out of the comparison (repeatable)
+    --report FILE     write the results as JSON
+    --capture DIR     write both sides' raw headers and normalized bodies for every difference
+
+Exits 0 when every response pair matched, 1 when any differed, 2 when a scenario couldn't run.
+"""
+
+import argparse
+import json
+import os
+import sys
+import traceback
+
+sys.dont_write_bytecode = True
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import replay  # noqa: E402
+from families import FAMILIES, for_seed  # noqa: E402
+
+
+def select(names, seed, read_only):
+    available = for_seed(seed)
+    if names:
+        wanted = names.split(",")
+        unknown = [w for w in wanted if not any(matches(f.name, w) for f in FAMILIES.values())]
+        if unknown:
+            raise SystemExit(f"replay: unknown family {', '.join(unknown)} (see --list)")
+        available = [f for f in available if any(matches(f.name, w) for w in wanted)]
+    return [f for f in available if not (read_only and f.mutates)]
+
+
+def matches(name, wanted):
+    return name == wanted or (wanted.endswith(":") and (name == wanted[:-1] or name.startswith(wanted)))
+
+
+def main():
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("reference", nargs="?")
+    parser.add_argument("candidate", nargs="?")
+    parser.add_argument("--family")
+    parser.add_argument("--seed", default="default")
+    parser.add_argument("--read-only", action="store_true")
+    parser.add_argument("--frozen-clock", action="store_true")
+    parser.add_argument("--keep-asset-digests", action="store_true")
+    parser.add_argument("--ignore-header", action="append", default=[])
+    parser.add_argument("--report")
+    parser.add_argument("--capture")
+    parser.add_argument("--list", action="store_true")
+    parser.add_argument("-h", "--help", action="store_true")
+    args = parser.parse_args()
+
+    if args.help:
+        print(__doc__.strip())
+        return 0
+    if args.list:
+        for f in sorted(FAMILIES.values(), key=lambda f: (f.seed != args.seed, f.seed, f.mutates, f.name)):
+            print(f"{f.name:16} seed={f.seed:10} {'writes   ' if f.mutates else 'read-only'}  {f.doc}")
+        return 0
+    if not (args.reference and args.candidate):
+        parser.error("REFERENCE_URL and CANDIDATE_URL are required")
+
+    families = select(args.family, args.seed, args.read_only)
+    if not families:
+        raise SystemExit(f"replay: no families for seed {args.seed} match {args.family!r}")
+    for base in (args.reference, args.candidate):
+        try:
+            replay.Browser(base, "127.0.0.1").get("/up")
+        except OSError as error:
+            raise SystemExit(f"replay: {base} isn't answering ({error})")
+    run = replay.Run(args.reference, args.candidate, seed=args.seed, ignored_headers=args.ignore_header, capture=args.capture)
+    run.options.frozen_clock = args.frozen_clock
+    run.options.keep_asset_digests = args.keep_asset_digests
+
+    errors = []
+    for f in families:
+        run.family = f.name
+        try:
+            f.fn(run)
+        except Exception as error:  # a scenario that can't continue (a missing form, a failed sign-in)
+            errors.append({"family": f.name, "error": f"{type(error).__name__}: {error}"})
+            print(f"! [{f.name}] stopped: {type(error).__name__}: {error}", file=sys.stderr)
+            traceback.print_exc(limit=3, file=sys.stderr)
+
+    print()
+    for name, (matched, differed) in run.summary().items():
+        print(f"{name:16} {matched:4} matched {differed:4} differed")
+    total = len(run.results)
+    failed = len(run.failures())
+    print(f"\n{total - failed} matched, {failed} differed, {len(errors)} families stopped")
+    if args.report:
+        with open(args.report, "w") as out:
+            json.dump({"reference": args.reference, "candidate": args.candidate, "seed": args.seed,
+                       "families": [f.name for f in families], "results": run.results, "errors": errors}, out, indent=2, ensure_ascii=False)
+    if errors:
+        return 2
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
