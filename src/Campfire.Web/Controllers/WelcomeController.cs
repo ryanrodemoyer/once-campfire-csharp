@@ -24,7 +24,8 @@ public sealed class WelcomeController : ApplicationController
         }
         else
         {
-            await this.RenderActionAsync((view, _, w) => view.WelcomeShow(w, user.Name)).ConfigureAwait(false);
+            // An explicit `render`: a request that takes no HTML has no template (500, not 406).
+            await this.RenderTemplateAsync((view, _, w) => view.WelcomeShow(w, user.Name)).ConfigureAwait(false);
         }
     }
 }
