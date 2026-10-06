@@ -380,7 +380,7 @@ flowchart LR
   classDef done fill:#d3f9d8,stroke:#2f9e44,color:#000
   class D04,D05,R03,S01,S02,W01,W02,W03,A01,M01,M02,M03,M04,M05,M08,VS01,B01,B06,B02 bench
   class F01,F02,V03,R01,R02,R03,M02,M05,M06,I05,Q02,B03,B05,X01,X02 critical
-  class F01,F02,F03,F04,V01,V02,V03,C01,C02,C03,C04,C05,C06,C07,D01,D02,D03,D05,R01,R02,R03,R05,S01,S02,S03,S04,W01,W02,W03,W04,M02,I01,I03,I04,P01,P03,P04,B01 done
+  class F01,F02,F03,F04,V01,V02,V03,C01,C02,C03,C04,C05,C06,C07,D01,D02,D03,D05,R01,R02,R03,R05,S01,S02,S03,S04,W01,W02,W03,W04,M02,M05,RT01,I01,I03,I04,P01,P03,P04,Q01,B01 done
 ```
 
 ## Critical path
@@ -425,11 +425,11 @@ immediately. Real throughput will be lower: review, integration and rework aren'
 
 | Agents | Calendar days to finish | Peak parallel |
 |---:|---:|---:|
-| 1 | 47.0 | 1 |
-| 4 | 13.0 | 4 |
-| 8 | 10.0 | 8 |
-| 12 | 10.0 | 12 |
-| 16 | 10.0 | 15 |
+| 1 | 41.0 | 1 |
+| 4 | 11.5 | 4 |
+| 8 | 8.0 | 8 |
+| 12 | 8.0 | 12 |
+| 16 | 8.0 | 16 |
 
 Total work: 90.5 agent-days.
 
