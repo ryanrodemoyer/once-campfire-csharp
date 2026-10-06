@@ -49,6 +49,11 @@ public sealed record AccountUserRow(User User, string AvatarToken);
 
 /// <summary>What <c>accounts/edit</c> shows.</summary>
 /// <param name="Account">The account's form model.</param>
+/// <param name="AccountFormPath">
+/// Where <c>form_with model: @account</c> posts: <c>polymorphic_path(@account)</c> for the singular
+/// <c>resource :account</c> is <c>account_path(@account)</c>, whose id lands in the format
+/// (<c>/account.1</c>).
+/// </param>
 /// <param name="AccountName"><c>@account.name</c>.</param>
 /// <param name="JoinCode"><c>Current.account.join_code</c>, for <c>accounts/_invite</c>.</param>
 /// <param name="RestrictRoomCreationToAdministrators"><c>Current.account.settings.restrict_room_creation_to_administrators?</c>.</param>
@@ -59,6 +64,7 @@ public sealed record AccountUserRow(User User, string AvatarToken);
 /// <param name="NextPage"><c>@page.next_param</c>, or null on the last page.</param>
 public sealed record AccountEditPage(
     FormModel Account,
+    string AccountFormPath,
     string AccountName,
     string JoinCode,
     bool RestrictRoomCreationToAdministrators,

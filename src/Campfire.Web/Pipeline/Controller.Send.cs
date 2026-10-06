@@ -14,10 +14,17 @@ public abstract partial class Controller
     internal async Task SendResponseAsync()
     {
         CommitFlash();
+        // Live::Buffer#write: a body rendered (not a sent file) defaults Cache-Control to no-cache.
+        if (IsLive && streamBody is null && !Headers.Contains("Cache-Control"))
+        {
+            Headers["Cache-Control"] = "no-cache";
+        }
         CommitResponse();
         RackEtag();
         RackConditionalGet();
         var sendBody = !Request.IsHead;
+        // Live::Response#before_committed: `request.cookie_jar.write self`, before the session's.
+        var committedCookies = IsLive ? Cookies.ToSetCookieHeaders(RequestUrl.IsSsl, RequestUrl.Host) : [];
         CommitSession();
 
         var response = HttpContext.Response;
@@ -26,10 +33,10 @@ public abstract partial class Controller
         {
             response.Headers[name] = value;
         }
-        var setCookies = Cookies.ToSetCookieHeaders(RequestUrl.IsSsl, RequestUrl.Host);
-        if (setCookies.Count > 0)
+        var setCookies = committedCookies.Concat(Cookies.ToSetCookieHeaders(RequestUrl.IsSsl, RequestUrl.Host)).ToArray();
+        if (setCookies.Length > 0)
         {
-            response.Headers.SetCookie = setCookies.ToArray();
+            response.Headers.SetCookie = setCookies;
         }
         var output = HttpContext.Features.Get<ResponseOutput>();
         if (streamBody is not null && output is not null)

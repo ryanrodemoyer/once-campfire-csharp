@@ -20,14 +20,16 @@ public sealed class AccountsLogosController : ApplicationController
 
     public static readonly RequestDelegate Show = Action(Chain, c => c.ShowAsync());
 
+    // `include ActiveStorage::Streaming`, which includes ActionController::Live.
+    protected override bool IsLive => true;
+
     /// <summary><c>Current.account.logo.destroy</c>, then back to the settings.</summary>
     public static readonly RequestDelegate Destroy = Action(Chain, async c =>
     {
-        var now = c.Now;
         await c.WriteAsync(tx =>
         {
             var account = Accounts.First(tx.Session) ?? throw new InvalidOperationException("undefined method 'logo' for nil");
-            AccountsController.DetachLogo(tx, account.Id, now);
+            AccountsController.DetachLogo(tx, account.Id);
         });
         c.RedirectTo(Routes.EditAccountUrl(c.UrlBase));
     });
@@ -74,7 +76,7 @@ public sealed class AccountsLogosController : ApplicationController
     {
         var filename = IsSmallLogo ? "app-icon-192.png" : "app-icon.png";
         var assets = App.RequireAssets();
-        var bytes = assets.DigestedPath($"logos/{filename}") is { } path && assets.Files.TryGetValue(path, out var file)
+        var bytes = assets.AssetPath($"logos/{filename}") is { } url && assets.Files.TryGetValue(url, out var file)
             ? file
             : throw new InvalidOperationException($"Cannot read file app/assets/images/logos/{filename}");
         SendPng(filename, (stream, cancellationToken) => stream.WriteAsync(bytes, cancellationToken).AsTask());

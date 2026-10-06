@@ -23,7 +23,7 @@
 <section class="panel txt-align-center flex flex-column gap" style="view-transition-name: account-settings">
   <% if (CurrentUser!.CanAdminister) { %>
     <div class="align-center center avatar__form gap" data-controller="upload-preview">
-      <%= FormWith(page.Account, Routes.AccountPath(), new() { { "method", "patch" }, { "class", "txt--medium" }, { "data", new HtmlOptions { { "controller", "form" } } } }, form => { %>
+      <%= FormWith(page.Account, page.AccountFormPath, new() { { "method", "patch" }, { "class", "txt--medium" }, { "data", new HtmlOptions { { "controller", "form" } } } }, form => { %>
         <label class="btn input--file">
           <%= ImageTag("camera.svg", new() { { "aria", new HtmlOptions { { "hidden", "true" } } }, { "size", 20 } }) %>
           <%= form.FileField("logo", new() { { "class", "input" }, { "accept", "image/*" },
@@ -32,7 +32,7 @@
         </label>
       <% }) %>
 
-      <%= FormWith(page.Account, Routes.AccountPath(), new() { { "method", "patch" }, { "data", new HtmlOptions { { "controller", "form" } } } }, form => { %>
+      <%= FormWith(page.Account, page.AccountFormPath, new() { { "method", "patch" }, { "data", new HtmlOptions { { "controller", "form" } } } }, form => { %>
         <label class="btn avatar input--file account-logo txt-xx-large">
           <%= ImageTag(Routes.FreshAccountLogoPath(CurrentAccount?.UpdatedAt), new() { { "role", "presentation" }, { "size", 48 }, { "data", new HtmlOptions { { "upload_preview_target", "image" } } } }) %>
           <%= form.FileField("logo", new() { { "class", "input" }, { "accept", "image/*" },
@@ -49,7 +49,7 @@
       <% } %>
     </div>
 
-    <%= FormWith(page.Account, Routes.AccountPath(), new() { { "data", new HtmlOptions { { "controller", "form" } } }, { "class", "flex flex-column gap" } }, form => { %>
+    <%= FormWith(page.Account, page.AccountFormPath, new() { { "data", new HtmlOptions { { "controller", "form" } } }, { "class", "flex flex-column gap" } }, form => { %>
       <div class="flex align-center gap">
         <%= TranslationButton("account_name") %>
 
@@ -66,7 +66,7 @@
     <% }) %>
 
     <div class="margin-block-start pad-block pad-inline-double fill-shade border-radius">
-      <%= FormWith(page.Account, Routes.AccountPath(), new() { { "method", "put" }, { "data", new HtmlOptions { { "controller", "form" } } }, { "class", "flex align-center gap center" } }, form => { %>
+      <%= FormWith(page.Account, page.AccountFormPath, new() { { "method", "put" }, { "data", new HtmlOptions { { "controller", "form" } } }, { "class", "flex align-center gap center" } }, form => { %>
         <div class="flex-item-grow flex align-center gap txt-align-start">
           <%= ImageTag("crown.svg", new() { { "class", "colorize--black" }, { "aria", new HtmlOptions { { "hidden", "true" } } }, { "size", 18 } }) %> Must be admin to create new rooms
         </div>

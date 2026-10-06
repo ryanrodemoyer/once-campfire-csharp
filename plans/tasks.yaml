@@ -607,7 +607,7 @@ tasks:
     milestone: M3
     size: S
     deps: [A01]
-    owns: [src/Campfire.Web/Controllers/Sessions/Transfers*, src/Campfire.Web/Controllers/Users/Profiles*, src/Campfire.Web/Views/sessions/transfers/, src/Campfire.Web/Views/users/profiles/]
+    owns: [src/Campfire.Web/Controllers/Sessions/Transfers*, src/Campfire.Web/Controllers/Users/Profiles*, src/Campfire.Web/Views/sessions/transfers/, src/Campfire.Web/Views/users/profiles/show*, src/Campfire.Web/Views/users/profiles/_membership*]
     refs: [reference/app/controllers/sessions/transfers_controller.rb, reference/app/controllers/users/profiles_controller.rb]
     deliver: Transfer links (4h signed ids) and profile show/update.
     accept:
@@ -619,7 +619,7 @@ tasks:
     milestone: M3
     size: M
     deps: [A01, S03]
-    owns: [src/Campfire.Web/Controllers/Users*, src/Campfire.Web/Controllers/Accounts*, src/Campfire.Web/Controllers/Accounts/JoinCodes*, src/Campfire.Web/Controllers/Accounts/Logos*, src/Campfire.Web/Controllers/Accounts/CustomStyles*, src/Campfire.Web/Views/users/*, src/Campfire.Web/Views/accounts/edit*, src/Campfire.Web/Views/accounts/_help_contact*, src/Campfire.Web/Views/accounts/custom_styles/]
+    owns: [src/Campfire.Web/Controllers/Users*, src/Campfire.Web/Controllers/Accounts*, src/Campfire.Web/Controllers/Accounts/JoinCodes*, src/Campfire.Web/Controllers/Accounts/Logos*, src/Campfire.Web/Controllers/Accounts/CustomStyles*, src/Campfire.Web/Views/users/*, src/Campfire.Web/Views/accounts/edit*, src/Campfire.Web/Views/accounts/_help_contact*, src/Campfire.Web/Views/accounts/custom_styles/, src/Campfire.Web/Views/users/profiles/_transfer*, src/Campfire.Web/Views/accounts/users/_user*, src/Campfire.Web/Views/accounts/users/_next_page_container*]
     refs: [reference/app/controllers/users_controller.rb, reference/app/controllers/accounts_controller.rb, reference/app/controllers/accounts, reference/app/models/account]
     deliver: Join by code, users#show, join code regeneration, account edit/update, logo show/destroy, custom styles.
     accept:
@@ -631,7 +631,7 @@ tasks:
     milestone: M3
     size: M
     deps: [A03, I01]
-    owns: [src/Campfire.Web/Controllers/Accounts/Users*, src/Campfire.Web/Controllers/Users/Bans*, src/Campfire.Web/Views/accounts/users/]
+    owns: [src/Campfire.Web/Controllers/Accounts/Users*, src/Campfire.Web/Controllers/Users/Bans*, src/Campfire.Web/Views/accounts/users/index*]
     refs: [reference/app/controllers/accounts/users_controller.rb, reference/app/controllers/users/bans_controller.rb, reference/app/jobs/remove_banned_content_job.rb]
     deliver: User index with geared_pagination Link/X-Total-Count headers and turbo_stream next page, role change, deactivate, ban/unban with content removal.
     accept:

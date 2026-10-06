@@ -2,7 +2,6 @@ using System.Globalization;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
-using Campfire.RailsCompat.Formatting;
 using Campfire.RailsCompat.Params;
 using Campfire.RailsCompat.Signing;
 using Campfire.Storage.Blobs;
@@ -42,6 +41,7 @@ public sealed class AccountsController : ApplicationController
             var users = AccountUsers(session, viewer).Select(user => new AccountUserRow(user, TransferableUser.GenerateAvatarSignedId(App.Keys, user.Id))).ToList();
             var page = new AccountEditPage(
                 View.AccountFormModel(account),
+                Routes.AccountPath(new() { { "format", account.Id } }),
                 account.Name,
                 account.JoinCode,
                 account.SettingsData.RestrictRoomCreationToAdministrators,
@@ -65,7 +65,8 @@ public sealed class AccountsController : ApplicationController
     /// <summary>
     /// <c>Current.account.update!(attributes)</c> of <c>name</c>, <c>custom_styles</c>,
     /// <c>settings</c> and <c>logo</c>: the row is saved first, then the logo attached (or, for
-    /// nil or "", detached), which touches the account.
+    /// nil or "", detached). The account isn't touched: its <c>updated_at</c> (and so the logo's
+    /// ETag and <c>?v=</c>) stays as it was, as in the reference.
     /// </summary>
     internal static async Task UpdateAccountAsync(WebApp app, ParamHash attributes, DateTimeOffset now, CancellationToken cancellationToken)
     {
@@ -84,33 +85,26 @@ public sealed class AccountsController : ApplicationController
             var accountId = account.Id;
             if (staged is not null)
             {
-                BlobStorage.AttachOne(tx, staged, nameof(Account), accountId, AttachmentNames.Logo, now, touch => TouchAccount(touch, accountId, now));
+                BlobStorage.AttachOne(tx, staged, nameof(Account), accountId, AttachmentNames.Logo, now);
             }
             else if (logo is not null)
             {
-                DetachLogo(tx, accountId, now);
+                DetachLogo(tx, accountId);
             }
         }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
-    /// <c>Current.account.logo.destroy</c>: the attachment goes (touching the account); its blob
-    /// is left for <c>ActiveStorage::PurgeJob</c>.
+    /// <c>Current.account.logo.destroy</c>: the attachment goes; its blob is left for
+    /// <c>ActiveStorage::PurgeJob</c>.
     /// </summary>
-    internal static void DetachLogo(WriteTransaction tx, long accountId, DateTimeOffset now)
+    internal static void DetachLogo(WriteTransaction tx, long accountId)
     {
         if (BlobRecords.FindAttachment(tx.Session, nameof(Account), accountId, AttachmentNames.Logo) is { } attachment)
         {
             BlobRecords.DeleteAttachment(tx.Session, attachment.Id);
-            TouchAccount(tx, accountId, now);
         }
     }
-
-    // The attachment's `belongs_to :record, touch: true`.
-    static void TouchAccount(WriteTransaction tx, long accountId, DateTimeOffset now) =>
-        tx.Session.Execute(
-            """UPDATE "accounts" SET "updated_at" = @now WHERE "accounts"."id" = @id""",
-            ("@now", ActiveRecordTime.ToDb(now)), ("@id", accountId));
 
     // `account_users`: administrators also see banned people.
     static List<User> AccountUsers(SqliteSession session, User viewer) => viewer.CanAdminister()
