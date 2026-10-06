@@ -6,11 +6,12 @@
 # APP_VERSION, GIT_REVISION), the ONCE backup/restore hooks, and bin/boot as the command.
 #
 #   docker build -t campfire-csharp --build-arg APP_VERSION=... --build-arg GIT_REVISION=... .
-#   docker run -e SECRET_KEY_BASE=... -v campfire:/rails/storage -p 3000:3000 campfire-csharp
+#   docker run -e SECRET_KEY_BASE=... -v campfire:/rails/storage -p 80:80 -p 443:443 campfire-csharp
 #
-# bin/boot is the reference's bin/start-app: db:prepare, then the app on PORT (3000) on every
-# interface. Thruster's public listener on 80 and 443 in front of it is task P03; the pinned media
-# toolchain (libvips, ffmpeg) is task P02.
+# bin/boot is the reference's `thrust bin/start-app` (reference/Procfile): Thruster, the same
+# binary the reference's gem ships, on 80 and, with TLS_DOMAIN, on 443 (certificates cached in
+# /rails/storage/thruster), in front of `campfire server` (db:prepare, then the app on PORT 3000).
+# The pinned media toolchain (libvips, ffmpeg) is task P02.
 #
 # The runtime is Debian trixie, as the reference's ruby:3.4-slim is, so P02 can add the same
 # Debian media libraries. Microsoft ships no Debian image for .NET 10, so the app is published
@@ -44,6 +45,14 @@ RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet run assets/build-assets.cs -- /src /out/app/assets
 
 
+# Thruster from the gem reference/Gemfile.lock pins, for the target architecture, checked against
+# rubygems.org's checksums (src/Campfire.Server/Front/).
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION} AS thruster
+ARG TARGETARCH
+COPY src/Campfire.Server/Front /front
+RUN /front/install-thruster "$TARGETARCH" /out/thrust
+
+
 FROM docker.io/library/debian:${DEBIAN_RELEASE}-slim
 
 # ca-certificates: the system CA store, for webhooks, unfurling and Web Push. The libraries the .NET
@@ -66,13 +75,20 @@ RUN groupadd --system --gid 1000 rails && \
 
 COPY --from=build /out/app /app
 RUN ln -s /app/campfire /usr/local/bin/campfire
+COPY --from=thruster /out/thrust /usr/local/bin/thrust
 
 WORKDIR /rails
 
+# Thruster sets PORT to TARGET_PORT (3000) for the app, proxies to it, relays SIGTERM and exits
+# with the app's status. Its environment (HTTP_PORT, HTTPS_PORT, TLS_DOMAIN, ACME_DIRECTORY,
+# HTTP_*_TIMEOUT, ... and their THRUSTER_ forms) means what it does in the reference image.
 COPY --chmod=755 <<'EOF' /rails/bin/boot
 #!/bin/sh
-exec /usr/local/bin/campfire server
+exec /usr/local/bin/thrust /usr/local/bin/campfire server
 EOF
+
+# Thruster's 502 page is ./public/502.html, as in the reference; public/ is the asset bundle's.
+RUN ln -s /app/assets/public /rails/public
 
 # Rails.root.join("storage"): storage/db/<env>.sqlite3, storage/files (Active Storage) and
 # storage/backups (the ONCE hooks).
@@ -90,7 +106,7 @@ COPY --chmod=755 reference/hooks/post-restore /hooks/post-restore
 
 USER 1000:1000
 
-# Configure environment defaults. The HTTP_* timeouts are Thruster's, for P03's front server.
+# Configure environment defaults. The HTTP_* timeouts are Thruster's, as in the reference.
 ENV RAILS_ENV="production" \
     CAMPFIRE_ASSETS_PATH="/app/assets" \
     DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -104,8 +120,8 @@ ENV APP_VERSION=$APP_VERSION
 ARG GIT_REVISION
 ENV GIT_REVISION=$GIT_REVISION
 
-# The app's own listener; P03 puts Thruster's 80 and 443 in front of it.
-EXPOSE 3000
+# Expose ports for HTTP and HTTPS
+EXPOSE 80 443
 
 # Start the server by default, this can be overwritten at runtime
 CMD ["bin/boot"]
