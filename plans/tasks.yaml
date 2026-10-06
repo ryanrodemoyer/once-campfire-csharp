@@ -748,9 +748,12 @@ tasks:
     size: L
     deps: [M02, R05, D03, W02]
     bench: true
-    owns: [src/Campfire.Web/Controllers/Messages/Write*, src/Campfire.Web/Views/messages/create*, src/Campfire.Web/Views/messages/destroy*, src/Campfire.Web/Views/messages/edit*, src/Campfire.Web/Views/messages/show*]
+    owns: [src/Campfire.Web/Controllers/Messages/Write*, src/Campfire.Web/Views/messages/create*, src/Campfire.Web/Views/messages/destroy*, src/Campfire.Web/Views/messages/edit*, src/Campfire.Web/Views/messages/show*, src/Campfire.Web/Views/messages/room_not_found*]
     refs: [reference/app/controllers/messages_controller.rb, reference/app/javascript/models/file_uploader.js]
-    deliver: Create (HTML and turbo_stream, multipart XHR attachments, client_message_id), show/edit/update/destroy with permissions; fires domain events through D03 seams.
+    deliver: >
+      Create (HTML and turbo_stream, form and multipart bodies, client_message_id, room_not_found),
+      show/edit/update/destroy with permissions; fires domain events through D03 seams. Messages
+      with a file are M10's (split out of this task), through hooks M05 leaves in the controller.
     accept:
       - State differential after create/edit/delete equals the reference
       - The benchmark's POST returns the reference status and turbo_stream body shape
@@ -803,6 +806,23 @@ tasks:
     deliver: unfurl_link#create returning opengraph metadata.
     accept:
       - Ported controller tests pass, including private-network rejection
+
+  - id: M10
+    title: Message attachments
+    lane: M
+    milestone: M3
+    size: M
+    deps: [M05, S03]
+    owns: [src/Campfire.Web/Controllers/Messages/Attachments*, src/Campfire.Data/MessageAttachments/]
+    refs: [reference/app/models/message/attachment.rb, reference/app/javascript/models/file_uploader.js, reference/app/controllers/messages_controller.rb]
+    deliver: >
+      Split out of M05. The file uploader's multipart XHR create (`create_with_attachment!`: blob
+      and attachment rows in the message's transaction, the upload, `process_attachment`'s
+      analysis and thumbnail or video preview) and destroying a message with a file
+      (`purge_later`), by implementing MessagesWriteController's `CreateWithAttachment` and
+      `DestroyWithAttachment` hooks; RemoveBannedContentJob picks up the same destroy.
+    accept:
+      - State differential, broadcasts and jobs after uploading an image, a video and a plain file, and destroying each, equal the reference
 
   # ---------------------------------------------------------------- Realtime
   - id: RT01
