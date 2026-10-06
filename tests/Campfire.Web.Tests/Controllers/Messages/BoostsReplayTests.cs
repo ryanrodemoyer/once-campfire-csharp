@@ -24,7 +24,7 @@ public sealed partial class BoostsReplayTests : IDisposable
     static readonly string[] ComparedHeaders = ["content-type", "location", "vary", "cache-control", "x-frame-options", "etag"];
 
     // The session id of signed-in requests (the generator's SESSION_ID).
-    const string SessionId = "0123456789abcdef0123456789abcdef";
+    const string sessionId = "0123456789abcdef0123456789abcdef";
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -181,7 +181,7 @@ public sealed partial class BoostsReplayTests : IDisposable
     JsonObject? SessionData(string setCookie)
     {
         var data = CookieJar.FromHeader(setCookie[..setCookie.IndexOf(';', StringComparison.Ordinal)], messages.Keys, () => messages.Now).Encrypted.Get("_campfire_session") as JsonObject;
-        if (data?["session_id"] is { } id && id.GetValue<string>() != SessionId)
+        if (data?["session_id"] is { } id && id.GetValue<string>() != sessionId)
         {
             data["session_id"] = "<new session>";
         }
