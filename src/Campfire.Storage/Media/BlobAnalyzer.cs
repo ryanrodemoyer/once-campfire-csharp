@@ -1,8 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 using Campfire.Storage.Blobs;
-using NetVips;
 
 namespace Campfire.Storage.Media;
 
@@ -21,13 +19,10 @@ public enum AnalyzerKind
 /// (never, since the variant processor is <c>:vips</c>), <c>VideoAnalyzer</c> and <c>AudioAnalyzer</c>,
 /// then <c>NullAnalyzer</c>. Each reads a local copy of the blob (<see cref="BlobTempfile"/>).
 /// </summary>
-public static partial class BlobAnalyzer
+public static class BlobAnalyzer
 {
     /// <summary><c>ActiveStorage.paths[:ffprobe] || "ffprobe"</c>.</summary>
     public const string FfprobePath = "ffprobe";
-
-    [GeneratedRegex("Right-top|Left-bottom|Top-right|Bottom-left", RegexOptions.CultureInvariant)]
-    private static partial Regex Rotations();
 
     /// <summary><c>analyzer_class</c>: the first analyzer that <c>accept?</c>s the blob.</summary>
     public static AnalyzerKind For(Blob blob)
@@ -79,22 +74,10 @@ public static partial class BlobAnalyzer
     /// </summary>
     public static JsonObject ImageMetadata(string path)
     {
+        ArgumentNullException.ThrowIfNull(path);
         LibVips.EnsureInitialized();
-        try
-        {
-            using var image = Image.NewFromFile(path, access: Enums.Access.Sequential);
-            var (width, height) = IsRotated(image) ? (image.Height, image.Width) : (image.Width, image.Height);
-            return new JsonObject { ["width"] = width, ["height"] = height };
-        }
-        catch (VipsException)
-        {
-            return [];
-        }
+        return VipsImaging.ImageMetadata(path);
     }
-
-    /// <summary><c>ROTATIONS === image.get("exif-ifd0-Orientation")</c>, false when it's missing.</summary>
-    static bool IsRotated(Image image) =>
-        image.Contains("exif-ifd0-Orientation") && image.Get("exif-ifd0-Orientation") is string orientation && Rotations().IsMatch(orientation);
 
     /// <summary>
     /// <c>probe_from(file)</c>: <c>ffprobe -print_format json -show_streams -show_format -v error &lt;path&gt;</c>,

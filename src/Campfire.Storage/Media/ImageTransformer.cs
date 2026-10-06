@@ -1,5 +1,4 @@
 using Campfire.Storage.Variants;
-using NetVips;
 
 namespace Campfire.Storage.Media;
 
@@ -28,68 +27,8 @@ public static class ImageTransformer
         ArgumentNullException.ThrowIfNull(output);
         var operations = Operations(variation.Transformations);
         LibVips.EnsureInitialized();
-        try
-        {
-            using var image = Load(input);
-            var current = image;
-            try
-            {
-                foreach (var (width, height) in operations)
-                {
-                    var resized = ResizeToLimit(current, width, height);
-                    if (current != image)
-                    {
-                        current.Dispose();
-                    }
-                    current = resized;
-                }
-                current.WriteToFile(output);
-            }
-            finally
-            {
-                if (current != image)
-                {
-                    current.Dispose();
-                }
-            }
-        }
-        catch (VipsException exception)
-        {
-            throw new MediaException(exception.Message, exception);
-        }
+        VipsImaging.Transform(input, operations, output);
     }
-
-    /// <summary>
-    /// <c>Processor.load_image(path, page: 0)</c>: <c>page</c> reaches only loaders that take it
-    /// (<c>Utils.select_valid_loader_options</c>), then <c>autorot</c>.
-    /// </summary>
-    static Image Load(string path)
-    {
-        var options = LoaderAcceptsPage(path) ? new VOption { { "page", 0 } } : null;
-        using var loaded = Image.NewFromFile(path, kwargs: options);
-        return loaded.Autorot();
-    }
-
-    /// <summary>
-    /// Whether the loader libvips picks for <paramref name="path"/> lists <c>page</c> among its
-    /// optional inputs (<c>Vips::Introspect#optional_input</c>).
-    /// </summary>
-    static bool LoaderAcceptsPage(string path) =>
-        Image.FindLoad(path) is { } loader && Introspect.Get(loader).OptionalInput.ContainsKey("page");
-
-    /// <summary>
-    /// <c>resize_to_limit(width, height)</c>: <c>thumbnail_image(width, height:, size: :down,
-    /// no_rotate: true)</c>, then the default sharpen, <c>conv(SHARPEN_MASK, precision: :integer)</c>.
-    /// </summary>
-    static Image ResizeToLimit(Image image, int width, int height)
-    {
-        using var thumbnail = image.ThumbnailImage(width, height: height, size: Enums.Size.Down, noRotate: true);
-        using var mask = SharpenMask();
-        return thumbnail.Conv(mask, precision: Enums.Precision.Integer);
-    }
-
-    /// <summary><c>SHARPEN_MASK</c>: <c>new_from_array([[-1,-1,-1],[-1,32,-1],[-1,-1,-1]], 24)</c>.</summary>
-    static Image SharpenMask() => Image.NewFromArray(new double[,] { { -1, -1, -1 }, { -1, 32, -1 }, { -1, -1, -1 } }, 24);
 
     /// <summary>
     /// <c>ImageProcessingTransformer#operations</c>: every transformation but <c>format</c>, skipping

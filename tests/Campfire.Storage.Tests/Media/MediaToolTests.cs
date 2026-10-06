@@ -117,6 +117,32 @@ public sealed class MediaToolTests : IDisposable
     }
 
     [Fact]
+    public void Libvips_modules_are_loaded_without_putting_their_libraries_in_the_global_scope()
+    {
+        Toolchain.RequireLibVips();
+        LibVips.EnsureInitialized();
+
+        // Ubuntu's and Debian's openslide module links the system libsqlite3. Opened globally (as
+        // vips_init opens modules), its symbols replace the bundled SQLite's own internal calls,
+        // and the next connection crashes in sqlite3_open_v2.
+        Assert.Equal(0, dlsym(0, "sqlite3_libversion"));
+        Assert.Equal(0, dlsym(0, "openslide_open"));
+        var directory = LibVips.Modules.Select(Path.GetDirectoryName).Distinct().SingleOrDefault();
+        if (directory is not null)
+        {
+            Assert.Equal(Directory.GetFiles(directory).Order(StringComparer.Ordinal), LibVips.Modules);
+        }
+        using var connection = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "CREATE VIRTUAL TABLE t USING fts5(body, tokenize=porter); INSERT INTO t VALUES ('hello world'); SELECT count(*) FROM t WHERE t MATCH 'hello'";
+        Assert.Equal(1L, command.ExecuteScalar());
+    }
+
+    [System.Runtime.InteropServices.DllImport("libc", BestFitMapping = false, ThrowOnUnmappableChar = true)]
+    static extern nint dlsym(nint handle, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)] string symbol);
+
+    [Fact]
     public void A_failing_variant_reports_its_own_error_after_many_variants()
     {
         Toolchain.RequireLibVips();
