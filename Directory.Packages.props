@@ -9,6 +9,8 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
     <!-- Data -->
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <!-- Media: the managed binding only. libvips itself comes from the system (the pinned toolchain), never NetVips.Native. -->
+    <PackageVersion Include="NetVips" Version="3.2.0" />
     <!-- Tests -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
