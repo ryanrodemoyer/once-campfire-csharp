@@ -56,14 +56,19 @@ def room_writes(run):
     run.compare("  then GET /", david.get("/"))
     run.compare("POST /rooms/closeds", david.submit("/rooms/closeds/new", "/rooms/closeds", "post", [("room[name]", "Replay closed")] + users))
     run.compare("  then kevin GET /users/me/sidebar", kevin.get("/users/me/sidebar"))
-    run.compare("PATCH /rooms/opens/<id> (closed to open)", david.submit(f"/rooms/closeds/{designers}/edit", f"/rooms/opens/{designers}", "patch", [("room[name]", "Designers!")]))
-    run.compare("PATCH /rooms/closeds/<id> (open to closed)", david.submit(f"/rooms/opens/{hq}/edit", f"/rooms/closeds/{hq}", "patch", [("room[name]", "HQ")] + users[:2]))
+    # The edit page's room type toggle points the form at the other controller; its JavaScript
+    # sends the page's token.
+    run.compare("PATCH /rooms/opens/<id> (closed to open)", david.form("patch", f"/rooms/opens/{designers}",
+                david.tokens(f"/rooms/closeds/{designers}/edit", lambda r: r.meta_token()), [("room[name]", "Designers!")]))
+    run.compare("PATCH /rooms/closeds/<id> (open to closed)", david.form("patch", f"/rooms/closeds/{hq}",
+                david.tokens(f"/rooms/opens/{hq}/edit", lambda r: r.meta_token()), [("room[name]", "HQ")] + users[:2]))
     run.compare("  then GET /rooms/<hq>", david.get(f"/rooms/{hq}"))
     run.compare("kevin PATCH /rooms/opens/<id> (not the creator)", kevin.form("patch", f"/rooms/opens/{run.label('rooms.pets')}",
-                                                                               kevin.tokens("/", lambda r: r.meta_token()), [("room[name]", "x")]))
+                                                                               kevin.tokens(f"/rooms/{hq}", lambda r: r.meta_token()), [("room[name]", "x")]))
     run.compare("POST /rooms/directs", david.submit("/rooms/directs/new", "/rooms/directs", "post", [("user_ids[]", str(run.label("users.jz")))]))
     run.compare("POST /rooms/directs (existing)", david.submit("/rooms/directs/new", "/rooms/directs", "post", [("user_ids[]", str(run.label("users.jason")))]))
     quiet = run.label("rooms.quiet")
-    run.compare("david DELETE /rooms/{quiet} (not the creator)", david.form("delete", f"/rooms/{quiet}", david.tokens(f"/rooms/{quiet}", lambda r: r.meta_token())))
+    pets = run.label("rooms.pets")
+    run.compare("kevin DELETE /rooms/{pets} (not the creator)", kevin.form("delete", f"/rooms/{pets}", kevin.tokens(f"/rooms/{quiet}", lambda r: r.meta_token())))
     run.compare("kevin DELETE /rooms/{quiet}", kevin.form("delete", f"/rooms/{quiet}", kevin.tokens(f"/rooms/{quiet}", lambda r: r.meta_token())))
     run.compare("  then GET /users/me/sidebar", kevin.get("/users/me/sidebar"))

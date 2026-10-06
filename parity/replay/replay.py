@@ -17,6 +17,7 @@ A response pair is compared on:
 """
 
 import difflib
+import email.utils
 import http.client
 import json
 import os
@@ -32,6 +33,7 @@ HOST = "campfire.test"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
 TRANSPORT_HEADERS = {"date", "connection", "keep-alive", "transfer-encoding", "content-length"}
 PRESENCE_HEADERS = {"x-request-id", "x-runtime", "server-timing"}
+HTTP_DATE_HEADERS = {"last-modified", "expires"}
 SIDES = ("reference", "candidate")
 # Active Storage names a variant sent inline after its random blob key.
 BLOB_KEY_FILENAME = re.compile(r'filename="[a-z0-9]{28}"; filename\*=UTF-8\'\'[a-z0-9]{28}')
@@ -226,11 +228,21 @@ def header_value(reply, name, options):
     value = reply.header(name)
     if value is None or name in PRESENCE_HEADERS:
         return value if value is None else "«present»"
+    if name in HTTP_DATE_HEADERS:
+        return http_date(value, options)
     if name == "etag":
         return "W/«etag»" if value.startswith("W/") else "«etag»"
     value = CSP_NONCE.sub("'nonce-«nonce»'", value)
     value = BLOB_KEY_FILENAME.sub("«blob_key»", value)
     return normalize.mask_text(value, options)
+
+
+def http_date(value, options):
+    try:
+        ms = round(email.utils.parsedate_to_datetime(value).timestamp() * 1000)
+    except (TypeError, ValueError):
+        return value
+    return normalize.describe_time("http-date", ms, options) if options.seed_time is not None else value
 
 
 def cookie_shape(cookie):

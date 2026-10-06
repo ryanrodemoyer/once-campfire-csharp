@@ -241,6 +241,11 @@ JOIN_CODE = re.compile(r"/join/([A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4})\b"
 BOT_KEY = re.compile(r"/(\d+)-([A-Za-z0-9]{12})(?=/messages)")
 
 
+# Signed values whose payload is a has_secure_token minted at sign-in (Session#token, set by
+# app/controllers/concerns/authentication.rb as cookies.signed.permanent[:session_token]).
+RANDOM_PAYLOADS = {"cookie.session_token"}
+
+
 class Volatile:
     """Values random by design that the seed fixes: a seeded join code or bot key is compared as
     is, one made during the run (a reset join code, a new bot) is typed."""
@@ -293,6 +298,8 @@ def describe_signed_message(encoded, options):
         if gid:
             return f"«sgid:{'' if purpose == 'default' else purpose + ':'}{gid}{expires}»"
         shown = payload if isinstance(payload, str) else json.dumps(payload, separators=(",", ":"))
+        if purpose in RANDOM_PAYLOADS:
+            shown = "«token»"
         return f"«signed_id:{purpose}:{shown}{expires}»"
     # Marshal-era messages (\x04\x08) and bare ones: pull out a GlobalID if there is one.
     gid = describe_gid(text)

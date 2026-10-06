@@ -49,7 +49,7 @@ def user_writes(run):
     run.compare("PATCH /users/me/profile with a taken email", admins.submit("/users/me/profile", "/users/me/profile", "patch", [("user[email_address]", run.label("emails.kevin"))]))
     run.compare("POST /users/<id>/ban", admins.submit(f"/users/{jz}", f"/users/{jz}/ban"))
     run.compare("  then GET /users/<id>", admins.get(f"/users/{jz}"))
-    run.compare("DELETE /users/<id>/ban", admins.press(f"/users/{jz}", f"/users/{jz}/ban", "delete"))
+    run.compare("DELETE /users/<id>/ban", admins.form("delete", f"/users/{jz}/ban", admins.tokens(f"/users/{jz}", lambda r: r.meta_token())))
     run.compare("member POST /users/<id>/ban (forbidden)", members.form("post", f"/users/{jz}/ban", members.tokens("/users/me/profile", lambda r: r.meta_token())))
 
     run.compare("PATCH /users/me/profile with an avatar", members.multipart("patch", "/users/me/profile", members.tokens("/users/me/profile", lambda r: r.form_token("/users/me/profile")),
@@ -57,7 +57,7 @@ def user_writes(run):
     run.compare("  then GET /users/me/profile", members.get("/users/me/profile"))
     avatars = [re.search(r'src="(/users/[^"]+/avatar\?v=\d+)"', r.text()).group(1) for r in members.get("/users/me/profile")]
     run.compare("  then GET the avatar", [b.get(a) for b, a in zip(members.browsers, avatars)], body=False)
-    paths = [a.split("?")[0] for a in avatars]
+    paths = [re.search(r'action="(/users/[^"/]+/avatar)"', r.text()).group(1) for r in members.get("/users/me/profile")]
     run.compare("DELETE /users/<token>/avatar", [b.form("delete", p, b.get("/users/me/profile").button_token(p, "delete")) for b, p in zip(members.browsers, paths)])
     run.compare("  then GET /users/me/profile", members.get("/users/me/profile"))
 

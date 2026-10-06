@@ -66,7 +66,7 @@ def message_writes(run):
         run.compare("DELETE /messages/<id>/boosts/<id>", david.form("delete", f"/messages/{target}/boosts/{mine}",
                                                                     david.tokens(f"/rooms/{designers}", lambda r: r.meta_token()), headers=STREAM))
     run.compare("kevin POST boost on an unreachable message", kevin.form("post", f"/messages/{run.label('messages.bot_in_watercooler')}/boosts",
-                                                                          kevin.tokens("/", lambda r: r.meta_token()), [("boost[content]", "x")]))
+                                                                          kevin.tokens(f"/rooms/{hq}", lambda r: r.meta_token()), [("boost[content]", "x")]))
 
 
 @family("bot_api", mutates=True)

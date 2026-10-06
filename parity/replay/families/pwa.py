@@ -13,4 +13,4 @@ def pwa(run):
                  "/qr_code/aHR0cDovL2NhbXBmaXJlLnRlc3Qvam9pbi9DUk11LWw4R2UtS0I5Qg", "/qr_code/aHR0cDovL2NhbXBmaXJlLnRlc3Q", "/qr_code/!!"]:
         run.compare(f"anon GET {path}", anon.get(path))
         run.compare(f"david GET {path} with Accept: */*", david.get(path, {"Accept": "*/*"}))
-    run.compare("POST /unfurl_link (a private address)", david.xhr("/", "post", "/unfurl_link", [("url", "http://127.0.0.1/")]))
+    run.compare("POST /unfurl_link (a private address)", david.xhr(f"/rooms/{run.label('rooms.hq')}", "post", "/unfurl_link", [("url", "http://127.0.0.1/")]))
