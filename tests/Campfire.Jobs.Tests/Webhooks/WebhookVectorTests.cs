@@ -1,8 +1,8 @@
 using System.Net.Sockets;
 using Campfire.Jobs.Webhooks;
+using Campfire.Vectors;
 using WebhookReply = Campfire.Vectors.WebhookReply;
 using WebhookRequest = Campfire.Vectors.WebhookRequest;
-using Campfire.Vectors;
 
 namespace Campfire.Jobs.Tests.Webhooks;
 
@@ -14,7 +14,7 @@ namespace Campfire.Jobs.Tests.Webhooks;
 /// </summary>
 public sealed class WebhookVectorTests
 {
-    const string Payload = """{"message":"hi"}""";
+    const string payload = """{"message":"hi"}""";
 
     static readonly Lazy<Task<Dictionary<string, (object Outcome, IReadOnlyList<WebhookRequest> Requests)>>> Runs = new(RunAllAsync);
 
@@ -87,7 +87,7 @@ public sealed class WebhookVectorTests
         {
             try
             {
-                return (object)await client.DeliverAsync(c.Url ?? server.Url(c.Name), Payload);
+                return (object)await client.DeliverAsync(c.Url ?? server.Url(c.Name), payload);
             }
             catch (Exception error)
             {

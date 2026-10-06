@@ -135,8 +135,11 @@ public sealed class MessagesBoostsByBotsController : ApplicationController
         }
     }
 
-    // RawRequestBody's `request.body.read.force_encoding("UTF-8")`.
-    string RawRequestBody() => Encoding.UTF8.GetString(Request.Body.Raw);
+    // RawRequestBody's `request.body.read.force_encoding("UTF-8")`. Invalid UTF-8 fails `blank?`
+    // in Rails, a 500.
+    string RawRequestBody() => StrictUtf8.GetString(Request.Body.Raw);
+
+    static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
     MessageView LoadMessage(SqliteSession session) =>
         new MessageViews(App.Keys, body => RichTextPlainText.ToPlainText(body, RichTextContext(session))).Load(session, [CurrentMessage])[0];

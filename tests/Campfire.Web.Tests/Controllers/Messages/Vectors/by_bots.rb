@@ -203,4 +203,37 @@ results = CASES.map do |name, method, path, headers, body|
   }
 end
 
-puts JSON.pretty_generate("now" => NOW.iso8601, "cases" => results)
+# Bot::WebhookJob's halves that don't touch the network, for Bender's webhook: the payload it
+# posts for a message (Webhook#payload), and what a text reply does
+# (Webhook#receive_text_reply_to: the message, its broadcasts and its jobs, rendered without a
+# request).
+webhook = User.find(394959859).webhook
+
+PAYLOADS = [
+  ["a mention of the bot by another bot", -> { Message.where(creator_id: 773523956, room_id: ARCHIVE).order(:id).last }],
+  ["the bot's own message mentioning itself", -> { Message.where(creator_id: 394959859, room_id: ARCHIVE).order(:id).last }],
+  ["a message with HTML", -> { Message.where(creator_id: 394959859, room_id: ARCHIVE).joins(:rich_text_body).where("body LIKE '%Deployed%'").last }],
+  ["a message in a direct room", -> { Message.find(933434634) }],
+  ["a member's message", -> { Message.find(JZS_MESSAGE) }]
+]
+
+payloads = PAYLOADS.map do |name, message|
+  message = message.call
+  { "name" => name, "message_id" => message.id, "payload" => webhook.send(:payload, message) }
+end
+
+REPLIES = [
+  ["text", ALL_TALK, "Hello back!"],
+  ["HTML", ARCHIVE, "<b>Hi</b> & <script>alert(1)</script>bye"],
+  ["in a direct room", BENDER_AND_KEVIN, "Psst"]
+]
+
+replies = REPLIES.map do |name, room, text|
+  Rails.cache.clear
+  events.clear
+  before = snapshot
+  webhook.send(:receive_text_reply_to, Room.find(room), text: text)
+  { "name" => name, "room_id" => room, "text" => text, "events" => events.dup, "changes" => changes(before, snapshot) }
+end
+
+puts JSON.pretty_generate("now" => NOW.iso8601, "cases" => results, "webhook_payloads" => payloads, "webhook_replies" => replies)

@@ -22,9 +22,6 @@ public sealed record WebhookTextReply(byte[] Bytes) : WebhookReply
     public WebhookTextReply(string text) : this(Encoding.UTF8.GetBytes(text))
     {
     }
-
-    /// <summary>The text, with any invalid UTF-8 replaced.</summary>
-    public string Text => Encoding.UTF8.GetString(Bytes);
 }
 
 /// <summary>

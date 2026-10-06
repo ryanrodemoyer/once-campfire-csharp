@@ -29,6 +29,8 @@ public sealed partial class ByBotsWebhookReplies(WebApp app) : IWebhookReplies
     /// <summary>The renderer's default host.</summary>
     public static readonly UrlBase RendererOrigin = new("http", "example.org");
 
+    static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+
     /// <summary>
     /// <c>room.messages.create!(body: text, creator: user)</c>: the text assigned to the rich text
     /// body as a posted body is.
@@ -38,7 +40,8 @@ public sealed partial class ByBotsWebhookReplies(WebApp app) : IWebhookReplies
         ArgumentNullException.ThrowIfNull(room);
         ArgumentNullException.ThrowIfNull(bot);
         ArgumentNullException.ThrowIfNull(reply);
-        var body = EditableContent.StoredBody(reply.Text);
+        // A reply that isn't valid UTF-8 fails the assignment in Rails (Encoding::CompatibilityError).
+        var body = EditableContent.StoredBody(StrictUtf8.GetString(reply.Bytes));
         var (seams, now) = (app.RequireSeams(), app.Clock.GetUtcNow());
         var message = await app.Database.WriteAsync(transaction =>
         {

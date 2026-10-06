@@ -238,8 +238,11 @@ public sealed partial class MessagesByBotsController : ApplicationController
     }
 
     // RawRequestBody's `request.body.read.force_encoding("UTF-8")`: the body as sent, though for
-    // multipart only its parsed parts are kept (see the status file's known gaps).
-    string RawRequestBody() => Encoding.UTF8.GetString(Request.Body.Raw);
+    // multipart only its parsed parts are kept (see plans/status/I05.md). Invalid UTF-8 fails
+    // whatever reads it first in Rails (`blank?`, the rich text), a 500.
+    string RawRequestBody() => StrictUtf8.GetString(Request.Body.Raw);
+
+    static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
     // `params[:before].present?` / `params[:after].present?`: the id to page from.
     string? PagingParam(string name) => Params[name] is { } value && RubyValues.IsPresent(value) ? RubyValues.ToS(value) : null;

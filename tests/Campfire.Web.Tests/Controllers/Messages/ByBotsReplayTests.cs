@@ -3,7 +3,11 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Campfire.Data.Events;
+using Campfire.Data.Queries;
+using Campfire.Jobs.Webhooks;
 using Campfire.Vectors;
+using Campfire.Web.Controllers;
+using Campfire.Web.Helpers;
 
 namespace Campfire.Web.Tests.Controllers.Messages;
 
@@ -51,6 +55,40 @@ public sealed partial class ByBotsReplayTests : IDisposable
             failures.AddRange(CompareResponse(sample["response"]!, actual).Select(failure => $"{name}: {failure}"));
             failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events).Select(failure => $"{name}: {failure}"));
             failures.AddRange(CompareChanges(sample["changes"]!.AsObject(), changes).Select(failure => $"{name}: {failure}"));
+        }
+
+        // Then, on the database the requests left, Bot::WebhookJob's halves for Bender's webhook:
+        // the payload it posts for a message, and what a text reply makes.
+        using var client = new WebhookClient();
+        var replies = new ByBotsWebhookReplies(messages.App);
+        var webhooks = new BotWebhooks(messages.Database, client, replies, session => new DatabaseAttachables(session, messages.Keys, messages.Now));
+        var bender = await messages.Database.ReadAsync(session => Users.Find(session, 394959859)!, TestContext.Current.CancellationToken);
+        foreach (var sample in Vectors["webhook_payloads"]!.AsArray())
+        {
+            var name = sample!["name"]!.GetValue<string>();
+            var payload = await messages.Database.ReadAsync(session =>
+            {
+                var message = Data.Queries.Messages.Find(session, sample["message_id"]!.GetValue<long>())!;
+                return webhooks.Payload(session, bender, Data.Queries.Rooms.Find(session, message.RoomId)!, message);
+            }, TestContext.Current.CancellationToken);
+            if (payload != sample["payload"]!.GetValue<string>())
+            {
+                failures.Add($"payload for {name}: {FirstDifference(sample["payload"]!.GetValue<string>(), payload)}");
+            }
+        }
+        foreach (var sample in Vectors["webhook_replies"]!.AsArray())
+        {
+            var name = sample!["name"]!.GetValue<string>();
+            messages.Seams.Clear();
+            var room = await messages.Database.ReadAsync(session => Data.Queries.Rooms.Find(session, sample["room_id"]!.GetValue<long>())!, TestContext.Current.CancellationToken);
+            var before = Snapshot();
+            await replies.ReceiveTextAsync(room, bender, new WebhookTextReply(sample["text"]!.GetValue<string>()), TestContext.Current.CancellationToken);
+            var changes = Changes(before, Snapshot());
+            NameNewMessages(sample["changes"]!.AsObject(), wantMessageIds);
+            NameNewMessages(changes, haveMessageIds);
+
+            failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events).Select(failure => $"{name} reply: {failure}"));
+            failures.AddRange(CompareChanges(sample["changes"]!.AsObject(), changes).Select(failure => $"{name} reply: {failure}"));
         }
         Assert.True(failures.Count == 0, string.Join('\n', failures));
     }
