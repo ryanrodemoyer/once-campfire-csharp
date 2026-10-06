@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""Summarize a bench/bin/run results dir: the README table, then median [min-max] across reps.
+
+  bench/bin/report bench/results/<stamp>
+
+The first table has the format of the README's "Other implementations" table (requests/sec at
+README_CONC concurrent clients, default 16, medians across reps). The tables after it follow the
+Rust port's bench/report: "C# adv." (and "Rust adv." when the run has a Rust column) is the
+advantage over Rails, >1 meaning better (higher throughput, or lower latency/memory/time),
+computed from the medians.
+"""
+import glob, json, os, statistics, sys
+
+out = sys.argv[1]
+README_CONC = int(os.environ.get("README_CONC", "16"))
+NAMES = {"reference": "Rails", "csharp": "C#", "rust": "Rust"}
+README_ROWS = [
+    ("room_show", "Room page"), ("messages_page", "Messages page"), ("sidebar", "Sidebar"),
+    ("search", "Search"), ("post_message", "Post a message"), ("up", "Health check (/up)"),
+]
+
+runs = {}
+for f in sorted(glob.glob(os.path.join(out, "*-*.json"))):
+    r = json.load(open(f))
+    runs.setdefault(r["app"], []).append(r)
+apps = [a for a in NAMES if a in runs]
+others = [a for a in apps if a != "reference"]
+
+
+def fmt_for(m):
+    return (lambda v: f"{v:,.0f}") if m >= 100 else (lambda v: f"{v:.1f}") if m >= 10 else (lambda v: f"{v:.2f}")
+
+
+def cell(vals):
+    vals = [v for v in vals if v is not None]
+    if not vals:
+        return None, "–"
+    m = statistics.median(vals)
+    fmt = fmt_for(m)
+    spread = f" [{fmt(min(vals))}–{fmt(max(vals))}]" if len(vals) > 1 else ""
+    return m, fmt(m) + spread
+
+
+def values(app, getter):
+    vals = []
+    for r in runs[app]:
+        try:
+            vals.append(getter(r))
+        except (KeyError, IndexError, TypeError, StopIteration):
+            vals.append(None)
+    return vals
+
+
+def advantage(meds, app, higher_better):
+    ref, other = meds.get("reference"), meds.get(app)
+    if not ref or not other:
+        return "–"
+    return f"{(other / ref if higher_better else ref / other):.1f}×"
+
+
+def row(name, getter, higher_better):
+    meds, cells = {}, []
+    for a in apps:
+        meds[a], c = cell(values(a, getter))
+        cells.append(c)
+    advs = [advantage(meds, a, higher_better) for a in others] if "reference" in apps else []
+    print(f"| {name} | " + " | ".join(cells + advs) + " |")
+
+
+def header(title, note=""):
+    print(f"\n### {title}\n")
+    if note:
+        print(note + "\n")
+    advs = [f"{NAMES[a]} adv." for a in others] if "reference" in apps else []
+    cols = [NAMES[a] for a in apps] + advs
+    print("| Metric | " + " | ".join(cols) + " |")
+    print("|---|" + "---|" * len(cols))
+
+
+def http(route, conc, key):
+    def get(r):
+        h = next(h for h in r["http"] if h["route"] == route and h["conc"] == conc)
+        if h["latency"].get("n", 0) == 0 or h["ok"] == 0:
+            return None
+        return h["rps"] if key == "rps" else h["latency"][key]
+    return get
+
+
+def readme_table():
+    present = {(h["route"], h["conc"]) for a in apps for r in runs[a] for h in r["http"]}
+    rows = [(route, label) for route, label in README_ROWS if (route, README_CONC) in present]
+    print(f"\n### HTTP workload (requests/sec), {README_CONC} concurrent clients\n")
+    if not rows:
+        print(f"No HTTP routes were measured at c={README_CONC}.")
+        return
+    print("| HTTP workload (requests/sec) | " + " | ".join(NAMES[a] for a in apps) + " |")
+    print("|---|" + "---:|" * len(apps))
+    for route, label in rows:
+        cells = []
+        for a in apps:
+            vals = [v for v in values(a, http(route, README_CONC, "rps")) if v is not None]
+            cells.append(f"{statistics.median(vals):,.0f}" if vals else "–")
+        print(f"| {label} | " + " | ".join(cells) + " |")
+
+
+if not apps:
+    sys.exit(f"report: no results in {out}")
+
+failed = os.path.join(out, "failed.txt")
+if os.path.exists(failed):
+    print("**The run stopped before finishing:** " + "; ".join(open(failed).read().split("\n")).strip("; ") + "\n")
+unvalidated = sorted({a for a in apps for r in runs[a] if not r.get("validated")})
+if unvalidated:
+    print("**Not validated against the reference:** " + ", ".join(unvalidated)
+          + ". These numbers are not comparable and must not be published.\n")
+
+env = os.path.join(out, "env.txt")
+if os.path.exists(env):
+    print("```\n" + open(env).read().strip() + "\n```")
+print("\nReps: " + ", ".join(f"{a} {len(runs[a])}" for a in apps) + ". Cells: median [min–max].")
+
+readme_table()
+
+header("Startup and memory")
+row("cold start: docker run → /up answers (ms)", lambda r: r["cold_start_ms"], False)
+row("idle memory.current (MB)", lambda r: r["memory"]["idle_current_mb"], False)
+row("idle anon (MB)", lambda r: r["memory"]["idle_anon_mb"], False)
+row("peak memory.current under load (MB)", lambda r: r["memory"]["peak_current_mb"], False)
+row("peak anon under load (MB)", lambda r: r["memory"]["peak_anon_mb"], False)
+
+first = runs[apps[0]][0]
+routes = []
+for h in first["http"]:
+    if (h["route"], h["conc"]) not in routes:
+        routes.append((h["route"], h["conc"]))
+
+if routes:
+    header("HTTP (signed in as david; keep-alive; c = concurrent connections)")
+    for route, conc in routes:
+        row(f"{route} c={conc} req/s", http(route, conc, "rps"), True)
+        row(f"{route} c={conc} p50 ms", http(route, conc, "p50_ms"), False)
+        row(f"{route} c={conc} p99 ms", http(route, conc, "p99_ms"), False)
+
+    print("\n### HTTP errors / non-2xx-3xx (first rep, per app)\n")
+    for a in apps:
+        bad = [f"{h['route']} c={h['conc']}: {h['statuses']} errors={h['errors']}" for h in runs[a][0]["http"]
+               if h["errors"] or any(int(k) >= 400 for k in h["statuses"])]
+        print(f"- {NAMES[a]}: " + ("; ".join(bad) if bad else "none"))
+
+if first["cable"]:
+    header("Action Cable fan-out (one room; chatter.js subscriptions per client)")
+    for i, c in enumerate(first["cable"]):
+        n = c["clients"]
+        row(f"{n} clients: subscribed", lambda r, i=i: r["cable"][i]["ready"], True)
+        row(f"{n} clients: connect+subscribe all (s)", lambda r, i=i: r["cable"][i]["connect_secs"], False)
+        row(f"{n} clients: paced post→one client p50 ms", lambda r, i=i: r["cable"][i]["latency"]["per_client"]["p50_ms"], False)
+        row(f"{n} clients: paced post→all clients p50 ms", lambda r, i=i: r["cable"][i]["latency"]["all_clients"]["p50_ms"], False)
+        row(f"{n} clients: paced post→all clients p99 ms", lambda r, i=i: r["cable"][i]["latency"]["all_clients"]["p99_ms"], False)
+        row(f"{n} clients: max sustained msgs/s (delivered to all)", lambda r, i=i: r["cable"][i]["throughput"]["delivered_msgs_per_sec"], True)
+        row(f"{n} clients: deliveries/s (client×message)", lambda r, i=i: r["cable"][i]["throughput"]["frames_per_sec"], True)
+        row(f"{n} clients: saturated post→all p50 ms", lambda r, i=i: r["cable"][i]["throughput"]["all_clients"]["p50_ms"], False)
+        row(f"{n} clients: saturated POST p50 ms", lambda r, i=i: r["cable"][i]["throughput"]["post"]["p50_ms"], False)
+
+if first["upload"]:
+    header("Upload + thumbnail (black_hole.jpg, 505 KB)")
+    med = lambda key: (lambda r: statistics.median([x[key] for x in r["upload"]["runs"] if key in x]))
+    row("POST with attachment (ms)", med("post_ms"), False)
+    row("then GET thumb → 200 (ms)", med("thumb_ms"), False)
+    row("POST → thumbnail served (ms)", lambda r: r["upload"]["median_total_ms"], False)
+
+
+# The process that serves requests: Rails' Puma master and workers, or the port's one campfire.
+APP_ROLE = {"reference": ["puma"], "csharp": ["campfire"], "rust": ["campfire"]}
+SERVING_ROLES = {"reference": ["puma", "redis", "thrust"], "csharp": ["campfire", "thrust"], "rust": ["campfire"]}
+
+
+def procmem(n, phase, what):
+    def get(r):
+        c = next(c for c in r["cable"] if c["clients"] == n)
+        p = c["process_memory"][phase]
+        roles = p["roles"]
+        if what == "app":
+            return roles[APP_ROLE[r["app"]][0]]["peak_pss_mb"]
+        if what == "app_anon":
+            return roles[APP_ROLE[r["app"]][0]]["peak_anon_mb"]
+        if what == "serving":  # everything that takes part in a cable delivery
+            return sum(roles[k]["peak_pss_mb"] for k in SERVING_ROLES[r["app"]] if k in roles)
+        return p["peak_total_pss_mb"]
+    return get
+
+
+if first["cable"] and all("process_memory" in c for a in apps for r in runs[a] for c in r["cable"]):
+    header("Memory during cable fan-out, by process (MB, peak within the phase)", note=(
+        "App process: Rails' Puma master and workers (Action Cable runs in them), or the port's one\n"
+        "campfire process. Pss counts pages shared between forked workers once; RssAnon counts them\n"
+        "in every process."))
+    for c in first["cable"]:
+        n = c["clients"]
+        for phase, label in (("connected", "all subscribed, idle"), ("saturated", "saturated fan-out")):
+            row(f"{n} clients, {label}: app process Pss", procmem(n, phase, "app"), False)
+            row(f"{n} clients, {label}: app process RssAnon", procmem(n, phase, "app_anon"), False)
+            row(f"{n} clients, {label}: app + Redis + Thruster Pss", procmem(n, phase, "serving"), False)
+            row(f"{n} clients, {label}: whole container Pss", procmem(n, phase, "total"), False)

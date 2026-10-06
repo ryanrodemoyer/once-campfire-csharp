@@ -1,0 +1,548 @@
+{
+  "now": "2026-03-03T12:00:00Z",
+  "scenarios": [
+    {
+      "name": "message_create_mentioning_bots",
+      "input": {
+        "room_id": 699448327,
+        "creator_id": 127326141,
+        "client_message_id": "c1a7e2b0-0000-4000-8000-000000000001",
+        "body_html": "<div>Hi <action-text-attachment sgid=\"eyJfcmFpbHMiOnsiZGF0YSI6ImdpZDovL2NhbXBmaXJlL1VzZXIvMzk0OTU5ODU5P2V4cGlyZXNfaW4iLCJwdXIiOiJhdHRhY2hhYmxlIn19--2d901b2788f114cf22ccc90205adab36e0d2a921\" content-type=\"application/vnd.campfire.mention\"></action-text-attachment> and <action-text-attachment sgid=\"eyJfcmFpbHMiOnsiZGF0YSI6ImdpZDovL2NhbXBmaXJlL1VzZXIvNzczNTIzOTU2P2V4cGlyZXNfaW4iLCJwdXIiOiJhdHRhY2hhYmxlIn19--2296bbee0af989471c9bf732c6920d499cb62779\" content-type=\"application/vnd.campfire.mention\"></action-text-attachment></div>",
+        "plain_text_body": "Hi @Bender Bot and @Deploy Bot",
+        "mentioned_user_ids": [
+          394959859,
+          773523956
+        ]
+      },
+      "setup": [
+        "UPDATE memberships SET connected_at = '2026-03-03 11:59:30', connections = 1 WHERE room_id = 699448327 AND user_id = 712064548"
+      ],
+      "events": [
+        "begin",
+        "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
+        "insert action_text_rich_texts body,created_at,name,record_id,record_type,updated_at rows=1",
+        "update messages updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=5",
+        "enqueue Room::PushMessageJob 699448327,933434638",
+        "enqueue Bot::WebhookJob 394959859,933434638"
+      ]
+    },
+    {
+      "name": "message_create_in_direct_room_with_bot",
+      "input": {
+        "room_id": 340026324,
+        "creator_id": 712064548,
+        "client_message_id": "c1a7e2b0-0000-4000-8000-000000000002",
+        "body_html": "<div>Ping</div>",
+        "plain_text_body": "Ping",
+        "mentioned_user_ids": []
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
+        "insert action_text_rich_texts body,created_at,name,record_id,record_type,updated_at rows=1",
+        "update messages updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=1",
+        "enqueue Room::PushMessageJob 340026324,933434639",
+        "enqueue Bot::WebhookJob 394959859,933434639"
+      ]
+    },
+    {
+      "name": "message_create_by_bot_mentioning_itself",
+      "input": {
+        "room_id": 699448327,
+        "creator_id": 394959859,
+        "client_message_id": null,
+        "body_html": "<div>I am <action-text-attachment sgid=\"eyJfcmFpbHMiOnsiZGF0YSI6ImdpZDovL2NhbXBmaXJlL1VzZXIvMzk0OTU5ODU5P2V4cGlyZXNfaW4iLCJwdXIiOiJhdHRhY2hhYmxlIn19--2d901b2788f114cf22ccc90205adab36e0d2a921\" content-type=\"application/vnd.campfire.mention\"></action-text-attachment></div>",
+        "plain_text_body": "I am @Bender Bot",
+        "mentioned_user_ids": [
+          394959859
+        ]
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
+        "insert action_text_rich_texts body,created_at,name,record_id,record_type,updated_at rows=1",
+        "update messages updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=4",
+        "enqueue Room::PushMessageJob 699448327,933434640"
+      ]
+    },
+    {
+      "name": "message_create_without_body",
+      "input": {
+        "room_id": 201306877,
+        "creator_id": 773523953,
+        "client_message_id": "c1a7e2b0-0000-4000-8000-000000000004",
+        "body_html": null,
+        "plain_text_body": "",
+        "mentioned_user_ids": []
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=5",
+        "enqueue Room::PushMessageJob 201306877,933434641"
+      ]
+    },
+    {
+      "name": "message_update_body",
+      "input": {
+        "message_id": 933434481,
+        "body_html": "<div>Edited</div>",
+        "plain_text_body": "Edited"
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "update action_text_rich_texts body,updated_at rows=1",
+        "update messages updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "update message_search_index body rows=1"
+      ]
+    },
+    {
+      "name": "boost_create",
+      "input": {
+        "message_id": 933434481,
+        "booster_id": 127326141,
+        "content": "👍"
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert boosts booster_id,content,created_at,message_id,updated_at rows=1",
+        "update messages updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "update message_search_index body rows=1"
+      ]
+    },
+    {
+      "name": "boost_destroy",
+      "input": {
+        "boost_id": 136976342
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "delete boosts rows=1",
+        "update messages updated_at rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "update message_search_index body rows=1"
+      ]
+    },
+    {
+      "name": "message_destroy",
+      "input": {
+        "message_id": 933434507
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "delete boosts rows=1",
+        "delete boosts rows=1",
+        "delete boosts rows=1",
+        "delete boosts rows=1",
+        "delete boosts rows=1",
+        "delete boosts rows=1",
+        "delete action_text_rich_texts rows=1",
+        "delete messages rows=1",
+        "update rooms updated_at rows=1",
+        "commit",
+        "delete message_search_index rows=1"
+      ]
+    },
+    {
+      "name": "user_create",
+      "input": {
+        "name": "Nina",
+        "email_address": "nina@37signals.com",
+        "password": "secret123456"
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert users bio,bot_token,created_at,email_address,name,password_digest,role,status,updated_at rows=1",
+        "commit",
+        "insert memberships created_at,room_id,updated_at,user_id rows=3"
+      ]
+    },
+    {
+      "name": "bot_create",
+      "input": {
+        "name": "Hook Bot",
+        "webhook_url": "https://example.com/hook"
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert users bio,bot_token,created_at,email_address,name,password_digest,role,status,updated_at rows=1",
+        "commit",
+        "insert memberships created_at,room_id,updated_at,user_id rows=3",
+        "begin",
+        "insert webhooks created_at,updated_at,url,user_id rows=1",
+        "commit"
+      ]
+    },
+    {
+      "name": "user_deactivate",
+      "input": {
+        "user_id": 149087659
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "disconnect 149087659 reconnect=false",
+        "delete memberships rows=5",
+        "delete push_subscriptions rows=1",
+        "delete searches rows=0",
+        "delete sessions rows=0",
+        "update users email_address,status,updated_at rows=1",
+        "commit"
+      ]
+    },
+    {
+      "name": "user_ban",
+      "input": {
+        "user_id": 712064548
+      },
+      "setup": [
+        "INSERT INTO sessions (user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (712064548, 'lifecycle-ban-0', '198.51.100.7', 'Firefox', '2026-03-03 10:00:00', '2026-03-03 10:00:00', '2026-03-03 10:00:00')",
+        "INSERT INTO sessions (user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (712064548, 'lifecycle-ban-1', '198.51.100.7', 'Firefox', '2026-03-03 10:00:00', '2026-03-03 10:00:00', '2026-03-03 10:00:00')",
+        "INSERT INTO sessions (user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (712064548, 'lifecycle-ban-2', '203.0.113.20', 'Firefox', '2026-03-03 10:00:00', '2026-03-03 10:00:00', '2026-03-03 10:00:00')",
+        "INSERT INTO sessions (user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (712064548, 'lifecycle-ban-3', '', 'Firefox', '2026-03-03 10:00:00', '2026-03-03 10:00:00', '2026-03-03 10:00:00')",
+        "INSERT INTO sessions (user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (712064548, 'lifecycle-ban-4', NULL, 'Firefox', '2026-03-03 10:00:00', '2026-03-03 10:00:00', '2026-03-03 10:00:00')"
+      ],
+      "events": [
+        "begin",
+        "insert bans created_at,ip_address,updated_at,user_id rows=1",
+        "insert bans created_at,ip_address,updated_at,user_id rows=1",
+        "disconnect 712064548 reconnect=false",
+        "delete sessions rows=5",
+        "enqueue RemoveBannedContentJob 712064548",
+        "update users status,updated_at rows=1",
+        "commit"
+      ]
+    },
+    {
+      "name": "user_ban_from_private_address",
+      "input": {
+        "user_id": 773523953
+      },
+      "setup": [
+        "INSERT INTO sessions (user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (773523953, 'lifecycle-ban-private', '10.1.2.3', 'Firefox', '2026-03-03 10:00:00', '2026-03-03 10:00:00', '2026-03-03 10:00:00')"
+      ],
+      "events": [
+        "begin",
+        "rollback"
+      ],
+      "error": "ActiveRecord::RecordInvalid"
+    },
+    {
+      "name": "user_unban",
+      "input": {
+        "user_id": 773523955
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "delete bans rows=1",
+        "update users status,updated_at rows=1",
+        "commit"
+      ]
+    },
+    {
+      "name": "memberships_revise",
+      "input": {
+        "room_id": 486777696,
+        "granted_user_ids": [
+          712064548
+        ],
+        "revoked_user_ids": [
+          394959859
+        ]
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "insert memberships created_at,involvement,room_id,updated_at,user_id rows=1",
+        "delete memberships rows=1",
+        "commit",
+        "disconnect 394959859 reconnect=true"
+      ]
+    },
+    {
+      "name": "memberships_revoke",
+      "input": {
+        "room_id": 654632876,
+        "user_ids": [
+          773523953,
+          773523955
+        ]
+      },
+      "setup": [],
+      "events": [
+        "begin",
+        "delete memberships rows=1",
+        "commit",
+        "disconnect 773523953 reconnect=true",
+        "begin",
+        "delete memberships rows=1",
+        "commit",
+        "disconnect 773523955 reconnect=true"
+      ]
+    }
+  ],
+  "ban_addresses": [
+    {
+      "ip_address": "203.0.113.9",
+      "error": null
+    },
+    {
+      "ip_address": "8.8.8.8",
+      "error": null
+    },
+    {
+      "ip_address": "127.0.0.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "127.255.0.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "10.0.0.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "172.16.5.4",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "172.32.0.1",
+      "error": null
+    },
+    {
+      "ip_address": "192.168.1.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "169.254.1.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "0.0.0.0",
+      "error": null
+    },
+    {
+      "ip_address": "255.255.255.255",
+      "error": null
+    },
+    {
+      "ip_address": "010.1.1.1",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "1.2.3",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "1.2.3.4.5",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "256.1.1.1",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "1.2.3.4 ",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": " 1.2.3.4",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "1.2.3.4\n",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "abc",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "::1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "::",
+      "error": null
+    },
+    {
+      "ip_address": "2001:db8::1",
+      "error": null
+    },
+    {
+      "ip_address": "2606:4700::1111",
+      "error": null
+    },
+    {
+      "ip_address": "fc00::1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "fd12:3456::1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "fe80::1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "febf::1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "fec0::1",
+      "error": null
+    },
+    {
+      "ip_address": "::ffff:127.0.0.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "::ffff:10.0.0.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "::ffff:8.8.8.8",
+      "error": null
+    },
+    {
+      "ip_address": "::ffff:169.254.0.1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "1:2:3:4:5:6:7:8",
+      "error": null
+    },
+    {
+      "ip_address": "1:2:3:4:5:6:1.2.3.4",
+      "error": null
+    },
+    {
+      "ip_address": "::ffff:7f00:1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "1::2::3",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "1:2:3:4:5:6:7:8:9",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "12345::1",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "[2001:db8::1]",
+      "error": null
+    },
+    {
+      "ip_address": "[10.0.0.1]",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "fe80::1%eth0",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "8.8.8.8%eth0",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "10.0.0.1/8",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "8.8.8.8/8",
+      "error": null
+    },
+    {
+      "ip_address": "8.8.8.8/0",
+      "error": null
+    },
+    {
+      "ip_address": "11.0.0.1/7",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "8.8.8.8/33",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "8.8.8.8/08",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "8.8.8.8/255.0.0.0",
+      "error": null
+    },
+    {
+      "ip_address": "10.1.1.1/255.255.0.255",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "2001:db8::1/64",
+      "error": null
+    },
+    {
+      "ip_address": "fc00::1/6",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "FE80::1",
+      "error": "cannot be a private or internal IP address"
+    },
+    {
+      "ip_address": "2001:DB8::A",
+      "error": null
+    },
+    {
+      "ip_address": "1.2.3.4/x",
+      "error": "is not a valid IP address"
+    },
+    {
+      "ip_address": "::ffff:1.2.3.4/96",
+      "error": null
+    },
+    {
+      "ip_address": "0::ffff:10.0.0.1",
+      "error": "cannot be a private or internal IP address"
+    }
+  ]
+}
