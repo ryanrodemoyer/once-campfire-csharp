@@ -73,6 +73,8 @@ sealed class MessagesApp : IDisposable
 
     public WebApp App { get; }
 
+    public SqliteDatabase Database => database;
+
     /// <summary>
     /// The headers of a browser signed in with <paramref name="sessionToken"/> that sends its CSRF
     /// token as Turbo does (<c>X-CSRF-Token</c>, from the page's meta tag).
