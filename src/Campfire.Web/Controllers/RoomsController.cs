@@ -124,7 +124,7 @@ public sealed class RoomsController : ApplicationController
         var account = Accounts.First(session);
         return new View
         {
-            Assets = App.Assets ?? throw new InvalidOperationException("WebApp.Assets isn't set"),
+            Assets = App.RequireAssets(),
             Origin = UrlBase,
             RequestPath = Request.Path,
             RequestUrl = RequestUrl.Url,
@@ -137,7 +137,7 @@ public sealed class RoomsController : ApplicationController
             VapidPublicKey = App.VapidPublicKey,
             AppVersion = App.AppVersion,
             RichTextContext = RichTextContext(session),
-            Storage = App.Storage ?? throw new InvalidOperationException("WebApp.Storage isn't set"),
+            Storage = App.RequireStorage(),
         };
     }
 
