@@ -1,0 +1,388 @@
+#!/usr/bin/env bash
+# Benchmark the reference (Rails) app against the C# port on the same seed and CPUs. Ported from
+# the Rust port's reference-rust/bench/run, with a `csharp` app added and response validation.
+#
+#   bench/bin/run [--apps reference,csharp[,rust]] [--reps 3] [--out DIR] [--user-agent UA]
+#                 [--routes up,room_show,...] [--suites "http cable upload"] [--up-only]
+#                 [--oracle DIR]
+#   bench/bin/report DIR        # README table + median [min-max] tables from a results dir
+#
+# Each rep, for each app in turn (never two at once; the order alternates between reps): a fresh
+# copy of parity/.seed/default, a fresh container pinned to SERVER_CPUS, then cold start, idle
+# memory, the HTTP suite, the Action Cable fan-out suite and the upload suite, with container
+# memory sampled throughout and each process's memory, by role, during the fan-out
+# (reference-rust/bench/lib/procmem.py). The load generator (reference-rust/bench/loadgen, built
+# into tmp/bench) runs pinned to LOADGEN_CPUS. Before each app's run it waits (up to
+# LOAD_WAIT_SECS) for the 1-minute load average to drop below LOAD_MAX, and records it.
+#
+# Nothing is measured before it is validated (bench/lib/validate.py):
+#   - each GET route is fetched once, before its warm-up, and must have the reference's status,
+#     content type and body (per-request CSRF tokens blanked). The reference's own responses are
+#     the oracle: the first reference rep captures them, so `reference` must come first in --apps,
+#     or --oracle must name an earlier results dir whose validation/ holds them;
+#   - every measured response must have the validated status, with no transport errors;
+#   - every acknowledged post must be saved in the room and in the search index;
+#   - every cable client must subscribe and every message must reach every client;
+#   - every upload's thumbnail must be served.
+# The first failure stops the run (exit 1) with the reason in the log and in DIR/failed.txt, and
+# nothing is written for that app's rep: an app that doesn't match the reference has no numbers.
+#
+# --up-only measures GET /up alone (routes "up", suites "http", no sign-in): the smallest run that
+# exercises the whole protocol. --routes picks routes by name: room_show messages_page sidebar
+# search avatar static_css up post_message.
+#
+# The load generator sends no User-Agent unless given one with --user-agent, which it then sends on
+# every request.
+#
+# Images (unmodified production images, not the parity ones):
+#   REFERENCE_IMAGE  campfire-reference:app   (reference-rust/parity/bin/reference build)
+#   CSHARP_IMAGE     campfire-csharp:app      (docker build -t campfire-csharp:app ., from /Dockerfile)
+#   RUST_IMAGE       campfire-rust:app        (reference-rust/parity/bin/candidate build)
+#
+# Knobs (env): SERVER_CPUS=8-11 LOADGEN_CPUS=12-15 HTTP_SECS=8 HTTP_CONCS="1 16 64"
+#   CABLE_CLIENTS="100 500 1000" CABLE_TPUT_SECS=15 CABLE_POSTERS=4 UPLOAD_REPS=5 PORT=4390
+#   LOAD_MAX=1.5 LOAD_WAIT_SECS=900 PROCMEM_CPUS=0 CGROUP_PARENT=/sys/fs/cgroup/system.slice (where
+#   Docker puts each container's docker-<id>.scope: cgroup v2 with the systemd driver)
+#   CSHARP_EXTRA_ENV / RUST_EXTRA_ENV: extra K=V (space-separated) for that app's container only.
+# The apps run with --network host: PORT and PORT+1 (and 6379, for the reference's Redis) must be
+# free on the host.
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+BENCH=$ROOT/bench
+RUST_BENCH=$ROOT/reference-rust/bench
+SEED=$ROOT/parity/.seed/default
+LABELS=$SEED/labels.json
+ENV_FILE=$ROOT/parity/.env.reference
+
+REFERENCE_IMAGE=${REFERENCE_IMAGE:-campfire-reference:app}
+CSHARP_IMAGE=${CSHARP_IMAGE:-campfire-csharp:app}
+RUST_IMAGE=${RUST_IMAGE:-campfire-rust:app}
+SERVER_CPUS=${SERVER_CPUS:-8-11}
+LOADGEN_CPUS=${LOADGEN_CPUS:-12-15}
+HTTP_SECS=${HTTP_SECS:-8}
+HTTP_CONCS=${HTTP_CONCS:-1 16 64}
+CABLE_CLIENTS=${CABLE_CLIENTS:-100 500 1000}
+CABLE_TPUT_SECS=${CABLE_TPUT_SECS:-15}
+CABLE_POSTERS=${CABLE_POSTERS:-4}
+UPLOAD_REPS=${UPLOAD_REPS:-5}
+PORT=${PORT:-4390}
+LOAD_MAX=${LOAD_MAX:-1.5}
+LOAD_WAIT_SECS=${LOAD_WAIT_SECS:-900}
+PROCMEM_CPUS=${PROCMEM_CPUS:-0}
+CGROUP_PARENT=${CGROUP_PARENT:-/sys/fs/cgroup/system.slice}
+CSHARP_EXTRA_ENV=${CSHARP_EXTRA_ENV-}
+RUST_EXTRA_ENV=${RUST_EXTRA_ENV-}
+BASE=http://127.0.0.1:$PORT
+WORK=$ROOT/tmp/bench
+LOADGEN=$WORK/target/release/loadgen
+ALL_ROUTES="room_show messages_page sidebar search avatar static_css up post_message"
+
+APPS=reference,csharp REPS=3 OUT="" ORACLE="" USER_AGENT_ARGS=()
+ROUTES=$ALL_ROUTES SUITES="http cable upload"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --apps)   APPS=$2; shift 2 ;;
+    --reps)   REPS=$2; shift 2 ;;
+    --out)    OUT=$2; shift 2 ;;
+    --oracle) ORACLE=$(cd "$2" && pwd); shift 2 ;;
+    --routes) ROUTES=${2//,/ }; shift 2 ;;
+    --suites) SUITES=${2//,/ }; shift 2 ;;
+    --up-only) ROUTES=up SUITES=http; shift ;;
+    --user-agent) USER_AGENT_ARGS=(--user-agent "$2"); shift 2 ;;
+    *) echo "unknown option $1" >&2; exit 2 ;;
+  esac
+done
+for r in $ROUTES; do [[ " $ALL_ROUTES " = *" $r "* ]] || { echo "unknown route $r" >&2; exit 2; }; done
+for a in ${APPS//,/ }; do case "$a" in reference|csharp|rust) ;; *) echo "unknown app $a" >&2; exit 2 ;; esac; done
+ORDER=(${APPS//,/ })
+if [ -z "$ORACLE" ] && [ "${ORDER[0]}" != reference ]; then
+  echo "the reference is the oracle: list it first in --apps, or pass --oracle DIR" >&2; exit 2
+fi
+OUT=${OUT:-$BENCH/results/$(date +%Y%m%d-%H%M%S)}
+mkdir -p "$OUT/validation"
+OUT=$(cd "$OUT" && pwd)
+ORACLE=${ORACLE:-$OUT}
+CONTAINER=bench-campfire-$PORT
+
+suite() { [[ " $SUITES " = *" $1 "* ]]; }
+route_wanted() { [[ " $ROUTES " = *" $1 "* ]]; }
+log() { echo "[$(date +%T)] $*" >&2; }
+label() { python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))[sys.argv[2]])' "$LABELS" "$1"; }
+lg() { taskset -c "$LOADGEN_CPUS" "$LOADGEN" "$@" "${USER_AGENT_ARGS[@]}"; }
+validate() { python3 "$BENCH/lib/validate.py" "$@"; }
+jget() { python3 -c 'import json,sys; v=json.loads(sys.argv[1]); [v := v[k] for k in sys.argv[2:]]; print(v)' "$@"; }
+
+# Stops the run: an app whose responses don't match the reference has no numbers.
+fail() {
+  log "FAILED: $*"
+  echo "$*" >> "$OUT/failed.txt"
+  exit 1
+}
+
+teardown() {
+  [ -n "${SAMPLER:-}" ] && kill "$SAMPLER" 2>/dev/null || true
+  [ -n "${PROCMEM:-}" ] && kill "$PROCMEM" 2>/dev/null || true
+  docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+}
+trap teardown EXIT INT TERM
+
+[ -f "$LABELS" ] || { echo "no seed: run parity/bin/seed build default" >&2; exit 2; }
+(cd "$RUST_BENCH/loadgen" && CARGO_TARGET_DIR=$WORK/target cargo build --release --locked -q)
+
+ROOM=$(label rooms.watercooler)        # the busy room (131 messages)
+WRITE_ROOM=$(label rooms.hq)           # writes and uploads go here, so the busy room stays put
+BEFORE=$(label messages.busy_060)      # a page in the middle of the busy room
+AVATAR=$(label avatar_tokens.jason)    # image avatar
+EMAIL=$(label emails.david)
+PASSWORD=$(label passwords.all)
+
+image_for() { case "$1" in reference) echo "$REFERENCE_IMAGE" ;; csharp) echo "$CSHARP_IMAGE" ;; rust) echo "$RUST_IMAGE" ;; esac; }
+
+# Environment: parity/.env.reference, but with the reference's *default* process model for
+# SERVER_CPUS (config/puma.rb: workers = ceil(nproc * 0.666), JOB_CONCURRENCY the same, 5 threads;
+# config/resque-pool.yml: ceil(nproc * 0.5) Resque workers). The C# and Rust apps read
+# RAILS_MAX_THREADS (reader pool) and JOB_CONCURRENCY (job workers) the same way; each is one
+# process.
+env_args() {
+  local ncpu; ncpu=$(taskset -c "$SERVER_CPUS" nproc)
+  local workers=$(( (ncpu * 666 + 999) / 1000 ))
+  grep -Ev '^(#|$|WEB_CONCURRENCY|JOB_CONCURRENCY|RAILS_MAX_THREADS|RAILS_LOG_LEVEL)' "$ENV_FILE" | sed 's/^/-e\n/'
+  printf '%s\n' -e "WEB_CONCURRENCY=$workers" -e "JOB_CONCURRENCY=$workers" -e RAILS_MAX_THREADS=5 -e RAILS_LOG_LEVEL=warn
+  local e extra=""
+  case "${1:-}" in csharp) extra=$CSHARP_EXTRA_ENV ;; rust) extra=$RUST_EXTRA_ENV ;; esac
+  for e in $extra; do printf '%s\n' -e "$e"; done
+}
+
+# Web Push and webhook deliveries to the seed's real endpoints (fcm.googleapis.com, ...) go to a
+# closed local port instead, so they fail fast without leaving the box.
+neuter_deliveries() {
+  python3 - "$1" <<'PY'
+import sqlite3, sys
+db = sqlite3.connect(sys.argv[1])
+db.execute("UPDATE push_subscriptions SET endpoint = 'https://127.0.0.1:9/push/' || id")
+db.execute("UPDATE webhooks SET url = 'http://127.0.0.1:9/hook/' || id")
+db.commit()
+PY
+}
+
+cgroup_dir() { echo "$CGROUP_PARENT/docker-$(docker inspect -f '{{.Id}}' "$CONTAINER").scope"; }
+mem_anon() { awk '$1=="anon"{print $2}' "$1/memory.stat"; }
+
+# Samples memory.current and anon every 200ms, keeping the maxima in $1.
+start_sampler() {
+  local cg=$1 out=$2
+  ( max_cur=0 max_anon=0
+    while [ -d "$cg" ]; do
+      cur=$(cat "$cg/memory.current" 2>/dev/null || echo 0); an=$(mem_anon "$cg" 2>/dev/null || echo 0)
+      [ "$cur" -gt "$max_cur" ] && max_cur=$cur; [ "$an" -gt "$max_anon" ] && max_anon=$an
+      echo "{\"peak_current_mb\": $((max_cur / 1048576)), \"peak_anon_mb\": $((max_anon / 1048576))}" > "$out.tmp" && mv "$out.tmp" "$out"
+      sleep 0.2
+    done ) &
+  SAMPLER=$!
+}
+
+start_app() {
+  local app=$1 dir=$WORK/$app
+  docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+  rm -rf "$dir"; mkdir -p "$dir/db" "$dir/storage"
+  cp -a --reflink=auto "$SEED/db/." "$dir/db/"; cp -a --reflink=auto "$SEED/storage/." "$dir/storage/"
+  neuter_deliveries "$dir/db/production.sqlite3"
+  local args=(); mapfile -t args < <(env_args "$app")
+  sync
+  local t0; t0=$(date +%s.%N)
+  # --network host: no docker-proxy between the load generator and the app. A front server
+  # (Thruster) listens on HTTP_PORT and runs its app on TARGET_PORT, passing it as PORT; the C#
+  # image without Thruster (until P03) listens on PORT itself. The reference's Redis takes 6379.
+  local net=(--network host -e "HTTP_PORT=$PORT" -e "TARGET_PORT=$((PORT + 1))")
+  [ "$app" = csharp ] && net+=(-e "PORT=$PORT")
+  docker run -d --name "$CONTAINER" --cpuset-cpus "$SERVER_CPUS" --user "$(id -u):$(id -g)" \
+    "${net[@]}" "${args[@]}" \
+    -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" \
+    "$(image_for "$app")" >/dev/null
+  # Any HTTP answer means the server is up; validation decides whether /up's answer is right.
+  for _ in $(seq 1 3000); do
+    if curl -sS -o /dev/null "$BASE/up" 2>/dev/null; then break; fi
+    sleep 0.02
+  done
+  curl -sS -o /dev/null "$BASE/up" || { docker logs "$CONTAINER" | tail -30 >&2; return 1; }
+  python3 -c "import sys; print(round((float(sys.argv[2]) - float(sys.argv[1])) * 1000))" "$t0" "$(date +%s.%N)"
+}
+
+# Waits for the 1-minute load average to drop below LOAD_MAX (the previous run's load decays with
+# a one-minute time constant), for at most LOAD_WAIT_SECS.
+wait_for_quiet() {
+  local waited=0
+  while awk -v max="$LOAD_MAX" '{exit !($1 >= max)}' /proc/loadavg && [ "$waited" -lt "$LOAD_WAIT_SECS" ]; do
+    sleep 10; waited=$((waited + 10))
+  done
+  log "load before run: $(cut -d' ' -f1-3 /proc/loadavg) (waited ${waited}s)"
+}
+
+# Captures one GET of $path as $app's response and checks it against the reference's. The first
+# reference rep's capture becomes the oracle.
+validate_get() {
+  local app=$1 rep=$2 name=$3 path=$4 cookie=$5
+  local got=$OUT/validation/$app-$rep-$name.json oracle=$ORACLE/validation/reference-$name.json
+  validate capture --base "$BASE" --path "$path" --cookie "$cookie" --out "$got"
+  if [ "$app" = reference ] && [ ! -f "$oracle" ]; then
+    cp "$got" "$oracle"; cp "${got%.json}.body" "${oracle%.json}.body"
+  fi
+  [ -f "$oracle" ] || fail "$app rep $rep: no reference response for $name to validate against"
+  validate compare "$oracle" "$got" || fail "$app rep $rep: $name ($path) doesn't match the reference; see $got"
+}
+
+# The status every measured response of a route must have: the validated GET's, or for posts the
+# reference's warm-up statuses (a single status, 2xx or 3xx).
+post_expectation() {
+  local app=$1 rep=$2 warmup=$3 f=$OUT/validation/$app-$rep-post_message.json oracle=$ORACLE/validation/reference-post_message.json
+  python3 -c 'import json,sys; s=json.loads(sys.argv[1])["statuses"]; print(json.dumps({"status": int(max(s, key=s.get)) if s else 0}))' "$warmup" > "$f"
+  if [ "$app" = reference ] && [ ! -f "$oracle" ]; then
+    validate statuses "$f" "$warmup" || fail "reference rep $rep: post_message warm-up"
+    cp "$f" "$oracle"
+  fi
+  [ -f "$oracle" ] || fail "$app rep $rep: no reference response for post_message to validate against"
+  validate statuses "$oracle" "$warmup" || fail "$app rep $rep: post_message warm-up doesn't match the reference's status"
+}
+
+needs_session() {
+  local r; for r in $ROUTES; do [ "$r" != up ] && return 0; done
+  suite cable || suite upload
+}
+
+run_rep() {
+  local app=$1 rep=$2 f=$OUT/$app-$rep.json
+  wait_for_quiet
+  local load_start; load_start=$(cat /proc/loadavg)
+  log "$app rep $rep: starting (load: $(cut -d' ' -f1-3 /proc/loadavg))"
+  local cold_ms; cold_ms=$(start_app "$app") || fail "$app rep $rep: the server never answered /up"
+  local db=$WORK/$app/db/production.sqlite3
+  local cg; cg=$(cgroup_dir)
+  sleep 10
+  local idle_cur idle_anon
+  idle_cur=$(( $(cat "$cg/memory.current") / 1048576 )); idle_anon=$(( $(mem_anon "$cg") / 1048576 ))
+  start_sampler "$cg" "$OUT/.$app-$rep.mem"
+  log "$app rep $rep: cold start ${cold_ms}ms, idle ${idle_cur}MB (anon ${idle_anon}MB)"
+
+  local cookie="" csrf="" streams="" css=""
+  if needs_session; then
+    local login scrape
+    login=$(lg login --base "$BASE" --email "$EMAIL" --password "$PASSWORD") || fail "$app rep $rep: sign-in failed"
+    cookie=$(jget "$login" cookie)
+    scrape=$(lg scrape --base "$BASE" --cookie "$cookie" --room "$ROOM") || fail "$app rep $rep: room scrape failed"
+    csrf=$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["csrf"] or "")' "$scrape")
+    streams=$(python3 -c 'import json,sys; print(",".join(json.loads(sys.argv[1])["streams"]))' "$scrape")
+    css=$(jget "$scrape" css)
+  fi
+
+  local routes=(
+    "room_show|/rooms/$ROOM"
+    "messages_page|/rooms/$ROOM/messages?before=$BEFORE"
+    "sidebar|/users/me/sidebar"
+    "search|/searches?q=coffee"
+    "avatar|/users/$AVATAR/avatar"
+    "static_css|$css"
+    "up|/up"
+    "post_message|POST"
+  )
+  local http_json="[]" r name path args mark expect
+  suite http || routes=()
+  for r in "${routes[@]}"; do
+    name=${r%%|*}; path=${r#*|}
+    route_wanted "$name" || continue
+    if [ "$path" = POST ]; then
+      args=(--post-room "$WRITE_ROOM" --csrf "$csrf")
+      mark=$(validate mark "$db")
+    else
+      args=(--path "$path")
+      validate_get "$app" "$rep" "$name" "$path" "$cookie"
+    fi
+    local warmup; warmup=$(lg http --base "$BASE" --cookie "$cookie" "${args[@]}" --conc 4 --duration 2)
+    if [ "$path" = POST ]; then
+      post_expectation "$app" "$rep" "$warmup"
+      expect=$ORACLE/validation/reference-post_message.json
+    else
+      expect=$OUT/validation/$app-$rep-$name.json
+      validate statuses "$expect" "$warmup" || fail "$app rep $rep: $name warm-up"
+    fi
+    local writes; writes=$(jget "$warmup" ok)
+    for c in $HTTP_CONCS; do
+      local res; res=$(lg http --base "$BASE" --cookie "$cookie" "${args[@]}" --conc "$c" --duration "$HTTP_SECS")
+      validate statuses "$expect" "$res" || fail "$app rep $rep: $name c=$c"
+      writes=$((writes + $(jget "$res" ok)))
+      http_json=$(python3 -c 'import json,sys; a=json.loads(sys.argv[1]); r=json.loads(sys.argv[2]); r["route"]=sys.argv[3]; a.append(r); print(json.dumps(a))' "$http_json" "$res" "$name")
+      log "$app rep $rep: $name c=$c $(python3 -c 'import json,sys; r=json.loads(sys.argv[1]); print(r["rps"], "rps p50", r["latency"].get("p50_ms"), "p99", r["latency"].get("p99_ms"), r["statuses"], "err", r["errors"])' "$res")"
+    done
+    if [ "$path" = POST ]; then
+      validate writes "$db" "$WRITE_ROOM" "$mark" "$writes" || fail "$app rep $rep: post_message writes"
+    fi
+  done
+
+  local cable_json="[]" n upload_json='{}' clients=""
+  suite cable && clients=$CABLE_CLIENTS
+  for n in $clients; do
+    local pm=$OUT/.$app-$rep-cable$n
+    taskset -c "$PROCMEM_CPUS" python3 "$RUST_BENCH/lib/procmem.py" sample "$cg" "$pm.jsonl" & PROCMEM=$!
+    local res; res=$(lg cable --base "$BASE" --cookie "$cookie" --room "$ROOM" --csrf "$csrf" --streams "$streams" \
+      --clients "$n" --tput-secs "$CABLE_TPUT_SECS" --posters "$CABLE_POSTERS" 2> "$pm.stderr")
+    sleep 0.5; kill "$PROCMEM" 2>/dev/null || true; wait "$PROCMEM" 2>/dev/null || true; PROCMEM=""
+    validate cable "$res" || fail "$app rep $rep: cable $n clients"
+    res=$(python3 -c 'import json,sys; r=json.loads(sys.argv[1]); r["process_memory"]=json.loads(sys.argv[2]); print(json.dumps(r))' \
+      "$res" "$(python3 "$RUST_BENCH/lib/procmem.py" phases "$pm.jsonl" "$pm.stderr")")
+    cable_json=$(python3 -c 'import json,sys; a=json.loads(sys.argv[1]); a.append(json.loads(sys.argv[2])); print(json.dumps(a))' "$cable_json" "$res")
+    log "$app rep $rep: cable $n clients $(python3 -c 'import json,sys; r=json.loads(sys.argv[1]); print("ready", r["ready"], "lat all p50", r["latency"]["all_clients"].get("p50_ms"), "p99", r["latency"]["all_clients"].get("p99_ms"), "tput", r["throughput"]["delivered_msgs_per_sec"], "msg/s", r["throughput"]["complete"], "/", r["throughput"]["posted"])' "$res")"
+    sleep 2
+  done
+
+  if suite upload; then
+    upload_json=$(lg upload --base "$BASE" --cookie "$cookie" --room "$WRITE_ROOM" --csrf "$csrf" \
+      --file "$ROOT/reference/test/fixtures/files/black_hole.jpg" --reps "$UPLOAD_REPS")
+    validate upload "$upload_json" || fail "$app rep $rep: upload"
+    log "$app rep $rep: upload median $(jget "$upload_json" median_total_ms)ms"
+  fi
+
+  sleep 0.5
+  local peak; peak=$(cat "$OUT/.$app-$rep.mem")
+  local cg_peak; cg_peak=$(( $(cat "$cg/memory.peak" 2>/dev/null || echo 0) / 1048576 ))
+  kill "$SAMPLER" 2>/dev/null || true; SAMPLER=""
+  python3 - "$f" "$app" "$rep" "$cold_ms" "$idle_cur" "$idle_anon" "$peak" "$cg_peak" "$http_json" "$cable_json" "$upload_json" "$load_start" "$(cat /proc/loadavg)" <<'PY'
+import json, sys
+f, app, rep, cold, idle_cur, idle_anon, peak, cg_peak, http, cable, upload, load0, load = sys.argv[1:]
+json.dump({
+  "app": app, "rep": int(rep), "cold_start_ms": int(cold), "validated": True,
+  "memory": {"idle_current_mb": int(idle_cur), "idle_anon_mb": int(idle_anon), **json.loads(peak), "cgroup_peak_mb": int(cg_peak)},
+  "http": json.loads(http), "cable": json.loads(cable), "upload": json.loads(upload), "loadavg_start": load0, "loadavg_end": load,
+}, open(f, "w"), indent=1)
+PY
+  docker rm -f "$CONTAINER" >/dev/null
+  rm -rf "$WORK/$app"
+  log "$app rep $rep: done -> $f"
+}
+
+{
+  echo "date: $(date -Is)"
+  echo "host: $(uname -r), $(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs), $(nproc) threads, $(free -g | awk '/Mem:/{print $2}')GB"
+  echo "server cpus: $SERVER_CPUS (nproc $(taskset -c "$SERVER_CPUS" nproc)); loadgen cpus: $LOADGEN_CPUS; network: host"
+  echo "env: $(env_args | grep -E 'WEB_CONC|JOB_CONC|MAX_THREADS' | tr '\n' ' ')"
+  echo "csharp extra env: $CSHARP_EXTRA_ENV"
+  echo "rust extra env: $RUST_EXTRA_ENV"
+  echo "user agent: ${USER_AGENT_ARGS[1]:-(none)}"
+  echo "routes: $ROUTES; suites: $SUITES; http: ${HTTP_SECS}s at c=$HTTP_CONCS; reps: $REPS"
+  echo "oracle: $ORACLE/validation"
+  echo "seed: $(sha256sum "$SEED/db/production.sqlite3" | cut -c1-16) (production.sqlite3), $(sha256sum "$LABELS" | cut -c1-16) (labels.json)"
+  echo "loadgen: $(sha256sum "$LOADGEN" | cut -c1-16), reference-rust $(git -C "$ROOT/reference-rust" rev-parse --short HEAD)"
+  for app in "${ORDER[@]}"; do echo "$app image: $(image_for "$app") $(docker image inspect -f '{{.Id}} {{.Created}}' "$(image_for "$app")")"; done
+  echo "csharp HEAD: $(git -C "$ROOT" rev-parse --short HEAD) (dirty: $(git -C "$ROOT" status --porcelain -- src Directory.Packages.props Dockerfile | wc -l) files)"
+} > "$OUT/env.txt"
+cat "$OUT/env.txt" >&2
+
+for rep in $(seq 1 "$REPS"); do
+  apps=("${ORDER[@]}")
+  if [ $((rep % 2)) -eq 0 ]; then apps=(); for ((i = ${#ORDER[@]} - 1; i >= 0; i--)); do apps+=("${ORDER[$i]}"); done; fi
+  for app in "${apps[@]}"; do
+    echo "$(date +%T) $app rep $rep start: $(uptime)" >> "$OUT/uptime.log"
+    run_rep "$app" "$rep"
+    echo "$(date +%T) $app rep $rep end:   $(uptime)" >> "$OUT/uptime.log"
+  done
+done
+"$BENCH/bin/report" "$OUT" | tee "$OUT/report.md"

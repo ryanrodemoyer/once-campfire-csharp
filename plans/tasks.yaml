@@ -1102,14 +1102,31 @@ tasks:
     size: M
     deps: [V02, P01]
     bench: true
-    owns: [bench/bin/, bench/lib/, bench/README.md, bench/results/harness-*]
+    owns: [bench/bin/, bench/lib/, bench/README.md]
     refs: [reference-rust/bench/run, reference-rust/bench/loadgen, once-campfire-go/bench/application, reference/bench]
     deliver: >
       Add a `csharp` app to the Rust benchmark runner (same seed, CPU pinning, alternating
       sequential runs, response validation, 1/16/64 concurrency, cable and upload suites)
       and a report script producing the README table format.
     accept:
-      - bench/run --apps reference,csharp completes on /up-only and records raw JSON under bench/results/
+      - bench/bin/run --apps reference,csharp --up-only runs the whole protocol, records raw JSON under bench/results/ and refuses to measure an app whose responses differ from the reference's
+
+  # Split from B01: the C# app has no /up until A08, and the reference image needs a Docker host.
+  - id: B06
+    title: First /up-only harness run against Rails
+    lane: B
+    milestone: M3
+    size: S
+    deps: [B01, A08]
+    bench: true
+    owns: [bench/results/harness-*]
+    refs: [bench/README.md, plans/status/B01.md]
+    deliver: >
+      On a Docker host, build campfire-reference:app and campfire-csharp:app (the first full
+      `docker build` of /Dockerfile), build and verify the default seed, and run the harness on
+      /up alone with Rails in the same run.
+    accept:
+      - bench/bin/run --apps reference,csharp --up-only completes and records raw JSON under bench/results/harness-*
 
   - id: B02
     title: First internal numbers for the five workloads
@@ -1156,7 +1173,7 @@ tasks:
     lane: B
     milestone: M5
     size: M
-    deps: [B03, B04, Q04, Q05, Q07, Q08, P02, P03, P04]
+    deps: [B03, B04, B06, Q04, Q05, Q07, Q08, P02, P03, P04]
     owns: [bench/results/final-*]
     refs: [README.md benchmark table]
     deliver: >
