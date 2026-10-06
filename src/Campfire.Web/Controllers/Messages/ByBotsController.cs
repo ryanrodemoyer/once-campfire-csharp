@@ -76,8 +76,26 @@ public sealed partial class MessagesByBotsController : ApplicationController
             Headers["Link"] = $"<{url}>; rel=\"next\"";
         }
 
-        // The implicit render: index has only a JSON template.
-        RespondTo(MimeType.Json);
+        // The implicit render: by_bots/index.json, or for HTML the index template the bot API
+        // inherits from MessagesController, messages/index.html.erb (`layout false`), whose
+        // forms carry tokens.
+        if (RespondTo(MimeType.Json, MimeType.Html) == MimeType.Html)
+        {
+            var html = await ReadAsync(session =>
+            {
+                var view = NewView(session, forgeryProtection: true);
+                return RenderString(w =>
+                {
+                    foreach (var messageView in LoadMessages(session, messages))
+                    {
+                        view.MessagesMessage(w, messageView);
+                    }
+                    w.WriteLiteral("\n"u8);
+                });
+            }).ConfigureAwait(false);
+            Render(html, MimeType.Html.Value);
+            return;
+        }
         var json = await ReadAsync(session => NewView(session).MessagesByBotsIndex(LoadMessages(session, messages))).ConfigureAwait(false);
         Render(json, MimeType.Json.Value);
     }
@@ -278,9 +296,9 @@ public sealed partial class MessagesByBotsController : ApplicationController
         return RenderString(w => template(view, w, messageView));
     }
 
-    // The view the JSON and the broadcasts render in. A bot's request has no session, so nothing
-    // carries a CSRF token.
-    View NewView(SqliteSession session)
+    // The view the JSON, pages and broadcasts render in. A broadcast's render
+    // (`ApplicationController.renderer`) has no session, so its forms carry no tokens.
+    View NewView(SqliteSession session, bool forgeryProtection = false)
     {
         var account = Accounts.First(session);
         var user = User;
@@ -291,6 +309,7 @@ public sealed partial class MessagesByBotsController : ApplicationController
             RequestPath = Request.Path,
             RequestUrl = RequestUrl.Url,
             Referrer = Referer,
+            FormAuthenticityToken = forgeryProtection ? (action, method) => FormAuthenticityToken(action, method) : null,
             StreamKeys = App.Keys,
             CurrentUser = new CurrentUser(user.Id, user.Name, user.CanAdminister()),
             CurrentAccount = account is null ? null : new CurrentAccount(account.CustomStyles, BlobRecords.FindAttachedBlob(session, "Account", account.Id, "logo") is not null, account.UpdatedAt),
