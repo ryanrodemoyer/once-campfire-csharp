@@ -1,0 +1,2078 @@
+{
+  "now": "2026-03-02T16:00:00Z",
+  "fixtures": [
+    "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900001, 712064548, 'KevinSessionToken0000001', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')"
+  ],
+  "csrf_token": "w02MatrixCsrfToken0w02MatrixCsrfToken0w02MA",
+  "cases": [
+    {
+      "name": "no cookie",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=wW%2FVOKilf37K77POR86ObfmG%2FwKVFxoP%2BexCwJGdRy74iiO2WLUEL38vGUq9ddGTEPfyw5qbLKviq039SZzI1hvGr9BDShgabaMpZfBpkmjYJI%2FGAZ49PUbYjHEudgevenKBE%2FzbShjFm%2BWWhv7TCHXFmJLPuSznNQkCOgPB8W2phXC33bgYuL7c1gxKZKbZeJ0ur4xFekbQqiCyoJ5gIPhZvjMGevRiCYgK9AsMqLbW3X8Acvzu%2Bd0vCcXdzwTvH4vexNBUEvzRfTolWytNu3AfLt%2F%2B8cdR8m4ZWxcM7EZC6Ox3bGlKDKLzxA%3D%3D--5T%2Bp5OhfC539IsM3--6cJUbjwGOFU6Qi023O%2BBxA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "no cookie, HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=r%2BqVAvbjI68rlSS5mI1O0U6i221dauJp5D6sV0REFgEUeIlZ3n4%2BjzTXk2uTei1dVhtJiXWPTckz6ElqZRZt1WLmbGrfIxz8wBIPJLb33MhUZcKOorcY8DK1lR1PdPCqAftTK4MFQDRyCJYX04M9MMGLhNqRxdfK8L96MqD2K6OG%2B%2B%2BVnB7j1p%2BVZ1k1cBIf8Eyvua3UbRqaHsSvfOE3RTq%2Fqgjpdt%2FIskFpE7itMzbKM580Fp5V9e9fiWt%2FPF4rnZwa9yVRImecpUyN7XYMVV7rjCusnIjEwdSh2TQVP3tVMfa6t4U7Qmc7mA%3D%3D--cFp%2BWOOIMpNUQOZJ--nJD1wwkW9WCuTyVkv0kdOw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "no cookie, JSON",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "application/json",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=pTRlgT7fFsH9unNNH8wOTXNIgjchbYovgZ3NUjItd1L%2BmEnqoKLD3tbsVJxiuk5UDtbzNuOdkUq9a6188ST19H37BMenA0cEf5%2FrEgXqoyJjSELu9yEULTpMHKbGtd72pH1EPaMLQvLIJ4zP4SjGDDjRFLBc3s0oJtLgkQK1%2BmHLBvOkI5Sif%2FZsxGmraf1ecDcMP0wAjUDJDV%2B4l3DkyOilmqrxsI5EdJaEcw%2B0B%2FivLdYOWIP3QUmRne6JtlnZAvNDTriEIGZwD8r7FNvXpdnGGgolWTGghftH5YkMs%2BXtkJ5giH%2FlrFNRqw%3D%3D--iQaf25aMeIVLsvrd--lOOV2KET8RdVFh0kNnL%2FPw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "no cookie, query kept for return_to",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?message_id=5&x=%20y",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=tsr6A%2FUpMnfJbXn4InMb4WPXotHWPxqVaBkRz3esHELuK2sf1NRgEhWzUWz%2FWYv5cANRagncHBw3IJyWgWadAsYtE7RrCntZAnXgyAQ6gJvj3z8UQvu63ykF4KJllyQz2DTQsG4JY5Ld%2BNA7sIHWuyMrTdktCt1kR4BRBB24sMuqYRtHfnywL%2F3Hzs016Nvx44MqWzUOCzt9K9HxnVVNhudTsetGzPCv%2B0BMLIRaAoMueJXxkTMl6oLCGJ5zgRw%2FULSqemrBVkZqO5jAdpiFuhq9%2FKaNCCnfq1DbNcJtmBkhMtGMXi%2FQ0qRkriXL%2BsNzaweZ9fTCmEwcUX86yIRYzzXDvqzVw9M1ah3fgssfFkcSRPbgNT87kI6mLfaCLCs%3D--vH7Tf1m7Iu5zYPdD--pGM2TPgwr%2BcukBFxokAgaA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "no cookie behind a TLS proxy",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "X-Forwarded-Proto": "https",
+          "X-Forwarded-Host": "chat.example.com"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "https://chat.example.com/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=gaCojjC2qtbyjvmr5r%2FIQJc1yiK6w5mwA41tstLYIY5tBIU%2Bs0jwWk8RqrFh5VpOO3jCZO6hvU8NtDneXeptQ1MS6BIxeX0YGOrFidLOObW6EsuD89TPY3DG%2FUAWSnks2PFMCHjk8xVx3MAchRV8iAD%2BMnMcw%2BV%2FYPIzMIL3890kADdHBaXXh7XeX5IAfUgplJh6XZQzG9%2BSUB%2FmZUXIvmBJqHrXQXSGuOsbR4ih0zTvSWTT%2FolKf0BCWezFvV5YDZWjv1ZiT%2BYJs57c%2F494dEawHjJhnl6VHmBQcfbYmGAF9sy6w6Hjh2NjKu79msU%3D--3UPLfemi1TsktFCu--QgQxYcTKvMCfjNNnL48oqw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "no cookie, Host with a port",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test:8080",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test:8080/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=w%2FNJoo3yS5ELM32txZ7E%2BzI1SoSG9TpAWG4MZr0OY2FcMya4x5dLtHT0MAC9PUItJLT%2FAslWWUIp2MoP6wHyZ2f9krYmpfyF2C3NkpKhtrj7FLUVUywA%2BfqP0COJc0vhsA40N%2BwkEj3394JCLk2oS5kaXxgyCl6EbKDpAKYHWhtB5ZRBiWiGIwwmy6H5DKzC2%2BRrqqOn0oObokQFB2oZJH9Yx41RQHDrjW955K4Kfa4lJ3s3W5ZTqJmNEEOm2c0Ji0XHljELoar5YbcX4x0iV%2B8kelZenAsS3zc7DzgKXqIgT%2FRyYhGmAywoLtyApL8%3D--koF0GznE4prSh84r--VgMluDfJQQvnSm01vGmlfA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "expired session_token",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwMjYtMDMtMDJUMTU6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--cf1229c12dc0f62620a6e35048ccd7e0868d5b47"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=qqs9L02mykGPiZzr4W8jD2owqZES3ClSW%2FUTVIfnZNeIHUpwmJ8Szxffa%2BESKUfhsCcRzkp37NrkKkXSwHEt4KTO2i2G9YK%2FFixBB%2BiCmTrMadIH9JV8Xj7BCL5nvcLBH6vXA5B%2Fuudf0TBROAMB7WaH5nGUi4GgAT4fQ93us8E0MzYLEzqlLRHVz3gvo4cytlZvCyPkinAScBGpgWYQtopLht5gUhqXaSUnQ0fhT8TnmyIM488RryD37%2FcNeDIRphAdY1%2F1X0Rm14TfOZFXgiDrBYC%2BenGQp1zChyA7fTZVl8bUiJnAWCmkng%3D%3D--%2BfYaJ1pwd6CAFA4t--pVoFpf8c2op2J3WWN5cQLQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "unknown session token",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrNXZVM1ZqYUZObGMzTnBiMjVVYjJ0bGJqQXdNREF3TUNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1f296dcfaa0c230aedb9c7460d04e91f67b5896e"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=OD%2B5amFa6EjKHjVA%2FNIrcti3Mm4qjbrOW8ZMbuEd9sTIRnWYMfiUi6Fw%2BUp3cJe1Yx3dUroQy%2BpE1jYnB6nxFOEnWVPxfecgSrPhIoV%2BvNjriqLSyJzPtDPPROOcN9Fo57T%2B3PSg7BzFN6hITMMidr%2BOWWttC7R2PejxKYD6aRtzpgfDw9RIhZDFqGwi54cfuw2ntOSEplUmctoeAr6%2BUJCpldlpdGgZjEetCC6GAPpS6hTu%2Ft0SqtaGxYAonTObagnsMd3VkyKJKnO7tkblz4vL1oQtBw2ehWlLv0%2Ber120bqIdGhXLY%2FGNIw%3D%3D--xv6HNLkN8tUf%2BClL--bTBCXfn7ianLPdz9gOxRDQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "tampered session_token",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c22A"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=GIvUdUHkCxprX8Uqv8rcSetzVivllJaeb4JPYbNjiGD1D2FW0PahmGeljsD%2BOL3luExAamp32Rdct1tFtiAP%2FdNUu%2Fl6RgPpWH%2FcAk78cvM288aCym%2Fu8EdPP%2Fe2iyRlKDr7fjfyNHmlikDoxnsCxwLJth4XfHzTkHmSmOZ3FrfspLkYfeFGePe6DXG7DrWMcw09A5q7fnuEDrFttlNL3J%2FYt5h77TgVWyOZxHJAjFsYQ5uezbrhEiGJzYIW1P8dAjFWGIDz166YsCbue3wnRFQogF437bV30pyf5q%2BQ8nKD8NFjbmKkGtKVVA%3D%3D--A2VH6TsmXE4EXjsN--%2FAkDlhqqu5Nr1OWLQsK18w%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "unsigned session_token",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=AxJs94fteQ5Autv2VrKsH68c"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=7EGjYlx8rAg81G0XPsi9w5eCOg59oK9TlvYkyppQ7FfO%2BkipTh%2FHx79OZTkAJf%2FbHoAN6X8W7gyHxxYHS%2Bn%2FgGo4jDYf7Qni6Ew%2FYzHZBpUaNk%2FrK7X1krOZeecWpTKD%2FUluWJ3SwYzRe47rUsIZI2mVHn%2BY0RZBPqq1J8Jdl5eEh1KRGYbQ7uYbZVvG12LXswtl%2FelvXfk5j%2BQ2DDCWrh9DBytHt3mNKdhL9Pjjo8dtW1V9Q7uo2xdzrhPLoKO4pQZBfjfe48b9dg%2FETDiNM43%2FWpdB%2FXUALZO89AbrZdhzoiW0sUNiuoIrQA%3D%3D--WQ9hVWVY6J59uvhB--AtSA%2Bp2u6himckOwmI3Kfg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "administrator, first request refreshes the session",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/rooms/104393281",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "administrator, last room cookie",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; last_room=486777696"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/rooms/486777696",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "administrator, last room cookie for a room they're not in",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; last_room=999"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/rooms/104393281",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "administrator, last room cookie that isn't a number",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; last_room=486777696abc"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/rooms/486777696",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "member",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/rooms/201306877",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "member with a session cookie",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/rooms/201306877",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=cASpryzpLlUbEOau8%2F5AveGOGQ27a68BxYcRvPd8h13hPVx1JfSQIPasMu1WqzOl2RoHRjOLNkt%2FGDof2xwzaIXUSWelF1pr08%2FHyThb1Tafdk3dQY3cv206tVvF%2BMMWfTYnlolBeN4QwDpG5DWWdrKhyPlEZIerWJapCNrwHpO9nD5AaH7kxm5v5IhPNDMADrAYqSYKLuR4SxKZEad615XRkAlWofBnOmBDZZeZFxitjDP36hA94fHsJ9MZAf57Xhj5wti2vcY%2BNmlrrpx3JC8w%2B1TM6iPzp54WwG2riPVLPR5kLwsX92Jfr43GUwg%3D--VXB8gLJKEQJxw8sT--DoYabb7uCtXdilJUHaCJ1w%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "bot key on a non-bot route",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?bot_key=394959859-BenderBot123",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "bot key with spaces",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?bot_key=%20394959859-BenderBot123%20",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "wrong bot key",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?bot_key=394959859-wrong",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=EfsDzp8kq3jWH0hJmeb%2Bxu2D5vTKLAbOGu69BLs%2B3aR9CPeHnYzBQB%2BQX7w7fW0zLww%2FBkrszhcPJSNFpsj%2FGN%2FcjNORenhzopsDzuUOlhBThSaKiVKvFh%2FSULRepAFcOrlbKP988SjdSuO8varGkWnoV68SBYdWl0USKWXwbSEZ1KFJit6RKZwSr0V91aCz9FCWpZxif5DdzJA7%2FweO3Skuvoc2cHWqe85Kp9z65xV%2Bxp%2BZu3Qpda7Wa9e4eeJocvWPyZFq0CrQbgwJkc4bwDhqMpBZBuhIK7Sk11L1k%2BDVu0NtD3Sqn7931A7detkhDfoGxqZE9FP0MUubnJiyu7sP%2BclrXce1Xw6GNzRpTsoAKTx7MgnKdH3T7mmdGmQ%3D--hajaaEoejjSOGOAS--CD9Ib3wezKegdZrdp%2F68hA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "blank bot key",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?bot_key=%20",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=%2Bu4eN%2B6%2Bcdkqk5ae2Ep2Mkjo9k8QwJhdLyDKpUcI8BhBm5LYMwolRqBv2FVivqY3IuQou8g3WgRVWjlSZHXuaFrf6FF8nu%2BX5BlMxoyGiYQZGjzC6berFGdQb3W6e7E%2BSXSAV1TSkdqaDYNnQZmmL3qbyxcHRB0fFpPhbLgFB93959Ao5Oc4WiE3pcGM9JAraV0N9k%2BZaB8lw79%2FEat8ldxtTxBcqzV05QPO%2BrcdLuENwUVwx6SxM%2FcLHcoA8xpqhSM9vHK5pMlqqFkwlUPa7fOiAOHAOa9YxOaqee49IhMn7o6Ub199c2vWggRgwhhEs2fmUI%2FCyW3oBAZzxgY3F5AzUAP6P2fgDQ9qxUpV%2FA%3D%3D--8oIHeqxVV3ZL0m6X--3YVn7OmSMtoR3jG7eD8gNA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "deactivated bot's key",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?bot_key=773523957-OldBot789abc",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=f6HJj0PMR5Fe3UvWcUYWYLt%2FO8HwWgevTO2e6CjMeSc3CqQSz8wkPbhS85X6GVMpWaQq5%2BVxh9dMuJ%2B06%2FqZKJcJPen5YXE1kWgC4SAqEC%2FRLvcSglVrn4icqfy%2F6R1ebKhx3wOJOU0wUUefSn9%2FamEdhAnyf3xAhzP2Z5nz%2BSgfhtIDUUWNNzLISajzLKHG4DhTvVH403OlcYPZN6FtbFa2AWvDexZs7Lqln%2FDngi3uiZr%2B%2FLpbQ9W8LzpnVvlEXZd6flpFAJ57RqBJUuDJJ2yDZS7BNRlRQn751AQuA20czGv9ASJALeY6Y6t42B7hWYIj9iR2XKQZZfYLm2nqWYnQsIDmtuVWiaQx7dXLDivyRb6BccClSC8qIBOSwHWC8Ktbip3IPg%3D%3D--d3biEANI0dzQaguJ--GvF%2BuuZCNbJblAUFKtZ3JQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "bot key on a non-bot write",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code?bot_key=394959859-BenderBot123",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "bot key on a bot route, no body",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/486777696/394959859-BenderBot123/messages",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "bot key on a bot route, room the bot isn't in",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/104393281/394959859-BenderBot123/messages",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "wrong bot key on a bot route",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/201306877/394959859-wrong/messages",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=qw9r1yIPRw6ui5Fvu6bVllanmQ9ykzvNOlpoH%2BKwvmZeJ2aYIQvApbkRiDcjoblsaNIBtr8aPImi0m7CdgZj5L3WERjrFtD3UbWEk6uvw%2FfBoLV6ymTLV1F0xJ%2FIOjba1N4mrPkwTBXkFMImVUFxIDeLKewmKpEyx1jnaFzHPbgd0NPX16aVFRXY%2B7T%2Br2GN%2BhkajOg3kTPvZOhkkExLKdzJD3ir3YtPifi3yky53vFMZsr5CH7gilLalgzT1MGnGgo4p77KVqGzoHu17k%2B4kL4HTuqzu4w1c0sWwU%2BzTjXiKOVyvAAg0gwRoxlYqwdTmG9Pl1fUZm0nV4S58m0ZNHW22iBfhRZpuEpxEK6uK3p%2F1pIW%2BmLB1T2EK%2FllxE0%3D--7AW4beh0Woj%2BfhDI--3%2BvYq98Ks2aenNb2bpBvbg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "deactivated bot on a bot route",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/201306877/773523957-OldBot789abc/messages",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=233Fqp1DILICaeogkmN8EgCc9%2BQKz9EsDzYTOnHZ8uzN%2Fmu0Qlndk4sW6ANITUQxQbVJH7NfQW3rtsjI1%2Bj5AomPt%2FYUKuU7mBSpKRLbn1K65FmIiRsgNp8X0vqB%2FnTO3xQW8Nrt6znMwq2xZoar47YUNWxlQYcLxTx67z4GbrDe%2Fe2c0hOX48UsW6WxCHzhPF9Ys6ObmxRMZfoVS0QLBibmf435jQzWRRr1cFGs9jaW9S8kUPO04T01pLHPcOm0O5497ygBnN1hHdIp3gTS9a4TPQ%2FgA4UnUWITxGqVRDLf7mZyLwhL%2FBVkCP7bIGvnDiYmSr8orO23juo6%2FEA4%2FWL3gGEwA2OnjNwpl5W0pKfNQ6MoRqAM%2BAtuUDwrl9FvxTsBn6nRCA%3D%3D--GkNPIauf3EEQe2kK--OrR3%2BobbO4QsVXuWBSvZrw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "user cookie on a bot route, no CSRF token",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/201306877/nokey/messages",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "29d14c28d41db9267a3577c0f8b834e86d4a99d2ed4d6a64db173e4cfc7f7950",
+        "body_length": 46
+      }
+    },
+    {
+      "name": "write, no cookie",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=IwW4jswjFnjTPfW2N84Y%2FWfZlboqPt427LLr2vimzgcSH54Ogpp8lt5tQtVo5czxAd5csRRtKQGUzJ%2Fs8bZP4XUEjHbr2Y44%2F4KioeoquT9z95SHMJaYQaPpCoksEKJmNDPI4lbdg0y193yFi6cAaLq%2BDYcA6Hm4JYYclYBr8DPtDBpmxDnMg46aynhrjkLmqiyst%2FZ6cEyGa1tm1ucEAZU4G6S%2F6yLHEDcmtvgmU6L4yZCE%2BZCDUxDEQr7Zr61Hs%2FcPEjtNPdaILaitsI3l%2B3VSVUMN7ojByK3c30Cu8KJmNsz3sF7Juh5OTpdUff2ftBDlnnJiy7MX%2FUrz8mii--v97PnBINlqBuaj%2F5--CVumXwOZrs5j6nlYiqChVw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "write, no token",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "write, no token and no session",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "write, bad token",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=bad"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "write, token for another form",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=ScV-V_8qSaSCyGeoufrKRkDsFRVyRKEo8p7wESRKMlC1jdIkXqatk6CoSpZOd7ytdFycBdhn2d-Pg3fLlU_WxQ"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "write, foreign Origin",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Origin": "http://evil.test",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "write, null Origin",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Origin": "null",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "write, form token",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Origin": "http://campfire.test",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=LgvuQW5cKBrk5Lkn74E%2Bf7cuZpPxiPC9D%2B2IytcLOQOZeFCYHul2KS8C%2B%2FRIC8VV3iTlXn7PMYUvVVMStiyPoLlroZOZzLrzfT2b7AdLby9%2F9S8om96Hc6T32ZPtt1DHDQkgxKfzmegHcMLS%2BLFK7ICc6ioDrHt0a%2FhFFK3yT0JKFdfikKseOQUFXR5FiKdSYE9VMqpCA2O%2BWqOvZHY3QMjQ6IJm3ewCiEaGl2EOVBJYn3AMi4IXOnyLsSMK4%2FmYec2nPl9PFM6uSx1AWXPuK%2BFapDQOhG3ssyCh7H992OEu1tpvlZPvqTPF%2B6fXh14%3D--jwoVfjSK55SLXalq--hkpH%2FFdSIrABZCEPCQjosA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "write, header token",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "X-CSRF-Token": "N15QmmpvBd2xXzOERdmNT32gZ0enq6HNodcpsXkzVWQDW9IXBlPQw05_utX7pcNOLxys1m9sy73Ubq3I5YiivA",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=h3Nkoios2QwV8vxPw31pQNbE9IZXa%2BChsUdtN1Zaom1EmfFQWakIi%2BnoDxpTltCJiQAjudJQ7brK0smZPRDjT8ljC%2FSm82sfvwe%2Btlq%2BSATfmVk3nfcdWJMZfJQrAcWgiCfoQjZX%2F0lyJ%2Bm7onZ2RH1jOtBKY3gcMpQRly%2BWUnDnaUD%2B5WPdFfUfUTE7iqimRCvnvNpX4Aeefu6UWBRoFGzX3NHe2itPKgW89sYXLkmG0kBq7%2BCzjWMtCDf0RGGKAc%2F6ncLvxnqliz%2FfGIBWSAQuEHpzBQH2pElXZS4Ga0Azxlsowpx042BnfnJNfao%3D--xrfY7bKImoUAu6ee--RX19t4fgzSwNAItsM1EdFA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "member write",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=jguX2csJHROU5ajC4HWkZAe8XbX5GjgzvMlQia%2BWG7jnDZ6DXK0J4MLXYih1Qv6XzWMpVQ1orFfFP3p%2FrE7YTDSgEy3LQC375cws1frDwho5n8WDUeqfVuFvfHzvzYhXDg4EEJYDABxu5uHgOLwKq9AGKoY%2B6C%2FXbzf%2FfnU1mUFJsf%2FM7tZpZCqRiIQz92HHO%2F08BCMBix8vc4DxOMigG4I7y6hVCc2LL%2BAbqaWW%2F5IX3Yf12J9Hf4MU3hXXYjy09BkatUf%2Ba1niQLnXefPBwYjh1VPz1YiaPM6dPoPCZxHKXrsrmEPTczpPiJP1csc%3D--PEOsXCkSOoUNBqtw--UyHZ2b3WCEJJYIxSU0WUiA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "member, room they're not in",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/104393281/involvement",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "X-CSRF-Token": "N15QmmpvBd2xXzOERdmNT32gZ0enq6HNodcpsXkzVWQDW9IXBlPQw05_utX7pcNOLxys1m9sy73Ubq3I5YiivA",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "_method=patch&involvement=everything"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6e04b180174f49e36df7d4c24e65e0545575d68d69aadf094e4c697db299c477",
+        "body_length": 4237
+      }
+    },
+    {
+      "name": "member, room id that isn't a number",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/abc/involvement",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "X-CSRF-Token": "N15QmmpvBd2xXzOERdmNT32gZ0enq6HNodcpsXkzVWQDW9IXBlPQw05_utX7pcNOLxys1m9sy73Ubq3I5YiivA",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "_method=patch&involvement=everything"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6e04b180174f49e36df7d4c24e65e0545575d68d69aadf094e4c697db299c477",
+        "body_length": 4237
+      }
+    },
+    {
+      "name": "member, PATCH with a token for POST",
+      "request": {
+        "method": "POST",
+        "path": "/rooms/104393281/involvement",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "_method=patch&authenticity_token=N3gqquNR1oo7ZqJ3p10Vf0jvNv2gcBvRJxwBagb0BcISdoUo7YJPkv0u3NCmaW2qpFWjtsUBaGqeuiW-4LG_EQ"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "banned IP write",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "X-Forwarded-For": "203.0.113.9",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "banned IP write, behind proxies",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "X-Forwarded-For": "203.0.113.9, 10.0.0.2",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "banned IP write by an administrator",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "X-Forwarded-For": "203.0.113.9",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=VemFYhzLZH%2BxK0TzgyWg8K90yubA8hBWpzGABCDsA3Lmu7Bn%2FfmrUxT0NsC%2FYVUeTBDL7%2ButjU5fUBXv96H7UOqVfDZNX83PXVLhpCN7sNUdpjuLD69LRdJHFCKMF0QE0sPJc3jtEm%2F1PGzqyUvefcMRrPecn1k6fXnakt%2Bcn8i72x7g0wb4KGhialYuEsBtPMJopsExEvKiNndcuk%2BZ%2BLc2ldW2q7TVVeg5M1N%2F%2FkFQ04HGqKHEDR4mEPBTXpzd%2FrLsF2YU9m7I1OBYDgvyAKWYstc8kSnO82kmXAQAzZM8EmYFF4rakQt8U8TuBbA%3D--DKPEcQ9erlQmeaUE--e8lqrDgABmW3ZeSqqgdMdg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "banned IP read",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "X-Forwarded-For": "203.0.113.9"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=ukHE5gqWjeQxRD%2F5Kz%2BxB2aawjvU2RdUWC%2BC2ZL1HTcuf4mWsVoeBxpwwwzvoWJYra%2BQLvwY4Jqh6Bw30jACFeqtZL%2BBp0WfljmnfSs27DS9%2Fd%2BT0xKdXojs6v7LAxIm1h8FFNNTAVcXNrIg7hHN3jDzJrKLJRHXSARhMpeqVOIT%2Bv1jEbUNGVaZcFfXdWdPrbD9rIVUl2hE9SvB%2F2rIY7Lj2DkhVVbj52sGrAcrA4ooc0uMPAQK5CFacPpBR%2FDeAZORGHYvL56QpNo2X7Ya8KVHjIPx%2BTyv05gGabKpJYw5xAVbGrlV9BJBcw%3D%3D--r58RzCLlaPYS14Jd--NWInMeEo92sKLJseIvbY9A%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "banned IP in Client-Ip only",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Client-Ip": "203.0.113.9",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "banned IP behind an untrusted hop",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "X-Forwarded-For": "203.0.113.9, 198.51.100.20",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=iqN4NCAW2NgdIEgpfxHRsXRMViz72RuSEm06IegdjNa8F%2FNtl9qpOL1bG1NJ8CEeYeslLRmd5qmCM9I9DMgLnrqTXimYQm1sFD2BGmwtdBLH2yvpZPvhHhuj%2BM6rnkLC3M9ACrW%2BOqX4UngXBPINogEVk6x1MNnQD5lcblOLEQdIuMCvDc2sQVB%2FhZADmdKdyt6CXBPBUlTx%2BpSGQm%2BBPfPDGNW3yabdqptsVW08n5F1WoA4lM1XAf8uSLi0sOuSNkyWtOPqkhnhroAgZsHkD%2BZe9pPLScy%2Bvq%2FEoJkzcFJi%2BBSuU8HtDZTTpSe%2FJtDjNgTx9JjjA29q7i4Mn6RY--bOGoWJiWy%2F%2FXT8qL--hj55IN%2FjAx6Ci5U7QXsBRA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "banned IP spoofing check",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Client-Ip": "203.0.113.9",
+          "X-Forwarded-For": "198.51.100.20",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 500,
+        "headers": {},
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "signed in, join link",
+      "request": {
+        "method": "GET",
+        "path": "/join/WRONG",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "signed in, right join code",
+      "request": {
+        "method": "GET",
+        "path": "/join/CRMu-l8Ge-KB9B",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "signed out, wrong join code",
+      "request": {
+        "method": "GET",
+        "path": "/join/WRONG",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "signed out, first run after the first run",
+      "request": {
+        "method": "GET",
+        "path": "/first_run",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "signed out, first run as JSON",
+      "request": {
+        "method": "GET",
+        "path": "/first_run",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "application/json",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "old browser",
+      "request": {
+        "method": "GET",
+        "path": "/first_run",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "max-age=0, private, must-revalidate",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "etag": "W/\"46648389772e7b2906dfc0dad7d3f79f\""
+        },
+        "set_cookies": [
+          "_campfire_session=ksHJ7L6INx08rLUcSBNCO5%2B8rhAy%2Bawa7%2BIwsyIiCFCr3BJjFBbDOBHdGjn6yoaVsLFw6i97IqD5SceDn523T1khP9oh74ai%2BHRNRKYj64lECaWI5P4C1jmsabrzxZIa%2FLotLhJgHy0unkll1SlQJqKa6qOndn4qiOtTdCbdVJcfNHO2eJWwbvkknKl%2FEwS%2BwN7smy2obQkokDJ6tD6xMcUQnp46TKs1NZB7sPs%2BzHlok81yO82%2BDiCc88qtyQTYulzTp6JH9vCbtnKMOrLgXnFjusaoG3Bsy1mp3LCOTjVafHVA2ND4EVxDFroOmfY%3D--5VqEUJ5Z4EqjNUK1--pdj1aOuRx%2F1ZloHvEiDivA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "46648389772e7b2906dfc0dad7d3f79fd466dc37e105f08b1723026f7236ad8e",
+        "body_length": 24960
+      }
+    },
+    {
+      "name": "old browser, signed out on a protected page",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=AOwy58vk8aX6b5u2jSrjza2Mv3v8v7IYiRHUvdrQ%2FqJHdaAxKJ6Zfpq8A7HtMMYPKxoE6e4v%2Bq8FlcQLaG4BGsv4AKIcnDfmZhQfzQOCytircZ%2BgXgWQv882C9CdKGTvYxTlRB8CGUrRZrSa8GnxDeQYnAgrD9DcQE%2B0KGDy88WsQX1nEhAkcLNu2Vc6mwEFK%2F7Oa0AlZUdcauJN6%2B4csKCD8xKONm9FsmO548fBbQ8gwta%2FTGYyKiIoaZUqKClndaz%2FoHhFYauQo%2FmN%2BXWN5p9BHhZgulMtlBDgjP%2FJzpqRlB9i4whKEbmSrQ%3D%3D--E5Qt52Jg7Dq47COO--3hz7uSwba2XHhetZZy7omg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "old browser, bot key",
+      "request": {
+        "method": "GET",
+        "path": "/rooms/201306877?bot_key=394959859-BenderBot123",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "content-type": "text/html",
+          "content-encoding": "gzip",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "identity only",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "identity"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=7hb%2FvIIum0S6BHmwoWrM7LBtFHi30mcrQx3OAVk6itAzcd3cENRK72Z%2BPq%2BktVUapj6LKJQqoq6wbSlZNXPc%2FVvChAayQjOZuh2sMQl6Qs%2BE52qwv%2BiLPvvxd6IH2b%2B0N9GRuCWxTRzy9foHpFSJ3DOUrhHYUps%2BnX%2B04NFhqCyevRmKmSIRGrWgaI9WcHLmNz2FajcL5FT0BYZENTgb0dGC32hDHDpiW%2FmfRdFdIh%2FwABu0x%2FsmNwaX5xKrWDXPBQpzhVJjognTBvrV8Gt061Ulw9lRJolBixsqZxEHsXF6Lf8oLmQ8k0hHDA%3D%3D--iM8XPNK2rcEvKh%2Fr--4S6UlfJi085X49v%2BFTymcg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "no Accept-Encoding",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": ""
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=1y1qRypMXxBJWpTn4HTE4CH7iun2t9O3Xeb4YKzNmqxiyhse72%2BN5FLhdSo8hWrQMVTTDlx0xLVbJv9SK0det69JQRzMnkhY3qQk7%2FnKiCDy9SQ7ocCyBF2QV1gQwZA0vEaydirP8t1gUJGtX7pKAj5%2B9RDpZ66UlJBTQvRM3rGWVLvSTWGpEYO47tTWpz56AlP0RPURXd1Ed1lnbij%2FAy31wBXEv%2BWPZfLH9pGqWdpcffhJnl6kBej9%2B9t%2B5gXAQwj%2FKLyfvp0ohWVqmfo8xG7k4VjyBI9fMUbb3v4%2B9iZ6Y3dMnrJ6ypJcqg%3D%3D--%2B7zt6iDYcXGzDkjw--XUffZURz0aT1dFqL8dQ9Bg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "gzip refused",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip;q=0, identity"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "location": "http://campfire.test/session/new",
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "set_cookies": [
+          "_campfire_session=ecvrzuRk7wZl0B1oBWA%2BWSKMQBGzLAVwY7AEe%2B7Le1EehXhW3i9hnUNVoFaZTjwNMWGqb1t%2FEoFpcML4ClpRAB4jZGqr0J4WCrCTteRe7KwhPEsfIlI34yqCY019jwoY6ExnX4jVITm0XVQOuEseFNk2nYXP9Q51RQ2VP6tu8mB8UmRteXdd1BCij4wtBMORDtEiJNIhG4YTLRFXITPqRssACixtfThjr7sIRFaL9uYdc6hi7q6NfhAformBWtJoR7KQaoSD6qxmAt1yiYk8nzLcv%2BATJrCYx4veQu2DLPVLmT4qYAdz3d0h%2Bg%3D%3D--30qwoXUKjv9SlGeN--m7P3Ike%2Bq%2BN%2Ffh2twohwnA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    },
+    {
+      "name": "nothing acceptable",
+      "request": {
+        "method": "GET",
+        "path": "/",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "identity;q=0"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 406,
+        "headers": {
+          "content-type": "text/plain"
+        },
+        "set_cookies": [],
+        "body_sha256": "8fd1f8141d8d920b22be2524b5422a037995dd627435c5968149ca919da8799e",
+        "body_length": 71
+      }
+    },
+    {
+      "name": "gzipped error page",
+      "request": {
+        "method": "POST",
+        "path": "/account/join_code",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-encoding": "gzip",
+          "vary": "Accept-Encoding"
+        },
+        "set_cookies": [],
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_length": 5408
+      }
+    },
+    {
+      "name": "error page, HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/rooms/abc/involvement",
+        "headers": {
+          "Host": "campfire.test",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e"
+        },
+        "body": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8"
+        },
+        "set_cookies": [],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
+      }
+    }
+  ]
+}
