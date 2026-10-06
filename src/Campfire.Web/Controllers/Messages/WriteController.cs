@@ -80,7 +80,7 @@ public sealed class MessagesWriteController : ApplicationController
         }).ConfigureAwait(false);
 
         // `@message.broadcast_create`, then `deliver_webhooks_to_bots`
-        var html = await ReadAsync(session => RenderToString(session, (view, w, messageView) => view.MessagesCreate(w, messageView, RoomRecord(room)))).ConfigureAwait(false);
+        var html = await ReadAsync(session => RenderBroadcast(session, (view, w, messageView) => view.MessagesCreate(w, messageView, RoomRecord(room)))).ConfigureAwait(false);
         seams.Broadcaster.Broadcast(MessagesStream(room), TurboStreamPayload(html));
         await BroadcastUnreadRoomAsync(seams.Broadcaster).ConfigureAwait(false);
         var created = CurrentMessage;
@@ -125,7 +125,7 @@ public sealed class MessagesWriteController : ApplicationController
 
         // `@message.broadcast_replace_to @room, :messages, target: [ @message, :presentation ],
         //   partial: "messages/presentation", attributes: { maintain_scroll: true }`
-        var presentation = await ReadAsync(session => RenderToString(session, (view, w, messageView) => view.MessagesPresentation(w, messageView))).ConfigureAwait(false);
+        var presentation = await ReadAsync(session => RenderBroadcast(session, (view, w, messageView) => view.MessagesPresentation(w, messageView))).ConfigureAwait(false);
         var replace = Tag.Element("turbo-stream", Tag.Template(new SafeString(presentation)), new HtmlOptions
         {
             { "maintain_scroll", true },
@@ -224,9 +224,12 @@ public sealed class MessagesWriteController : ApplicationController
         Render(page, MimeType.Html.Value);
     }
 
-    string RenderToString(SqliteSession session, Action<View, HtmlWriter, MessageView> template)
+    // A broadcast's render: `ApplicationController.renderer` has no session, so its forms carry no
+    // authenticity tokens. create's response is the fragment the broadcast cached, so it has none
+    // either.
+    string RenderBroadcast(SqliteSession session, Action<View, HtmlWriter, MessageView> template)
     {
-        var view = NewView(session);
+        var view = NewView(session, forgeryProtection: false);
         var messageView = LoadMessage(session);
         return RenderString(w => template(view, w, messageView));
     }
@@ -234,8 +237,8 @@ public sealed class MessagesWriteController : ApplicationController
     MessageView LoadMessage(SqliteSession session) =>
         new MessageViews(App.Keys, body => RichTextPlainText.ToPlainText(body, RichTextContext(session))).Load(session, [CurrentMessage])[0];
 
-    // The account's account, the layout's current user and the request's view state.
-    View NewView(SqliteSession session)
+    // The view a page renders in: the request, the current user and account, and the app's assets.
+    View NewView(SqliteSession session, bool forgeryProtection = true)
     {
         var account = Accounts.First(session);
         var user = User;
@@ -246,7 +249,7 @@ public sealed class MessagesWriteController : ApplicationController
             RequestPath = Request.Path,
             RequestUrl = RequestUrl.Url,
             Referrer = Referer,
-            FormAuthenticityToken = (action, method) => FormAuthenticityToken(action, method),
+            FormAuthenticityToken = forgeryProtection ? (action, method) => FormAuthenticityToken(action, method) : null,
             StreamKeys = App.Keys,
             Flash = Flash,
             CurrentUser = new CurrentUser(user.Id, user.Name, user.CanAdminister()),

@@ -83,7 +83,7 @@ def form(params) = URI.encode_www_form(params)
 def mention(user)
   sgid = user.attachable_sgid
   content = ApplicationController.render(partial: "users/mention", locals: { user: user })
-  %(<action-text-attachment sgid="#{sgid}" content-type="application/vnd.campfire.mention" content="#{ERB::Util.html_escape(content)}"></action-text-attachment>)
+  %(<action-text-attachment sgid="#{sgid}" content-type="application/vnd.campfire.mention" content="#{ERB::Util.html_escape(content.to_str)}"></action-text-attachment>)
 end
 
 BENDER = User.find(394959859)
