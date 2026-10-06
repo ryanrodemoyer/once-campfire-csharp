@@ -7,6 +7,8 @@
     <!-- Source generators -->
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
+    <!-- Crypto: bcrypt for has_secure_password (BCL has no bcrypt). -->
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.2.1" />
     <!-- Data -->
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.12" />
     <!-- Media: the managed binding only. libvips itself comes from the system (the pinned toolchain), never NetVips.Native. -->
