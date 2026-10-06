@@ -29,7 +29,7 @@ public partial class View
     /// instead, which for an ERB block is the last text it appended (<paramref name="lastText"/>).
     /// So an empty room's <c>messages_tag</c> holds just a newline.
     /// </summary>
-    static void CaptureOrLastText(HtmlWriter w, string lastText, Action body)
+    internal static void CaptureOrLastText(HtmlWriter w, string lastText, Action body)
     {
         var output = w.Capture(body);
         w.AppendRaw(RubyValues.IsBlank(output.ToString()) ? lastText : output.ToString());
@@ -39,7 +39,7 @@ public partial class View
     /// turbo-rails' <c>turbo_exempts_page_from_preview</c>: <c>provide :head</c> of the
     /// <c>turbo-cache-control</c> meta tag, so it outputs nothing where it is called.
     /// </summary>
-    SafeString TurboExemptsPageFromPreview()
+    internal SafeString TurboExemptsPageFromPreview()
     {
         ContentFor("head", Tag.Meta(new() { { "name", "turbo-cache-control" }, { "content", "no-preview" } }));
         return SafeString.Empty;
@@ -52,7 +52,7 @@ public partial class View
     /// <c>dom_id(object, "&lt;id&gt;_trix_input")</c>, with Active Storage's upload URLs and no
     /// value for an empty body.
     /// </summary>
-    IHtml ComposerRichTextArea(FormBuilder form, string method, HtmlOptions options, Action body)
+    internal IHtml ComposerRichTextArea(FormBuilder form, string method, HtmlOptions options, Action body)
     {
         var attributes = options.Clone();
         var id = form.FieldId(method);

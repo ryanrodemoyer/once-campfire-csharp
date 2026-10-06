@@ -21,7 +21,7 @@ public partial class View
     public partial void PwaInstallInstructions(HtmlWriter w, ApplicationPlatform platform);
 
     /// <summary><c>platform.browser.capitalize</c>, which raises when the browser is unknown.</summary>
-    static string CapitalizedBrowser(ApplicationPlatform platform) =>
+    internal static string CapitalizedBrowser(ApplicationPlatform platform) =>
         RubyCase.Capitalize(platform.Browser() ?? throw new InvalidOperationException("undefined method 'capitalize' for nil"));
 }
 #pragma warning restore IDE0060
