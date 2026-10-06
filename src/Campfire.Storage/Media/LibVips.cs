@@ -23,8 +23,8 @@ namespace Campfire.Storage.Media;
 /// </summary>
 public static class LibVips
 {
-    const int GModuleBindLazy = 1;
-    const int GModuleBindLocal = 2;
+    const int gModuleBindLazy = 1;
+    const int gModuleBindLocal = 2;
 
     static readonly Lazy<Exception?> Setup = new(Initialize);
 
@@ -93,7 +93,7 @@ public static class LibVips
         }
         foreach (var path in Directory.GetFiles(Path.Combine(libraries, directoryName)).Order(StringComparer.Ordinal))
         {
-            var module = g_module_open(path, GModuleBindLazy | GModuleBindLocal);
+            var module = g_module_open(path, gModuleBindLazy | gModuleBindLocal);
             if (module != 0)
             {
                 g_module_make_resident(module);
