@@ -29,13 +29,13 @@ public partial class View
     public partial void MessagesRoomNotFound(HtmlWriter w);
 
     /// <summary><c>message_attachment_presentation(message)</c>, without <c>message_presentation</c>'s rescue.</summary>
-    SafeString MessageAttachmentPresentation(MessageView message) => new AttachmentPresentation(this, message.Attachment!).Render();
+    internal SafeString MessageAttachmentPresentation(MessageView message) => new AttachmentPresentation(this, message.Attachment!).Render();
 
     /// <summary>
     /// <c>editable_body(@message)</c> as Lexxy's <c>lexxy_rich_textarea_tag</c> passes it on:
     /// <c>render_custom_attachments_in</c> of it, or null when the body is blank.
     /// </summary>
-    string? EditorValue(MessageView message) =>
+    internal string? EditorValue(MessageView message) =>
         EditableContent.EditorValue(message.Body, RichTextContext ?? throw new InvalidOperationException("View.RichTextContext isn't set"));
 
     /// <summary>
@@ -45,7 +45,7 @@ public partial class View
     /// <c>dom_id(object, "&lt;id&gt;_trix_input")</c>, with Active Storage's upload URLs.
     /// <paramref name="options"/> carries the <c>value</c>.
     /// </summary>
-    IHtml LexxyRichTextArea(FormBuilder form, string method, MessageView message, HtmlOptions options, Action body)
+    internal IHtml LexxyRichTextArea(FormBuilder form, string method, MessageView message, HtmlOptions options, Action body)
     {
         var attributes = options.Clone();
         var value = attributes.Delete("value");

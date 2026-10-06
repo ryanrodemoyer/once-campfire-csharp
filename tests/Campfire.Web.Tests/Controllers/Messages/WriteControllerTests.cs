@@ -134,7 +134,7 @@ public sealed partial class WriteControllerTests : IDisposable
         }
     }
 
-    const string Placeholder = "<uuid>";
+    const string placeholder = "<uuid>";
 
     // CSRF tokens are masked with random bytes, and a message created without a client message
     // id gets a random UUID: both read as placeholders. A message's boost forms carry a token only
@@ -142,7 +142,7 @@ public sealed partial class WriteControllerTests : IDisposable
     // fragment a broadcast rendered (without a session, so without tokens) when there is one, and
     // fragment caching isn't modeled (M02's known gap), so those tokens are left out on both sides.
     static string Normalize(string text) =>
-        Uuid().Replace(CsrfMeta().Replace(AuthenticityToken().Replace(BoostFormToken().Replace(text, "$1"), "$1<token>\""), "$1<token>\""), Placeholder);
+        Uuid().Replace(CsrfMeta().Replace(AuthenticityToken().Replace(BoostFormToken().Replace(text, "$1"), "$1<token>\""), "$1<token>\""), placeholder);
 
     static bool SameHeader(string name, string? want, string? have)
     {

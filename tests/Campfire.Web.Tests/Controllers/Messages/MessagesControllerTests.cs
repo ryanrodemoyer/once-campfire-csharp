@@ -14,17 +14,17 @@ namespace Campfire.Web.Tests.Controllers.Messages;
 /// </summary>
 public sealed partial class MessagesControllerTests : IDisposable
 {
-    const long Designers = 654632876;
-    const long Archive = 699448327;
-    const long David = 127326141;
-    const long Jason = 149087659;
-    const string DavidSession = "AxJs94fteQ5Autv2VrKsH68c";
-    const string JzSession = "JzSessionToken0000000001";
+    const long designersRoom = 654632876;
+    const long archiveRoom = 699448327;
+    const long david = 127326141;
+    const long jason = 149087659;
+    const string davidSession = "AxJs94fteQ5Autv2VrKsH68c";
+    const string jzSession = "JzSessionToken0000000001";
 
     static readonly string[] Fixtures =
     [
         "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) " +
-            $"VALUES (900002, 773523953, '{JzSession}', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
+            $"VALUES (900002, 773523953, '{jzSession}', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
     ];
 
     readonly MessagesApp messages = new(new DateTimeOffset(2026, 3, 2, 16, 0, 0, TimeSpan.Zero), Fixtures);
@@ -32,9 +32,9 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task Get_renders_a_single_message_belonging_to_the_user()
     {
-        var message = FirstMessageBy(David);
+        var message = FirstMessageBy(david);
 
-        var response = await messages.SendAsync("GET", $"/rooms/{Designers}/messages/{message}", messages.SignedIn(DavidSession, "text/html"));
+        var response = await messages.SendAsync("GET", $"/rooms/{designersRoom}/messages/{message}", messages.SignedIn(davidSession, "text/html"));
 
         Assert.Equal(200, response.Status);
         Assert.Contains($"data-message-id=\"{message}\"", response.Body, StringComparison.Ordinal);
@@ -43,24 +43,24 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task Creating_a_message_broadcasts_the_message_to_the_room()
     {
-        var response = await Post(Designers, "message[body]=New+one&message[client_message_id]=999");
+        var response = await Post(designersRoom, "message[body]=New+one&message[client_message_id]=999");
 
         Assert.Equal(200, response.Status);
         var id = (long)messages.Scalar("SELECT id FROM messages WHERE client_message_id = '999'")!;
         var broadcast = Assert.Single(messages.Seams.Broadcasts, broadcast => broadcast.Stream.EndsWith(":messages", StringComparison.Ordinal));
         var html = JsonNode.Parse(broadcast.Payload)!.GetValue<string>();
-        Assert.StartsWith($"<turbo-stream action=\"append\" target=\"messages_rooms_closed_{Designers}\"><template>", html, StringComparison.Ordinal);
+        Assert.StartsWith($"<turbo-stream action=\"append\" target=\"messages_rooms_closed_{designersRoom}\"><template>", html, StringComparison.Ordinal);
         Assert.Matches(MessageBodyWithNewOne(), html);
-        Assert.Contains($"title=\"Copy link\" aria-label=\"Copy link\" data-controller=\"copy-to-clipboard\" data-action=\"copy-to-clipboard#copy\" data-copy-to-clipboard-success-class=\"btn--success\" data-copy-to-clipboard-content-value=\"http://{MessagesApp.Host}/rooms/{Designers}/@{id}\"", html, StringComparison.Ordinal);
+        Assert.Contains($"title=\"Copy link\" aria-label=\"Copy link\" data-controller=\"copy-to-clipboard\" data-action=\"copy-to-clipboard#copy\" data-copy-to-clipboard-success-class=\"btn--success\" data-copy-to-clipboard-content-value=\"http://{MessagesApp.Host}/rooms/{designersRoom}/@{id}\"", html, StringComparison.Ordinal);
     }
 
     [Fact]
     public async Task Creating_a_message_broadcasts_unread_room_to_each_member()
     {
-        foreach (var member in RoomMembers(Designers))
+        foreach (var member in RoomMembers(designersRoom))
         {
             messages.Seams.Clear();
-            await Post(Designers, $"message[body]=New+one+{member}&message[client_message_id]={member}");
+            await Post(designersRoom, $"message[body]=New+one+{member}&message[client_message_id]={member}");
 
             Assert.Single(messages.Seams.Broadcasts, broadcast => broadcast.Stream == $"user_{member}_unreads");
         }
@@ -69,11 +69,11 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task Creating_a_message_doesnt_broadcast_unread_room_to_non_members()
     {
-        var members = RoomMembers(Designers);
+        var members = RoomMembers(designersRoom);
         var outsiders = Query("SELECT id FROM users").Where(id => !members.Contains(id)).ToList();
         Assert.NotEmpty(outsiders);
 
-        await Post(Designers, "message[body]=New+one&message[client_message_id]=999");
+        await Post(designersRoom, "message[body]=New+one&message[client_message_id]=999");
 
         foreach (var outsider in outsiders)
         {
@@ -82,29 +82,29 @@ public sealed partial class MessagesControllerTests : IDisposable
     }
 
     [Theory]
-    [InlineData(David)]
-    [InlineData(Jason)]
+    [InlineData(david)]
+    [InlineData(jason)]
     public async Task Update_updates_a_message_the_administrator_may_edit(long creator)
     {
         var message = FirstMessageBy(creator);
 
-        var response = await messages.SendAsync("PUT", $"/rooms/{Designers}/messages/{message}", messages.SignedIn(DavidSession), "message[body]=Updated+body");
+        var response = await messages.SendAsync("PUT", $"/rooms/{designersRoom}/messages/{message}", messages.SignedIn(davidSession), "message[body]=Updated+body");
 
         Assert.Equal(302, response.Status);
-        Assert.Equal($"http://{MessagesApp.Host}/rooms/{Designers}/messages/{message}", response.Headers.Location.ToString());
+        Assert.Equal($"http://{MessagesApp.Host}/rooms/{designersRoom}/messages/{message}", response.Headers.Location.ToString());
         Assert.Single(messages.Seams.Broadcasts, broadcast => JsonNode.Parse(broadcast.Payload)!.GetValue<string>().Contains("action=\"replace\"", StringComparison.Ordinal));
         Assert.Equal("Updated body", messages.Scalar($"SELECT body FROM message_search_index WHERE rowid = {message}"));
     }
 
     [Theory]
-    [InlineData(David)]
-    [InlineData(Jason)]
+    [InlineData(david)]
+    [InlineData(jason)]
     public async Task Destroy_destroys_a_message_the_administrator_may_edit(long creator)
     {
         var message = FirstMessageBy(creator);
         var count = MessageCount();
 
-        var response = await messages.SendAsync("DELETE", $"/rooms/{Designers}/messages/{message}.turbo_stream", messages.SignedIn(DavidSession));
+        var response = await messages.SendAsync("DELETE", $"/rooms/{designersRoom}/messages/{message}.turbo_stream", messages.SignedIn(davidSession));
 
         Assert.Equal(200, response.Status);
         Assert.Equal(count - 1, MessageCount());
@@ -114,9 +114,9 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task A_member_cant_update_a_message_belonging_to_another_user()
     {
-        var message = FirstMessageBy(Jason);
+        var message = FirstMessageBy(jason);
 
-        var response = await messages.SendAsync("PUT", $"/rooms/{Designers}/messages/{message}", messages.SignedIn(JzSession), "message[body]=Updated+body");
+        var response = await messages.SendAsync("PUT", $"/rooms/{designersRoom}/messages/{message}", messages.SignedIn(jzSession), "message[body]=Updated+body");
 
         Assert.Equal(403, response.Status);
         Assert.Empty(messages.Seams.Events);
@@ -125,10 +125,10 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task A_member_cant_destroy_a_message_belonging_to_another_user()
     {
-        var message = FirstMessageBy(Jason);
+        var message = FirstMessageBy(jason);
         var count = MessageCount();
 
-        var response = await messages.SendAsync("DELETE", $"/rooms/{Designers}/messages/{message}.turbo_stream", messages.SignedIn(JzSession));
+        var response = await messages.SendAsync("DELETE", $"/rooms/{designersRoom}/messages/{message}.turbo_stream", messages.SignedIn(jzSession));
 
         Assert.Equal(403, response.Status);
         Assert.Equal(count, MessageCount());
@@ -137,7 +137,7 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task Mentioning_a_bot_triggers_a_webhook()
     {
-        var response = await Post(Archive, $"message[body]={Uri.EscapeDataString($"<div>Hey {BenderMention()}</div>")}&message[client_message_id]=999");
+        var response = await Post(archiveRoom, $"message[body]={Uri.EscapeDataString($"<div>Hey {BenderMention()}</div>")}&message[client_message_id]=999");
 
         Assert.Equal(200, response.Status);
         var webhook = Assert.Single(messages.Seams.Jobs.OfType<WebhookJob>());
@@ -155,9 +155,9 @@ public sealed partial class MessagesControllerTests : IDisposable
     [InlineData("\"><script>alert(1)</script>")]
     public async Task Posted_markup_never_renders_as_script(string body)
     {
-        var created = await Post(Designers, $"message[body]={Uri.EscapeDataString(body)}&message[client_message_id]=hostile");
+        var created = await Post(designersRoom, $"message[body]={Uri.EscapeDataString(body)}&message[client_message_id]=hostile");
         var id = (long)messages.Scalar("SELECT id FROM messages WHERE client_message_id = 'hostile'")!;
-        var edit = await messages.SendAsync("GET", $"/rooms/{Designers}/messages/{id}/edit", messages.SignedIn(DavidSession, "text/html"));
+        var edit = await messages.SendAsync("GET", $"/rooms/{designersRoom}/messages/{id}/edit", messages.SignedIn(davidSession, "text/html"));
         var broadcasts = messages.Seams.Broadcasts.Select(broadcast => broadcast.Payload.StartsWith('"') ? JsonNode.Parse(broadcast.Payload)!.GetValue<string>() : broadcast.Payload);
 
         // The layout's own scripts are the app's; the page is what's inside <main>.
@@ -175,18 +175,18 @@ public sealed partial class MessagesControllerTests : IDisposable
         var body = "--b\r\nContent-Disposition: form-data; name=\"message[attachment]\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhi\r\n" +
             "--b\r\nContent-Disposition: form-data; name=\"message[client_message_id]\"\r\n\r\nupload\r\n--b--\r\n";
 
-        var response = await messages.SendAsync("POST", $"/rooms/{Designers}/messages", messages.SignedIn(DavidSession, "*/*"), body, "multipart/form-data; boundary=b");
+        var response = await messages.SendAsync("POST", $"/rooms/{designersRoom}/messages", messages.SignedIn(davidSession, "*/*"), body, "multipart/form-data; boundary=b");
 
         Assert.Equal(501, response.Status);
         Assert.Null(messages.Scalar("SELECT id FROM messages WHERE client_message_id = 'upload'"));
     }
 
     Task<Response> Post(long room, string form) =>
-        messages.SendAsync("POST", $"/rooms/{room}/messages.turbo_stream", messages.SignedIn(DavidSession), form);
+        messages.SendAsync("POST", $"/rooms/{room}/messages.turbo_stream", messages.SignedIn(davidSession), form);
 
     // `room.messages.where(creator:).first`
     long FirstMessageBy(long creator) =>
-        (long)messages.Scalar($"SELECT id FROM messages WHERE room_id = {Designers} AND creator_id = {creator} ORDER BY id LIMIT 1")!;
+        (long)messages.Scalar($"SELECT id FROM messages WHERE room_id = {designersRoom} AND creator_id = {creator} ORDER BY id LIMIT 1")!;
 
     long MessageCount() => (long)messages.Scalar("SELECT COUNT(*) FROM messages")!;
 

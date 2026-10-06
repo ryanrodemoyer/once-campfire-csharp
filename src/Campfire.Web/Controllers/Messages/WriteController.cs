@@ -26,7 +26,7 @@ namespace Campfire.Web.Controllers;
 /// <c>create</c>, <c>show</c>, <c>edit</c>, <c>update</c> and <c>destroy</c>. <c>index</c> is M04's.
 /// Domain events go out through <see cref="WebApp.Seams"/> in the order Rails sends them.
 /// </summary>
-public sealed class MessagesWriteController : ApplicationController
+public sealed partial class MessagesWriteController : ApplicationController
 {
     static readonly ControllerCallbacks<MessagesWriteController> Chain = Callbacks.For<MessagesWriteController>()
         .Before("set_room", c => c.SetRoomAsync(), except: ["create"])
@@ -73,11 +73,21 @@ public sealed class MessagesWriteController : ApplicationController
         var (room, user, now) = (CurrentRoom, User, Now);
         var seams = App.RequireSeams();
 
-        message = await WriteAsync(transaction =>
+        // `@room.messages.create_with_attachment!(message_params)`
+        if (RubyValues.IsPresent(attributes["attachment"]))
         {
-            var plainTextBody = RichTextPlainText.PlainTextBody(body, null, RichTextContext(transaction.Session));
-            return MessageLifecycle.Create(transaction, seams, room.Id, user.Id, clientMessageId, body, plainTextBody, now);
-        }).ConfigureAwait(false);
+            Func<ValueTask<Message>>? create = null;
+            CreateWithAttachment(attributes, body, ref create);
+            message = await (create ?? throw new NotImplementedRouteException("Message attachments are M10's")).Invoke().ConfigureAwait(false);
+        }
+        else
+        {
+            message = await WriteAsync(transaction =>
+            {
+                var plainTextBody = RichTextPlainText.PlainTextBody(body, null, RichTextContext(transaction.Session));
+                return MessageLifecycle.Create(transaction, seams, room.Id, user.Id, clientMessageId, body, plainTextBody, now);
+            }).ConfigureAwait(false);
+        }
 
         // `@message.broadcast_create`, then `deliver_webhooks_to_bots`
         var html = await ReadAsync(session => RenderBroadcast(session, (view, w, messageView) => view.MessagesCreate(w, messageView, RoomRecord(room)))).ConfigureAwait(false);
@@ -98,6 +108,10 @@ public sealed class MessagesWriteController : ApplicationController
     async ValueTask UpdateAsync()
     {
         var attributes = PermittedMessageParams();
+        if (RubyValues.IsPresent(attributes["attachment"]))
+        {
+            throw new NotImplementedRouteException("Replacing a message's attachment is M10's");
+        }
         var body = attributes["body"] is { } posted ? StoredBody(posted) : null;
         var clientMessageId = attributes["client_message_id"] is { } id ? RubyValues.ToS(id) : null;
         var (current, now) = (CurrentMessage, Now);
@@ -145,11 +159,17 @@ public sealed class MessagesWriteController : ApplicationController
     async ValueTask DestroyAsync()
     {
         var (destroyed, now) = (CurrentMessage, Now);
+        // `@message.destroy`
         if (await ReadAsync(session => BlobRecords.FindAttachedBlob(session, Message.ModelName, destroyed.Id, "attachment") is not null).ConfigureAwait(false))
         {
-            throw new NotImplementedRouteException("Destroying a message with an attachment is M10's (purge_later)");
+            Func<ValueTask>? destroy = null;
+            DestroyWithAttachment(destroyed, ref destroy);
+            await (destroy ?? throw new NotImplementedRouteException("Destroying a message with an attachment is M10's")).Invoke().ConfigureAwait(false);
         }
-        await WriteAsync(transaction => MessageLifecycle.Destroy(transaction, destroyed, now)).ConfigureAwait(false);
+        else
+        {
+            await WriteAsync(transaction => MessageLifecycle.Destroy(transaction, destroyed, now)).ConfigureAwait(false);
+        }
 
         // `@message.broadcast_remove`
         var remove = TurboStreamTags.Remove(RecordIdentifier.DomId(new RecordKey(Message.ModelName, destroyed.ClientMessageId)));
@@ -180,17 +200,17 @@ public sealed class MessagesWriteController : ApplicationController
         }
     }
 
-    // `params.require(:message).permit(:body, :attachment, :client_message_id)`. Attachments are
-    // M10's (Active Storage uploads, analysis and thumbnails); until then a file is a 501.
-    ParamHash PermittedMessageParams()
-    {
-        var attributes = Params.RequireHash("message").Permit(MessageParams);
-        if (RubyValues.IsPresent(attributes["attachment"]))
-        {
-            throw new NotImplementedRouteException("Message attachments are M10's");
-        }
-        return attributes;
-    }
+    // `params.require(:message).permit(:body, :attachment, :client_message_id)`
+    ParamHash PermittedMessageParams() => Params.RequireHash("message").Permit(MessageParams);
+
+    // The attachment half of create and destroy, which M10 implements in its own file
+    // (Controllers/Messages/Attachments*): `create_with_attachment!` with a file (the blob and
+    // attachment rows, the upload, `process_attachment`), returning the created message for the
+    // broadcasts that follow; and `destroy` of a message with a file (`purge_later`). Without
+    // them, either answers 501.
+    partial void CreateWithAttachment(ParamHash attributes, string? storedBody, ref Func<ValueTask<Message>>? create);
+
+    partial void DestroyWithAttachment(Message message, ref Func<ValueTask>? destroy);
 
     // `body = value` on has_rich_text: the value as `ActionText::Content` stores it.
     static string StoredBody(object posted) => EditableContent.StoredBody(RubyValues.ToS(posted));
