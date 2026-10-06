@@ -74,14 +74,6 @@ public sealed class CommandsTests : IDisposable
             error.ToString().TrimEnd());
     }
 
-    [Fact]
-    public async Task Backup_is_a_stub_until_p04()
-    {
-        Assert.Equal(1, await Run(root.Settings(), "backup"));
-
-        Assert.Equal("campfire backup: not implemented yet (task P04)", error.ToString().TrimEnd());
-    }
-
     [Theory]
     [InlineData("console")]
     [InlineData("db:prepare", "extra")]
