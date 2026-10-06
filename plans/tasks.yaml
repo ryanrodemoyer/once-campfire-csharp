@@ -619,7 +619,7 @@ tasks:
     milestone: M3
     size: M
     deps: [A01, S03]
-    owns: [src/Campfire.Web/Controllers/Users*, src/Campfire.Web/Controllers/Accounts*, src/Campfire.Web/Controllers/Accounts/JoinCodes*, src/Campfire.Web/Controllers/Accounts/Logos*, src/Campfire.Web/Controllers/Accounts/CustomStyles*, src/Campfire.Web/Views/users/*, src/Campfire.Web/Views/accounts/*, src/Campfire.Web/Views/accounts/custom_styles/]
+    owns: [src/Campfire.Web/Controllers/Users*, src/Campfire.Web/Controllers/Accounts*, src/Campfire.Web/Controllers/Accounts/JoinCodes*, src/Campfire.Web/Controllers/Accounts/Logos*, src/Campfire.Web/Controllers/Accounts/CustomStyles*, src/Campfire.Web/Views/users/*, src/Campfire.Web/Views/accounts/edit*, src/Campfire.Web/Views/accounts/_help_contact*, src/Campfire.Web/Views/accounts/custom_styles/]
     refs: [reference/app/controllers/users_controller.rb, reference/app/controllers/accounts_controller.rb, reference/app/controllers/accounts, reference/app/models/account]
     deliver: Join by code, users#show, join code regeneration, account edit/update, logo show/destroy, custom styles.
     accept:
@@ -679,7 +679,7 @@ tasks:
     milestone: M3
     size: M
     deps: [W02, W03, S04]
-    owns: [src/Campfire.Web/Controllers/Pwa*, src/Campfire.Web/Controllers/QrCode*, src/Campfire.Web/Controllers/Autocompletable/, src/Campfire.Web/Views/pwa/, src/Campfire.Web/Views/autocompletable/, src/Campfire.Web/Views/users/autocompletables/]
+    owns: [src/Campfire.Web/Controllers/Pwa*, src/Campfire.Web/Controllers/QrCode*, src/Campfire.Web/Controllers/Autocompletable/, src/Campfire.Web/Views/pwa/manifest*, src/Campfire.Web/Views/pwa/service_worker*, src/Campfire.Web/Views/autocompletable/, src/Campfire.Web/Views/users/autocompletables/]
     refs: [reference/app/controllers/pwa_controller.rb, reference/app/controllers/qr_code_controller.rb, reference/app/controllers/autocompletable/users_controller.rb]
     deliver: webmanifest, service worker, QR code, /up, autocompletable users (HTML and JSON).
     accept:
@@ -722,7 +722,7 @@ tasks:
     size: M
     deps: [M02, D05, W02]
     bench: true
-    owns: [src/Campfire.Web/Controllers/Rooms*, src/Campfire.Web/Views/rooms/show*, src/Campfire.Web/Views/rooms/show/]
+    owns: [src/Campfire.Web/Controllers/Rooms*, src/Campfire.Web/Views/rooms/show*, src/Campfire.Web/Views/rooms/show/, src/Campfire.Web/Views/rooms/involvements/_bell*, src/Campfire.Web/Views/accounts/_invite*, src/Campfire.Web/Views/pwa/_*]
     refs: [reference/app/controllers/rooms_controller.rb, reference/app/views/rooms/show.html.erb, reference/app/views/rooms/show]
     deliver: rooms#index redirect, rooms#show and the @message deep link with nav, composer, invitation and last-room tracking.
     accept:
@@ -773,7 +773,7 @@ tasks:
     milestone: M3
     size: L
     deps: [M03, D03]
-    owns: [src/Campfire.Web/Controllers/Rooms/Opens*, src/Campfire.Web/Controllers/Rooms/Closeds*, src/Campfire.Web/Controllers/Rooms/Directs*, src/Campfire.Web/Controllers/Rooms/Settings*, src/Campfire.Web/Controllers/Rooms/Involvements*, src/Campfire.Web/Views/rooms/opens/, src/Campfire.Web/Views/rooms/closeds/, src/Campfire.Web/Views/rooms/directs/, src/Campfire.Web/Views/rooms/layouts/, src/Campfire.Web/Views/rooms/involvements/]
+    owns: [src/Campfire.Web/Controllers/Rooms/Opens*, src/Campfire.Web/Controllers/Rooms/Closeds*, src/Campfire.Web/Controllers/Rooms/Directs*, src/Campfire.Web/Controllers/Rooms/Settings*, src/Campfire.Web/Controllers/Rooms/Involvements*, src/Campfire.Web/Views/rooms/opens/, src/Campfire.Web/Views/rooms/closeds/, src/Campfire.Web/Views/rooms/directs/, src/Campfire.Web/Views/rooms/layouts/, src/Campfire.Web/Views/rooms/involvements/show*]
     refs: [reference/app/controllers/rooms, reference/app/views/rooms]
     deliver: New/create/edit/update for open, closed and direct rooms, rooms#destroy, settings, involvement bell.
     accept:
