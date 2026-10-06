@@ -223,7 +223,8 @@ public sealed class RestrictedHttpHandlersTests : IAsyncDisposable
                     connections.Add(ServeAsync(await listener.AcceptTcpClientAsync(stopping.Token)));
                 }
             }
-            catch (Exception e) when (e is OperationCanceledException or SocketException)
+            // Stopped between two accepts: "Not listening".
+            catch (Exception e) when (e is OperationCanceledException or SocketException or InvalidOperationException)
             {
             }
             await Task.WhenAll(connections);

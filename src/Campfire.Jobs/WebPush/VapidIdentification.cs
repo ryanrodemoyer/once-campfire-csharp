@@ -58,13 +58,13 @@ public sealed class VapidIdentification(string? publicKey, string? privateKey, s
             ["exp"] = (now + Expiration).ToUnixTimeSeconds(),
             ["sub"] = subject,
         };
-        var signingInput = $"{Encode64(Encoding.UTF8.GetBytes(JwtHeader))}.{Encode64(Encoding.UTF8.GetBytes(RailsJson.Generate(claims)))}";
+        var signingInput = $"{Encode64(Encoding.UTF8.GetBytes(jwtHeader))}.{Encode64(Encoding.UTF8.GetBytes(RailsJson.Generate(claims)))}";
         var signature = Sign(privateScalar, Encoding.ASCII.GetBytes(signingInput));
         return $"vapid t={signingInput}.{Encode64(signature)},k={Encode64(P256.Uncompressed(publicPoint))}";
     }
 
     // `jwt_header_fields`, as JWT.encode writes them.
-    const string JwtHeader = """{"typ":"JWT","alg":"ES256"}""";
+    const string jwtHeader = """{"typ":"JWT","alg":"ES256"}""";
 
     // `OpenSSL::BN.new(decode64(key), 2).to_s(2)`, as the 32-byte scalar it stands for.
     static byte[] Scalar(byte[] bytes)
