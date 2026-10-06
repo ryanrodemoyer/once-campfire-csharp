@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Campfire.Web/Campfire.Web.csproj" />
+    <ProjectReference Include="../Campfire.Cable.Tests/Campfire.Cable.Tests.csproj" />
     <ProjectReference Include="../Campfire.Vectors/Campfire.Vectors.csproj" />
   </ItemGroup>
 
