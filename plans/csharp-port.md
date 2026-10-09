@@ -162,8 +162,8 @@ The full graph is in [`dag.md`](dag.md). It's generated, so run `plans/bin/plan 
 - **Remaining critical paths** (as of 2026-10-09, with 62 tasks merged):
   `M10 → Q02 → B03 → B05 → X01 → X02` and `RT04 → Q04/Q05/Q07/Q08 → B05`.
 - **Path to first benchmark numbers**: `VS01 → B02`.
-- **Swarm sizing**: the remaining graph is about four chains wide, so four agents, one task each, is
-  enough. The original sizing (8 agents for the full 79-task graph) no longer applies.
+- **Swarm sizing**: the remaining graph is about four chains wide. Four agents with two slots
+  each run every ready task at once; a second slot shares its CLI's quota. The original sizing (8 agents for the full 79-task graph) no longer applies.
 
 Lane overview, a snapshot of the generated one in dag.md (edge labels count cross-lane task dependencies):
 
@@ -325,7 +325,7 @@ Claude takes the security-critical R04 and RT04; Grok reviews them in Q08.
    - sends a red or conflicted PR back to its own worker before that worker takes new work;
    - retries a task whose worker exited without a PR. After `max_attempts` (3) it labels the
      issue `needs-human` and stops retrying.
-3. **Dispatches** each idle worker the first ready task in its queue, one task per worker. Each
+3. **Dispatches** each worker the first ready tasks in its queue, up to its `slots` (2). Each
    task gets a worktree at `../campfire-wt/<ID>` on `port/<ID>-<slug>`, branched from
    `origin/main` (never the local `main`), with submodules checked out. The worker gets the task
    card, the rules in `AGENTS.md`, and instructions to see its PR through to merge. The issue
