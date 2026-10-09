@@ -1,0 +1,1319 @@
+{
+  "now": "2026-03-02T16:00:00Z",
+  "fixtures": [
+    "INSERT OR REPLACE INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900001, 127326141, 'DavidSessionToken0000001', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')"
+  ],
+  "storage": [
+    {
+      "key": "2k7n5s996jb5k5xwhx14f5oetpj4",
+      "file": "reference/test/fixtures/files/moon.jpg"
+    },
+    {
+      "key": "5nlq52kvmcweobxncp0zy1zvu9bg",
+      "file": "reference-rust/vectors/storage/moon-avatar.webp"
+    },
+    {
+      "key": "5yn8o54bcl3ruybz88hlc6blvenf",
+      "file": "reference/test/fixtures/files/moon.jpg"
+    },
+    {
+      "key": "6btcnksw2px5m61m8ttuft8qq5sg",
+      "file": "reference-rust/vectors/storage/moon-avatar.webp"
+    },
+    {
+      "key": "5j2ce1yctlrqocxcrb749gk74d70",
+      "file": "reference/test/fixtures/files/moon.jpg"
+    },
+    {
+      "key": "1la4o27xxpq9ksfz8queu37rsz24",
+      "file": "reference-rust/vectors/storage/moon-thumb.jpg"
+    },
+    {
+      "key": "2yenb2ld8ninydzf9y2cpqyrbjqx",
+      "file": "reference/test/fixtures/files/black_hole.jpg"
+    },
+    {
+      "key": "4lihdellmqlan3dkoguy17k7b3u9",
+      "file": "reference-rust/vectors/storage/black_hole-thumb.jpg"
+    },
+    {
+      "key": "353m578luh88ii4tp6d8yuyva55v",
+      "file": "reference/test/fixtures/files/alpha-centuri.mov"
+    },
+    {
+      "key": "359ws0k2x3iscwqju6x1z5fotuj9",
+      "file": "reference-rust/vectors/storage/alpha-centuri-preview_image.jpg"
+    },
+    {
+      "key": "3o8eizy6lzq4d0bh82x5ddncbtdn",
+      "file": "reference-rust/vectors/storage/alpha-centuri-preview-webp.webp"
+    },
+    {
+      "key": "ex0ujd9i7haorvtq2hku4qo22hd8",
+      "file": "reference-rust/vectors/storage/alpha-centuri-poster.webp"
+    },
+    {
+      "key": "5dadz19ls6axuhw3ago9wumgc26k",
+      "text": "Launch notes\n\n1. Copy\n2. Video\n3. Ship\n"
+    },
+    {
+      "key": "raodqbbpbhm7xp5hfgb3tu8on8vi",
+      "file": "reference/test/fixtures/files/pixel.bmp"
+    }
+  ],
+  "extra_sql": [
+    "INSERT INTO active_storage_blobs (id, key, filename, content_type, metadata, service_name, byte_size, checksum, created_at) VALUES (15, '5rrh9yol58klxiqejcwqdjgatnm2', 'alpha-centuri.webp', 'image/webp', '{\"identified\":true}', 'local', 4962, 'XtJzWPB2ohtXI1XdqZll1A==', '2026-03-02 16:00:00')",
+    "INSERT INTO active_storage_blobs (id, key, filename, content_type, metadata, service_name, byte_size, checksum, created_at) VALUES (16, 'lodzfilename0000000000000001', 'Łódź.jpg', 'image/jpeg', NULL, 'local', 4, 'q088y6dIV8Xyug1bfb9l4Q==', '2026-03-02 16:00:00')",
+    "INSERT INTO active_storage_variant_records (id, blob_id, variation_digest) VALUES (7, 10, 'u0TSbUypNLiezYYkiqbZ8jAyVv0=')",
+    "INSERT INTO active_storage_attachments (id, name, record_type, record_id, blob_id, created_at) VALUES (15, 'image', 'ActiveStorage::VariantRecord', 7, 15, '2026-03-02 16:00:00')"
+  ],
+  "extra_files": [
+    {
+      "key": "5rrh9yol58klxiqejcwqdjgatnm2",
+      "base64": "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"
+    },
+    {
+      "key": "lodzfilename0000000000000001",
+      "base64": "anBlZw=="
+    }
+  ],
+  "signed": {
+    "moon_redirect": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+    "moon_redirect_attachment": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg?disposition=attachment",
+    "moon_proxy": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+    "moon_disk": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+    "moon_disk_attachment": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1vb24uanBnXCI7IGZpbGVuYW1lKj1VVEYtOCcnbW9vbi5qcGciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9qcGVnIiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--d55f8339f489125e6edf0bec22b8c47015495736/moon.jpg",
+    "moon_disk_no_expiry": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJwdXIiOiJibG9iX2tleSJ9fQ==--0fd9aec44da6ebb46ff8ac3ba4690cf04bc09530/moon.jpg",
+    "video_disk_inline": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIzNTNtNTc4bHVoODhpaTR0cDZkOHl1eXZhNTV2IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cImFscGhhLWNlbnR1cmkubW92XCI7IGZpbGVuYW1lKj1VVEYtOCcnYWxwaGEtY2VudHVyaS5tb3YiLCJjb250ZW50X3R5cGUiOiJ2aWRlby9xdWlja3RpbWUiLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--75e680dbdbd7e74e4cf9bb375623feea68e8f3d7/alpha-centuri.mov",
+    "thumb_redirect": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/moon.jpg",
+    "thumb_proxy": "/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/moon.jpg",
+    "thumb_disk": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIxbGE0bzI3eHhwcTlrc2Z6OHF1ZXUzN3JzejI0IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4222a65ebaaa681e6c4609d492805703825afd24/moon.jpg",
+    "poster_redirect": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6OSwicHVyIjoiYmxvYl9pZCJ9fQ==--c41e212f6aa839f5dc122c08987d3d9c13a372a0/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCw4MDBdfSwicHVyIjoidmFyaWF0aW9uIn19--132e54230de6ddc9c41e0118730416f2e3d3127f/alpha-centuri.mov",
+    "poster_proxy": "/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6OSwicHVyIjoiYmxvYl9pZCJ9fQ==--c41e212f6aa839f5dc122c08987d3d9c13a372a0/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCw4MDBdfSwicHVyIjoidmFyaWF0aW9uIn19--132e54230de6ddc9c41e0118730416f2e3d3127f/alpha-centuri.mov",
+    "poster_disk": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIzNTl3czBrMngzaXNjd3FqdTZ4MXo1Zm90dWo5IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwiYWxwaGEtY2VudHVyaS5qcGdcIjsgZmlsZW5hbWUqPVVURi04JydhbHBoYS1jZW50dXJpLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--20ffb199eff196052aaf1020b5a1dc3ce2b59bd2/alpha-centuri.jpg",
+    "lodz_proxy": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTYsInB1ciI6ImJsb2JfaWQifX0=--f3a156d1ecb90c83710dbcccd83cdf59f32d82d9/%C5%81%C3%B3d%C5%BA.jpg",
+    "notes_proxy": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTMsInB1ciI6ImJsb2JfaWQifX0=--ec01704dc07d2fc78abbfa05a6bc0ed07efeccd9/launch-notes.txt",
+    "bmp_representation": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQsInB1ciI6ImJsb2JfaWQifX0=--c633a89b8189242ccbcaa2c36cca6348768e101a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/pixel.bmp",
+    "direct_upload": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJkaXJlY3R1cGxvYWRrZXkwMDAwMDAwMDAwMDAiLCJjb250ZW50X3R5cGUiOiJhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0iLCJjb250ZW50X2xlbmd0aCI6NiwiY2hlY2tzdW0iOiJXbzNUclFkV3FUM3Rjcmdqc1ozWWR3PT0iLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--b23ea72c6fc93083aa86078d48e914a742a209f3",
+    "direct_upload_key": "directuploadkey000000000000",
+    "direct_upload_checksum": "Wo3TrQdWqT3tcrgjsZ3Ydw==",
+    "direct_upload_byte_size": 6,
+    "direct_upload_content_type": "application/octet-stream",
+    "thumb_image_id": 6,
+    "poster_image_id": 10,
+    "lodz_id": 16
+  },
+  "cases": [
+    {
+      "name": "disk show",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "f95cac806ae17f0d59ad75e5d03d82a05019a65469e9e325baae898d46e7f1e5",
+        "body_size": 12794
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk show, attachment url",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1vb24uanBnXCI7IGZpbGVuYW1lKj1VVEYtOCcnbW9vbi5qcGciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9qcGVnIiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--d55f8339f489125e6edf0bec22b8c47015495736/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "12794",
+          "content-disposition": "attachment; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "f95cac806ae17f0d59ad75e5d03d82a05019a65469e9e325baae898d46e7f1e5",
+        "body_size": 12794
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk show, no expiry",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJwdXIiOiJibG9iX2tleSJ9fQ==--0fd9aec44da6ebb46ff8ac3ba4690cf04bc09530/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "f95cac806ae17f0d59ad75e5d03d82a05019a65469e9e325baae898d46e7f1e5",
+        "body_size": 12794
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk show, video forced attachment",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIzNTNtNTc4bHVoODhpaTR0cDZkOHl1eXZhNTV2IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cImFscGhhLWNlbnR1cmkubW92XCI7IGZpbGVuYW1lKj1VVEYtOCcnYWxwaGEtY2VudHVyaS5tb3YiLCJjb250ZW50X3R5cGUiOiJ2aWRlby9xdWlja3RpbWUiLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--75e680dbdbd7e74e4cf9bb375623feea68e8f3d7/alpha-centuri.mov",
+        "headers": {
+          "Range": "bytes=0-15"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "video/quicktime",
+          "content-length": "16",
+          "content-range": "bytes 0-15/3945267",
+          "content-disposition": "attachment; filename=\"alpha-centuri.mov\"; filename*=UTF-8''alpha-centuri.mov",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "44d6bc079ded6c09e0d410f4eec97b346023344dd1e00e065326118d71dc7f35",
+        "body_size": 16,
+        "body": "\u0000\u0000\u0000 ftypqt   \u0005\u0003\u0000"
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk head",
+      "request": {
+        "method": "HEAD",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk range",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "Range": "bytes=0-3"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "4",
+          "content-range": "bytes 0-3/12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "ba4f25bf16ba4be6bc7d3276fafeb67f9eb3c5df042bc3a405e1af15b921eed7",
+        "body_size": 4
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk range suffix",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "Range": "bytes=-4"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "4",
+          "content-range": "bytes 12790-12793/12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "1452e9870e4c2d192fa0d5ac7662ca2193b60d248fa826429722992eb762d513",
+        "body_size": 4
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk range multi",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "Range": "bytes=0-1,4-5"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "162",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "596401f1cacaa951fb6a2a11d60d58fc68b4630febf684f2c589e34614742b99",
+        "body_size": 162
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk range unsatisfiable",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "Range": "bytes=999999-999999"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 416,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "25",
+          "content-range": "bytes */12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "74df33c8bac5ba384be103982461761b4b88eabd9b3247ec187e56c09fcc0f3a",
+        "body_size": 25,
+        "body": "Byte range unsatisfiable\n"
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk range head",
+      "request": {
+        "method": "HEAD",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "Range": "bytes=0-3"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "4",
+          "content-range": "bytes 0-3/12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk not modified",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "If-Modified-Since": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk modified since earlier",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+        "headers": {
+          "If-Modified-Since": "Thu, 01 Jan 2015 00:00:00 GMT"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-length": "12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "f95cac806ae17f0d59ad75e5d03d82a05019a65469e9e325baae898d46e7f1e5",
+        "body_size": 12794
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk bad key",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/not-a-signed-key/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "image/jpeg",
+          "cache-control": "max-age=3600, public",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk missing file",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJub3N1Y2hrZXkwMDAwMDAwMDAwMDAwMDAwMDAiLCJkaXNwb3NpdGlvbiI6ImlubGluZTsgZmlsZW5hbWU9XCJtaXNzaW5nLmJpblwiOyBmaWxlbmFtZSo9VVRGLTgnJ21pc3NpbmcuYmluIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--02cac4fb15d8b162f6c3e2ebf369eb1fe04b3085/missing.bin",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "max-age=3600, public",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob redirect",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "max-age=300, private",
+          "location": "http://campfire.test/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2c51e0ca44d71db3d350133875f0430254e33266/moon.jpg",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob redirect attachment",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg?disposition=attachment",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "max-age=300, private",
+          "location": "http://campfire.test/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1ajJjZTF5Y3RscnFvY3hjcmI3NDlnazc0ZDcwIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1vb24uanBnXCI7IGZpbGVuYW1lKj1VVEYtOCcnbW9vbi5qcGciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9qcGVnIiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--d55f8339f489125e6edf0bec22b8c47015495736/moon.jpg",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob redirect bad signature",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/redirect/not-a-signed-id/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob redirect missing",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6OTk5OTk5OTk5LCJwdXIiOiJibG9iX2lkIn19--bd3f15d33887c4ddfc130e9e7653e7113f6e15a8/missing.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-length": "4237"
+        },
+        "body_sha256": "6e04b180174f49e36df7d4c24e65e0545575d68d69aadf094e4c697db299c477",
+        "body_size": 4237,
+        "body": "<!DOCTYPE html>\n<html>\n\n<head>\n  <title>We can’t find that (404)</title>\n  <meta charset=\"UTF-8\">\n  <style>\n    *,\n    *::before,\n    *::after {\n      box-sizing: border-box;\n    }\n\n    body {\n      --lch-black: 0% 0 0;\n      --lch-gray: 75% 0.005 96;\n      --lch-white: 100% 0 0;\n\n      --color-border: oklch(var(--lch-gray));\n      --color-bg: oklch(var(--lch-white));\n      --color-text: oklch(var(--lch-black));\n\n      --btn-size: 2.65em;\n\n      background-color: var(--color-bg);\n      block-size: 100dvh;\n      color: var(--color-text);\n      display: grid;\n      margin: 0;\n      padding: 0;\n      place-items: center;\n      font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n\n      @media (prefers-color-scheme: dark) {\n        --lch-black: 100% 0 0;\n        --lch-gray: 44.95% 0 0;\n        --lch-white: 0% 0 0;\n      }\n    }\n\n    svg {\n      fill: var(--color-text);\n\n      @media (prefers-color-scheme: dark) {\n        fill: var(--color-text);\n      }\n    }\n\n    .error {\n      align-items: center;\n      display: flex;\n      flex-direction: column;\n      gap: 2em;\n      justify-content: start;\n      margin-block-end: 15dvh;\n    }\n\n    .error__img {\n      aspect-ratio: 1;\n      background-color: var(--color-text);\n      block-size: auto;\n      border-radius: 50%;\n      display: grid;\n      place-items: center;\n      inline-size: 30dvh;\n\n      svg {\n        fill: var(--color-bg);\n        grid-area: 1/1;\n        max-inline-size: 66%;\n\n        @media (prefers-color-scheme: dark) {\n          fill: var(--color-bg);\n        }\n      }\n    }\n\n    .buttons {\n      display: flex;\n      flex-direction: row;\n      gap: 1em;\n      justify-content: center;\n    }\n\n    .btn {\n      align-items: center;\n      aspect-ratio: 1;\n      background-color: var(--color-bg);\n      block-size: var(--btn-size);\n      border-radius: 50%;\n      border: 1px solid var(--color-border);\n      color: var(--color-text);\n      cursor: pointer;\n      display: grid;\n      font-weight: 600;\n      font-size: 1.4rem;\n      gap: 0.5em;\n      inline-size: var(--btn-size);\n      justify-content: center;\n      padding: 0;\n      place-items: center;\n      text-align: center;\n\n      svg {\n        -webkit-touch-callout: none;\n        grid-area: 1/1;\n        inline-size: 1.3em;\n        max-inline-size: unset;\n        user-select: none;\n      }\n    }\n\n    .for-screen-reader {\n      clip-path: inset(50%);\n      height: 1px;\n      width: 1px;\n      overflow: hidden;\n      position: absolute;\n      white-space: nowrap;\n    }\n\n  </style>\n</head>\n\n<body>\n  <div class=\"error\">\n    <div class=\"error__img\">\n      <svg enable-background=\"new 0 0 24 24\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Not found\">\n        <path\n          d=\"m24 4.8c0-1.7-1.3-3-3-3h-18c-1.7 0-3 1.3-3 3v14.5c0 1.7 1.3 3 3 3h18c1.7 0 3-1.3 3-3zm-14.3-1c.3-.5.8-.6 1.3-.4.2.1.3.2.4.4.1.1.1.3.2.5 0 .2-.1.4-.2.5-.3.5-.8.6-1.3.4-.2-.2-.4-.3-.4-.4-.1-.2-.2-.4-.2-.6 0-.1.1-.3.2-.4zm-3.5 0c.2-.5.8-.7 1.3-.4.2.1.3.2.4.4 0 .1.1.3.1.4 0 .2-.1.4-.2.5-.2.5-.8.7-1.3.4-.1-.1-.3-.2-.3-.3-.1-.2-.2-.4-.2-.6 0-.1.1-.3.2-.4zm-3.6 0c.2-.4.5-.6.9-.6s.7.2.8.5c.1.1.1.3.2.5 0 .2-.1.4-.2.5-.2.5-.8.7-1.3.4-.1-.1-.3-.2-.3-.3-.1-.2-.2-.4-.2-.6 0-.1 0-.2.1-.4zm19.4 15.4c0 .6-.4 1-1 1h-18c-.6 0-1-.4-1-1v-12.2c0-.1.1-.2.2-.2h19.5c.2 0 .3.1.3.2z\" />\n        <path\n          d=\"m16.4 10.9c.2-.2.2-.6 0-.9l-.9-.9c-.2-.2-.6-.2-.9 0l-2.6 2.6h-.1l-2.5-2.6c-.2-.2-.6-.2-.9 0l-.9.9c-.2.2-.2.6 0 .9l2.6 2.6v.1l-2.6 2.6c-.2.2-.2.6 0 .9l.9.9c.2.2.6.2.9 0l2.6-2.6h.1l2.6 2.6c.2.2.6.2.9 0l.9-.9c.2-.2.2-.6 0-.9l-2.6-2.6v-.1z\" />\n      </svg>\n    </div>\n    <a href=\"/\" class=\"btn\" autofocus=\"true\">\n      <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n        <path\n          d=\"m21.864 9.5h-11.607a.25.25 0 0 1 -.174-.43l3.864-3.721a2.609 2.609 0 0 0 -.075-3.682 2.612 2.612 0 0 0 -3.68-.077l-9.792 9.699a1 1 0 0 0 -.008 1.411l9.625 9.724a2.66 2.66 0 0 0 3.755-3.757l-3.729-3.733a.25.25 0 0 1 .177-.427h11.673c1.556 0 2-1.675 2-2.51a2.28 2.28 0 0 0 -2.029-2.497z\" />\n      </svg>\n      <span class=\"for-screen-reader\">Go back</span>\n    </a>\n  </div>\n</body>\n\n</html>\n"
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"ab9a8912f562f1a8b0322f6bea1afa82\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "accept-ranges": "bytes",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "f95cac806ae17f0d59ad75e5d03d82a05019a65469e9e325baae898d46e7f1e5",
+        "body_size": 12794
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy head",
+      "request": {
+        "method": "HEAD",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"ab9a8912f562f1a8b0322f6bea1afa82\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "accept-ranges": "bytes",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy not modified",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {
+          "If-None-Match": "W/\"ab9a8912f562f1a8b0322f6bea1afa82\""
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"ab9a8912f562f1a8b0322f6bea1afa82\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy range",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {
+          "Range": "bytes=0-5"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-range": "bytes 0-5/12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "content-transfer-encoding": "binary",
+          "cache-control": "no-cache",
+          "accept-ranges": "bytes"
+        },
+        "body_sha256": "fc16d7dcee9cae83ef3923222a81ccd8fe96c9d25fdb7f504d66f1011e0cd870",
+        "body_size": 6
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy range multi",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {
+          "Range": "bytes=0-1,3-4"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "multipart/byteranges; boundary=993499128735d9e142fe643fe60e9819",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "content-transfer-encoding": "binary",
+          "cache-control": "no-cache",
+          "accept-ranges": "bytes"
+        },
+        "body_sha256": "c4df0af1bb848be76645bde7294d9833344ed39c5336c37d4e517a65e4400c56",
+        "body_size": 240
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy range unsatisfiable",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {
+          "Range": "bytes=999999-999999"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 416,
+        "headers": {
+          "content-type": "image/jpeg",
+          "cache-control": "no-cache"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "blob proxy range head",
+      "request": {
+        "method": "HEAD",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg",
+        "headers": {
+          "Range": "bytes=0-5"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 206,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-range": "bytes 0-5/12794",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "content-transfer-encoding": "binary",
+          "cache-control": "no-cache",
+          "accept-ranges": "bytes"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "lodz proxy",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTYsInB1ciI6ImJsb2JfaWQifX0=--f3a156d1ecb90c83710dbcccd83cdf59f32d82d9/%C5%81%C3%B3d%C5%BA.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-disposition": "inline; filename=\"Lodz.jpg\"; filename*=UTF-8''%C5%81%C3%B3d%C5%BA.jpg",
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"b41a5889e333b8d331adb0557cc83b0b\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "accept-ranges": "bytes",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "41e5787e9f28562d07b891b1816b492309d646c0f2829743fa4963a9f9cc1d61",
+        "body_size": 4,
+        "body": "jpeg"
+      },
+      "changes": {}
+    },
+    {
+      "name": "notes proxy",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTMsInB1ciI6ImJsb2JfaWQifX0=--ec01704dc07d2fc78abbfa05a6bc0ed07efeccd9/launch-notes.txt",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/plain",
+          "content-disposition": "attachment; filename=\"launch-notes.txt\"; filename*=UTF-8''launch-notes.txt",
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"abfdb07c6e220da898e5563f9fc9fb00\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "accept-ranges": "bytes",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "c91f8a1ad71744b40c6da1567ce8080dd3a58934c1cad12ec0e17a3d688eb3e0",
+        "body_size": 39,
+        "body": "Launch notes\n\n1. Copy\n2. Video\n3. Ship\n"
+      },
+      "changes": {}
+    },
+    {
+      "name": "thumb redirect",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "max-age=300, private",
+          "location": "http://campfire.test/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIxbGE0bzI3eHhwcTlrc2Z6OHF1ZXUzN3JzejI0IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibW9vbi5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jydtb29uLmpwZyIsImNvbnRlbnRfdHlwZSI6ImltYWdlL2pwZWciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI2LTAzLTAyVDE2OjA1OjAwLjAwMFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4222a65ebaaa681e6c4609d492805703825afd24/moon.jpg",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "thumb proxy",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/jpeg",
+          "content-disposition": "inline; filename=\"moon.jpg\"; filename*=UTF-8''moon.jpg",
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"67f965f2b09f2bd6892e9e1405483496\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "e862029b2398043281a748f77485525f8ae3c3d951db21c0ce806f2488216246",
+        "body_size": 13036
+      },
+      "changes": {}
+    },
+    {
+      "name": "thumb proxy not modified",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/moon.jpg",
+        "headers": {
+          "If-None-Match": "W/\"67f965f2b09f2bd6892e9e1405483496\""
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"67f965f2b09f2bd6892e9e1405483496\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "poster redirect",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6OSwicHVyIjoiYmxvYl9pZCJ9fQ==--c41e212f6aa839f5dc122c08987d3d9c13a372a0/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCw4MDBdfSwicHVyIjoidmFyaWF0aW9uIn19--132e54230de6ddc9c41e0118730416f2e3d3127f/alpha-centuri.mov",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "max-age=300, private",
+          "location": "http://campfire.test/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1cnJoOXlvbDU4a2x4aXFlamN3cWRqZ2F0bm0yIiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwiYWxwaGEtY2VudHVyaS53ZWJwXCI7IGZpbGVuYW1lKj1VVEYtOCcnYWxwaGEtY2VudHVyaS53ZWJwIiwiY29udGVudF90eXBlIjoiaW1hZ2Uvd2VicCIsInNlcnZpY2VfbmFtZSI6ImxvY2FsIn0sImV4cCI6IjIwMjYtMDMtMDJUMTY6MDU6MDAuMDAwWiIsInB1ciI6ImJsb2Jfa2V5In19--154a096adc0d15bff8898aa0236fb16551fdac85/alpha-centuri.webp",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "poster proxy",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6OSwicHVyIjoiYmxvYl9pZCJ9fQ==--c41e212f6aa839f5dc122c08987d3d9c13a372a0/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCw4MDBdfSwicHVyIjoidmFyaWF0aW9uIn19--132e54230de6ddc9c41e0118730416f2e3d3127f/alpha-centuri.mov",
+        "headers": {
+          "Range": "bytes=0-3"
+        },
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "content-disposition": "inline; filename=\"alpha-centuri.webp\"; filename*=UTF-8''alpha-centuri.webp",
+          "cache-control": "max-age=3155695200, public, immutable",
+          "etag": "W/\"1e60f048ced75393f6857c8f056a9973\"",
+          "last-modified": "Sat, 01 Jan 2011 00:00:00 GMT",
+          "date": "Mon, 02 Mar 2026 16:00:00 GMT"
+        },
+        "body_sha256": "e1229db9bf54715acfed155e4513ace66b3e961e74190d7ca3e04d79fffde87b",
+        "body_size": 4962
+      },
+      "changes": {}
+    },
+    {
+      "name": "bmp representation",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQsInB1ciI6ImJsb2JfaWQifX0=--c633a89b8189242ccbcaa2c36cca6348768e101a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/pixel.bmp",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-length": "4887"
+        },
+        "body_sha256": "faa2c0fd9a62e4cf93e8358bb892632b870c46956ff9162f0fabaabdc7ddb92e",
+        "body_size": 4887,
+        "body": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Something went wrong (500)</title>\n    <meta charset=\"UTF-8\">\n    <style>\n      *,\n      *::before,\n      *::after {\n        box-sizing: border-box;\n      }\n\n      body {\n        --lch-black: 0% 0 0;\n        --lch-gray: 75% 0.005 96;\n        --lch-white: 100% 0 0;\n\n        --color-border: oklch(var(--lch-gray));\n        --color-bg: oklch(var(--lch-white));\n        --color-text: oklch(var(--lch-black));\n\n        --btn-size: 2.65em;\n\n        background-color: var(--color-bg);\n        block-size: 100dvh;\n        color: var(--color-text);\n        display: grid;\n        margin: 0;\n        padding: 0;\n        place-items: center;\n        font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n\n        @media (prefers-color-scheme: dark) {\n          --lch-black: 100% 0 0;\n          --lch-gray: 44.95% 0 0;\n          --lch-white: 0% 0 0;\n        }\n      }\n\n      svg {\n        fill: var(--color-text);\n\n        @media (prefers-color-scheme: dark) {\n          fill: var(--color-text);\n        }\n      }\n\n      .error {\n        align-items: center;\n        display: flex;\n        flex-direction: column;\n        gap: 2em;\n        justify-content: start;\n        margin-block-end: 15dvh;\n      }\n\n      .error__img {\n        aspect-ratio: 1;\n        background-color: var(--color-text);\n        block-size: auto;\n        border-radius: 50%;\n        display: grid;\n        place-items: center;\n        inline-size: 30dvh;\n\n        svg {\n          fill: var(--color-bg);\n          grid-area: 1/1;\n          max-inline-size: 66%;\n\n          @media (prefers-color-scheme: dark) {\n            fill: var(--color-bg);\n          }\n        }\n      }\n\n      .buttons {\n        display: flex;\n        flex-direction: row;\n        gap: 1em;\n        justify-content: center;\n      }\n\n      .btn {\n        align-items: center;\n        aspect-ratio: 1;\n        background-color: var(--color-bg);\n        block-size: var(--btn-size);\n        border-radius: 50%;\n        border: 1px solid var(--color-border);\n        color: var(--color-text);\n        cursor: pointer;\n        display: grid;\n        font-weight: 600;\n        font-size: 1.4rem;\n        gap: 0.5em;\n        inline-size: var(--btn-size);\n        justify-content: center;\n        padding: 0;\n        place-items: center;\n        text-align: center;\n\n        svg {\n          -webkit-touch-callout: none;\n          grid-area: 1/1;\n          inline-size: 1.3em;\n          max-inline-size: unset;\n          user-select: none;\n        }\n      }\n\n      .for-screen-reader {\n        clip-path: inset(50%);\n        height: 1px;\n        width: 1px;\n        overflow: hidden;\n        position: absolute;\n        white-space: nowrap;\n      }\n    </style>\n  </head>\n\n  <body>\n    <div class=\"error\">\n      <div class=\"error__img\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-label=\"Server error\">\n          <title>server-warning</title>\n          <path\n            d=\"M2.5,6h17A2.5,2.5,0,0,0,22,3.5v-1A2.5,2.5,0,0,0,19.5,0H2.5A2.5,2.5,0,0,0,0,2.5v1A2.5,2.5,0,0,0,2.5,6ZM3.635,3A1.115,1.115,0,1,1,4.749,4.114,1.114,1.114,0,0,1,3.635,3ZM7.5,3A1.115,1.115,0,1,1,8.614,4.114,1.115,1.115,0,0,1,7.5,3Z\" />\n          <path\n            d=\"M14.892,11.574a2.952,2.952,0,0,1,3.339-1.486,3.061,3.061,0,0,1,1.934,1.59l.26.495a.5.5,0,0,0,.765.154A2.468,2.468,0,0,0,22,10.5v-1A2.5,2.5,0,0,0,19.5,7H2.5A2.5,2.5,0,0,0,0,9.5v1A2.5,2.5,0,0,0,2.5,13H13.842a.5.5,0,0,0,.442-.268ZM9.729,10A1.115,1.115,0,1,1,8.614,8.885,1.115,1.115,0,0,1,9.729,10ZM5.864,10A1.115,1.115,0,1,1,4.749,8.885,1.115,1.115,0,0,1,5.864,10Z\" />\n          <path\n            d=\"M2.5,20h7.67a.5.5,0,0,0,.442-.268l2.624-5A.5.5,0,0,0,12.792,14H2.5A2.5,2.5,0,0,0,0,16.5v1A2.5,2.5,0,0,0,2.5,20Zm1.136-3a1.115,1.115,0,1,1,1.114,1.115A1.114,1.114,0,0,1,3.635,17ZM7.5,17a1.115,1.115,0,1,1,1.115,1.115A1.115,1.115,0,0,1,7.5,17Z\" />\n          <path\n            d=\"M11.165,21.905a1.429,1.429,0,0,0,.048,1.408A1.453,1.453,0,0,0,12.446,24H22.558a1.455,1.455,0,0,0,1.232-.687,1.429,1.429,0,0,0,.048-1.408l-5.055-9.634a1.45,1.45,0,0,0-2.562,0ZM17.5,14.75a.75.75,0,0,1,.75.75v3a.75.75,0,0,1-1.5,0v-3A.75.75,0,0,1,17.5,14.75Zm1,6.5a1,1,0,1,1-1-1A1,1,0,0,1,18.5,21.25Z\" />\n        </svg>\n      </div>\n      <a href=\"/\" class=\"btn\" autofocus=\"true\">\n        <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n          <path\n            d=\"m21.864 9.5h-11.607a.25.25 0 0 1 -.174-.43l3.864-3.721a2.609 2.609 0 0 0 -.075-3.682 2.612 2.612 0 0 0 -3.68-.077l-9.792 9.699a1 1 0 0 0 -.008 1.411l9.625 9.724a2.66 2.66 0 0 0 3.755-3.757l-3.729-3.733a.25.25 0 0 1 .177-.427h11.673c1.556 0 2-1.675 2-2.51a2.28 2.28 0 0 0 -2.029-2.497z\" />\n        </svg>\n        <span class=\"for-screen-reader\">Go back</span>\n      </a>\n    </div>\n  </body>\n</html>\n"
+      },
+      "changes": {}
+    },
+    {
+      "name": "representation bad key",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/not-a-variation-key/moon.jpg",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "direct upload anonymous",
+      "request": {
+        "method": "POST",
+        "path": "/rails/active_storage/direct_uploads",
+        "headers": {
+          "Cookie": "_campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Origin": "http://campfire.test",
+          "X-CSRF-Token": "VGVhjMCFeq5aeiw2me7z-7fZho5sk2lHDyynZdgEjSmO410cL12j43R8MURPbI0KMAeLQgOuWGkIuJVBHuqzzg",
+          "Content-Type": "application/json"
+        },
+        "content_type": "application/json",
+        "body_base64": "eyJibG9iIjp7ImZpbGVuYW1lIjoicXVvdGEuYmluIiwiYnl0ZV9zaXplIjo2LCJjaGVja3N1bSI6IldvM1RyUWRXcVQzdGNyZ2pzWjNZZHc9PSIsImNvbnRlbnRfdHlwZSI6ImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSJ9fQ=="
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "direct upload no csrf",
+      "request": {
+        "method": "POST",
+        "path": "/rails/active_storage/direct_uploads",
+        "headers": {
+          "Cookie": "_campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Origin": "http://campfire.test",
+          "Content-Type": "application/json"
+        },
+        "content_type": "application/json",
+        "body_base64": "eyJibG9iIjp7ImZpbGVuYW1lIjoicXVvdGEuYmluIiwiYnl0ZV9zaXplIjo2LCJjaGVja3N1bSI6IldvM1RyUWRXcVQzdGNyZ2pzWjNZZHc9PSIsImNvbnRlbnRfdHlwZSI6ImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSJ9fQ=="
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "content-length": "5408"
+        },
+        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
+        "body_size": 5408,
+        "body": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>That didn’t work (422)</title>\n    <meta charset=\"UTF-8\">\n    <style>\n      *,\n      *::before,\n      *::after {\n        box-sizing: border-box;\n      }\n\n      body {\n        --lch-black: 0% 0 0;\n        --lch-gray: 75% 0.005 96;\n        --lch-white: 100% 0 0;\n\n        --color-border: oklch(var(--lch-gray));\n        --color-bg: oklch(var(--lch-white));\n        --color-text: oklch(var(--lch-black));\n\n        --btn-size: 2.65em;\n\n        background-color: var(--color-bg);\n        block-size: 100dvh;\n        color: var(--color-text);\n        display: grid;\n        margin: 0;\n        padding: 0;\n        place-items: center;\n        font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n\n        @media (prefers-color-scheme: dark) {\n          --lch-black: 100% 0 0;\n          --lch-gray: 44.95% 0 0;\n          --lch-white: 0% 0 0;\n        }\n      }\n\n      svg {\n        fill: var(--color-text);\n\n        @media (prefers-color-scheme: dark) {\n          fill: var(--color-text);\n        }\n      }\n\n      .error {\n        align-items: center;\n        display: flex;\n        flex-direction: column;\n        gap: 2em;\n        justify-content: start;\n        margin-block-end: 15dvh;\n      }\n\n      .error__img {\n        aspect-ratio: 1;\n        background-color: var(--color-text);\n        block-size: auto;\n        border-radius: 50%;\n        display: grid;\n        place-items: center;\n        inline-size: 30dvh;\n\n        svg {\n          fill: var(--color-bg);\n          grid-area: 1/1;\n          max-inline-size: 66%;\n\n          @media (prefers-color-scheme: dark) {\n            fill: var(--color-bg);\n          }\n        }\n      }\n\n      .buttons {\n        display: flex;\n        flex-direction: row;\n        gap: 1em;\n        justify-content: center;\n      }\n\n      .btn {\n        align-items: center;\n        aspect-ratio: 1;\n        background-color: var(--color-bg);\n        block-size: var(--btn-size);\n        border-radius: 50%;\n        border: 1px solid var(--color-border);\n        color: var(--color-text);\n        cursor: pointer;\n        display: grid;\n        font-weight: 600;\n        font-size: 1.4rem;\n        gap: 0.5em;\n        inline-size: var(--btn-size);\n        justify-content: center;\n        padding: 0;\n        place-items: center;\n        text-align: center;\n\n        svg {\n          -webkit-touch-callout: none;\n          grid-area: 1/1;\n          inline-size: 1.3em;\n          max-inline-size: unset;\n          user-select: none;\n        }\n      }\n\n      .for-screen-reader {\n        clip-path: inset(50%);\n        height: 1px;\n        width: 1px;\n        overflow: hidden;\n        position: absolute;\n        white-space: nowrap;\n      }\n    </style>\n  </head>\n\n  <body>\n    <div class=\"error\">\n      <div class=\"error__img\">\n        <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"That didn’t work\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\"\n          y=\"0px\" viewBox=\"0 0 24 24\" style=\"enable-background:new 0 0 24 24;\" xml:space=\"preserve\">\n          <g>\n            <circle cx=\"11.5\" cy=\"11.5\" r=\"1.8\" />\n            <path d=\"M12.2,18.7c-0.2,0-0.5,0-0.7,0c-4,0-7.2-3.2-7.2-7.2c0-4,3.2-7.2,7.2-7.2c4,0,7.2,3.2,7.2,7.2c0,1-0.2,1.9-0.5,2.7l0.3-0.3\n        \t\tc0-1.3,0.8-2.5,2-3c-0.3-4.7-4.2-8.4-9-8.4c-5,0-9,4-9,9c0,4.6,3.5,8.5,8,9L12.2,18.7z\" />\n            <path d=\"M11.5,6.1c-3,0-5.4,2.4-5.4,5.4s2.4,5.4,5.4,5.4s5.4-2.4,5.4-5.4S14.5,6.1,11.5,6.1z M11.5,15.1c-2,0-3.6-1.6-3.6-3.6\n        \t\ts1.6-3.6,3.6-3.6s3.6,1.6,3.6,3.6S13.5,15.1,11.5,15.1z\" />\n          </g>\n          <path d=\"M15,24l4-4v-1.5l2.6-2.6C21.7,16,21.9,16,22,16c1.1,0,2-0.9,2-2s-0.9-2-2-2c-1.1,0-2,0.9-2,2c0,0.1,0,0.3,0.1,0.4L17.5,17\n        \tH16l-4,4h3V24\" />\n        </svg>\n      </div>\n      <div class=\"buttons\">\n        <a href=\"/\" class=\"btn\" autofocus=\"true\">\n          <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path\n              d=\"m21.864 9.5h-11.607a.25.25 0 0 1 -.174-.43l3.864-3.721a2.609 2.609 0 0 0 -.075-3.682 2.612 2.612 0 0 0 -3.68-.077l-9.792 9.699a1 1 0 0 0 -.008 1.411l9.625 9.724a2.66 2.66 0 0 0 3.755-3.757l-3.729-3.733a.25.25 0 0 1 .177-.427h11.673c1.556 0 2-1.675 2-2.51a2.28 2.28 0 0 0 -2.029-2.497z\" />\n          </svg>\n          <span class=\"for-screen-reader\">Go back</span>\n        </a>\n        <a href=\"#\" class=\"btn\" autofocus=\"true\" onclick=\"window.location.reload()\">\n          <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path\n              d=\"m6.177 6.167a8.233 8.233 0 0 1 8.351-2.027 1.249 1.249 0 1 0 .76-2.38 10.751 10.751 0 0 0 -13.242 14.273.248.248 0 0 1 -.094.3l-1.4.922a1 1 0 0 0 .348 1.816l4.407.908a.99.99 0 0 0 .2.021 1 1 0 0 0 .979-.8l.914-4.406a1 1 0 0 0 -1.529-1.037l-1.339.881a.25.25 0 0 1 -.376-.133 8.269 8.269 0 0 1 2.021-8.338z\" />\n            <path\n              d=\"m23.883 5.832a1 1 0 0 0 -.763-.807l-4.388-1a1 1 0 0 0 -1.2.752l-1 4.387a1 1 0 0 0 1.507 1.069l1.443-.906a.247.247 0 0 1 .218-.027.252.252 0 0 1 .153.159 8.249 8.249 0 0 1 -10.285 10.424 1.25 1.25 0 1 0 -.737 2.388 10.75 10.75 0 0 0 13.154-14.271.248.248 0 0 1 .1-.3l1.346-.846a1 1 0 0 0 .452-1.022z\" />\n          </svg>\n          <span class=\"for-screen-reader\">Try again</span>\n        </a>\n      </div>\n    </div>\n  </body>\n</html>\n"
+      },
+      "changes": {}
+    },
+    {
+      "name": "direct upload",
+      "request": {
+        "method": "POST",
+        "path": "/rails/active_storage/direct_uploads",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Origin": "http://campfire.test",
+          "X-CSRF-Token": "VGVhjMCFeq5aeiw2me7z-7fZho5sk2lHDyynZdgEjSmO410cL12j43R8MURPbI0KMAeLQgOuWGkIuJVBHuqzzg",
+          "Content-Type": "application/json"
+        },
+        "content_type": "application/json",
+        "body_base64": "eyJibG9iIjp7ImZpbGVuYW1lIjoicXVvdGEuYmluIiwiYnl0ZV9zaXplIjo2LCJjaGVja3N1bSI6IldvM1RyUWRXcVQzdGNyZ2pzWjNZZHc9PSIsImNvbnRlbnRfdHlwZSI6ImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSJ9fQ=="
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "max-age=0, private, must-revalidate",
+          "etag": "W/\"bf622f30ff8b6161a79b1fa8cd1bae58\"",
+          "vary": "Accept",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "bf622f30ff8b6161a79b1fa8cd1bae58d200033b5a889e73a0d70e84634513d5",
+        "body_size": 1014,
+        "body": "{\"id\":17,\"byte_size\":6,\"checksum\":\"Wo3TrQdWqT3tcrgjsZ3Ydw==\",\"content_type\":\"application/octet-stream\",\"created_at\":\"2026-03-02T16:00:00.000Z\",\"filename\":\"quota.bin\",\"key\":\"rislq4fbhxiu8cvjzm00edcp07n5\",\"metadata\":{},\"service_name\":\"local\",\"attachable_sgid\":\"eyJfcmFpbHMiOnsiZGF0YSI6ImdpZDovL2NhbXBmaXJlL0FjdGl2ZVN0b3JhZ2U6OkJsb2IvMTc_ZXhwaXJlc19pbiIsInB1ciI6ImF0dGFjaGFibGUifX0=--ed444da8ffd51cada796390b539aac55656b9302\",\"signed_id\":\"eyJfcmFpbHMiOnsiZGF0YSI6MTcsInB1ciI6ImJsb2JfaWQifX0=--c03aacb2e3d70bfc8fd7a0540d80fe571acef4ab\",\"direct_upload\":{\"url\":\"http://campfire.test/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJyaXNscTRmYmh4aXU4Y3Zqem0wMGVkY3AwN241IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwiY29udGVudF9sZW5ndGgiOjYsImNoZWNrc3VtIjoiV28zVHJRZFdxVDN0Y3JnanNaM1lkdz09Iiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--2ad024bd2d39b3d0c0f685bd194f85432dc8208d\",\"headers\":{\"Content-Type\":\"application/octet-stream\"}}}",
+        "body_normalized": "{\"id\":17,\"byte_size\":6,\"checksum\":\"Wo3TrQdWqT3tcrgjsZ3Ydw==\",\"content_type\":\"application/octet-stream\",\"created_at\":\"2026-03-02T16:00:00.000Z\",\"filename\":\"quota.bin\",\"key\":\"<key>\",\"metadata\":{},\"service_name\":\"local\",\"attachable_sgid\":\"eyJfcmFpbHMiOnsiZGF0YSI6ImdpZDovL2NhbXBmaXJlL0FjdGl2ZVN0b3JhZ2U6OkJsb2IvMTc_ZXhwaXJlc19pbiIsInB1ciI6ImF0dGFjaGFibGUifX0=--ed444da8ffd51cada796390b539aac55656b9302\",\"signed_id\":\"<signed_id>\",\"direct_upload\":{\"url\":\"http://campfire.test/rails/active_storage/disk/<token>\",\"headers\":{\"Content-Type\":\"application/octet-stream\"}}}"
+      },
+      "changes": {
+        "active_storage_blobs": [
+          {
+            "id": 17,
+            "row": {
+              "id": 17,
+              "byte_size": 6,
+              "checksum": "Wo3TrQdWqT3tcrgjsZ3Ydw==",
+              "content_type": "application/octet-stream",
+              "created_at": "2026-03-02 16:00:00",
+              "filename": "quota.bin",
+              "key": "rislq4fbhxiu8cvjzm00edcp07n5",
+              "metadata": null,
+              "service_name": "local"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "disk put anonymous",
+      "request": {
+        "method": "PUT",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJyaXNscTRmYmh4aXU4Y3Zqem0wMGVkY3AwN241IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwiY29udGVudF9sZW5ndGgiOjYsImNoZWNrc3VtIjoiV28zVHJRZFdxVDN0Y3JnanNaM1lkdz09Iiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--2ad024bd2d39b3d0c0f685bd194f85432dc8208d",
+        "headers": {
+          "Content-Type": "application/octet-stream",
+          "Content-Length": "6"
+        },
+        "content_type": "application/octet-stream",
+        "body_base64": "aGVsbG8h"
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk put bad token",
+      "request": {
+        "method": "PUT",
+        "path": "/rails/active_storage/disk/not-a-token",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Content-Type": "application/octet-stream",
+          "Content-Length": "6"
+        },
+        "content_type": "application/octet-stream",
+        "body_base64": "aGVsbG8h"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk put wrong type",
+      "request": {
+        "method": "PUT",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJyaXNscTRmYmh4aXU4Y3Zqem0wMGVkY3AwN241IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwiY29udGVudF9sZW5ndGgiOjYsImNoZWNrc3VtIjoiV28zVHJRZFdxVDN0Y3JnanNaM1lkdz09Iiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--2ad024bd2d39b3d0c0f685bd194f85432dc8208d",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Content-Type": "text/plain",
+          "Content-Length": "6"
+        },
+        "content_type": "text/plain",
+        "body_base64": "aGVsbG8h"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk put bad checksum",
+      "request": {
+        "method": "PUT",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJyaXNscTRmYmh4aXU4Y3Zqem0wMGVkY3AwN241IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwiY29udGVudF9sZW5ndGgiOjYsImNoZWNrc3VtIjoiV28zVHJRZFdxVDN0Y3JnanNaM1lkdz09Iiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--2ad024bd2d39b3d0c0f685bd194f85432dc8208d",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Content-Type": "application/octet-stream",
+          "Content-Length": "6"
+        },
+        "content_type": "application/octet-stream",
+        "body_base64": "aGVsbG8/"
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk put",
+      "request": {
+        "method": "PUT",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJyaXNscTRmYmh4aXU4Y3Zqem0wMGVkY3AwN241IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwiY29udGVudF9sZW5ndGgiOjYsImNoZWNrc3VtIjoiV28zVHJRZFdxVDN0Y3JnanNaM1lkdz09Iiwic2VydmljZV9uYW1lIjoibG9jYWwifSwiZXhwIjoiMjAyNi0wMy0wMlQxNjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--2ad024bd2d39b3d0c0f685bd194f85432dc8208d",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=voOcMXWiuIIdjsEYdmJ9jzKQV4n%2BcJGhjZnJ1rS4WDTr3Kz3yEBNGh9aUr8UQ6605LDXEpGJ7yF2tsphdvz0BRNVB%2F2xOi2wZiQfhlJE%2BLhznkOH4ygTMTHc2Xfn3otCdCZkw27yhMMI%2BvBTpD7VthOuZGu8ql2oO0XRCQsDVlj7kqAJratcu77UKNFUIdsqEUFxvQ9IQDgWRECjE9WAmF0MBrClvI8iwMtftn%2FLTZDA9J%2B5fvwRfEZNFuDwS3cZLgy%2B%2BNFArTHFgYuQl4klz3rvaGBgVBnflw%3D%3D--wWR09spDJErIqnhe--0%2FkoD9R2KVe066mdIjHM8Q%3D%3D",
+          "Accept": "text/html",
+          "Content-Type": "application/octet-stream",
+          "Content-Length": "6"
+        },
+        "content_type": "application/octet-stream",
+        "body_base64": "aGVsbG8h"
+      },
+      "response": {
+        "status": 204,
+        "headers": {
+          "cache-control": "no-cache",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_size": 0,
+        "body": ""
+      },
+      "changes": {}
+    },
+    {
+      "name": "disk show uploaded",
+      "request": {
+        "method": "GET",
+        "path": "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJyaXNscTRmYmh4aXU4Y3Zqem0wMGVkY3AwN241IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInF1b3RhLmJpblwiOyBmaWxlbmFtZSo9VVRGLTgnJ3F1b3RhLmJpbiIsImNvbnRlbnRfdHlwZSI6ImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsInNlcnZpY2VfbmFtZSI6ImxvY2FsIn0sImV4cCI6IjIwMjYtMDMtMDJUMTY6MDU6MDAuMDAwWiIsInB1ciI6ImJsb2Jfa2V5In19--0d7f1020bf04b1ca35617791aa97a305a6476966/quota.bin",
+        "headers": {},
+        "content_type": null,
+        "body_base64": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/octet-stream",
+          "content-length": "6",
+          "content-disposition": "attachment; filename=\"quota.bin\"; filename*=UTF-8''quota.bin",
+          "cache-control": "max-age=3600, public",
+          "last-modified": "Mon, 02 Mar 2026 16:00:00 GMT",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
+        },
+        "body_sha256": "ce06092fb948d9ffac7d1a376e404b26b7575bcc11ee05a4615fef4fec3a308b",
+        "body_size": 6,
+        "body": "hello!"
+      },
+      "changes": {}
+    }
+  ]
+}
