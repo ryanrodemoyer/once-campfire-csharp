@@ -302,16 +302,17 @@ One task is one PR, and PRs merge themselves:
 
 ### Orchestrator
 
-The swarm runs locally on the owner's machine (16 hardware threads, Docker). There are five
+The swarm runs locally on the owner's machine (16 hardware threads, Docker). There are six
 workers, each a different model. The assignments are in [`swarm.yaml`](swarm.yaml):
 
 | Worker | CLI and model | Queue | Points |
 |---|---|---|---|
-| `claude` | Claude Code, Opus 5.5 (medium; high on R04 and RT04) | R04, RT04 | 4 |
+| `claude` | Claude Code, Opus 5.5 (medium; high on R04 and RT04) | RT04 (R04 handed to glm) | 2 |
 | `gemini` | Antigravity, Gemini 3.8 Flash (high) | M09, Q06, Q02, Q07, Q05, X01 | 9 |
 | `grok` | Grok CLI, Grok 4.7 (high) | VS01, B06, B02, B03, B04, Q08 | 11 |
-| `glm` | OpenCode, GLM 5.3 (high) | M10, P02, Q04 | 8 |
+| `glm` | OpenCode, GLM 5.3 (high) | R04, M10 | 6 |
 | `deepseek` | OpenCode, DeepSeek V4.1 Flash | Q09 | 1 |
+| `dspro` | OpenCode via OpenRouter, DeepSeek V4 Pro | P02, Q04 | 6 |
 
 Queues are balanced by size (S=1, M=2, L=4 points) and keep each dependency chain with one worker.
 Claude takes the security-critical R04 and RT04; Grok reviews them in Q08. B03 and X01 moved

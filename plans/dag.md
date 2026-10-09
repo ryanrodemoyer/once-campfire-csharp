@@ -174,7 +174,7 @@ flowchart LR
   end
   subgraph M4["M4 · Parity gates green"]
     direction TB
-    R04["R04 Rich text gate and differential fuzzing<br/><small>M</small>"]
+    R04["R04 Rich text gate and differential fuzzing<br/><small>L</small>"]
     P03["P03 Public front server<br/><small>L</small>"]
     P04["P04 Backup and restore hooks<br/><small>S</small>"]
     Q04["Q04 Screen parity<br/><small>L</small>"]
@@ -429,13 +429,13 @@ immediately. Real throughput will be lower: review, integration and rework aren'
 
 | Agents | Calendar days to finish | Peak parallel |
 |---:|---:|---:|
-| 1 | 17.0 | 1 |
+| 1 | 18.0 | 1 |
 | 4 | 6.0 | 4 |
 | 8 | 6.0 | 8 |
 | 12 | 6.0 | 8 |
 | 16 | 6.0 | 8 |
 
-Total work: 91.0 agent-days.
+Total work: 92.0 agent-days.
 
 ## Task index
 
@@ -486,7 +486,7 @@ Total work: 91.0 agent-days.
 | `M02` | Message rendering ⚡ | M | M1 | L | `R03` `S02` `W03` |
 | `M09` | Link unfurling endpoint | M | M3 | S | `I03` `W02` |
 | `Q03` | State differential and Rails-on-C#-data | Q | M1 | M | `Q01` `D03` |
-| `R04` | Rich text gate and differential fuzzing | R | M4 | M | `R05` |
+| `R04` | Rich text gate and differential fuzzing | R | M4 | L | `R05` |
 | `RT01` | Action Cable server | RT | M1 | L | `W02` |
 | `S03` | Media processing | S | M3 | L | `S02` |
 | `S05` | Active Storage HTTP endpoints | S | M3 | M | `S01` `S02` `W02` |

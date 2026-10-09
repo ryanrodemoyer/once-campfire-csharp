@@ -183,7 +183,8 @@ def prepare_worktree(config, task):
 
 
 def prompt_for(agent, config, task, issue, path, branch, prs, state):
-    card = sh("plans/bin/plan", "show", task["id"], cwd=path, check=False)
+    # The main checkout's card, not the worktree's: a retried worktree can predate a card edit.
+    card = sh("plans/bin/plan", "show", task["id"], check=False)
     exclusive = task["id"] in config["exclusive"]
     pr = prs.get(branch)
     resume = (f"\nA previous attempt already pushed {branch} and opened {pr['url']}. Continue from "
@@ -317,7 +318,8 @@ def tick(config, dispatch=True):
                 if free <= 0 or exclusive_running:
                     break
                 exclusive = task_id in config["exclusive"]
-                if (exclusive and running) or (draining and not exclusive):
+                exempt = task_id in config.get("drain_exempt", [])
+                if (exclusive and running) or (draining and not exclusive and not exempt):
                     continue
                 launch(agent, config, tasks[task_id], issues[task_id], prs, state)
                 states[task_id] = "running"
@@ -336,7 +338,7 @@ STATE_COLORS = {
     "pr-red": "#cf222e", "conflicted": "#cf222e", "stuck": "#82071e", "ready": "#8250df",
     "waiting": "#6e7781", "cooling": "#9a6700", "human": "#57606a",
 }
-AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe"}
+AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe", "dspro": "#7c3aed"}
 
 
 def activity(config, task_id):
