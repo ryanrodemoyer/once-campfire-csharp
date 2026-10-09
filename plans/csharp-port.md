@@ -302,8 +302,8 @@ One task is one PR, and PRs merge themselves:
 
 ### Orchestrator
 
-The swarm runs locally on the owner's machine (16 hardware threads, Docker). There are four
-workers, each a different vendor's CLI. The assignments are in [`swarm.yaml`](swarm.yaml):
+The swarm runs locally on the owner's machine (16 hardware threads, Docker). There are five
+workers, each a different model. The assignments are in [`swarm.yaml`](swarm.yaml):
 
 | Worker | CLI and model | Queue | Points |
 |---|---|---|---|
@@ -311,6 +311,7 @@ workers, each a different vendor's CLI. The assignments are in [`swarm.yaml`](sw
 | `gemini` | Antigravity, Gemini 3.8 Flash (high) | M09, Q06, Q02, Q07, Q05 | 8 |
 | `grok` | Grok CLI, Grok 4.7 (high) | VS01, B06, B02, B04, Q08 | 7 |
 | `glm` | OpenCode, GLM 5.3 (high) | M10, P02, Q04 | 8 |
+| `deepseek` | OpenCode, DeepSeek V4.1 Flash | Q09 | 1 |
 
 Queues are balanced by size (S=1, M=2, L=4 points) and keep each dependency chain with one worker.
 Claude takes the security-critical R04 and RT04; Grok reviews them in Q08.
@@ -323,8 +324,9 @@ Claude takes the security-critical R04 and RT04; Grok reviews them in Q08.
    - removes the worktree of every task whose status file has landed on `main`;
    - turns on auto-merge for PRs that don't have it;
    - sends a red or conflicted PR back to its own worker before that worker takes new work;
-   - retries a task whose worker exited without a PR. After `max_attempts` (3) it labels the
-     issue `needs-human` and stops retrying.
+   - retries a task whose worker exited without a PR, after `retry_after_minutes` (45) so a quota
+     or rate limit has time to clear. After `max_attempts` (3) it labels the issue `needs-human`
+     and stops retrying.
 3. **Dispatches** each worker the first ready tasks in its queue, up to its `slots` (2). Each
    task gets a worktree at `../campfire-wt/<ID>` on `port/<ID>-<slug>`, branched from
    `origin/main` (never the local `main`), with submodules checked out. The worker gets the task

@@ -131,8 +131,18 @@ def checks_state(pr):
     return "green"
 
 
+def cooling(record, config):
+    """A worker that exited without a PR waits before its retry, so a quota or rate limit that
+    killed it has time to clear instead of burning every attempt in a few minutes."""
+    log = ROOT / record["log"] if record.get("log") else None
+    if not log or not log.exists():
+        return False
+    return time.time() - log.stat().st_mtime < config.get("retry_after_minutes", 45) * 60
+
+
 def task_state(task_id, task, done, prs, state, config):
-    """One of: merged, running, pr-green, pr-pending, pr-red, conflicted, stuck, ready, waiting."""
+    """One of: merged, running, pr-green, pr-pending, pr-red, conflicted, stuck, cooling, ready,
+    waiting."""
     if task_id in done:
         return "merged"
     record = state["tasks"].get(task_id, {})
@@ -145,6 +155,8 @@ def task_state(task_id, task, done, prs, state, config):
         return "stuck" if exhausted and s in ("conflicted", "pr-red") else s
     if exhausted:
         return "stuck"
+    if cooling(record, config):
+        return "cooling"
     return "ready" if all(d in done for d in task["deps"]) else "waiting"
 
 
@@ -170,13 +182,16 @@ def prepare_worktree(config, task):
     return path, branch
 
 
-def prompt_for(agent, config, task, issue, path, branch, prs):
+def prompt_for(agent, config, task, issue, path, branch, prs, state):
     card = sh("plans/bin/plan", "show", task["id"], cwd=path, check=False)
     exclusive = task["id"] in config["exclusive"]
     pr = prs.get(branch)
     resume = (f"\nA previous attempt already pushed {branch} and opened {pr['url']}. Continue from "
               f"there: read its state, fix what is red or conflicted, and see it through to merge.\n"
-              if pr else "")
+              if pr else
+              f"\nA previous attempt worked in this worktree and stopped before opening a PR. Read "
+              f"what it left (git log origin/main..HEAD, git status) and continue from there.\n"
+              if state["tasks"].get(task["id"], {}).get("attempts") else "")
     machine = ("\nThis is a benchmark task. The swarm has reserved the machine for you: no other "
                "agent is running, so measurements are not disturbed by build load.\n"
                if exclusive else "")
@@ -206,6 +221,8 @@ How to finish:
    then run `gh pr merge --auto --squash`.
 7. Watch CI with `gh pr checks --watch`. If it goes red, fix it and push. If main moves and the PR
    conflicts, merge origin/main into your branch. You are done when the PR has merged.
+   If CI fails in a test your change doesn't touch, it may be flaky (Q09 is fixing two known
+   ones). Re-run the failed job once with `gh run rerun <run-id> --failed` before changing code.
 8. If you are blocked on something outside your task, comment on issue #{issue} explaining what
    you need, and stop.
 Never benchmark before B02 and never publish numbers. Never work on issues labelled `human`.
@@ -216,7 +233,7 @@ def launch(agent, config, task, issue, prs, state):
     path, branch = prepare_worktree(config, task)
     spec = config["agents"][agent]
     effort = spec.get("effort_overrides", {}).get(task["id"], spec.get("effort", ""))
-    prompt = prompt_for(agent, config, task, issue, path, branch, prs)
+    prompt = prompt_for(agent, config, task, issue, path, branch, prs, state)
     fills = {"{prompt}": prompt, "{worktree}": str(path), "{effort}": effort}
     cmd = [fills.get(part, part) for part in spec["command"]]
 
@@ -314,9 +331,9 @@ def tick(config, dispatch=True):
 STATE_COLORS = {
     "merged": "#2da44e", "running": "#bf8700", "pr-pending": "#0969da", "pr-green": "#1a7f37",
     "pr-red": "#cf222e", "conflicted": "#cf222e", "stuck": "#82071e", "ready": "#8250df",
-    "waiting": "#6e7781", "human": "#57606a",
+    "waiting": "#6e7781", "cooling": "#9a6700", "human": "#57606a",
 }
-AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f"}
+AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe"}
 
 
 def activity(config, task_id):

@@ -1097,6 +1097,31 @@ tasks:
     accept:
       - No open high or critical findings
 
+  - id: Q09
+    title: Deflake the cable typing and opengraph vector tests
+    lane: Q
+    milestone: M4
+    size: S
+    deps: [RT03, I03]
+    owns:
+      - tests/Campfire.Cable.Tests/Channels/ChannelBehaviorTests.cs
+      - tests/Campfire.Cable.Tests/Server/CableTestApp.cs
+      - tests/Campfire.Jobs.Tests/OpenGraph/OpenGraphVectorTests.cs
+    refs:
+      - https://github.com/ryanrodemoyer/once-campfire-csharp/actions/runs/37977724198
+      - https://github.com/ryanrodemoyer/once-campfire-csharp/actions/runs/37977691566
+    deliver: >
+      Two tests fail intermittently in CI and pass on re-run.
+      ChannelBehaviorTests.Typing_notifications_broadcast_start_and_stop_to_the_room times out
+      after 10 s in CableClient.NextAsync (OperationCanceledException), and the opengraph vector
+      case "invalid image url /image.png" fails now and then. Find each root cause (an ordering
+      race, a shared port or fixture, a timeout too tight for CI) and fix it without loosening
+      what the tests assert. If the cause is a real race in production code, which belongs to
+      RT03 or I03, file an issue with the evidence instead of editing it.
+    accept:
+      - Each test passes 200 consecutive runs locally, under parallel load (`dotnet test` of the whole solution)
+      - The root cause of each flake is written up in the status file
+
   # ---------------------------------------------------------------- Vertical slice
   - id: VS01
     title: Vertical slice gate

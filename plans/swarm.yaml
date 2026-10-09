@@ -12,6 +12,7 @@
 
 worktrees: ../campfire-wt
 max_attempts: 3
+retry_after_minutes: 45
 poll_seconds: 120
 exclusive: [B02, B03, B04]
 
@@ -49,3 +50,11 @@ agents:
     # Attachments and the media toolchain go together; Q04 is harness work against the reference.
     slots: 2
     queue: [M10, P02, Q04]
+
+  deepseek:
+    model: DeepSeek V4.1 Flash via OpenCode
+    command: [opencode, run, --standalone, --auto, -m,
+              "fireworks-ai/accounts/fireworks/models/deepseek-v4p1-flash", "{prompt}"]
+    # Added to take load off Claude's quota.
+    slots: 1
+    queue: [Q09]
