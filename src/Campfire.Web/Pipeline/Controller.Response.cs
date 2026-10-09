@@ -219,8 +219,13 @@ public abstract partial class Controller
     }
 
     // ActionDispatch::Response.create: config.action_dispatch.default_headers (load_defaults 7.1).
+    // ActionController::Live builds its response with Live::Response.new, which has none.
     void StartResponse()
     {
+        if (IsLive)
+        {
+            return;
+        }
         Headers["X-Frame-Options"] = "SAMEORIGIN";
         Headers["X-XSS-Protection"] = "0";
         Headers["X-Content-Type-Options"] = "nosniff";
