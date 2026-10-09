@@ -338,7 +338,7 @@ STATE_COLORS = {
     "pr-red": "#cf222e", "conflicted": "#cf222e", "stuck": "#82071e", "ready": "#8250df",
     "waiting": "#6e7781", "cooling": "#9a6700", "human": "#57606a",
 }
-AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe"}
+AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe", "dspro": "#7c3aed"}
 
 
 def activity(config, task_id):

@@ -51,7 +51,8 @@ agents:
     # Attachments and the media toolchain go together; Q04 is harness work against the reference.
     slots: 2
     # R04, taken over from Claude, also fixes what its fuzzer found in merged tasks' code.
-    queue: [R04, M10, P02, Q04]
+    # P02 and Q04 moved to dspro so glm can focus on R04 and M10.
+    queue: [R04, M10]
 
   deepseek:
     model: DeepSeek V4.1 Flash via OpenCode
@@ -60,3 +61,11 @@ agents:
     # Added to take load off Claude's quota.
     slots: 1
     queue: [Q09]
+
+  dspro:
+    model: DeepSeek V4 Pro via OpenRouter (OpenCode)
+    command: [opencode, run, --standalone, --auto, -m, "openrouter/deepseek/deepseek-v4-pro",
+              "{prompt}"]
+    # Cheap ($0.21/M in, $0.02/M cache read); takes P02 (continuing glm's attempt) and Q04.
+    slots: 2
+    queue: [P02, Q04]
