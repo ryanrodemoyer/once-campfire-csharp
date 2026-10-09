@@ -1,0 +1,1865 @@
+{
+  "now": "2026-03-02T16:00:00Z",
+  "libvips": "8.16.1",
+  "fixtures": [
+    "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900001, 127326141, 'DavidSessionToken0000001', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
+    "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900002, 712064548, 'KevinSessionToken0000002', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
+    "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900003, 149087659, 'JasonSessionToken0000003', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')",
+    "INSERT INTO users (id, name, role, status, created_at, updated_at) VALUES (900101, 'Mary Jane Watson', 0, 0, '2026-02-10 10:00:00', '2026-02-10 10:00:00')",
+    "INSERT INTO users (id, name, role, status, created_at, updated_at) VALUES (900102, 'Émile Zola', 0, 0, '2026-02-10 10:00:00', '2026-02-10 10:00:00')",
+    "INSERT INTO users (id, name, role, status, created_at, updated_at) VALUES (900103, 'O''Brien & <Sons>', 0, 0, '2026-02-10 10:00:00', '2026-02-10 10:00:00')"
+  ],
+  "storage": [
+    [
+      1,
+      "reference/test/fixtures/files/moon.jpg"
+    ],
+    [
+      2,
+      "reference-rust/vectors/storage/moon-avatar.webp"
+    ],
+    [
+      3,
+      "reference/test/fixtures/files/moon.jpg"
+    ],
+    [
+      4,
+      "reference-rust/vectors/storage/moon-avatar.webp"
+    ]
+  ],
+  "cases": [
+    {
+      "name": "David's initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=8nme6G6ToLOnYneyfp2iKXOZEdA2xaICwPNaef%2FkLB110fYIanHVGf%2BbboaFxbGI8atOELShC05wlKZCflnWtUeTJdqfllTdfUZJudVDPFDoWl7RaQZVm6c%2FHZMwzMINq9O59ismiDrnDTRw5RstO9tKCW3cg0%2B%2BKxPGuNgNpYJvW2tgQyAeHDSZvJovF0SnzTAfmLB0QaJL%2F9zH3PP9lT2%2FKw4Hcq5Rnr%2FcY6BsIRMV2t04HcHLSKEA6iu5qcB9wLHSAYIwU1NqPhsuHeU82kHNHp6rZ5yDqcFvwEss%2BAU6FENk09fupsuKeAESqSM%3D--eze%2BB1GtKycg4Bd%2F--RXmKykjlpUFy6Q4%2Bw9YEFw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "Kevin's own initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzEyMDY0NTQ4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--24266f3c12491a2bac3805904b69ddeab0735455b7506b41b2cafe75aa085301/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=Zmc7%2BnKx2h9Z1Bzb0iOvWIh9l23MZWDcNl%2BaD1EavaVFhTNbF%2FqXsuQ2nLfVJr3VgNAF1x1Vp972cVVrqW%2F%2FpfsblSJmPKRKtueLPKuFmR6ptXr99hf2RRHKrxbCa8kpDZPNYSO3cYtVDrZVZgSBsC6OzzOlYag6HNOJUel6vajwtQOq8ogDpDrBON7Ybl8wBc55Sx1AnqSsQDYuVpC4lkCSXlWPPls50sox9evic6dVAghYtxmJ%2BhPSqcyHL%2FiHdMUc24znQSN9QrYKI1kMeCtuc11KB2jse2K%2BufyGcrMaMm%2B8vWdIrwAamCH%2BJ%2Fw%3D--ACuTdh10VcCvvUZc--8Wggd9Ahf9UoJu%2B8qXrTFQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"5719cacd7d66e9148f1f78ab48aa3ca5\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#AD1D1D\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      K\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "JZ's initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTUzLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--fb7c18bffeb78aebcbda5445ccc959fd4f68670b8549c1e7f84ac46d5699b15c/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=gbf6yFvM44%2FkzZGZNM%2Fq1DJKXnG6qrLhX1B1qDt6UrwDqsZk8T5V%2FxnjNr%2BTyUmLg2UK7TXU6IgEc0dx1Od4%2B7wZ4Pid%2FS02VFKEy9SjM9vruzkH1Qb9lkc9AxwjtpkK%2B4u%2Bd%2FNUgWkUaKzt7zPP5nXx955f535gKz13fOf%2FZ7CcNEi4a5QM0M%2BpcyIBzRERW0FGSJBvRLYbl9%2Bwog%2FWBTZtbeJa%2FUzCydRGOjt%2FnoNyPwlGhGKknyOcA6DkFPY6LVWizSdXMoQtpX31ZubfMeHbu27IzmoaWUq7obQDj%2BPLo%2F%2BevGHOnqGKRUihYfM%3D--kwiGAZHPDuV4M3dh--NkXjjbECro3b0xYjUEGvGA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"831baadcdc0ad1ccf2525b7dbcf517ec\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#AD1D1D\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      J\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a deactivated person's initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU0LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--ef5e5c898fa3cfabb70a5869a4ad1312493392d560bf1a4579e76bc39ba512c7/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=DnXEikz0jFpE2rDDjv8C3aN92Ldyw%2B%2BbyNVewqkZGicVVy15bgJHJYe93bDNAQXBWiemvf5LfRo9eNFMzu7%2FIsTvndFF86egCaR08Aedg5vBYQhTKDMXhvDxHD1a00fpECQWBRcvwiIF9Qjrj1ttLHerytg2uyibgVKGuKenBV6JVfihiSlIbHM%2Fx%2FefdPPKT0DMv2w%2BmewQT4g7yacS%2BjYtw8scyXRJb97KzDhlSVD2iUOe14LUbs4K73%2FzaP4LSOz4UMkiXDtsF56RLA9S9BIlUtwU5f1nYw8WhzcFj2mQpnlLkCIHvxZVqTzwl7o%3D--3yaUAwZEY46txUBm--KdyMntW5j%2FLH3PJbvF5izA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"ff3974dc9364ee537824d1a59e3dcb7c\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#698F9C\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      RL\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a banned person's initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU1LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--ad963f4065daa86068cc2ea6b05c6f8fc24cc64e3299dd3508c1938c540c0bdb/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=qZtTYuoWY5fsM5E9lJuLN%2Fbrx3s2PF7D5TV7lf%2B7K8%2Fmc27IkQvCUfAg48cuN4GHNp3AXeTaj4i2hXWRJYwSahGWpeIRC6o9zCkXCm9LmcOsvDpDkppEWrXjlZWfgfXqh59ShhH13lj%2FHQuRIpNXry5w81iknZmyug5vjIVa6lhlyLDRtVLBBzCOJjObglyRNlq15UfKRZqNZJW59kvzRk5OMMp2JdoLegvClX2Qs2hntR3dn8jlwcTOM9ArMtgZ%2FZW6ZSdi%2BF%2FPD%2F6gn%2FqYxMcxg7zFgqvx777%2B5TT6w8N1VDSEJBc%2FLu1YN8Vya%2Fw%3D--KmaU%2BP%2BPQuSXwHqi--%2Bmo8nvvoNChrgN7mpUsdTg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"0def2cb04bf6d85d7ac47420100e2f82\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736B1E\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      MB\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "Lonely Lou's initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--189e4e371430cb20e4621d79d0e75e6e15256a92650ae7ab3fc6c5704a7236d5/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=q4IN5YBcFEPJf5ebTLLGMgAzexFVhGaGBaZAGheuxWCpkXqZ%2Foe4yytg9r0qgq7jbXmKls2M3XoxZg%2FkHxzZwUcfCRaix7C6tDwsyzzeEtQ7a0UaFAkqJFGwYOoqaabQ3Ib7kiiYLXgjkZShTSiNMp1zxdOkC%2FW9YSBiyZ1LYAVX95%2F5PdK5sleYdF%2FK1juMUrzqi0LfnIcY9wYSDBhkSxxv6C1%2FnEJXT%2FZAc9VsPKRlLX22srOYugJ9iAElURDrXJF%2FyMqnXMOP6knxaf3glf5%2BmGh2%2B02lr4HWw1eby7FTTwN3kMByNVnYkJjMd3I%3D--%2B5Nxbi%2FIKMAx6FDu--DQBgYo3ivJTUzEludoV%2FgA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"47c729729f5e3d6ba9b81df243d04c0e\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#7C956B\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      LL\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "three initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6OTAwMTAxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--a9b39f8749a4f6bdd75d08edf10d2d3df376de77e94a0c46d346405725637bcb/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=Jk0xyGMTGgR8v%2B%2BweQ%2FqryxmoHk62ZHVYKQ4LvWW1ZyXR917z%2FX4I0WL%2FE22Dblc0rNucbiNpWGL7waWuemVBRIvP4VEoot5PSwBzZwmevfuij0nXEGo59LifQtEnFTiQ2Bot4WsR32AHU79nt7E9LharLguL6ofrf8f0Y0O8oxj3Vqr2M4Z1WUAtwd7NPkVZDNIux7Tv0FhJOqk92w%2Fjbmm%2Fc7lT%2BJUDJzUi3zoxP4EdpFNKX%2FKn6bwM7q8pDgFlqEra7j8QdscnYVM57yWwdVjOmM5teSoPGS7czIonQ%2Bw078xauF75BXRYMJiZtQ%3D--YGIjkbLeGkdDkuAw--DSlz%2Fa%2FXoR1k5RavDOnmvg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"f5588760ce75a4dceaf917c36ca7c7ef\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#ED3F1C\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      textLength=\"85%\" lengthAdjust=\"spacingAndGlyphs\"\n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      MJW\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials Ruby's \\w skips",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6OTAwMTAyLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--2824c8809b8baf7f22d32058479d29b561a12ec181962cc7b0ad43337fbd1c5e/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=yQtmcFKI%2Bwnm84SDqLEAXE0sA9DC%2B4NdlsttGvGSN5PJbk7dINzhnaixgNyPpsrLEpc9XfSY57IoRvPfZYss3krvr24RGK%2F%2Fa0331DSH1%2FP7qHd9%2F2AroWtVHa0KKR4l%2BvX8NidohsEgvibu0ELUqQDlHwy0IMmrze5H1Yf9syVqLHNhYm0%2F%2BkTWuykSRIXuKz4HrvvtFEvZCUej3cPj6i1BGbhtGh6JWjKwMPYKB20BA2ByhDbpHHyzPbtYk7wgK%2BcXQmzlKrLypHIKvZIZz7C6qnVeMoWSymeT5WpmpIEtKf6pR8yGPpuct%2BQetRo%3D--L42s9F66dBvQB%2Fjn--Bj0HTA8NeGU%2Bkodr9PgLGw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"ad7bcb85d05dff9766d9b8ce5913d599\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#BFA07A\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      Z\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials from punctuation",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6OTAwMTAzLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--ec7a659d1624a58a2fdb8aa69b09c1e33afc605b8fe2856cd9d2e0cd26987f86/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=qY8BK3%2Bn6%2BpjGKvdDK0bzz14Ow8%2FSrLQBd%2FoyDCDedHDP9mM7nAxk4%2B3%2FXBX16k%2By43Yj8VZPnKZgDTKJASRaCzDL3EiVH8MYBaSTGYg9jNKrduhF1jnuFDuInmD85eY1REb1eC6yBNFhP5nKxFXJJygGqynD7BHBA6h67qmgt1Dp3Iy9qMi4WCjauuU9i0qwWtOix45JR7uB2t2wNgvitENmjqcJiHWeLZPFElbzjoLPJv%2BARMNQ561GHytD%2FQaz7w4kvirFV978iX0Zgke6bzxV2LKUir6kTioLYryzwVXIDhswu8Sm26i3dyYbSM%3D--clX7SNXG%2Bp%2BypBtn--iiAFVZQK3ob7VR0owCXbIQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"3fd72720478a0a3f40282c965ab62e4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#698F9C\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      textLength=\"85%\" lengthAdjust=\"spacingAndGlyphs\"\n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      OBS\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, cached",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+          "If-None-Match": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=P6tO0T8P0I3IKikwp2y3FoCtYiXPeMuFTObA4rbcUXMim6Z3qjUhRoIAd25ovmVdd6jIqEy2agvC1KhNblfj7Jgo83qYH53KVjjMW1TGhBEEYyfko6D2L1m2kWeEMQ8QPq%2B3j4DfxAfKpEW%2FR9b0upsNTbpBNULUifVwCkvv0J1RUR2bZp%2F7WTTI%2BSLKVLhg2piDmqibjp06RdeukaDRyoQxpzlHRoABTsC7oHpt9TvJkog11egz7iuSjaEjQhChLTVLu38KS6xSxGhWpJ4ZbyJe89wQNRg1WqO7DqcW6Pd8jlgjOzat05VNhoqR4Hc%3D--appAuao6nVoKlbQd--3pOLP%2Br7Bw2klOmnV4zxeg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, cached etag of another user",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzEyMDY0NTQ4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--24266f3c12491a2bac3805904b69ddeab0735455b7506b41b2cafe75aa085301/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+          "If-None-Match": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=PGcvlx8A4shJRchEoIImjbWKuincKPTH5rVQEFEw%2BV3d5Jw1fylrTg%2FZ7ciqaIP3XuqOdw0lNY%2BYyf0bJIJ68vmJVpeF02OQMYt3KBsUv4rI586%2BUxzwf6KZfHFrfMcT1OhXk2I5qg44nHDIV%2BDYvVUuTw9CzOo9zV6VXGnbKS4ZuCU74n%2Bb0Ksej8VbDecshF7jqM9fM8RIKjNNQb%2B%2FbxfGOdyEon4mk2H9Z902E2IPcfxT1vK6Ccc3beLfV4KxWjsZAQZb7LgZias3PvTRcTZslEB%2BOClmX0PGkc9o6zt6%2B2xQ6PvMhrexZ4xz4nk%3D--HxB7Ub3LRMnvIpje--2lsG6oY2toIGkm7VQcnfzQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"5719cacd7d66e9148f1f78ab48aa3ca5\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#AD1D1D\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      K\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, SVG accepted",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/svg+xml"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "vary": "Accept",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=4qe30Jhiyih1PpCvGL1zOAhtARUfil2oHZUG2lEgoS5KAaLZzhhnDnf7xQ5XCi4iFiby5Pfezbw1kL6xiGyGQISm%2B2BSn4NbWGi7fNgNoncscl7n19iPkMdadtoDXm1uCwhxfXTr%2Foy3ne6rr59mobNkgr63DuwzM5%2B7vyOvPbof13zotqfxSCgMV2aeuZ9xasUSIpbKkFg9ltPmhGvBvBVflx45OLjrgDVHJ6FgdpLwK9P3HmHEz%2FRUIjpJ966wUUNao2L1cnS%2FfniGTK3G98M0EiF4DU38ebalAa4Q%2FQ%2BDLxddQpWPafn2%2Bo14W0U%3D--XlwvRo2VEJkyq6vC--y5hAgusTtOqt6kTuGunocg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"04d9bef0d34acdbaa21f666a275df659\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, SVG accepted and cached",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/svg+xml",
+          "If-None-Match": "W/\"04d9bef0d34acdbaa21f666a275df659\""
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=xlfczm5tin81ct8kJEkMCs%2Bg%2BqLBMeN2011OcEbINlm%2FNTB9gEsSSskjQmGE6Iilz1im%2F0WR8lqSXdT2LaK2LZSNDQ5uTDAcPnDBIgfRp0%2BU1x74WDx3gokBDEpMph68PPZZJex8RCTLMwch%2FZVg1OZrW4Tk5khbyZH9NdjVmakHA%2BHY5ZTcPYA%2BCBs3fXkgxht%2BGkiCVyiojSuGjwxXaoGpsf%2FTCSkawco6Ash%2BLe9%2Bm5iuGpsN%2FeZrlW%2ByYzotz7b4W73HxIyBNcaYAReO27HYsdJ9vI4Mij3TDYRwGpzgDW7hSlD9ed5NtAsSbkA%3D--GJIVAbXkcB3We8j3--Ww6Yq4ZJd5WM6sqZwvEzyw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"04d9bef0d34acdbaa21f666a275df659\""
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, anything accepted",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "*/*"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "vary": "Accept",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=r6S%2Bqa%2F5NAU4nMw8WT5uoLRRbl55UP7uEpKFeU7CzuDE%2BGhAslqXgAyPLJY34xmQKVMZL4I1HeWABv7Lf7oRCVHl6ASctZCAed3qpmVkv6yG1y9i%2FQmNG7S7z7rU16HbMQtf45XE1AMBAAatJnzcxuvOJqpAGUyn2INQxghlq3dmos0kpo3ptJ7taVzuuwraZ0k%2FqMFf56noANcCIIpkIBW6tV0orM23xEb39lsnKhNvXb8xVJ82ww%2BpJtctLqRTGYhWO9JIGtOcT7dhocAkTYyaU0jAW2o8F92dYtA804qi%2B4ZwPzB3ydcJv%2BHc5Gg%3D--h5sj3VZH2TsP1Wr5--HHD0a4l7x2gu6eNuLUHC4Q%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"04d9bef0d34acdbaa21f666a275df659\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, JSON accepted",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "application/json"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "vary": "Accept",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=RekdPY6HhX%2Bni3kQ%2FvzWLge1N%2FA%2BEXHDTP%2FR8u7VxWH0193FeW8wX8mkeuS2VXBRimabSRvQJ%2BfoviVxhf9ezrmnCspNEXK58GkhRGiMCnspT4NAIbgM0POjDn8fPgMVg%2FGQX6dIP5KsN7HBju0b0794Jsy%2BwnYgVZ53ku1DBymwk31YTomOFY7Q1YnU3G2YW5hMQpHLu9FnFEDL%2BY0ITu3knredve0phXWW%2B0HAD64W7acnTIXSBWCCL4jJKE2OEFj5LMy7L5CZA%2FRVgS0zYRBqIdJf1Crqlibh9C9dlZSoOuqU3zP8tH0PXq6Gmhs%3D--JjPJTDGTAG2P9uqG--acnHxRQ9eLIuVGyJ2Za0%2Fg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, HTML accepted",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/html"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "vary": "Accept",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=o4zumLPurXnn9F6CeiimkMuzPu7eTzvpZkFjIWTjdWGDbX0e%2F4FxX%2FIHv4pSKYg08IYVQUe%2Bx0UVpE3Rd5BFZnNQN%2BSIy0It0lcPz5sD%2FSFGaC9cSyKzaAUXX%2FlmX%2FEbMqYHhp8J6hhCNCI7t5VL%2FHRFRk4tokXcM%2FaA%2F%2FNHjcC%2BjwKZ6JA5%2FLWcKTstdNOgNI7njXn1f5cVkqq4kNzQ2ijM2ESjMsb8vxp2xoOvoul7XMTdEco7BM4MnFZqcxAebH105HVwv%2BkzHX3GFEaXCJ%2FOXnhH49T8haKgMegHnmktOSzfOcewnuLiIVNOask%3D--LbpYEuvyosR%2FT1WX--7DXMGOMKbiuDoVRhbZSL%2Bw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, no Accept",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=UxX10cKA5TquEal63QFQweMfR8bFMtTPjPBrr%2BVKnzJjfao2PIIwgyuoj49l3MVhxPtFpgg9NkJ1hUvb2tdY7XfPTfl0m6qGkA4V0EUUcwVxNkU86z2Qo3QipNiOMQ5q1jxt8stweyC0QSq5EJ4sfS2bCMSiJ8ka%2Fg%2FlCpI6rF4m3gwEqofXXk4ahvQIW0O38ZS0o5WoSUW3FRiUOIbXEZic1lYsgn33FHtjZeGVasFsltRrgA%2F3OFD4ZKIH5eifiYoY1px7Ng8UHETG%2BvtnDnEzo5CrOMNLyG%2BLcYWMz%2Bd4BVD7IzvjP0ft0o7joZ8%3D--6usGfToxPDBDfRvW--R7kAOoJAtesVAAqukSWYeA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, .svg",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar.svg",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=09LZhezF1JkXuU8rpKa%2FENwJmgFSjnEYg%2FXWy%2Fq0mYAz8eDDqhUBuey6JGq7t0392M2mqbDao1nb6tqrXQn1jx%2BT8oWwfLMI7P0dIrdWgbXZaSPRCOncqXGf9qMIVtoAgTchhg4VwoD%2BSMSFCT4AFssKLwtC79T%2FXbIOEDfNFEG7eb%2BjtEr4QhaT6EVUPYFZq3vGOuy51F7TyeuYoZ0qQQl7yP7m5x4UoLGuXsrqj8gqb9e1GzTsC9Q3KjcUpQjDnggtAqmioG9MJgMNNyS4VLFHbJ8DyT%2F673Q5g1xfP5surP0FQnySW60Eaojr960%3D--Itb2bRQkbWsKiCUE--Os4gQ40lnM20yML2bqeQSQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"04d9bef0d34acdbaa21f666a275df659\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, .png",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar.png",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=GRat6D4Bxbbkk8C4RE78GBYfXZ835d%2FLyWbkmYFxWkNvp1AbHLb3%2FWeGNTu53LszSti%2BfhTj6xTBNHJD9W0SQ1zLKWoTfsBXoROGM9VDzUoY91Op7uuk5TdlTADdj68rh%2FAYct%2BjQ%2B5xp3TQD87wzhfWNEIdrTqvBzLAt8jc5h3QIiYWT9RDvsCYBqLkiOBdOISAy40R6hwlVRkTtPNtNGPgwO2jrzPqLt0oDxEAJdevEqpbokx%2BnG6y9a89VQ%2FNzG4DcPByFLx4HuTZGgd6Ga%2BGtJ3LZEORKYHrv3VdNbbtWlDQuruQDmifgC6buXE%3D--oXx2RuXN1gcvPZ4d--ltrPfQt9ji215A9cnKpoJA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials with a version",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar?v=20260102160000",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=e0T0FP0j4u9X5ARoQ7vxddBs7E8M23yXkTKgh%2BSHrc70iKdBNSeJOQYMo7e2rX1pTv2oZV5Z9czfiWKZYxrGXkcCy3uWJDK5l6KjMoDaHVJCcIkgk4Dcfx7QqWI%2Fd3kvHFqHHIEYbJmP7QP7EKdU6w%2BPENzugCKhAI0V6phbG6VrxZA3Lv23gJMR2azPj%2BnqezyC4MROtggfUyjzxXI4RrwVIMlgjY%2B41pATc3oULjGrGbSJwKwshgJPbfhXqz2eWUx4RKJRZvp8kWcjPDDYU0MN8No%2BAfJ4UXJnqlYy8bpfs5T0VrGr9d6th3Voyv4%3D--%2BRgI5JllOiWA9RXN--tdHYANfiSFR1D4PobOL5oA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#736356\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      D\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "initials, HEAD",
+      "request": {
+        "method": "HEAD",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=knO2qyNWXxo1wS839savmuXeq5rs7Qiuiyo%2BzFcSNRMg%2BiZBLjBDLL7PUN8RmX%2FesztAxicrTCYHuwSzsWN8iSij40AzOvH7yNwnMzSA%2B5yxbyS6DwYqS6iWjrn0T%2BSfLMyscPgMsEXd1xp6nMQA%2F5YeFkze8ZppWV7Iov%2BU25XLR00uP6iWCAT58aFqv%2BoIVLb9S6GkMvT1xslRfuXfRf%2BjJuNeUvtlS%2FQuaXHt8W8YsOfba9Q2mqa5Xmt%2B78rJKfTIPr4Ak6Amb2p%2FrlgluZUS5XD5xop0ZhWOdcqRGvLE1uWVLBaszivHL42LymI%3D--XNiZI8mGX9j3o5K8--XvjvwyoSk7laXjFsBZ1Hww%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"6bd452b9114127dff5c3f46f079f7a4a\""
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "Bender's avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6Mzk0OTU5ODU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--48059d515a972512c695caed73bb6d52d0b1a84609515f2e0de0748414b0da37/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=SPcmekBUSoCfevyDPP9thofZoF4KWpsFqSnbaVJbpHTLfG1NrouF%2BmfDf1VPvNv5apa85Lrnfz4%2F0A0mfj5DxHIJL%2BL2sUvgpB5b8NXceCImwjMpN4SSSY92w8CgApDYIja4RS0DY1mkfDsaM24%2F%2FxCTNFYv9RJ6pxw8%2BfG4O6pyKmnCRqi9AqhxFQrXwFS7Z1d6gjxFEyzj4JL0vukt%2FY7dLEgGAWVB1J46KZSeJ4glo0nm0hGBUYCJFNhftp5GD6zq1mbSVmWY0BwyrODKchPtTP3BzHSjBScX73%2BjJiPNdJrgQBWjgQ7mDn3kheo%3D--FrdERnsF6bGYEI4L--%2BIM8chXyIZPuPTu16cdWMw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"56f043ea45edac5ae5e7b12cbd956786\"",
+          "content-disposition": "inline; filename=\"default-bot-avatar.svg\"; filename*=UTF-8''default-bot-avatar.svg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": "<svg enable-background=\"new 0 0 18 18\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m0 0h18v18h-18z\" fill=\"#fff\"/><path d=\"m0 0h18v18h-18z\" fill-opacity=\".33\"/><g fill-opacity=\".5\"><path d=\"m14.9 15.2-3.3-.6s0-.9 0-1.1-.8-.1-.8-.1v-.3c.1 0 .2-.1.2-.1s.1-.1.2-.2h.6v.3l.4-.2v-1.1l-.4-.4.5-.1.2-1.1h.3l.2-1.8-.3-.2.1-.2s.1-.9-.5-2.3c-.7-1.7-3.1-2.5-3.1-2.5h-.4c-.4.1-2.4 1-3.1 2.5-.6 1.3-.4 2.2-.4 2.2l.1.2-.4.3.3 1.9h.3l.2 1.1.5.1-.4.4v1.1l.4.2v-.3h.6c0 .1 0 .1.1.2 0 0 .1.1.2.1v.3s-.8-.1-.8.1v1.1l-3.3.6s-.9 1-.8 2.8h13.5c0-1.9-.9-2.9-.9-2.9zm-7.1-5.5c-.5 0-.8-.4-.8-.8-.1-.5.3-.9.8-.9s.8.4.8.8c0 .5-.4.9-.8.9zm1.8 2.2h-1.2v-.4h1.1zm.6-2.2c-.5 0-.8-.4-.8-.8 0-.5.4-.9.8-.9.5 0 .8.4.8.8.1.5-.3.9-.8.9z\"/><path d=\"m7.8 8.6c-.1 0-.2.1-.2.2s.1.2.2.2c.1.1.2 0 .2-.2 0-.1-.1-.2-.2-.2z\"/><path d=\"m10.2 8.6c-.1 0-.2.1-.2.2s.1.2.2.2.2-.1.2-.2c.1-.1 0-.2-.2-.2z\"/></g></svg>",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a deactivated bot's avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU3LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--792a149f8be64eb3192bc6ba4142ec628fe2ba262604da261e8e33d867bdcf31/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=jrba8kLjvHURoz4ZP%2FSG6ABm3BAG36g%2BAzsAGFTC6wH8Atrd8QmvOa9iizTs%2B8b9m5RBul5JySiLmOiq0Frwq1peRD8jGR2VA9DpQEoMm%2FUXJ0nqWJ1PKp0gIU8qui5L8sI0HzQkoYQto6lVelSODcexo0Voj%2Bhfe46aY6uZayKPD%2B%2FtKPJrsjmg6K31xh4tRlPbCWQMDaXrU84uFznR8QN3O49WlYBlvPyWWq%2FuEProDJdY1odLY9Cp06uyGsNccl2e9xH88sbaDCEwvLWYQwsyYnksXjDvgglV9T9GwUzGnrvAHFJk0W5EtiUAm%2FM%3D--ADfGDgU%2FznGx5Cbd--lXuDr1bnfMfwdjbsMABMxQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"8f1421da0b79962bc011183fb5775aad\"",
+          "content-disposition": "inline; filename=\"default-bot-avatar.svg\"; filename*=UTF-8''default-bot-avatar.svg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": "<svg enable-background=\"new 0 0 18 18\" viewBox=\"0 0 18 18\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m0 0h18v18h-18z\" fill=\"#fff\"/><path d=\"m0 0h18v18h-18z\" fill-opacity=\".33\"/><g fill-opacity=\".5\"><path d=\"m14.9 15.2-3.3-.6s0-.9 0-1.1-.8-.1-.8-.1v-.3c.1 0 .2-.1.2-.1s.1-.1.2-.2h.6v.3l.4-.2v-1.1l-.4-.4.5-.1.2-1.1h.3l.2-1.8-.3-.2.1-.2s.1-.9-.5-2.3c-.7-1.7-3.1-2.5-3.1-2.5h-.4c-.4.1-2.4 1-3.1 2.5-.6 1.3-.4 2.2-.4 2.2l.1.2-.4.3.3 1.9h.3l.2 1.1.5.1-.4.4v1.1l.4.2v-.3h.6c0 .1 0 .1.1.2 0 0 .1.1.2.1v.3s-.8-.1-.8.1v1.1l-3.3.6s-.9 1-.8 2.8h13.5c0-1.9-.9-2.9-.9-2.9zm-7.1-5.5c-.5 0-.8-.4-.8-.8-.1-.5.3-.9.8-.9s.8.4.8.8c0 .5-.4.9-.8.9zm1.8 2.2h-1.2v-.4h1.1zm.6-2.2c-.5 0-.8-.4-.8-.8 0-.5.4-.9.8-.9.5 0 .8.4.8.8.1.5-.3.9-.8.9z\"/><path d=\"m7.8 8.6c-.1 0-.2.1-.2.2s.1.2.2.2c.1.1.2 0 .2-.2 0-.1-.1-.2-.2-.2z\"/><path d=\"m10.2 8.6c-.1 0-.2.1-.2.2s.1.2.2.2.2-.1.2-.2c.1-.1 0-.2-.2-.2z\"/></g></svg>",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "bot avatar, cached",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6Mzk0OTU5ODU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--48059d515a972512c695caed73bb6d52d0b1a84609515f2e0de0748414b0da37/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+          "If-None-Match": "W/\"56f043ea45edac5ae5e7b12cbd956786\""
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=Cnod465ITPH2ylaXKIIwMJEqxNAzI4b8AuHxnw%2Bu9vnrXcim7nlydQf83pSG%2B99LyMilfqzZ3gbr%2FTd0a%2BqwxIecgn4Psdl6wyNNzL8yDcevmlQi%2Fn8N%2FhUdRYyJ6ALQkXSvIsEgpcDTsIwM66N4FMExMdHPR6xfdS1FxbrnkcEhTnSFj58jMZk2oXHEGQKfXXH9qHmt%2Fv2ZWsykV4gBagYbtYpphUAbTq3sUjjvMTlFtpix7ZT2pHXqkmbm7sk%2Bn%2B2eByTZm9vvi2oHxFVTzZxlRcPv2T0IkzTNUNs46MDToPUPQGw%2FYnYvhjuSahM%3D--hoTvqJtlPA5z4GCR--eA%2FmuIaHbWoS0SB0UKxduw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"56f043ea45edac5ae5e7b12cbd956786\""
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "Jason's avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=78iIlOG2oJSAcwEF0P5%2Bp8VLuoQSwpIliYCuui32b6C5Vzo2AoepilUcqZ6c3tnKYaJtAo9zWEVSMpSTKHU4LH8Ba60kavbcsSChZpIRZ6FQ4W32f8%2BlqKNDH%2Bn5CVWVUNM%2F7FWtVt2JtPIsFEWl%2B%2BjF3%2FfWW%2BH1mjYw%2FHEPxEerRiCaWEN7HV1He1oKyh3fnSaM2dKFsoFZKxC0NQVKb4jL8y1bPoyQvFMhDxE0VCRzsobFXFGVU3rKugpPW%2BB3b4Ai64rmWTcfjlBEfKhx2YR5ipConwH8vtNjeQ03lYfRbksSYp15S1dChbYyNro%3D--xrP0H46fMB6MZiGZ--rk2SUuWXeX1pOjcIssmqtA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a8565eaf5bbc1ba87057ffc990e3f157\"",
+          "content-disposition": "inline; filename=\"5nlq52kvmcweobxncp0zy1zvu9bg\"; filename*=UTF-8''5nlq52kvmcweobxncp0zy1zvu9bg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {}
+    },
+    {
+      "name": "Deploy Bot's avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU2LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3082ce6e219f07d789fa73ff1dbcb901211ea80c27c9b679e277ca21bd416ce4/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=3AGvDd3X7CC2jZVi24L7TV0pUJLEyJs7dwTQWtXPNrLucgSk1%2FWfDJfd%2FPXwzqPzXTlvnYQhF5YX5u2FdZ5ziQJ96ubYu%2F9tJG3pezvCzy6uVtqndQWBtBPk81ZgC9NbJVA5mwV2y%2ByTuzQpu%2BVzJDtr88DMVjsr2gRXKEWn7z7OYrcxSdtxdP2XbL%2BTZvdS2zHUg0sG2%2FNdR9nA3VbTvPwzC%2BFaIjsnU3Teb7dDUDR7mdgiPwLHZCQZQo1OcZU1erbl%2BF8t81QYURoJHFo0is3Ng9tmY8jv9BCCeNXJgtfK08R1uea7%2BwaOR%2BH8s7Q%3D--ZybWnynkyjSDXUZX--KGyje4AKvJf0q0J7JHFoVA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"3ff049ebf689441959f42ef64c7a68fa\"",
+          "content-disposition": "inline; filename=\"6btcnksw2px5m61m8ttuft8qq5sg\"; filename*=UTF-8''6btcnksw2px5m61m8ttuft8qq5sg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {}
+    },
+    {
+      "name": "Jason's own avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=rm4HoReOnpV8Y0jlxW5JoM3JHr81fSRqJ4jX5Kkzo5hMk1Wui02M3ezU2QZlFtP4kjXTJBg2uTvmD1iNrryBPASAuCBHEiJ6X4VBrVP3jmCHPm101HlmApjemq%2FNmmfHojZd9kEzNQpfLVRDgwKTRtMgIOiLwhM2TZ75rgUObPbPxlAOpG2HN93djGhrDUDRQcJ5pB2jUYDgnZWRCis8nWx%2B%2BXTNpLjF9QI1NshbNGILkV7%2F5PntPFProbfA3wYeoFGj8KnHualaokVvPlUz7XnjQUrS%2FEnqkwFo9BKgFGkEn0Gfmq5DXXKZaZdEF0c%3D--pGjQV8s4s7tJQqEp--cHr0xbtk7ZVbf3fI2FWWSg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a8565eaf5bbc1ba87057ffc990e3f157\"",
+          "content-disposition": "inline; filename=\"5nlq52kvmcweobxncp0zy1zvu9bg\"; filename*=UTF-8''5nlq52kvmcweobxncp0zy1zvu9bg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {}
+    },
+    {
+      "name": "uploaded avatar, cached",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+          "If-None-Match": "W/\"a8565eaf5bbc1ba87057ffc990e3f157\""
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 304,
+        "headers": {
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=UXLHU0fEGr%2FHKIakVx6%2BU%2FQYdzAlhQkWZ%2FEo8i5mZ1YNmX4l1BF1%2BeBvppzRIFL61fSuIeaE90ha6%2FbiiIphgPVC29vYYVpDt%2BMzC%2Fakqr%2BCCp5rzshRO9M%2BguRCA9uLHMsBhdN%2FakVeRyJ%2BL8411%2FniPNeKmrVJ50im5DQudHvIsQbeSyOZSZXtM0rfX07HVmrNPdvKOo9GMwDWo1HrI80FG%2Bo3yrxSrTJbvXQIJWGWgjQs1PFQ%2BXRzsw9FAA3g32whhXRmCLzuIRxgNSuO8ygFLmYVdpK55A%2BPR33TNvOX9Zgu8bSvxEHpFRB5iNw%3D--%2FiULIb1uUZWRtwjt--DaTdKyiOi8jSIcJL5jGh3g%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a8565eaf5bbc1ba87057ffc990e3f157\""
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "uploaded avatar, SVG accepted",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/svg+xml"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=NWlCh9d%2Bb8gjd57gVz5FiL%2F1h%2BWOi4ZVrVs%2BWz%2FxxDnWXAEvD%2BNaKkNWKG7oQbaruYaEYnoqnkBNWWHBngKvoTfYF5TbJ8zfzDy5pMh9NioUIc52gWKCbLxRWqlKoFajfiAGDL8%2BspChBUdyDCApVw2xGmP9qbYQB5quQiS60OaaFiNMKm1XqSc4iZyVWsKON5dbm0wATbTRHTMHb4sGetIdglDz5ynU3GtGcMbDL13e6HatMcRCBL6K4rX4P4vuCYiJ8kcfM7ILLJmXnYvCJDWquy0hasniTd11hstq5ZfUkRQEpNA41t%2FG78FbqkQ%3D--UGSHPLsojEqOnNOg--J1gLmSxB55lUci36k%2B1dWQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a0eab39abba52aa6f852cb93e1244bd7\"",
+          "content-disposition": "inline; filename=\"5nlq52kvmcweobxncp0zy1zvu9bg\"; filename*=UTF-8''5nlq52kvmcweobxncp0zy1zvu9bg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {}
+    },
+    {
+      "name": "a token that isn't one",
+      "request": {
+        "method": "GET",
+        "path": "/users/not-a-valid-token/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=fXtvilcwhg5dgRu6RNqON9bhk99%2FhGqOfgGu2p%2FykPVDeqSDGfue77G5ko4yKSoimnFDw4YPHfqgzo4maVbQt%2B0Qr7c0UamFIotU9eqm9OVNbne%2Bfb2lH9sBtSvCMsP0ShIslCcTntWmzkuzRKzI0n0Ghz1%2BYSlIq3sL8%2BfYjT16j6TmXwSW0u5fE6eO0lU9NUZmGTRokgCIOsWKwtZyiTVDIC1SY%2BXtS7uAPzhvQj3MCxn7S7u0pkS4EgohlVWlP4%2FNuSB28CUiVlcnPj3EGxh%2FURQzb%2BC%2FpUMNcov6kGpoZ8Gc3ssRTcb8cmzhIR8%3D--1QkkbXcus2EsboY9--JNkbQm%2B%2Bd0oFO3PGzVtI1A%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a user id for a token",
+      "request": {
+        "method": "GET",
+        "path": "/users/127326141/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=QqFPBg20cJkVwd6N2hxhUV5bfsP1DJNkN42nXzApj6bALingKNf%2F%2Bgyi0RLdUvybr77qDiACSkLAaUXrISAl%2FkS1lGMHKae0WGQxlC5QYjlxNLcNwjn04Sg%2BWPL9hATMczN%2FDd8RjUyQpD17WhUijGWOlJtmd%2BZE1m%2BVlyBPmNJIDNEBYAXVQXCfwqDxY7wyPpB8d50tSzfV%2B7YXpQufCbZHcnVP%2BgS6QIydUj7wKiy8LrSvSzhrH%2BbJMZarwwSn0tgk%2FHSi9DALe3apWowhvZceWZPFNlCn5WGQMw%2BWaZ43Pr524%2BV1R2NRRSujGqs%3D--b%2BQAlBZkFuYx2zUk--HW6dEZopfITTqxNj%2BRQ8dg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a tampered token",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQx--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=McGcwPL5soJ%2BXyhPa1BapaT5blVD5PPLz6unyTV2%2FG5xEQCYcbKEhOE79rM4R%2FnoP7ExlkbtgInGGysNqGQxWTu4JamUBgl0t5I4gp%2BQc56K7%2BCTZJz3NRS7EBOyph6jlkVX3ik5Lzc2ilY%2FwkFPR%2BfGIo9GBsvJXFPBDivR2up4AeG3NJzdZEEBmaS9%2FnhNhyRDVNX1MSLP%2FnnGYRdEkPTADoUns18aN01IgMzSY%2FExhivMgdNvD95wYEiub0R4ajrIrkNmg2qkGq%2FxLjKEg4diWPoGLuGezHC2nmhG%2Fc3qIny%2BzGsGXhqaWAkMD2Y%3D--4w0qQJMJHqH0om9v--Qwsr%2B8Vm4pB%2FfOCFr1Qf1Q%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a token for nobody",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoidXNlci9hdmF0YXIifX0--023b16424a00933214f527b2dbc6cb54ffa966a5b4fa3375c0678891f4e168e1/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8"
+        },
+        "body": "<!DOCTYPE html>\n<html>\n\n<head>\n  <title>We can’t find that (404)</title>\n  <meta charset=\"UTF-8\">\n  <style>\n    *,\n    *::before,\n    *::after {\n      box-sizing: border-box;\n    }\n\n    body {\n      --lch-black: 0% 0 0;\n      --lch-gray: 75% 0.005 96;\n      --lch-white: 100% 0 0;\n\n      --color-border: oklch(var(--lch-gray));\n      --color-bg: oklch(var(--lch-white));\n      --color-text: oklch(var(--lch-black));\n\n      --btn-size: 2.65em;\n\n      background-color: var(--color-bg);\n      block-size: 100dvh;\n      color: var(--color-text);\n      display: grid;\n      margin: 0;\n      padding: 0;\n      place-items: center;\n      font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n\n      @media (prefers-color-scheme: dark) {\n        --lch-black: 100% 0 0;\n        --lch-gray: 44.95% 0 0;\n        --lch-white: 0% 0 0;\n      }\n    }\n\n    svg {\n      fill: var(--color-text);\n\n      @media (prefers-color-scheme: dark) {\n        fill: var(--color-text);\n      }\n    }\n\n    .error {\n      align-items: center;\n      display: flex;\n      flex-direction: column;\n      gap: 2em;\n      justify-content: start;\n      margin-block-end: 15dvh;\n    }\n\n    .error__img {\n      aspect-ratio: 1;\n      background-color: var(--color-text);\n      block-size: auto;\n      border-radius: 50%;\n      display: grid;\n      place-items: center;\n      inline-size: 30dvh;\n\n      svg {\n        fill: var(--color-bg);\n        grid-area: 1/1;\n        max-inline-size: 66%;\n\n        @media (prefers-color-scheme: dark) {\n          fill: var(--color-bg);\n        }\n      }\n    }\n\n    .buttons {\n      display: flex;\n      flex-direction: row;\n      gap: 1em;\n      justify-content: center;\n    }\n\n    .btn {\n      align-items: center;\n      aspect-ratio: 1;\n      background-color: var(--color-bg);\n      block-size: var(--btn-size);\n      border-radius: 50%;\n      border: 1px solid var(--color-border);\n      color: var(--color-text);\n      cursor: pointer;\n      display: grid;\n      font-weight: 600;\n      font-size: 1.4rem;\n      gap: 0.5em;\n      inline-size: var(--btn-size);\n      justify-content: center;\n      padding: 0;\n      place-items: center;\n      text-align: center;\n\n      svg {\n        -webkit-touch-callout: none;\n        grid-area: 1/1;\n        inline-size: 1.3em;\n        max-inline-size: unset;\n        user-select: none;\n      }\n    }\n\n    .for-screen-reader {\n      clip-path: inset(50%);\n      height: 1px;\n      width: 1px;\n      overflow: hidden;\n      position: absolute;\n      white-space: nowrap;\n    }\n\n  </style>\n</head>\n\n<body>\n  <div class=\"error\">\n    <div class=\"error__img\">\n      <svg enable-background=\"new 0 0 24 24\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Not found\">\n        <path\n          d=\"m24 4.8c0-1.7-1.3-3-3-3h-18c-1.7 0-3 1.3-3 3v14.5c0 1.7 1.3 3 3 3h18c1.7 0 3-1.3 3-3zm-14.3-1c.3-.5.8-.6 1.3-.4.2.1.3.2.4.4.1.1.1.3.2.5 0 .2-.1.4-.2.5-.3.5-.8.6-1.3.4-.2-.2-.4-.3-.4-.4-.1-.2-.2-.4-.2-.6 0-.1.1-.3.2-.4zm-3.5 0c.2-.5.8-.7 1.3-.4.2.1.3.2.4.4 0 .1.1.3.1.4 0 .2-.1.4-.2.5-.2.5-.8.7-1.3.4-.1-.1-.3-.2-.3-.3-.1-.2-.2-.4-.2-.6 0-.1.1-.3.2-.4zm-3.6 0c.2-.4.5-.6.9-.6s.7.2.8.5c.1.1.1.3.2.5 0 .2-.1.4-.2.5-.2.5-.8.7-1.3.4-.1-.1-.3-.2-.3-.3-.1-.2-.2-.4-.2-.6 0-.1 0-.2.1-.4zm19.4 15.4c0 .6-.4 1-1 1h-18c-.6 0-1-.4-1-1v-12.2c0-.1.1-.2.2-.2h19.5c.2 0 .3.1.3.2z\" />\n        <path\n          d=\"m16.4 10.9c.2-.2.2-.6 0-.9l-.9-.9c-.2-.2-.6-.2-.9 0l-2.6 2.6h-.1l-2.5-2.6c-.2-.2-.6-.2-.9 0l-.9.9c-.2.2-.2.6 0 .9l2.6 2.6v.1l-2.6 2.6c-.2.2-.2.6 0 .9l.9.9c.2.2.6.2.9 0l2.6-2.6h.1l2.6 2.6c.2.2.6.2.9 0l.9-.9c.2-.2.2-.6 0-.9l-2.6-2.6v-.1z\" />\n      </svg>\n    </div>\n    <a href=\"/\" class=\"btn\" autofocus=\"true\">\n      <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n        <path\n          d=\"m21.864 9.5h-11.607a.25.25 0 0 1 -.174-.43l3.864-3.721a2.609 2.609 0 0 0 -.075-3.682 2.612 2.612 0 0 0 -3.68-.077l-9.792 9.699a1 1 0 0 0 -.008 1.411l9.625 9.724a2.66 2.66 0 0 0 3.755-3.757l-3.729-3.733a.25.25 0 0 1 .177-.427h11.673c1.556 0 2-1.675 2-2.51a2.28 2.28 0 0 0 -2.029-2.497z\" />\n      </svg>\n      <span class=\"for-screen-reader\">Go back</span>\n    </a>\n  </div>\n</body>\n\n</html>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "a token for the user's page",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyIn19--40250936cc7415975a1e836209b2b3ce729005a025810e508e55c3645f6616b1/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=eHBWZdSHU9pfCwUeuCal9j7np1djVlG71uroLcv4aN5peYtPuxYal4CpNzLxvqQ7%2BM6G69xK3pxgNWzsXQGejM8D6iBw%2BxoY18ndeLw8TJEo%2FrsMhmTV5G3VL8k08H1C4wx6CUREd62Fkx3XsmF4hMNg87FiwXKNx07g36nQRV7PfLC7rNBA0eEbf1qDpnA%2FrK0VydlRi%2BUK5hvvHHkOv4MGiXm9pzlYgVr2aNp4Cyi%2BYMnMoiBpyapDkMiwqP12%2FpOAxDti3Qjw0lO2%2BjLzDPPIARIAzSFgEwLBqmxrvqZScyOMzDTZIcEmwztbI%2Bk%3D--QOpRsnxg4dknYsck--TFAGgq8bykqGBwzTWrtUfg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "signed out",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+        "headers": {
+          "Cookie": "_campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/session/new",
+          "cache-control": "no-cache",
+          "set-cookie": "_campfire_session=icQGhUI8e3QkQRfQbGIoPujUH8FJApeLNAipLoDgbph06ye1EExnh3EjP6eOmOWmVGVzNQePrK%2F0zrZL6V0U2pw02gSxc8KjE3ipcL9LM5Ik%2Fl4HdkpAIwfZoVV%2FPrRhg%2B7En8Ft4VPX5ADvnciuSqToOpfPHIaZRW0M6SfL71c3KKHmrLcYWNCD8Z%2B7Ba5LGQjWpt4rWmrhpn8o%2F7Xp%2BpFtqp4RiZR0PC%2Bam0Pq%2F7yFLub%2BZlt1E%2Fuy3p9tBGVHm7k%2BM9%2FN%2BwGIXYDASfyJQ9%2FifW0ddhGo2lPJfeD0yOaBK9yo2TJM1EH7uTO4lkfzIt50WyLtrqsKFrk9L858s7eNEIt78HK2hEMuwL3IQJ648W3JaS%2BmtHj%2BjBqwmvR5q%2BZMPEQmsxkDIT1k5GbtDv1bOcaOa2PYONh71FldanTtHfuaVbbnllUJ9dOO8QlRYFA%2BfDN8%2FltLmH5FzPwslgXTarhK22AWTPmzHlVOHje4mjMWzygYUKaw6tmXkOd8zOIIDJaKOqbEFOHx9CM5TaIs5BWF92Ap%2FC0wJdjUXVusx4pBe7hzdr4eiCjUvXkKhjZa36dhe%2FWx1DOWzIwkvD7j9f2Aot%2BmBLyDWJJSCSI4zgSs2oDFtLGy6nFhRAmI0TOkwuXttnja0DGFdcw3aSpVGHo6OpKXFnHf--5m%2Bq9ZggL%2B41Luzx--K6pbmTmc2HOq9gzeE4TxHw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "signed out, uploaded avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "_campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/session/new",
+          "cache-control": "no-cache",
+          "set-cookie": "_campfire_session=kfnEZM48Wed3QoBiHy%2BdCpd9fiPshhuBFKivG4Vy9Pf5rI8SF98bM%2F%2BU%2BaeW%2FTJM5efaAXeFfiH6cFUEQ2%2BDObZE9Bl%2Fsx0mDck041Pp8%2FaIO33v1DHWGGK7g9qiHEG3AMjvDkNIlG81CREuwellzgvtcPC6on8G42HUciVCzLfptt50VkpDeTK3Qyh7B4fMzym%2B2OWcAx07ff0mF%2F%2FqQBAyI9z1Q38Dbfu0iiXrPW3umK513uGgQByGLDm8%2BUDHwK6tJWcwz1u8CAFt2LUCunYYjYqh%2F5PaP0DbvUpS153ujQ5CmBLYdJWPdx7u0JaL2%2BR2X1NqzXLtvvXHtABC52%2FlGq%2BaTz9j6E6m8jGgArGq3d03lr%2BBIq7GfXSdWBMJINFVc6VBKc0QBsHCLhZl9rs1GXf0J6%2FzEiEYOB9PRDXFmH734FPtGBIv65Ol6ynLOmAeVtwVJ3aUP34ftOY7VVi6IhJeNkY3RC8cza1rTNQOU0oanxWOxxRIACYHJtsXCSKMwk9wRiDs6jwi4uFIkLrzMPDYMdnSZu1cL9d1qa2KAbVt1TTK98izWmbnxpmRHuRNGIINQXwpFxTNi8gVMqHm1vbe4DdTDkCHbvuJ6Qbs5FGBxKr%2FnNgiGIyvu%2BqqtE3sslR3EnTrkcICRf%2Fc0AzNQPdgNM18t4Sp--JVCBR2vQQkYBgDxG--OWBfzk6DGNppwESEXH08JQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "join with an avatar",
+      "request": {
+        "method": "POST",
+        "path": "/join/CRMu-l8Ge-KB9B",
+        "headers": {
+          "Cookie": "_campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "multipart/form-data; boundary=----a06FormBoundary7MA4YWxkTrZu0gW",
+        "body": null,
+        "multipart": {
+          "boundary": "----a06FormBoundary7MA4YWxkTrZu0gW",
+          "parts": [
+            {
+              "name": "authenticity_token",
+              "value": "Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA"
+            },
+            {
+              "name": "user[name]",
+              "value": "Ava Tar"
+            },
+            {
+              "name": "user[email_address]",
+              "value": "ava@37signals.com"
+            },
+            {
+              "name": "user[password]",
+              "value": "secret123456"
+            },
+            {
+              "name": "user[avatar]",
+              "filename": "moon.jpg",
+              "content_type": "image/jpeg",
+              "file": "reference/test/fixtures/files/moon.jpg"
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6Iklta3hURE5CZUVKTFJXdERZM2s0ZFhKdVRIRlZkVXhwZENJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1a298d76d8289a0690cc75ef7749fe791996d8c8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=uNhesfCS%2BQiF5sHoy%2FPS5WAhWguAS5lgHIsOHzu49VFtpqX%2B5fOx8u1cqfTDJsJSjXdw9sbFtPK2vN%2BEPrJYG0KYSYjz9gL8CWrko2uQp0r87FdxO%2FO10ete3LvzrvFiepHuk%2BYvC30YC0mp7J6vI4%2BNKEI15wefgghfA2wNMR5GbFpJPPpUxiSAFYJux9355JmBlijy0k3kAcOlr06UrLqh6%2B9cuLdM%2BZRAmfCEhrP8oXm6G8xvJuHqGHBprs2WXOytnju0VrIMubYq6oQOmfJvmtsj0ZW6CcjBgMfRtYKMbxSI2wstg951ygyJNBQ%3D--TQSzgXwTHPQYscQX--w%2BuJY4sP3Ogk9qRwcj4E3A%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "x-frame-options": "SAMEORIGIN"
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {
+        "users": [
+          {
+            "id": 773523959,
+            "row": {
+              "id": 773523959,
+              "bio": null,
+              "bot_token": null,
+              "created_at": "2026-03-02 16:00:00",
+              "email_address": "ava@37signals.com",
+              "name": "Ava Tar",
+              "password_digest": "$2a$12$pK3A/sCVRNJsOQTef026xu1jPB9gO9BdZEyKfbC9g274BIf0REjJ2",
+              "role": 0,
+              "status": 0,
+              "updated_at": "2026-03-02 16:00:00"
+            }
+          }
+        ],
+        "sessions": [
+          {
+            "id": 481019662,
+            "row": {
+              "id": 481019662,
+              "created_at": "2026-03-02 16:00:00",
+              "ip_address": "198.51.100.7",
+              "last_active_at": "2026-03-02 16:00:00",
+              "token": "i1L3AxBKEkCcy8urnLqUuLit",
+              "updated_at": "2026-03-02 16:00:00",
+              "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+              "user_id": 773523959
+            }
+          }
+        ],
+        "active_storage_blobs": [
+          {
+            "id": 15,
+            "row": {
+              "id": 15,
+              "byte_size": 12794,
+              "checksum": "j65kKv2abaidraFRfGAQlg==",
+              "content_type": "image/jpeg",
+              "created_at": "2026-03-02 16:00:00",
+              "filename": "moon.jpg",
+              "key": "fhs4fd02688cln0on2p1dh01n1oc",
+              "metadata": "{\"identified\":true}",
+              "service_name": "local"
+            }
+          }
+        ],
+        "active_storage_attachments": [
+          {
+            "id": 15,
+            "row": {
+              "id": 15,
+              "blob_id": 15,
+              "created_at": "2026-03-02 16:00:00",
+              "name": "avatar",
+              "record_id": 773523959,
+              "record_type": "User"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "a new avatar",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--bfc4a6c2a481da5b9f90c055f4f25b8d3d73eebed9366f430c052b05a010cc46/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=urP3tjtB4sOe9DOu0TLxoGfCZ%2FkuR6CkcX4KeJwk2r8pM6DfuWjmV0YdUzjOC%2Bj%2BexQ11eThb%2FwNJZ2HHonopt8mipcvXL7QoWwEsKTQE9IW2BSTQ3BEtLcQ5uU%2FfP9Bct7LwZc98ONpxg%2FlWLUO%2FrMHnmsszBaxrcz0vL8Cng41dktTkvzBnMLeN2P4yDnNy0lnY%2FiI44Rz7fMyQj5kRgJgIpd%2BUHIng3ngqRWFx2Gi6hspek0TXlCG5vAQyaTYuKVXZNWDoF5k17xR29DG0l5eyQHyS92AKEMRmKs0bB%2Fii75pGO2WOPlvcGGJi%2BY%3D--0oJVSmxGlhnrb7pN--0KmMfss7N2%2BbSHjrKVCr%2Fw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"651aef33a8b368b295e07991054c8db3\"",
+          "content-disposition": "inline; filename=\"vz83kvvw35dd0exobm3yxe004tnq\"; filename*=UTF-8''vz83kvvw35dd0exobm3yxe004tnq",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {
+        "active_storage_blobs": [
+          {
+            "id": 16,
+            "row": {
+              "id": 16,
+              "byte_size": 3364,
+              "checksum": "T3zvDOR6l1l+tR5Khy9rgA==",
+              "content_type": "image/webp",
+              "created_at": "2026-03-02 16:00:00",
+              "filename": "moon.webp",
+              "key": "vz83kvvw35dd0exobm3yxe004tnq",
+              "metadata": "{\"identified\":true}",
+              "service_name": "local"
+            }
+          }
+        ],
+        "active_storage_attachments": [
+          {
+            "id": 16,
+            "row": {
+              "id": 16,
+              "blob_id": 16,
+              "created_at": "2026-03-02 16:00:00",
+              "name": "image",
+              "record_id": 7,
+              "record_type": "ActiveStorage::VariantRecord"
+            }
+          }
+        ],
+        "active_storage_variant_records": [
+          {
+            "id": 7,
+            "row": {
+              "id": 7,
+              "blob_id": 15,
+              "variation_digest": "6gwfjNKv9eUy9jNUtEZvQFLU0hQ="
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "a new avatar, again",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--bfc4a6c2a481da5b9f90c055f4f25b8d3d73eebed9366f430c052b05a010cc46/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=tDGHgudtdXRP4ZY0gObLFycf3T%2BvylnmCtMfFqGTiHXiMiPCwNkuSdCfsxBl3SxMFrCkl5TMOUxeoG0glro6yHNml%2B4j%2BqSChsxVchQRnGrpuaHc3l%2Fbpe9Zr0vffUnbBHKBCggXzSk41SnDRSB24Inmsbup08%2BM4umL8TFqRNyOizk1pbaiAqd1d7AAqzccvjzgb5XEH%2FVPYay72mnyuSfQ1T7MuRf78AsyzqC14Zxr4Uyg1Vk0m7wqv2Z8HpP60k95C5V2E4uh0Qu9t9vvZqGoQGqLCJUD4TMD%2BF1vPICbbSwxHTn%2F9xeFCV1d49M%3D--2rbT0%2BrDzam3L8AN--%2FB8%2B8RNUyo060zW%2FGUhEAQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"651aef33a8b368b295e07991054c8db3\"",
+          "content-disposition": "inline; filename=\"vz83kvvw35dd0exobm3yxe004tnq\"; filename*=UTF-8''vz83kvvw35dd0exobm3yxe004tnq",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {}
+    },
+    {
+      "name": "join with an avatar that can't be resized",
+      "request": {
+        "method": "POST",
+        "path": "/join/CRMu-l8Ge-KB9B",
+        "headers": {
+          "Cookie": "_campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "multipart/form-data; boundary=----a06FormBoundary7MA4YWxkTrZu0gW",
+        "body": null,
+        "multipart": {
+          "boundary": "----a06FormBoundary7MA4YWxkTrZu0gW",
+          "parts": [
+            {
+              "name": "authenticity_token",
+              "value": "Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA"
+            },
+            {
+              "name": "user[name]",
+              "value": "Pix El"
+            },
+            {
+              "name": "user[email_address]",
+              "value": "pixel@37signals.com"
+            },
+            {
+              "name": "user[password]",
+              "value": "secret123456"
+            },
+            {
+              "name": "user[avatar]",
+              "filename": "pixel.bmp",
+              "content_type": "image/bmp",
+              "file": "reference/test/fixtures/files/pixel.bmp"
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IkltcHpaMjVxVXpWeGFVeGFOakozY2pKMGJYQjRVbUp0TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--470b2a8b0afbc70ccfbd09a417af9278009f663b; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=7SkRyDUkha5vHDgwdbYTyWJZmXFSO0NI2Tc3MCllQBAPHS4LQGnaXwjlLJfooYQESKHrbmz1uvDpW5uibQdomqISFIWmUtXHAjDQupKhghfw%2BPqHfh2P8ZwHNjsLbNK3k6qFVZsP747svOyaQje5lvmCHp9HdrFTklkfVTj05%2Fw9T1hxrDGfVJ0xQQeE6%2BCxtw2RD8FtbHdJE0sl9dkMk3R6TC72yUaWtunYYsmE2RCF6b9L35bDb50dhWg6Wi3MuH7K1iDFXbKszOkuv3HB5GAFK5JTADQEOXn0hATzcY0YAlATtB%2BhaWBrEcWISYo%3D--qWXOEnBY3F6%2FeRiz--DZ%2Beanxi6gHbki0kvIHgFA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "x-frame-options": "SAMEORIGIN"
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {
+        "users": [
+          {
+            "id": 773523960,
+            "row": {
+              "id": 773523960,
+              "bio": null,
+              "bot_token": null,
+              "created_at": "2026-03-02 16:00:00",
+              "email_address": "pixel@37signals.com",
+              "name": "Pix El",
+              "password_digest": "$2a$12$Td4oW51BN9ekR.I7fg2dKO.3y5DNSC.pRj0UBR8sPmYKHU3MD5.iG",
+              "role": 0,
+              "status": 0,
+              "updated_at": "2026-03-02 16:00:00"
+            }
+          }
+        ],
+        "sessions": [
+          {
+            "id": 481019663,
+            "row": {
+              "id": 481019663,
+              "created_at": "2026-03-02 16:00:00",
+              "ip_address": "198.51.100.7",
+              "last_active_at": "2026-03-02 16:00:00",
+              "token": "jsgnjS5qiLZ62wr2tmpxRbm1",
+              "updated_at": "2026-03-02 16:00:00",
+              "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+              "user_id": 773523960
+            }
+          }
+        ],
+        "active_storage_blobs": [
+          {
+            "id": 17,
+            "row": {
+              "id": 17,
+              "byte_size": 58,
+              "checksum": "E2dhqa6f8Un1oZCuUR/YMw==",
+              "content_type": "image/bmp",
+              "created_at": "2026-03-02 16:00:00",
+              "filename": "pixel.bmp",
+              "key": "roo7pq3gx5p2nzyw43ny140z4pna",
+              "metadata": "{\"identified\":true}",
+              "service_name": "local"
+            }
+          }
+        ],
+        "active_storage_attachments": [
+          {
+            "id": 17,
+            "row": {
+              "id": 17,
+              "blob_id": 17,
+              "created_at": "2026-03-02 16:00:00",
+              "name": "avatar",
+              "record_id": 773523960,
+              "record_type": "User"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "initials when the avatar can't be resized",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTYwLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--049d7953494e1c68ff09a02f94226a8e23680dfa564e6206882f38d3b7f073a0/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrUmhkbWxrVTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1c6572bea90980cdb9cf56f7985ec3c92afd46cf; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=cVyUPvPa%2BO2k0cK54eLjpabuuS4jvT%2BVLhGR5FEmXAVcndpD1cN436PI8Ur4i%2F0%2FWI3N4kyjY8HVUko%2F82lt9J77v7ev2hBUpFqSpG3GKobCaP3N3EIA%2B4yICcASUuQn7syO%2Faz4IspHuWycxfkPua23bFwXtFDe9fnvDwRK0DDCh3Wt9jsXhbTM6b8RQvS9CWyo1gLekk6hLkpfa6sIZmYcl7fkW4rh%2F8gTSNoqpYjdCNvnkZdejF%2FnYDYH8T1TwuWWWUZ%2BYe4LJKbWkt0gFj3tC9Nmy1xzsvOkPsc8lqAEhi%2FA%2BYbUX5%2BmRmKVPlA%3D--Z0EvoDI3HFIa%2FNvs--unFdqRTsPRhKTiLPXBLNiw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"8d2e600a3977a83a98b67040257ab46d\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#BFA07A\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      PE\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "remove, no CSRF token",
+      "request": {
+        "method": "DELETE",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "application/x-www-form-urlencoded",
+        "body": "x=y",
+        "multipart": null
+      },
+      "response": {
+        "status": 422,
+        "headers": {
+          "content-type": "text/html; charset=UTF-8"
+        },
+        "body": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>That didn’t work (422)</title>\n    <meta charset=\"UTF-8\">\n    <style>\n      *,\n      *::before,\n      *::after {\n        box-sizing: border-box;\n      }\n\n      body {\n        --lch-black: 0% 0 0;\n        --lch-gray: 75% 0.005 96;\n        --lch-white: 100% 0 0;\n\n        --color-border: oklch(var(--lch-gray));\n        --color-bg: oklch(var(--lch-white));\n        --color-text: oklch(var(--lch-black));\n\n        --btn-size: 2.65em;\n\n        background-color: var(--color-bg);\n        block-size: 100dvh;\n        color: var(--color-text);\n        display: grid;\n        margin: 0;\n        padding: 0;\n        place-items: center;\n        font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n\n        @media (prefers-color-scheme: dark) {\n          --lch-black: 100% 0 0;\n          --lch-gray: 44.95% 0 0;\n          --lch-white: 0% 0 0;\n        }\n      }\n\n      svg {\n        fill: var(--color-text);\n\n        @media (prefers-color-scheme: dark) {\n          fill: var(--color-text);\n        }\n      }\n\n      .error {\n        align-items: center;\n        display: flex;\n        flex-direction: column;\n        gap: 2em;\n        justify-content: start;\n        margin-block-end: 15dvh;\n      }\n\n      .error__img {\n        aspect-ratio: 1;\n        background-color: var(--color-text);\n        block-size: auto;\n        border-radius: 50%;\n        display: grid;\n        place-items: center;\n        inline-size: 30dvh;\n\n        svg {\n          fill: var(--color-bg);\n          grid-area: 1/1;\n          max-inline-size: 66%;\n\n          @media (prefers-color-scheme: dark) {\n            fill: var(--color-bg);\n          }\n        }\n      }\n\n      .buttons {\n        display: flex;\n        flex-direction: row;\n        gap: 1em;\n        justify-content: center;\n      }\n\n      .btn {\n        align-items: center;\n        aspect-ratio: 1;\n        background-color: var(--color-bg);\n        block-size: var(--btn-size);\n        border-radius: 50%;\n        border: 1px solid var(--color-border);\n        color: var(--color-text);\n        cursor: pointer;\n        display: grid;\n        font-weight: 600;\n        font-size: 1.4rem;\n        gap: 0.5em;\n        inline-size: var(--btn-size);\n        justify-content: center;\n        padding: 0;\n        place-items: center;\n        text-align: center;\n\n        svg {\n          -webkit-touch-callout: none;\n          grid-area: 1/1;\n          inline-size: 1.3em;\n          max-inline-size: unset;\n          user-select: none;\n        }\n      }\n\n      .for-screen-reader {\n        clip-path: inset(50%);\n        height: 1px;\n        width: 1px;\n        overflow: hidden;\n        position: absolute;\n        white-space: nowrap;\n      }\n    </style>\n  </head>\n\n  <body>\n    <div class=\"error\">\n      <div class=\"error__img\">\n        <svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"That didn’t work\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\"\n          y=\"0px\" viewBox=\"0 0 24 24\" style=\"enable-background:new 0 0 24 24;\" xml:space=\"preserve\">\n          <g>\n            <circle cx=\"11.5\" cy=\"11.5\" r=\"1.8\" />\n            <path d=\"M12.2,18.7c-0.2,0-0.5,0-0.7,0c-4,0-7.2-3.2-7.2-7.2c0-4,3.2-7.2,7.2-7.2c4,0,7.2,3.2,7.2,7.2c0,1-0.2,1.9-0.5,2.7l0.3-0.3\n        \t\tc0-1.3,0.8-2.5,2-3c-0.3-4.7-4.2-8.4-9-8.4c-5,0-9,4-9,9c0,4.6,3.5,8.5,8,9L12.2,18.7z\" />\n            <path d=\"M11.5,6.1c-3,0-5.4,2.4-5.4,5.4s2.4,5.4,5.4,5.4s5.4-2.4,5.4-5.4S14.5,6.1,11.5,6.1z M11.5,15.1c-2,0-3.6-1.6-3.6-3.6\n        \t\ts1.6-3.6,3.6-3.6s3.6,1.6,3.6,3.6S13.5,15.1,11.5,15.1z\" />\n          </g>\n          <path d=\"M15,24l4-4v-1.5l2.6-2.6C21.7,16,21.9,16,22,16c1.1,0,2-0.9,2-2s-0.9-2-2-2c-1.1,0-2,0.9-2,2c0,0.1,0,0.3,0.1,0.4L17.5,17\n        \tH16l-4,4h3V24\" />\n        </svg>\n      </div>\n      <div class=\"buttons\">\n        <a href=\"/\" class=\"btn\" autofocus=\"true\">\n          <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path\n              d=\"m21.864 9.5h-11.607a.25.25 0 0 1 -.174-.43l3.864-3.721a2.609 2.609 0 0 0 -.075-3.682 2.612 2.612 0 0 0 -3.68-.077l-9.792 9.699a1 1 0 0 0 -.008 1.411l9.625 9.724a2.66 2.66 0 0 0 3.755-3.757l-3.729-3.733a.25.25 0 0 1 .177-.427h11.673c1.556 0 2-1.675 2-2.51a2.28 2.28 0 0 0 -2.029-2.497z\" />\n          </svg>\n          <span class=\"for-screen-reader\">Go back</span>\n        </a>\n        <a href=\"#\" class=\"btn\" autofocus=\"true\" onclick=\"window.location.reload()\">\n          <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path\n              d=\"m6.177 6.167a8.233 8.233 0 0 1 8.351-2.027 1.249 1.249 0 1 0 .76-2.38 10.751 10.751 0 0 0 -13.242 14.273.248.248 0 0 1 -.094.3l-1.4.922a1 1 0 0 0 .348 1.816l4.407.908a.99.99 0 0 0 .2.021 1 1 0 0 0 .979-.8l.914-4.406a1 1 0 0 0 -1.529-1.037l-1.339.881a.25.25 0 0 1 -.376-.133 8.269 8.269 0 0 1 2.021-8.338z\" />\n            <path\n              d=\"m23.883 5.832a1 1 0 0 0 -.763-.807l-4.388-1a1 1 0 0 0 -1.2.752l-1 4.387a1 1 0 0 0 1.507 1.069l1.443-.906a.247.247 0 0 1 .218-.027.252.252 0 0 1 .153.159 8.249 8.249 0 0 1 -10.285 10.424 1.25 1.25 0 1 0 -.737 2.388 10.75 10.75 0 0 0 13.154-14.271.248.248 0 0 1 .1-.3l1.346-.846a1 1 0 0 0 .452-1.022z\" />\n          </svg>\n          <span class=\"for-screen-reader\">Try again</span>\n        </a>\n      </div>\n    </div>\n  </body>\n</html>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "remove, signed out",
+      "request": {
+        "method": "DELETE",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "_campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "application/x-www-form-urlencoded",
+        "body": "authenticity_token=Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA",
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/session/new",
+          "cache-control": "no-cache",
+          "set-cookie": "_campfire_session=DevuBxtkNvTg5UDLxWI6xem8jFLK4u8H1QoI%2B5qfHoaas0NJkU%2FBY9VbIb8GV7GplRheEDp5RbOEu7i1m0a6gZMdIXjPtXv7BuPZmnNMWQGOqCtvmSo8TYHp173z04U%2BL0UXgLhdtV0HJBlKkomtLWp3l8RZg0cxBupsYiVtYC2KwdFScXhaRtcsKdvnSL%2F%2FAe17qtoKSwe9w%2BpqSM%2FBc8fnbRSHJPZSBDGjLOBXuObBIKLXmxLOwRRfRpRnylsSA5U71%2BpjDAmvHOjwhb4iB8KVSwX7cpuI6%2BZNZvDt%2B6cyphaVIOsFa%2F0okvvdnG4IdsG3BNX33gmcS1YihhasouyuRnX4UZQw%2FGOqNyrnAJZ7Qw4tUCe3obFe9uMcfSfPOta1EWm7HOKvfyCWd34PEOvf1Jrvu3mii5E0owOkMC3HNXF9auVQwYGRLHpQhd9vAio1W%2BCxFDdwWjfu63tnm0tlIwNVSWhUZ19tn%2BDDKkBpBdl2RI75TYjDBya4jqBBiBZpLGh%2B7c6ZojtJGgaXZ1yW0YqFY8aZ2n6y%2B8okUvu9BdHwrZgvkzsMAEDmkihUryvTU5AzQEmM7%2FLMdDV%2FmNj%2FOe9NAxcAwk2Or4KBl6Y1%2FDF105bVnqtcTx4OrLfBMzNbPj56JcMR2oY9mBvkBIGYp7NETlnJL9lK--aWqpHm2lzphAq0yB--HRYfOJvgYCBJ20W4v%2BAdbw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "remove another's avatar",
+      "request": {
+        "method": "DELETE",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "application/x-www-form-urlencoded",
+        "body": "authenticity_token=Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA",
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/users/me/profile",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=uLVgNziqGcQbCMo1E0mGXwfim%2FhWVJnBgoxbG%2FOjQl7vN9ONnWy9vbIWscd43GJaJpcmH2OCv6228vNrekMhZ2%2FaNnQIJMNz58ka%2FbHBfFsjdYrNbGtwhh%2FWcNlDBe8Eyo4Kh86QV%2FrlGO3ZR1rdp2nD6LY3rrt3%2FidCQfvCDefv8d3YcmrW0H8T75pu3Wut7SEHpl03%2FKc7staKa8oBE6V7e1Pr1dFWzBt%2FrI4C1vZAzUwFGrKlkNQWgErVxWDHtMQPPwwOIBOBvR6U5rXopfcglPy4kpUS7vuG6jypKSRZBRoWI5MrQ0UNo%2FtQ9lg%3D--gJDXD%2FMy1UKCx4J2--rC0d7sTtMQM59UimTKE5jw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "remove, with a bad token",
+      "request": {
+        "method": "DELETE",
+        "path": "/users/not-a-valid-token/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "application/x-www-form-urlencoded",
+        "body": "authenticity_token=Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA",
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/users/me/profile",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=oWoboIIDWgvRPypAS3FgfGy9OasY2B30Hds0iGX0J3f22wOTuM8Eeqo1bXm2DAISPp%2BKMIp5CEqn51eXoj08%2BTJidH6JNKg%2Fu4xormDZCtJg4D%2FsYvnQ9vgqqLQ8JSTEFcAmV%2BhwsXumVq6zzeOwSInsinxY%2FMqBHldcdh1CeNT13yJpanXtdM78bMx8PYO4ABtGusdfCpt8RJzz7bHRN9qd2bCUp%2B%2Bs%2B%2FKOargFITDinRY%2FPEvGbFh658e2sMOQHwg7VjIBYr2MgYPW8%2B14WbLt82MRux%2BCeyTUB99%2BaS1SFq4RHNnrxwT0Vqh36Os%3D--xKY9oGS2AXxC%2BhvL--u2pYq2z3nl%2F37qloA%2FsBGg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "Jason's avatar, still there",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/webp",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=coXe8%2B4J6QC8hpDFizEB2wtmmkCe74r8Zee%2Bje%2BtgaMqOsx4TpvrFO9J36URBC2lA9IfX44CKDSBxnX9HvUajREPt52So07sAO%2B4nRwZUqVbieabew7%2FJZ9NNGJiOwvdW5aGyzfZZAdy8eNnehxYGZhPL4Vc%2FEtSkx8Onuj033uJClTFa3wdFJ7TVp48DYJvrwEfqDpGGVN1AOIvcOwaHTCEQ68cPxp6EVEMSATjv49znRNEfBaiuuYaz85W2AT5BFR%2FoR1bztkDPmNsixhGbHAlUzNsXitOVeSC2aASuhNcfrcY7wQLEMKLlapWc3I%3D--arOtEk3jufWyNOMp--07NlO4pVAsXZqrcJeFwWbQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a8565eaf5bbc1ba87057ffc990e3f157\"",
+          "content-disposition": "inline; filename=\"5nlq52kvmcweobxncp0zy1zvu9bg\"; filename*=UTF-8''5nlq52kvmcweobxncp0zy1zvu9bg",
+          "content-transfer-encoding": "binary"
+        },
+        "body": null,
+        "body_sha256": "03511ce37fe4c163e6af2b64238248fbfc7461241cb125c73f708ea1f4d170de",
+        "body_size": 3364
+      },
+      "changes": {}
+    },
+    {
+      "name": "remove own avatar",
+      "request": {
+        "method": "DELETE",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "application/x-www-form-urlencoded",
+        "body": "authenticity_token=Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA",
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/users/me/profile",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=YfX3%2FT%2BoDS%2BYt%2Bn5T4OGM5r%2Bst81vDNoNxbEkLEZaITosPbHqJtq2usWYtcfEQNa2fiCIek8tP8dgxHoyTouqd4MC3Vld4WldhgOhCtsP2a19McFqO45n2aHflBE1m9BEouRv4j9dK%2Bu3Ny5P8qO68aSguIT6FhcRnEeAYmSwIqhiBuerlMw3IDw%2FHfr%2BZQho4k1smyYtdrXmQl3eg6E%2BF57aZAE2EAs1dBcVEODmfQC7DTN6VQtUX1ll3RVnGOCpy3bSg21zudyWDkfahbCvKgV%2BNyJ%2BAAPX03PGilsNAG1RCYf6TYt7IJ5FnXgaRc%3D--gkP7n8FX8OEy7837--KNquTsF9pYCCf4KI0u8onA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {
+        "users": [
+          {
+            "id": 149087659,
+            "row": {
+              "id": 149087659,
+              "bio": null,
+              "bot_token": null,
+              "created_at": "2026-01-02 17:00:00",
+              "email_address": "jason@37signals.com",
+              "name": "Jason",
+              "password_digest": "$2a$12$Gz1V3e1PgXe5HFJ5lLlH8eP5BlvdNLdGGdQyacJSn7rvquw4Lt0ue",
+              "role": 1,
+              "status": 0,
+              "updated_at": "2026-03-02 16:00:00"
+            }
+          }
+        ],
+        "active_storage_attachments": [
+          {
+            "id": 1,
+            "row": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "Jason's initials",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=o31FRKDgUPh1eauZxqo%2BM79GJ3%2FpTpzKr2clGC3x9oPeDHkdp3Z4ktYOpCVLdF%2Bu%2Fiu0A99nSCrUOXOf0RNztM5BoP2vbrkFNy%2FALXv8zMZibYtpnHVJqn1NZBAnX8vWgGCGD%2BCKpcJMZ3ZBTbbAk%2BWNOgc%2FnKQqIV1WYLOup8ojeS0cYZH3Dgq%2FeDpufWveiW3jOGq4CKNkyvDLJGxC08hePPJrMjA4JEV5ODjX2MMOHQbfBja5RVs2NLU%2BoRtMMVVQYJKzTKnKVaC8KCAunxSK2%2BSTMk4hP0RnpgB5uGHCq5NR9Y2BOamVJaADUCo%3D--NKdNTNM2Kj0d7NGI--6dBT41eGsYaKQrhjLoXhSw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a3c619d425fa3ada71a748e3d7334ae6\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#BF7C2A\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      J\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "Jason's initials, old etag",
+      "request": {
+        "method": "GET",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5",
+          "If-None-Match": "W/\"a8565eaf5bbc1ba87057ffc990e3f157\""
+        },
+        "content_type": null,
+        "body": null,
+        "multipart": null
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "image/svg+xml; charset=utf-8",
+          "cache-control": "max-age=1800, public, stale-while-revalidate=604800",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TWlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f46c7f845dac2012bd22db11c7ecb4b1b89b9a4d; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=r%2ByirLrXyGblqXIZU1jCKA7GIjEhlQYqaXTRkaKMo%2B4dZX5E4wWds7hdhI5I%2BMAd5UE%2BbXc5RxX6ksrgf0%2BbvsRuEGwLsgbMAsSs4p32BLw8TNvLz%2BsjJf3LI9tbkkMHrIhOm%2F1Uhy2g8kGcJaCNcc429T47kLjvwbGBHFYJre9qz8ygNHAFD75qQAx84G5BFJMgrzakiCGZmB9DF4f%2BdM%2BLtHTPlBTezJOMTgtDxV2%2B4luTrw1VT6QupB6bs8zYu25MDdGQpWGUeXnI8134OqIT9Dvpefri%2Ff60uwqKtgEongMK2wt94VrpWlFCxUY%3D--kilLGeSlD4%2BUi8fy--aAzufzLOCPFNNn%2FAnI9hsQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ],
+          "etag": "W/\"a3c619d425fa3ada71a748e3d7334ae6\""
+        },
+        "body": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n  viewBox=\"0 0 512 512\" class=\"avatar\" aria-hidden=\"true\">\n  <defs>\n    <clipPath id=\"porthole\">\n      <circle cx=\"50%\" cy=\"50%\" r=\"50%\" />\n    </clipPath>\n  </defs>\n\n  <g>\n    <rect width=\"100%\" height=\"100%\" rx=\"50\" fill=\"#BF7C2A\" />\n\n    <text x=\"50%\" y=\"50%\" fill=\"#FFFFFF\"\n      text-anchor=\"middle\" dy=\"0.35em\"\n      \n      font-family=\"-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif\"\n      font-size=\"230\"\n      font-weight=\"800\"\n      letter-spacing=\"-5\">\n      J\n    </text>\n  </g>\n</svg>\n",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    },
+    {
+      "name": "remove own avatar again",
+      "request": {
+        "method": "DELETE",
+        "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+        "headers": {
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; _campfire_session=NfAgxm%2BsZyhPGyH34F3F5r4A%2FQt0HTdRD%2F0zfnPaMWWVclTe%2BpylmT1TPhZm%2BauJeyIcig0NFRm%2BCBy5NLInOWXWaryU72O0%2FBQwYi9Pw0TKy3zBZSswCX89FUT3rVRGWDap9iGiPuvghYZUJrMM3FrrWdbmx95RGxgxc7KI4%2BnT3rcUXkYPrAA30%2FsO5aRFVtPug3f7iWKS%2FsD95u6U%2Bvn3emJ6KSp1uvRSo7IbHvbcYkmsflejEHIjOZrcxZ5Ni8vL945rt%2F1LWjWXtYtIXGUU345ja7gutA%3D%3D--QmAma1gPzCBuLYFf--WLjBzeLKC0gZjmuzLel8qA%3D%3D",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+          "Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"
+        },
+        "content_type": "application/x-www-form-urlencoded",
+        "body": "authenticity_token=Fse6d29MpI0S9nnaKzHdvqH6MdRrRBF4H2gdUxvwzXy64ai4U9Bo6otrIiQ_TQBUvpkSma7XapmpgSR0g_cMqA",
+        "multipart": null
+      },
+      "response": {
+        "status": 302,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "location": "http://campfire.test/users/me/profile",
+          "cache-control": "no-cache",
+          "set-cookie": [
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrcGhjMjl1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3a179ba2647af79c00dd8fb998bfac2a78ed98a8; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
+            "_campfire_session=%2BmDWSDWhi4DWwT41747csmXM1epyvf35HdtcI233MeP0nlN6zdAp093GxaCWrnXnBEquB%2FGpY6qKpyWKz3%2B7TdjkG%2BIiFGP6CxVJkKUo7XNwyI69JmXSBleLhatw4xhZJVO8M3NjCl%2F6qfmoYsb6ZGi5Fk%2FGdYgc5pkSoRTjmAl3am95Z2mW0Qg3wA7eJBSg3%2F5giQSWclJWx665qC6Y0GGqW5N%2BYb9nXdVab0GEaD8cCRoMw1o%2FVleKEuXNjA8aB2iZ4mcNEeJKRW9J2%2B2OlGc8hcy204zGfQ9ZH3GL6JBCQt3KxZ9HUIGGHT8r%2B3k%3D--JaJG%2FQIS%2BwUhH8fJ--p1tT8iDCt1wK7zDMxGhU9w%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          ]
+        },
+        "body": "",
+        "body_sha256": null,
+        "body_size": null
+      },
+      "changes": {}
+    }
+  ]
+}
