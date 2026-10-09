@@ -319,6 +319,18 @@ STATE_COLORS = {
 AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f"}
 
 
+def activity(config, task_id):
+    """What a worker has done so far, read from its worktree; headless CLIs log little until done."""
+    path = worktree_for(config, task_id)
+    if not path.exists():
+        return ""
+    changed = sh("git", "status", "--short", cwd=path, check=False).splitlines()
+    commits = sh("git", "log", "--format=%h %s (%cr)", "origin/main..HEAD", cwd=path, check=False).splitlines()
+    lines = [f"{len(commits)} commits, {len(changed)} uncommitted files"]
+    lines += commits[:3] + [f"  {c}" for c in changed[:5]]
+    return "\n".join(lines)
+
+
 def tail(path, lines=6):
     try:
         text = (ROOT / path).read_text(errors="replace").splitlines()
@@ -364,7 +376,7 @@ def write_dashboard(config, tasks, states, state, done, prs):
         now = (f"<b>{current}</b> {html.escape(tasks[current]['title'])} · since "
                f"{record.get('started', '')[11:16]} · attempt {record.get('attempts')}"
                if current else "idle")
-        log = html.escape(tail(record.get("log"))) if current else ""
+        log = html.escape("\n".join(filter(None, [activity(config, current), tail(record.get("log"))]))) if current else ""
         cards.append(f"""
 <section class="agent" style="border-top:4px solid {AGENT_COLORS.get(agent, '#000')}">
   <h2>{agent}</h2><div class="model">{html.escape(spec['model'])}</div>
