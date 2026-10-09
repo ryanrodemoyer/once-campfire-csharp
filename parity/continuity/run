@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""Cross-server continuity test harness.
+
+Verifies compatibility contracts between Rails (reference) and C# (candidate):
+- Sign in on Rails and continue on C#; sign in on C# and continue on Rails.
+- Render forms on one server, submit to the other (unauthenticated login, authenticated message, profile update).
+- Mint 4h transfer links on one server, redeem and continue on the other.
+- Verify security boundaries (tampered CSRF tokens -> 422, tampered transfer links -> 400).
+
+Usage:
+    parity/continuity/run [REFERENCE_URL] [CANDIDATE_URL] [options]
+    parity/continuity/run --selftest
+    parity/continuity/run --list
+
+Options:
+    --scenario NAME      Run only the named scenario
+    --direction DIR      Direction: both (default), rails-to-csharp, or csharp-to-rails
+    --report FILE        Save results JSON report to FILE
+    --list               List available continuity scenarios
+    --selftest           Run offline mock unit self-tests
+    -h, --help           Show this help message
+
+Exits 0 when all scenarios pass in both directions, 1 on scenario failure, 2 on server error.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import time
+import urllib.parse
+
+sys.dont_write_bytecode = True
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from continuity import Client, ScenarioResult  # noqa: E402
+from scenarios import SCENARIOS  # noqa: E402
+
+
+def check_server(url: str, label: str) -> None:
+    try:
+        c = Client(url)
+        res = c.get("/up")
+        if res.status != 200:
+            raise RuntimeError(f"{label} at {url} returned /up status {res.status}")
+    except Exception as exc:
+        raise SystemExit(f"continuity: {label} at {url} is not responding ({exc})")
+
+
+def run_selftest(out=sys.stdout) -> int:
+    """Run unit self-tests offline."""
+    import unittest
+    suite = unittest.defaultTestLoader.discover(os.path.dirname(os.path.abspath(__file__)), pattern="test_*.py")
+    runner = unittest.TextTestRunner(stream=out, verbosity=2)
+    result = runner.run(suite)
+    return 0 if result.wasSuccessful() else 1
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("reference", nargs="?", default="http://127.0.0.1:3100", help="Reference Rails URL (default: http://127.0.0.1:3100)")
+    parser.add_argument("candidate", nargs="?", default="http://127.0.0.1:3200", help="Candidate C# URL (default: http://127.0.0.1:3200)")
+    parser.add_argument("--scenario", help="Run only the specified scenario")
+    parser.add_argument("--direction", choices=["both", "rails-to-csharp", "csharp-to-rails"], default="both", help="Scenario direction")
+    parser.add_argument("--report", help="Path to write JSON test report")
+    parser.add_argument("--list", action="store_true", help="List scenarios")
+    parser.add_argument("--selftest", action="store_true", help="Run offline self-tests")
+
+    args = parser.parse_args()
+
+    if args.list:
+        print("Available continuity scenarios:")
+        for name, _, desc in SCENARIOS:
+            print(f"  {name:36} {desc}")
+        return 0
+
+    if args.selftest:
+        return run_selftest()
+
+    # Verify both servers are reachable
+    check_server(args.reference, "Reference (Rails)")
+    check_server(args.candidate, "Candidate (C#)")
+
+    active_scenarios = SCENARIOS
+    if args.scenario:
+        active_scenarios = [s for s in SCENARIOS if s[0] == args.scenario]
+        if not active_scenarios:
+            print(f"continuity: unknown scenario {args.scenario!r} (see --list)", file=sys.stderr)
+            return 2
+
+    directions = []
+    if args.direction in ("both", "rails-to-csharp"):
+        directions.append(("rails-to-csharp", args.reference, args.candidate))
+    if args.direction in ("both", "csharp-to-rails"):
+        directions.append(("csharp-to-rails", args.candidate, args.reference))
+
+    results: List[ScenarioResult] = []
+    failed = False
+
+    print(f"Running cross-server continuity checks between {args.reference} and {args.candidate}")
+    print(f"Directions: {args.direction}\n")
+
+    for dir_name, url_a, url_b in directions:
+        label = "Rails -> C#" if dir_name == "rails-to-csharp" else "C# -> Rails"
+        print(f"=== Direction: {label} ({dir_name}) ===")
+        for sc_name, sc_fn, desc in active_scenarios:
+            client_a = Client(url_a, ip="203.0.113.11")
+            client_b = Client(url_b, ip="203.0.113.12")
+            try:
+                res = sc_fn(client_a, client_b, dir_name)
+            except Exception as exc:
+                res = ScenarioResult(sc_name, dir_name, False, f"Unhandled exception: {exc}")
+
+            results.append(res)
+            status_str = "PASS" if res.passed else "FAIL"
+            mark = "✓" if res.passed else "✗"
+            print(f"  [{status_str}] {mark} {sc_name:36} - {res.message}")
+            if not res.passed:
+                failed = True
+        print()
+
+    total = len(results)
+    passed = sum(1 for r in results if r.passed)
+    print(f"Results: {passed}/{total} scenarios passed.")
+
+    if args.report:
+        report_data = {
+            "reference": args.reference,
+            "candidate": args.candidate,
+            "direction": args.direction,
+            "total": total,
+            "passed": passed,
+            "failed": total - passed,
+            "results": [r.to_dict() for r in results],
+        }
+        with open(args.report, "w", encoding="utf-8") as f:
+            json.dump(report_data, f, indent=2)
+        print(f"Report written to {args.report}")
+
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
