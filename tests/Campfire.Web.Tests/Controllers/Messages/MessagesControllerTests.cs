@@ -169,16 +169,34 @@ public sealed partial class MessagesControllerTests : IDisposable
         }
     }
 
+    // A plain file needs no libvips or ffmpeg (reference/app/models/message/attachment.rb: neither
+    // a thumbnail nor a video preview). The image, video and bmp cases are AttachmentsTests.
     [Fact]
-    public async Task A_create_with_an_attachment_waits_for_M10()
+    public async Task Creating_a_message_with_a_plain_file_keeps_the_blob_until_purge()
     {
         var body = "--b\r\nContent-Disposition: form-data; name=\"message[attachment]\"; filename=\"a.txt\"\r\nContent-Type: text/plain\r\n\r\nhi\r\n" +
             "--b\r\nContent-Disposition: form-data; name=\"message[client_message_id]\"\r\n\r\nupload\r\n--b--\r\n";
 
         var response = await messages.SendAsync("POST", $"/rooms/{designersRoom}/messages", messages.SignedIn(davidSession, "*/*"), body, "multipart/form-data; boundary=b");
 
-        Assert.Equal(501, response.Status);
-        Assert.Null(messages.Scalar("SELECT id FROM messages WHERE client_message_id = 'upload'"));
+        Assert.Equal(200, response.Status);
+        var id = (long)messages.Scalar("SELECT id FROM messages WHERE client_message_id = 'upload'")!;
+        Assert.Contains("action=\"append\"", response.Body, StringComparison.Ordinal);
+        Assert.Equal("a.txt text/plain", messages.Scalar(
+            "SELECT b.filename || ' ' || b.content_type FROM active_storage_blobs b " +
+            "JOIN active_storage_attachments a ON a.blob_id = b.id " +
+            $"WHERE a.record_type = 'Message' AND a.name = 'attachment' AND a.record_id = {id}"));
+        Assert.Equal("a.txt", messages.Scalar($"SELECT body FROM message_search_index WHERE rowid = {id}"));
+        Assert.Equal(["Room::PushMessageJob", "ActiveStorage::AnalyzeJob"], messages.Seams.Jobs.Select(job => job.ClassName));
+
+        messages.Seams.Clear();
+        var destroyed = await messages.SendAsync("DELETE", $"/rooms/{designersRoom}/messages/{id}.turbo_stream", messages.SignedIn(davidSession));
+
+        Assert.Equal(200, destroyed.Status);
+        Assert.Equal(0L, messages.Scalar($"SELECT COUNT(*) FROM messages WHERE id = {id}"));
+        Assert.Equal(0L, messages.Scalar($"SELECT COUNT(*) FROM active_storage_attachments WHERE record_type = 'Message' AND record_id = {id}"));
+        Assert.Equal(["ActiveStorage::PurgeJob"], messages.Seams.Jobs.Select(job => job.ClassName));
+        Assert.Equal(1L, messages.Scalar("SELECT COUNT(*) FROM active_storage_blobs WHERE filename = 'a.txt'"));
     }
 
     Task<Response> Post(long room, string form) =>
