@@ -140,6 +140,12 @@ def cooling(record, config):
     return time.time() - log.stat().st_mtime < config.get("retry_after_minutes", 45) * 60
 
 
+def failed_attempts(record):
+    """Attempts that count toward max_attempts: a deliberate handoff to another agent (quota,
+    credits) is recorded in `handoffs` and isn't the task's failure."""
+    return record.get("attempts", 0) - record.get("handoffs", 0)
+
+
 def task_state(task_id, task, done, prs, state, config):
     """One of: merged, running, pr-green, pr-pending, pr-red, conflicted, stuck, cooling, ready,
     waiting."""
@@ -149,7 +155,7 @@ def task_state(task_id, task, done, prs, state, config):
     if alive(record.get("pid")):
         return "running"
     pr = prs.get(branch_for(task))
-    exhausted = record.get("attempts", 0) >= config["max_attempts"]
+    exhausted = failed_attempts(record) >= config["max_attempts"]
     if pr:
         s = "conflicted" if pr.get("mergeable") == "CONFLICTING" else f"pr-{checks_state(pr)}"
         return "stuck" if exhausted and s in ("conflicted", "pr-red") else s
@@ -312,7 +318,7 @@ def tick(config, dispatch=True):
             free = spec.get("slots", 1) - sum(states[t] == "running" for t in spec["queue"])
             # A red or conflicted PR goes back to its own worker before anything new.
             needs_fix = [t for t in spec["queue"] if states[t] in ("pr-red", "conflicted")
-                         and state["tasks"].get(t, {}).get("attempts", 0) < config["max_attempts"]]
+                         and failed_attempts(state["tasks"].get(t, {})) < config["max_attempts"]]
             ready = [t for t in spec["queue"] if states[t] == "ready"]
             for task_id in needs_fix + ready:
                 if free <= 0 or exclusive_running:
