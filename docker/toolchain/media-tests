@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Runs the media golden tests (S03's, tests/Campfire.Storage.Tests/Media/) inside the pinned
+# toolchain image (this directory's Dockerfile), where libvips 8.16.1 and ffmpeg 7.1.5 are the
+# versions the vectors were made with, so the byte comparisons run and pass instead of skipping.
+# The image sets CAMPFIRE_REQUIRE_MEDIA_VECTORS=1, so any other version fails rather than skips.
+#
+#   docker/toolchain/media-tests [amd64|arm64|both] [-- extra dotnet test arguments]
+#
+# Defaults to the host's architecture. `arm64` runs under emulation on an amd64 host, which needs
+# QEMU binfmt first:  docker run --privileged --rm tonistiigi/binfmt --install arm64
+#
+# The repo is bind-mounted read-only and copied into the container, so the host's bin/ and obj/
+# are never touched; NuGet packages are kept in a per-architecture Docker volume.
+set -euo pipefail
+
+cd "$(dirname "$0")/../.."
+
+arch="${1:-}"
+if [ -z "$arch" ]; then
+  arch=$(docker info --format '{{.Architecture}}')
+fi
+shift || true
+if [ "${1:-}" = "--" ]; then
+  shift
+fi
+if [ "$arch" = both ]; then
+  "$0" amd64 "${@}"
+  "$0" arm64 "${@}"
+  exit 0
+fi
+case "$arch" in
+  amd64 | arm64) ;;
+  *)
+    echo "usage: docker/toolchain/media-tests [amd64|arm64|both] [-- extra dotnet test arguments]" >&2
+    exit 64
+    ;;
+esac
+
+image="campfire-csharp-toolchain:$arch"
+
+echo "== Building the toolchain image for $arch"
+docker buildx build --platform "linux/$arch" --tag "$image" --load docker/toolchain
+
+echo "== Running the media golden tests inside it"
+docker run --rm --platform "linux/$arch" \
+  --volume "$PWD:/src:ro" \
+  --volume "campfire-csharp-toolchain-nuget-$arch:/root/.nuget/packages" \
+  "$image" bash -euo pipefail -c '
+    # Copy the repo in (the bind mount is read-only); reference-rust and .git are not needed.
+    mkdir -p /work
+    tar -C /src --exclude=.git --exclude=reference-rust -cf - . | tar -C /work -xf -
+    cd /work
+
+    # ffmpeg video encoding is not byte-identical across architectures (same version,
+    # same input, same flags, different SIMD/float code paths). The image variants are
+    # byte-identical on both amd64 and arm64 (confirmed by MediaGoldenTests.Variant_equals).
+    # For arm64 we exclude the video preview byte comparison, while still running
+    # every other media test (including ffmpeg/ffprobe usage through analysis and
+    # MediaToolTests.A_failing_ffmpeg) to verify the toolchain is correctly installed.
+    filter="FullyQualifiedName~Media"
+    if [ "$(uname -m)" = aarch64 ]; then
+      filter="$filter&FullyQualifiedName!~Preview_image_equals_the_reference"
+      echo "Note: skipping video preview byte comparison (not byte-identical across architectures)"
+    fi
+
+    dotnet test tests/Campfire.Storage.Tests -c Release --nologo --filter "$filter" "$@"
+  ' bash "$@"
