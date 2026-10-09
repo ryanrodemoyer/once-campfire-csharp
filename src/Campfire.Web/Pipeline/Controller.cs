@@ -52,6 +52,14 @@ public abstract partial class Controller
     /// <summary>The time for this request, read once so every write and cookie agrees.</summary>
     public DateTimeOffset Now { get; private set; }
 
+    /// <summary>
+    /// Whether the controller includes <c>ActionController::Live</c> (as
+    /// <c>ActiveStorage::Streaming</c> does), whose <c>Live::Response</c> is built without the
+    /// default headers, defaults a written body's <c>Cache-Control</c> to <c>no-cache</c>, and
+    /// writes the cookies set by commit once more than the cookie middleware does.
+    /// </summary>
+    protected virtual bool IsLive => false;
+
     /// <summary><c>Current</c></summary>
     public Current Current => current ??= new Current(this);
 
