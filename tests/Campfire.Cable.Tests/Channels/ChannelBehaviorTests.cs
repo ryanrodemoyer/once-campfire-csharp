@@ -219,13 +219,18 @@ public class ChannelBehaviorTests
 
         await typist.PerformAsync(typing, new JsonObject { ["action"] = "start" });
         var start = Typing("start", jz);
-        Assert.Equal(Deliver(typing, start), await reader.NextAsync());
-        Assert.Equal(Deliver(typing, start), await typist.NextAsync());
+        // Start both reads concurrently: delivery order between connections is non-deterministic.
+        var readerStart = reader.NextAsync();
+        var typistStart = typist.NextAsync();
+        Assert.Equal(Deliver(typing, start), await readerStart);
+        Assert.Equal(Deliver(typing, start), await typistStart);
 
         await typist.PerformAsync(typing, new JsonObject { ["action"] = "stop" });
         var stop = Typing("stop", jz);
-        Assert.Equal(Deliver(typing, stop), await reader.NextAsync());
-        Assert.Equal(Deliver(typing, stop), await typist.NextAsync());
+        var readerStop = reader.NextAsync();
+        var typistStop = typist.NextAsync();
+        Assert.Equal(Deliver(typing, stop), await readerStop);
+        Assert.Equal(Deliver(typing, stop), await typistStop);
 
         await typist.PerformAsync(typing, new JsonObject { ["action"] = "dance" });
         await reader.AssertSilentAsync();
@@ -253,13 +258,17 @@ public class ChannelBehaviorTests
 
         await typist.PerformAsync(prefixed, new JsonObject { ["action"] = "start" });
         var start = Typing("start", jz);
-        Assert.Equal(Deliver(plain, start), await reader.NextAsync());
-        Assert.Equal(Deliver(prefixed, start), await typist.NextAsync());
+        var readerStart = reader.NextAsync();
+        var typistStart = typist.NextAsync();
+        Assert.Equal(Deliver(plain, start), await readerStart);
+        Assert.Equal(Deliver(prefixed, start), await typistStart);
 
         await reader.PerformAsync(plain, new JsonObject { ["action"] = "stop" });
         var stop = Typing("stop", kevin);
-        Assert.Equal(Deliver(prefixed, stop), await typist.NextAsync());
-        Assert.Equal(Deliver(plain, stop), await reader.NextAsync());
+        var typistStop = typist.NextAsync();
+        var readerStop = reader.NextAsync();
+        Assert.Equal(Deliver(prefixed, stop), await typistStop);
+        Assert.Equal(Deliver(plain, stop), await readerStop);
     }
 
     [Fact]
