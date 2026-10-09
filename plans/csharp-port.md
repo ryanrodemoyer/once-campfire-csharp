@@ -307,14 +307,16 @@ workers, each a different model. The assignments are in [`swarm.yaml`](swarm.yam
 
 | Worker | CLI and model | Queue | Points |
 |---|---|---|---|
-| `claude` | Claude Code, Opus 5.5 (medium; high on R04 and RT04) | R04, RT04, B03, X01 | 9 |
-| `gemini` | Antigravity, Gemini 3.8 Flash (high) | M09, Q06, Q02, Q07, Q05 | 8 |
-| `grok` | Grok CLI, Grok 4.7 (high) | VS01, B06, B02, B04, Q08 | 7 |
+| `claude` | Claude Code, Opus 5.5 (medium; high on R04 and RT04) | R04, RT04 | 4 |
+| `gemini` | Antigravity, Gemini 3.8 Flash (high) | M09, Q06, Q02, Q07, Q05, X01 | 9 |
+| `grok` | Grok CLI, Grok 4.7 (high) | VS01, B06, B02, B03, B04, Q08 | 11 |
 | `glm` | OpenCode, GLM 5.3 (high) | M10, P02, Q04 | 8 |
 | `deepseek` | OpenCode, DeepSeek V4.1 Flash | Q09 | 1 |
 
 Queues are balanced by size (S=1, M=2, L=4 points) and keep each dependency chain with one worker.
-Claude takes the security-critical R04 and RT04; Grok reviews them in Q08.
+Claude takes the security-critical R04 and RT04; Grok reviews them in Q08. B03 and X01 moved
+from Claude to Grok and Gemini to spare Claude's quota; Grok now holds all three exclusive
+benchmark tasks, which run one at a time anyway.
 
 `plans/bin/swarm run` is the orchestrator. Every `poll_seconds` it:
 

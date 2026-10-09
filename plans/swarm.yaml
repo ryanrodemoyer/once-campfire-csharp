@@ -26,14 +26,15 @@ agents:
     # Rich-text sanitizer fuzzing and connection revocation are the two security-critical tasks
     # left; B03 is on the critical path; X01 follows the owner's B05 run.
     slots: 2
-    queue: [R04, RT04, B03, X01]
+    # B03 and X01 moved to grok and gemini to spare Claude's quota.
+    queue: [R04, RT04]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
     command: [agy, -p, "{prompt}", --model, gemini-3.8-flash-high, --dangerously-skip-permissions]
     # The route chain: small features, the coverage gate, then the Playwright and cable gates.
     slots: 2
-    queue: [M09, Q06, Q02, Q07, Q05]
+    queue: [M09, Q06, Q02, Q07, Q05, X01]
 
   grok:
     model: Grok 4.7 (high)
@@ -41,7 +42,7 @@ agents:
               --output-format, plain, -p, "{prompt}"]
     # The benchmark chain, plus the cross-vendor security review of R04 and RT04.
     slots: 2
-    queue: [VS01, B06, B02, B04, Q08]
+    queue: [VS01, B06, B02, B03, B04, Q08]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
