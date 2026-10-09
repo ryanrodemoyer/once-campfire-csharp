@@ -307,15 +307,16 @@ workers, each a different model. The assignments are in [`swarm.yaml`](swarm.yam
 
 | Worker | CLI and model | Queue | Points |
 |---|---|---|---|
-| `claude` | Claude Code, Opus 5.5 (medium; high on R04 and RT04) | RT04 (R04 handed to glm) | 2 |
+| `claude` | Claude Code, Opus 5.5 | RT04 (R04 handed off at 86% quota) | 2 |
 | `gemini` | Antigravity, Gemini 3.8 Flash (high) | M09, Q06, Q02, Q07, Q05, X01 | 9 |
-| `grok` | Grok CLI, Grok 4.7 (high) | VS01, B06, B02, B03, B04, Q08 | 11 |
-| `glm` | OpenCode, GLM 5.3 (high) | R04, M10 | 6 |
-| `deepseek` | OpenCode, DeepSeek V4.1 Flash | Q09 | 1 |
-| `dspro` | OpenCode via OpenRouter, DeepSeek V4 Pro | P02, Q04 | 6 |
+| `grok` | Grok CLI, Grok 4.7 (high) | R04, M10, VS01, B06, B02, B03, B04 | 15 |
+| `glm` | OpenCode, GLM 5.3 (high), Fireworks | none: out of credits, R04 and M10 moved to grok | 0 |
+| `deepseek` | OpenCode, DeepSeek V4.1 Flash, Fireworks | none: out of credits, Q09 moved to dspro | 0 |
+| `dspro` | OpenCode via OpenRouter, DeepSeek V4 Pro | P02, Q09, Q04, Q08 | 9 |
 
 Queues are balanced by size (S=1, M=2, L=4 points) and keep each dependency chain with one worker.
-Claude takes the security-critical R04 and RT04; Grok reviews them in Q08. B03 and X01 moved
+R04 and RT04 are security-critical. Claude wrote RT04 and began R04; GLM and then Grok carried
+R04 on, so DeepSeek (dspro), from a vendor that wrote neither, reviews them in Q08. B03 and X01 moved
 from Claude to Grok and Gemini to spare Claude's quota; Grok now holds all three exclusive
 benchmark tasks, which run one at a time anyway.
 
