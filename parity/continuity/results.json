@@ -1,0 +1,108 @@
+{
+  "reference": "http://127.0.0.1:3100",
+  "candidate": "http://127.0.0.1:3200",
+  "direction": "both",
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "results": [
+    {
+      "name": "session_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Successfully signed in on Server A, browsed authenticated pages on Server B, and signed out across servers.",
+      "details": {}
+    },
+    {
+      "name": "form_login_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Successfully rendered login form on Server A and submitted authenticated session creation to Server B.",
+      "details": {}
+    },
+    {
+      "name": "form_message_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Successfully rendered message form on Server A and posted message to Server B with cross-server verification.",
+      "details": {}
+    },
+    {
+      "name": "form_profile_update_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Successfully rendered profile edit on Server A, updated bio on Server B, and verified on Server A.",
+      "details": {}
+    },
+    {
+      "name": "transfer_link_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Successfully minted transfer link on Server A, redeemed on Server B, and authenticated as target user.",
+      "details": {}
+    },
+    {
+      "name": "security_csrf_tamper_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Server B correctly rejected cross-server tampered CSRF token with 422 Unprocessable Entity.",
+      "details": {}
+    },
+    {
+      "name": "security_transfer_tamper_continuity",
+      "direction": "rails-to-csharp",
+      "passed": true,
+      "message": "Server B correctly rejected cross-server tampered transfer token with 400 Bad Request.",
+      "details": {}
+    },
+    {
+      "name": "session_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Successfully signed in on Server A, browsed authenticated pages on Server B, and signed out across servers.",
+      "details": {}
+    },
+    {
+      "name": "form_login_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Successfully rendered login form on Server A and submitted authenticated session creation to Server B.",
+      "details": {}
+    },
+    {
+      "name": "form_message_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Successfully rendered message form on Server A and posted message to Server B with cross-server verification.",
+      "details": {}
+    },
+    {
+      "name": "form_profile_update_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Successfully rendered profile edit on Server A, updated bio on Server B, and verified on Server A.",
+      "details": {}
+    },
+    {
+      "name": "transfer_link_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Successfully minted transfer link on Server A, redeemed on Server B, and authenticated as target user.",
+      "details": {}
+    },
+    {
+      "name": "security_csrf_tamper_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Server B correctly rejected cross-server tampered CSRF token with 422 Unprocessable Entity.",
+      "details": {}
+    },
+    {
+      "name": "security_transfer_tamper_continuity",
+      "direction": "csharp-to-rails",
+      "passed": true,
+      "message": "Server B correctly rejected cross-server tampered transfer token with 400 Bad Request.",
+      "details": {}
+    }
+  ]
+}

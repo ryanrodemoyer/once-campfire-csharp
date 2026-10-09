@@ -1,6 +1,7 @@
 # Porting Campfire to C#
 
-Status: plan, ready for execution by an agent swarm
+Status: in progress, run by a local multi-vendor swarm (`plans/bin/plan ready` and
+`plans/bin/swarm status` show where it stands)
 Target repo: `ryanrodemoyer/once-campfire-csharp`
 Oracle: Rails `basecamp/once-campfire@345e637` (submodule `reference/`)
 Secondary reference and tooling: `basecamp/once-campfire-rust@ccece30` (submodule `reference-rust/`)
@@ -10,6 +11,7 @@ Companion files:
 - [`tasks.yaml`](tasks.yaml): the task graph (scope, dependencies, file ownership, acceptance)
 - [`dag.md`](dag.md): the generated DAG, critical path, waves and swarm sizing
 - [`bin/plan`](bin/plan): validates the graph and tells an agent what to pick up next
+- [`swarm.yaml`](swarm.yaml) and [`bin/swarm`](bin/swarm): who runs what, and the local dispatcher
 - [`status/`](status/): one file per finished task
 
 ## Goal
@@ -155,16 +157,13 @@ share them publicly before B05.
 The full graph is in [`dag.md`](dag.md). It's generated, so run `plans/bin/plan dag` after editing
 `tasks.yaml`. The shape, at the time of writing:
 
-- **79 tasks, 172 dependencies, 16 lanes, ~89 agent-days of work.**
-- **Critical path** (about 19 days of sequential work): `F01 → F02 → V03 → R01 → R02 → R03 → M02 →
-  M05 → M06 → I05 → Q02 → B03 → B05 → X01 → X02`. The rich-text chain, R01→R03, gates message
-  rendering, which gates nearly everything else. Put the strongest agent on R01 the moment V03
-  lands.
-- **Path to first benchmark numbers** (about 12.5 days): `F01 → F02 → V03 → R01 → R02 → R03 → M02 →
-  M05 → VS01 → B02`.
-- **Swarm sizing**: the simulated schedule finishes in ~25 days with 4 agents and ~19 with 8. Beyond
-  8, extra agents don't help, because the critical path is the limit. **8 agents** is the
-  recommended size. Peak useful width is 12 at wave 7, when the A, M, RT, I and S lanes all open.
+- **81 tasks, 178 dependencies, 16 lanes.** M10 (message attachments) was split out of M05 and is
+  a dependency of Q02, since Q02 requires every route to be implemented.
+- **Remaining critical paths** (as of 2026-10-09, with 62 tasks merged):
+  `M10 → Q02 → B03 → B05 → X01 → X02` and `RT04 → Q04/Q05/Q07/Q08 → B05`.
+- **Path to first benchmark numbers**: `VS01 → B02`.
+- **Swarm sizing**: the remaining graph is about four chains wide. Four agents with two slots
+  each run every ready task at once; a second slot shares its CLI's quota. The original sizing (8 agents for the full 79-task graph) no longer applies.
 
 Lane overview, a snapshot of the generated one in dag.md (edge labels count cross-lane task dependencies):
 
@@ -178,13 +177,13 @@ flowchart LR
   S["S · Storage and media<br/><small>5 tasks</small>"]
   W["W · Web layer<br/><small>4 tasks</small>"]
   A["A · Accounts and auth features<br/><small>8 tasks</small>"]
-  M["M · Rooms and messages features<br/><small>9 tasks</small>"]
+  M["M · Rooms and messages features<br/><small>10 tasks</small>"]
   RT["RT · Realtime (Action Cable)<br/><small>4 tasks</small>"]
   I["I · Integrations and jobs<br/><small>5 tasks</small>"]
   P["P · Packaging and operations<br/><small>4 tasks</small>"]
   Q["Q · Parity and QA gates<br/><small>8 tasks</small>"]
   VS["VS · Vertical slice gate<br/><small>1 tasks</small>"]
-  B["B · Benchmarks and performance<br/><small>5 tasks</small>"]
+  B["B · Benchmarks and performance<br/><small>6 tasks</small>"]
   X["X · Launch<br/><small>2 tasks</small>"]
   F -->|2| V
   V -->|4| C
@@ -210,7 +209,7 @@ flowchart LR
   W -->|8| M
   D -->|6| M
   R -->|2| M
-  S -->|1| M
+  S -->|2| M
   I -->|1| M
   W -->|1| RT
   C -->|1| RT
@@ -226,7 +225,7 @@ flowchart LR
   V -->|1| Q
   P -->|1| Q
   A -->|7| Q
-  M -->|4| Q
+  M -->|5| Q
   I -->|4| Q
   S -->|1| Q
   D -->|1| Q
@@ -239,6 +238,7 @@ flowchart LR
   Q -->|1| VS
   V -->|1| B
   P -->|5| B
+  A -->|1| B
   VS -->|1| B
   M -->|3| B
   Q -->|6| B
@@ -294,33 +294,64 @@ One task is one PR, and PRs merge themselves:
    `plans/status/<ID>.md`, and the PR is merged. Once Q01 exists, feature PRs also attach the
    replay result for their route family.
 7. **Never benchmark** anything before B02, and never publish numbers before B05.
+8. **Stage files by path.** Never `git add -A` or `git add .`; worktrees hold local secrets and
+   scratch files (`tmp/` is ignored, but don't rely on it).
+9. **Security work is reviewed across vendors.** Whoever writes R04 or RT04 doesn't do Q08, and
+   the Q08 reviewer is a model from a different vendor, so two implementations can't agree on
+   the same unsafe behavior.
 
 ### Orchestrator
 
-A long-lived cloud session, "swarm: orchestrator", holds the standing procedure. A Claude Code
-routine, "Campfire C# swarm orchestrator (hourly)", wakes it every hour at :01. A routine-fired
-fresh session would start without the repository or the GitHub and session tools; a session
-started with the repository as its source has all three. Each run:
+The swarm runs locally on the owner's machine (16 hardware threads, Docker). There are five
+workers, each a different model. The assignments are in [`swarm.yaml`](swarm.yaml):
 
-1. **Stops if paused**: when any open issue carries the `pause-swarm` label.
-2. **Reconciles work in flight.** For each issue labelled `in-progress`, it finds the worker
-   session named in the issue's latest "Claimed by swarm session" comment, then:
-   - closes out tasks whose status file has landed on `main`;
-   - turns on auto-merge for green PRs;
-   - tells the worker to fix PRs that are red, conflicted or behind `main`;
-   - retries tasks whose worker died without a PR. After three failed attempts it labels the issue
-     `needs-human` and stops retrying.
-3. **Dispatches** ready tasks, in `plans/bin/plan ready` order, to new worker sessions, keeping
-   at most 8 in progress. Each worker gets the task card, the rules in `AGENTS.md`, and a designated
-   `port/<ID>-<slug>` branch. It sees its PR through to merge.
-4. **Rewrites the dashboard**, issue #85 ("Swarm status"), with progress, work in flight,
-   `needs-human` items and what's queued. It updates the body instead of commenting, to keep
-   notifications quiet.
+| Worker | CLI and model | Queue | Points |
+|---|---|---|---|
+| `claude` | Claude Code, Opus 5.5 (medium; high on R04 and RT04) | R04, RT04 | 4 |
+| `gemini` | Antigravity, Gemini 3.8 Flash (high) | M09, Q06, Q02, Q07, Q05, X01 | 9 |
+| `grok` | Grok CLI, Grok 4.7 (high) | VS01, B06, B02, B03, B04, Q08 | 11 |
+| `glm` | OpenCode, GLM 5.3 (high) | M10, P02, Q04 | 8 |
+| `deepseek` | OpenCode, DeepSeek V4.1 Flash | Q09 | 1 |
 
-It never touches issues labelled `human` (B05, X02).
+Queues are balanced by size (S=1, M=2, L=4 points) and keep each dependency chain with one worker.
+Claude takes the security-critical R04 and RT04; Grok reviews them in Q08. B03 and X01 moved
+from Claude to Grok and Gemini to spare Claude's quota; Grok now holds all three exclusive
+benchmark tasks, which run one at a time anyway.
 
-To steer the swarm by hand: add `pause-swarm` to any issue to pause it; remove `in-progress` from
-an issue to have it re-dispatched; add `needs-human` to take a task off the swarm's list.
+`plans/bin/swarm run` is the orchestrator. Every `poll_seconds` it:
+
+1. **Stops dispatching if paused**: when `.swarm/PAUSE` exists or any open issue carries
+   `pause-swarm`. Running workers carry on.
+2. **Reconciles work in flight**, using `origin/main`, open PRs and the worker processes:
+   - removes the worktree of every task whose status file has landed on `main`;
+   - turns on auto-merge for PRs that don't have it;
+   - sends a red or conflicted PR back to its own worker before that worker takes new work;
+   - retries a task whose worker exited without a PR, after `retry_after_minutes` (45) so a quota
+     or rate limit has time to clear. After `max_attempts` (3) it labels the issue `needs-human`
+     and stops retrying.
+3. **Dispatches** each worker the first ready tasks in its queue, up to its `slots` (2). Each
+   task gets a worktree at `../campfire-wt/<ID>` on `port/<ID>-<slug>`, branched from
+   `origin/main` (never the local `main`), with submodules checked out. The worker gets the task
+   card, the rules in `AGENTS.md`, and instructions to see its PR through to merge. The issue
+   gets `in-progress`, an `agent:<name>` label and a "Claimed by local swarm worker" comment.
+4. **Protects measurements.** B02, B03 and B04 are `exclusive`. When one is ready, nothing new
+   starts until the machine is idle, and nothing else starts while it runs.
+5. **Rewrites the dashboard**, `.swarm/dashboard.html`, which shows each worker's current task,
+   log tail and queue, a graph of the remaining work colored by state, and an event log. It
+   refreshes itself every 30 seconds.
+
+`plans/bin/swarm smoke` checks that every CLI can run headless and use a shell tool before you
+start. `plans/bin/swarm status` prints the same state as the dashboard without dispatching.
+Worker logs are in `.swarm/logs/<ID>-<attempt>.log`.
+
+The swarm never touches issues labelled `human` (B05, X02). X01 waits on the owner's B05 run.
+
+To steer the swarm by hand: `touch .swarm/PAUSE` (or label any issue `pause-swarm`) to pause it;
+edit a queue in `swarm.yaml` to move work between workers; add `needs-human` to take a task off
+the swarm's list.
+
+`plans/bin/plan` is a Ruby script and the machine has no host Ruby. `~/.local/bin/ruby` is a shim
+that runs `ruby:3.4-slim` in Docker with `~/Code` mounted, so `bin/check` works in every worktree.
 
 Once Q01 lands, the replay gate runs in CI on every PR, so regressions are caught before merge.
 If a task turns out larger than its size, its worker splits it in `tasks.yaml` (new ids, same
@@ -335,8 +366,10 @@ free of ownership conflicts.
 - **Workloads**: the README's five, at 16 concurrent clients, plus 1 and 64 for context; cable
   fan-out, upload, cold start and memory as secondary results.
 - **Hardware**: at least 16 hardware threads, with 4 for the app, 4 for the load generator, and
-  the rest idle. The current cloud sandbox (4 vCPUs, no Docker daemon) **cannot** produce
-  publishable numbers. B05 is run by a human on real hardware.
+  the rest idle. The local swarm machine (16 threads, Docker) is good enough for the internal
+  B02 and B04 numbers, with Rails measured in the same run. The swarm runs those tasks
+  exclusively, so build load doesn't leak into measurements. B05 is run by a human on
+  reference-class hardware.
 - **Rails in the same run.** We report C# against Rails measured on our box, not against the
   README's numbers. The headline claim is the ratio. If Basecamp re-runs it on their machine, even
   better.
