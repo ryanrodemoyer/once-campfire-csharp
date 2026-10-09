@@ -225,6 +225,9 @@ How to finish:
    ones). Re-run the failed job once with `gh run rerun <run-id> --failed` before changing code.
 8. If you are blocked on something outside your task, comment on issue #{issue} explaining what
    you need, and stop.
+You are running headless: nobody will come back to you, and your session ends the moment you end
+your turn. Never stop to wait for a build, container, test run or CI; keep polling until it is done
+and carry on. End your turn only when the PR has merged or you are blocked as in step 8.
 Never benchmark before B02 and never publish numbers. Never work on issues labelled `human`.
 """
 
@@ -474,7 +477,12 @@ def cmd_run(config):
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
     event("swarm started")
     while True:
-        states = tick(config)
+        try:
+            states = tick(config)
+        except Exception as error:  # a failed round (a racing fetch, a GitHub blip) is retried next round
+            event(f"tick failed, retrying next round: {error}")
+            time.sleep(config["poll_seconds"])
+            continue
         if all(s == "merged" or (s == "waiting" and t == "X01") for t, s in states.items()):
             event("every queued task has merged; X01 waits on the owner's B05 run")
             return
