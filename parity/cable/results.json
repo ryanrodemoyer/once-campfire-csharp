@@ -1,0 +1,140 @@
+{
+  "timestamp": 1791586171.4654896,
+  "success": true,
+  "mode": "replay",
+  "results": [
+    {
+      "name": "ApplicationCable_base",
+      "channel": "ApplicationCable::Channel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "HeartbeatChannel",
+      "channel": "HeartbeatChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "InvalidChannel",
+      "channel": "InvalidChannel",
+      "success": true,
+      "frames_count": 1,
+      "differences": []
+    },
+    {
+      "name": "PresenceChannel_member",
+      "channel": "PresenceChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "PresenceChannel_non_member",
+      "channel": "PresenceChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "ReadRoomsChannel",
+      "channel": "ReadRoomsChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "RoomChannel_member",
+      "channel": "RoomChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "RoomChannel_non_member",
+      "channel": "RoomChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "RoomMessagesChannel_forged",
+      "channel": "RoomMessagesChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "RoomMessagesChannel_valid",
+      "channel": "RoomMessagesChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "TurboStreamsChannel_forged",
+      "channel": "Turbo::StreamsChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "TurboStreamsChannel_valid",
+      "channel": "Turbo::StreamsChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "TypingNotificationsChannel_member",
+      "channel": "TypingNotificationsChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "UnreadRoomsChannel",
+      "channel": "UnreadRoomsChannel",
+      "success": true,
+      "frames_count": 2,
+      "differences": []
+    },
+    {
+      "name": "lag_disconnect",
+      "channel": "(lag)",
+      "success": true,
+      "frames_count": 3,
+      "differences": []
+    },
+    {
+      "name": "revocation_ban",
+      "channel": "(revocation)",
+      "success": true,
+      "frames_count": 3,
+      "differences": []
+    },
+    {
+      "name": "revocation_deactivate",
+      "channel": "(revocation)",
+      "success": true,
+      "frames_count": 3,
+      "differences": []
+    },
+    {
+      "name": "revocation_membership",
+      "channel": "(revocation)",
+      "success": true,
+      "frames_count": 3,
+      "differences": []
+    },
+    {
+      "name": "unauthenticated",
+      "channel": "(connection)",
+      "success": true,
+      "frames_count": 1,
+      "differences": []
+    }
+  ]
+}
