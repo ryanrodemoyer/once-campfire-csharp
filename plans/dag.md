@@ -68,7 +68,7 @@ flowchart LR
   V -->|1| Q
   P -->|1| Q
   A -->|7| Q
-  M -->|4| Q
+  M -->|5| Q
   I -->|4| Q
   S -->|1| Q
   D -->|1| Q
@@ -319,6 +319,7 @@ flowchart LR
   M07 --> Q02
   M08 --> Q02
   M09 --> Q02
+  M10 --> Q02
   I05 --> Q02
   S05 --> Q02
   Q01 --> Q03
@@ -368,7 +369,7 @@ flowchart LR
   P04 --> B05
   B05 --> X01
   X01 --> X02
-  linkStyle 0,6,22,23,25,70,79,83,107,128,162,165,175,176 stroke:#d6336c,stroke-width:3px
+  linkStyle 0,6,22,23,25,70,79,83,107,129,163,166,176,177 stroke:#d6336c,stroke-width:3px
   style M0 fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3
   style M1 fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3
   style M2 fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3
@@ -380,7 +381,7 @@ flowchart LR
   classDef done fill:#d3f9d8,stroke:#2f9e44,color:#000
   class D04,D05,R03,S01,S02,W01,W02,W03,A01,M01,M02,M03,M04,M05,M08,VS01,B01,B06,B02 bench
   class F01,F02,V03,R01,R02,R03,M02,M05,M06,I05,Q02,B03,B05,X01,X02 critical
-  class F01,F02,F03,F04,V01,V02,V03,C01,C02,C03,C04,C05,C06,C07,D01,D02,D03,D05,R01,R02,R03,R05,S01,S02,S03,S04,W01,W02,W03,W04,M02,M05,RT01,I01,I03,I04,P01,P03,P04,Q01,B01 done
+  class F01,F02,F03,F04,V01,V02,V03,C01,C02,C03,C04,C05,C06,C07,D01,D02,D03,D04,D05,R01,R02,R03,R05,S01,S05,S02,S03,S04,W01,W02,W03,W04,A01,A02,A03,A04,A05,A06,A07,A08,M01,M02,M03,M04,M05,M06,M07,M08,RT01,RT02,RT03,I01,I02,I03,I04,I05,P01,P03,P04,Q01,Q03,B01 done
 ```
 
 ## Critical path
@@ -425,11 +426,11 @@ immediately. Real throughput will be lower: review, integration and rework aren'
 
 | Agents | Calendar days to finish | Peak parallel |
 |---:|---:|---:|
-| 1 | 41.0 | 1 |
-| 4 | 11.5 | 4 |
-| 8 | 8.0 | 8 |
-| 12 | 8.0 | 12 |
-| 16 | 8.0 | 16 |
+| 1 | 17.5 | 1 |
+| 4 | 6.0 | 4 |
+| 8 | 6.0 | 8 |
+| 12 | 6.0 | 8 |
+| 16 | 6.0 | 8 |
 
 Total work: 90.5 agent-days.
 
@@ -509,7 +510,7 @@ Total work: 90.5 agent-days.
 | `I05` | Bot API and webhooks | I | M3 | L | `M05` `M06` `I01` |
 | `RT04` | Revocation and disconnects | RT | M3 | M | `RT03` |
 | `B04` | Runtime configuration matrix including Native AOT | B | M5 | M | `B02` `P01` |
-| `Q02` | Route coverage gate | Q | M3 | M | `Q01` `A02` `A04` `A05` `A06` `A07` `A08` `M06` `M07` `M08` `M09` `I05` `S05` |
+| `Q02` | Route coverage gate | Q | M3 | M | `Q01` `A02` `A04` `A05` `A06` `A07` `A08` `M06` `M07` `M08` `M09` `M10` `I05` `S05` |
 | `Q05` | Cable replay | Q | M4 | M | `RT04` `Q01` |
 | `Q08` | Security review | Q | M4 | M | `R04` `RT04` `I02` `I03` `I05` `C03` |
 | `B03` | Performance round | B | M5 | L | `B02` `Q02` |

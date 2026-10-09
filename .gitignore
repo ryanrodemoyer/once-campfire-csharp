@@ -17,4 +17,8 @@ TestResults/
 
 # Seeds and benchmark scratch space are generated, not committed
 /parity/.seed/*/
-/tmp/
+# Any tmp/ dir, including the dev secret_key_base in src/Campfire.Server/tmp/local_secret.txt
+tmp/
+
+# Local swarm runtime state (plans/bin/swarm)
+/.swarm/
