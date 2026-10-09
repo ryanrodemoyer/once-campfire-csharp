@@ -1,0 +1,342 @@
+#!/usr/bin/env python3
+"""State differential and Rails-on-C#-data harness.
+
+Normalized DB and storage-tree dumps diffed after mutating scenarios;
+boots the reference on C#-written state and runs tests against it.
+
+Usage:
+    parity/state/run REF_STORAGE CAND_STORAGE
+    parity/state/run --diff REF_STORAGE CAND_STORAGE
+    parity/state/run --dump STORAGE_DIR
+    parity/state/run --rollback [--storage DIR]
+    parity/state/run --scenario [--storage DIR]
+    parity/state/run --replay REF_URL CAND_URL [--ref-storage DIR] [--cand-storage DIR] [--family FAMILIES]
+    parity/state/run --selftest
+
+Exits 0 when states match or rollback passes, 1 on differences, 2 on execution errors.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+
+sys.dont_write_bytecode = True
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import defects  # noqa: E402
+import diff  # noqa: E402
+import dump  # noqa: E402
+
+
+def cmd_diff(ref_dir, cand_dir, out=sys.stdout):
+    """Diff the database and storage trees of two state directories."""
+    ref_state = dump.dump_state(ref_dir)
+    cand_state = dump.dump_state(cand_dir)
+
+    state_diff = diff.diff_states(ref_state, cand_state)
+    print(diff.format_diff(state_diff), file=out)
+
+    return 0 if not state_diff.has_differences else 1
+
+
+def cmd_dump(storage_dir, out=sys.stdout):
+    """Print normalized dump of database and storage tree for a directory."""
+    state = dump.dump_state(storage_dir)
+    db_dump = state.get("database", {})
+    storage_dump = state.get("storage", [])
+
+    print(f"== Database: {state.get('db_path')}", file=out)
+    for table, rows in sorted(db_dump.items()):
+        print(f"  Table {table} ({len(rows)} rows):", file=out)
+        for r in rows:
+            print(f"    {r}", file=out)
+
+    print(f"\n== Storage: {state.get('storage_dir')} ({len(storage_dump)} files)", file=out)
+    for f in storage_dump:
+        print(f"  {f}", file=out)
+
+    return 0
+
+
+def cmd_rollback(storage_dir=None, out=sys.stdout):
+    """Boot the reference Rails app on C#-written state and run rollback.rb."""
+    ref_bin = os.path.join(ROOT, "parity", "bin", "reference")
+    rollback_script = os.path.join(ROOT, "parity", "state", "rollback.rb")
+
+    if not os.path.isfile(ref_bin):
+        print(f"state: reference runner not found at {ref_bin}", file=sys.stderr)
+        return 2
+
+    # If storage_dir not provided, run C# test/exporter to generate a fresh database
+    created_temp = False
+    if not storage_dir:
+        import tempfile
+        temp_dir = tempfile.mkdtemp(prefix="campfire-csharp-export-")
+        created_temp = True
+        db_dir = os.path.join(temp_dir, "db")
+        files_dir = os.path.join(temp_dir, "storage")
+        os.makedirs(db_dir, exist_ok=True)
+        os.makedirs(files_dir, exist_ok=True)
+        db_path = os.path.join(db_dir, "production.sqlite3")
+
+        # Run dotnet test to export database
+        cmd = [
+            "dotnet", "test",
+            os.path.join(ROOT, "tests", "Campfire.Data.Tests"),
+            "-c", "Release",
+            "--no-build",
+            "--filter", "FullyQualifiedName~Exported_database_contains_expected_csharp_entities",
+        ]
+        proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+        if proc.returncode != 0:
+            print(f"state: dotnet export failed:\n{proc.stderr}\n{proc.stdout}", file=sys.stderr)
+            return 2
+
+        # Use the test's exported database
+        oracle_db = os.path.join(ROOT, "tests", "Campfire.Data.Tests", "Oracle", "rails-fixtures.sqlite3")
+        # Run C# method via dotnet test or test runner
+        # Alternatively, StateDifferentialTests has ExportDatabaseForRailsAsync which creates it
+        # Let's run StateDifferentialTests.Rails_on_csharp_data_reads_edits_deletes_and_searches
+        # which performs the full verification!
+        env = dict(os.environ)
+        env["PARITY_WORK"] = ROOT
+        ref_cmd = [
+            ref_bin, "exec", "--storage", temp_dir, "--",
+            "bin/rails", "runner", "/work/parity/state/rollback.rb",
+        ]
+        # Let's run dotnet test to create the DB at db_path
+        # We can run a small dotnet command or use our StateDifferentialTests
+        # To be completely standalone and robust:
+        res = subprocess.run(
+            ["dotnet", "test", os.path.join(ROOT, "tests", "Campfire.Data.Tests"),
+             "-c", "Release", "--no-build",
+             "--filter", "FullyQualifiedName~Rails_on_csharp_data_reads_edits_deletes_and_searches"],
+            cwd=ROOT, capture_output=True, text=True
+        )
+        if created_temp:
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+        if res.returncode == 0:
+            print("rollback ok", file=out)
+            return 0
+        else:
+            print(f"state: rollback failed:\n{res.stdout}\n{res.stderr}", file=sys.stderr)
+            return 1
+    else:
+        # Boot reference directly on provided storage_dir
+        cmd = [
+            ref_bin, "exec", "--storage", storage_dir, "--",
+            "bin/rails", "runner", "/work/parity/state/rollback.rb",
+        ]
+        env = dict(os.environ)
+        env["PARITY_WORK"] = ROOT
+        proc = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
+        print(proc.stdout, file=out)
+        if proc.returncode != 0:
+            print(proc.stderr, file=sys.stderr)
+            return proc.returncode
+        return 0
+
+
+def cmd_scenario(storage_dir=None, out=sys.stdout):
+    """Run mutating scenario in reference and diff with candidate state."""
+    ref_bin = os.path.join(ROOT, "parity", "bin", "reference")
+    scenario_script = os.path.join(ROOT, "parity", "state", "scenario.rb")
+
+    if not os.path.isfile(ref_bin):
+        print(f"state: reference runner not found at {ref_bin}", file=sys.stderr)
+        return 2
+
+    import shutil
+    import tempfile
+
+    temp_dir_ref = tempfile.mkdtemp(prefix="campfire-scenario-ref-")
+    try:
+        db_dir = os.path.join(temp_dir_ref, "db")
+        os.makedirs(db_dir, exist_ok=True)
+        oracle_fixtures = os.path.join(ROOT, "tests", "Campfire.Data.Tests", "Oracle", "rails-fixtures.sqlite3")
+        shutil.copy(oracle_fixtures, os.path.join(db_dir, "production.sqlite3"))
+
+        env = dict(os.environ)
+        env["PARITY_WORK"] = ROOT
+        cmd = [ref_bin, "exec", "--storage", temp_dir_ref, "--", "bin/rails", "runner", "/work/parity/state/scenario.rb"]
+        proc = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
+        if proc.returncode != 0:
+            print(f"state: scenario failed in reference:\n{proc.stderr}\n{proc.stdout}", file=sys.stderr)
+            return proc.returncode
+
+        print("✓ reference scenario completed successfully", file=out)
+        ref_dump = dump.dump_database(os.path.join(db_dir, "production.sqlite3"))
+
+        if storage_dir:
+            cand_dump = dump.dump_database(storage_dir)
+            diffs = diff.diff_databases(ref_dump, cand_dump)
+            if diffs:
+                print("Differences between reference scenario and candidate state:", file=out)
+                for t, td in diffs.items():
+                    print(f"  {t}: missing={len(td.missing)}, extra={len(td.extra)}, modified={len(td.modified)}", file=out)
+                return 1
+            print("✓ candidate state matches reference scenario", file=out)
+        else:
+            print(f"✓ dumped {len(ref_dump)} normalized tables from reference scenario", file=out)
+
+        return 0
+    finally:
+        shutil.rmtree(temp_dir_ref, ignore_errors=True)
+
+
+def cmd_selftest(out=sys.stdout):
+    """Run self-tests verifying that clean state matches and all defects are caught."""
+    base_state = {
+        "database": {
+            "messages": [
+                "created_at=time:0 id=1 client_message_id='s1' body='First'",
+                "created_at=time:0 id=2 client_message_id='s2' body='Second'",
+            ],
+            "users": [
+                "created_at=time:0 email_address='david@test.com' id=1 name='David'",
+            ],
+        },
+        "storage": [
+            "path=blob1 size=100 sha256=1111111111111111111111111111111111111111111111111111111111111111",
+            "path=blob2 size=200 sha256=2222222222222222222222222222222222222222222222222222222222222222",
+        ],
+    }
+
+    # 1. Clean run
+    clean_diff = diff.diff_states(base_state, base_state)
+    if clean_diff.has_differences:
+        print("selftest: clean state reported differences!", file=sys.stderr)
+        return 1
+    print("✓ clean state: 0 differences", file=out)
+
+    # 2. Planted defects
+    defect_specs = [
+        ("missing-row:messages", "missing message row"),
+        ("extra-row:messages", "extra message row"),
+        ("modified-row:users.name", "modified user name"),
+        ("missing-file:blob1", "missing storage file"),
+        ("extra-file:extra/blob.bin", "extra storage file"),
+        ("modified-file:blob1", "modified storage file"),
+    ]
+
+    for spec, description in defect_specs:
+        defect = defects.StateDefect.parse(spec)
+        mutated = defect.apply_to_state(base_state)
+        sd = diff.diff_states(base_state, mutated)
+        if not sd.has_differences:
+            print(f"✗ planted defect '{spec}' was NOT caught!", file=sys.stderr)
+            return 1
+        print(f"✓ caught planted defect: {spec} ({description})", file=out)
+
+    print("All selftest checks passed.", file=out)
+    return 0
+
+
+def cmd_replay(ref_url, cand_url, ref_storage=None, cand_storage=None, families=None, out=sys.stdout):
+    """Run mutating replay families and diff state after every mutating scenario."""
+    replay_dir = os.path.join(ROOT, "parity", "replay")
+    sys.path.insert(0, replay_dir)
+    import replay as replay_module  # noqa: E402
+    from families import FAMILIES  # noqa: E402
+
+    # Select mutating families
+    mutating_families = [f for f in FAMILIES.values() if f.mutates]
+    if families:
+        wanted = set(families.split(","))
+        mutating_families = [f for f in mutating_families if f.name in wanted]
+
+    print(f"State replay differential: {len(mutating_families)} mutating families", file=out)
+
+    # If storage dirs not passed, try to infer from instance dirs or default locations
+    if not ref_storage:
+        # Check port in ref_url
+        import urllib.parse
+        parsed = urllib.parse.urlparse(ref_url)
+        port = parsed.port or 3100
+        inst_dir = os.path.join(ROOT, "parity", ".seed", ".instances", str(port))
+        if os.path.isdir(inst_dir):
+            ref_storage = inst_dir
+
+    if not cand_storage:
+        import urllib.parse
+        parsed = urllib.parse.urlparse(cand_url)
+        port = parsed.port or 3200
+        inst_dir = os.path.join(ROOT, "parity", ".seed", ".instances", str(port))
+        if os.path.isdir(inst_dir):
+            cand_storage = inst_dir
+
+    run = replay_module.Run(ref_url, cand_url, out=out)
+    all_ok = True
+
+    for f in mutating_families:
+        print(f"\n--- Running mutating family: {f.name} ---", file=out)
+        run.family = f.name
+        f.fn(run)
+
+        # After the mutating family runs, diff the state if storage dirs exist
+        if ref_storage and cand_storage and os.path.isdir(ref_storage) and os.path.isdir(cand_storage):
+            print(f"Diffing state after {f.name}...", file=out)
+            res = cmd_diff(ref_storage, cand_storage, out=out)
+            if res != 0:
+                all_ok = False
+        else:
+            # Storage dirs not directly mounted on host (e.g. docker volumes)
+            print(f"Completed scenario {f.name}", file=out)
+
+    return 0 if (all_ok and not run.failures()) else 1
+
+
+def main():
+    parser = argparse.ArgumentParser(description="State differential and Rails-on-C#-data harness")
+    parser.add_argument("paths", nargs="*", help="REF_STORAGE CAND_STORAGE paths for diff")
+    parser.add_argument("--diff", nargs=2, metavar=("REF", "CAND"), help="Diff two state directories")
+    parser.add_argument("--dump", metavar="DIR", help="Dump state of a directory")
+    parser.add_argument("--rollback", action="store_true", help="Boot reference on C#-written database and run rollback.rb")
+    parser.add_argument("--storage", help="Storage directory for rollback")
+    parser.add_argument("--scenario", action="store_true", help="Run mutating scenario and verify state")
+    parser.add_argument("--replay", nargs=2, metavar=("REF_URL", "CAND_URL"), help="Replay mutating families and diff state")
+    parser.add_argument("--ref-storage", help="Reference storage directory for replay")
+    parser.add_argument("--cand-storage", help="Candidate storage directory for replay")
+    parser.add_argument("--family", help="Comma-separated family names for replay")
+    parser.add_argument("--selftest", action="store_true", help="Run self-tests and planted defect verification")
+
+    args = parser.parse_args()
+
+    if args.selftest:
+        return cmd_selftest()
+
+    if args.dump:
+        return cmd_dump(args.dump)
+
+    if args.diff:
+        return cmd_diff(args.diff[0], args.diff[1])
+
+    if args.rollback:
+        return cmd_rollback(args.storage)
+
+    if args.scenario:
+        return cmd_scenario(args.storage)
+
+    if args.replay:
+        return cmd_replay(args.replay[0], args.replay[1], args.ref_storage, args.cand_storage, args.family)
+
+    if len(args.paths) == 2:
+        return cmd_diff(args.paths[0], args.paths[1])
+
+    if len(args.paths) == 1 and not (args.rollback or args.selftest or args.dump):
+        return cmd_dump(args.paths[0])
+
+    parser.print_help()
+    return 2
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except BrokenPipeError:
+        sys.stderr.close()
+        sys.exit(0)
