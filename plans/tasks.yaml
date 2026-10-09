@@ -223,7 +223,7 @@ tasks:
     milestone: M1
     size: M
     deps: [C01]
-    owns: [src/Campfire.RailsCompat/GlobalId/, src/Campfire.RailsCompat/SignedIds/]
+    owns: [src/Campfire.RailsCompat/SignedIds/]  # GlobalId/ passed to R04
     refs: [reference/app/models/user/transferable.rb, reference/lib/rails_ext/action_text_attachables.rb, vectors/rails_compat.json]
     deliver: >
       Signed IDs (avatar no expiry, transfer 4h), GlobalID/SGID parse and generate,
@@ -379,7 +379,7 @@ tasks:
     milestone: M1
     size: L
     deps: [R01, C06]
-    owns: [src/Campfire.RichText/Sanitize/]
+    owns: []  # src/Campfire.RichText/Sanitize/ passed to R04
     refs: [reference/app/helpers/content_filters, reference/lib/rails_ext/action_text_allowed_tags.rb, reference/lib/rails_ext/actiontext_opengraph_embeds.rb, reference/app/helpers/rich_text_helper.rb]
     deliver: >
       RemoveSoloUnfurledLinkText -> SanitizeTags (drop disallowed elements with contents) ->
@@ -396,7 +396,7 @@ tasks:
     size: M
     deps: [R02, C04, D02]
     bench: true
-    owns: [src/Campfire.RichText/Attachments/]
+    owns: []  # src/Campfire.RichText/Attachments/ passed to R04
     refs: [reference/lib/rails_ext/action_text_attachables.rb, reference/app/views/users/_mention.html.erb, reference/app/views/action_text, reference/app/views/layouts/action_text]
     deliver: >
       action-text-attachment resolution for display - User mentions via SGID (incl. the
@@ -424,14 +424,34 @@ tasks:
     title: Rich text gate and differential fuzzing
     lane: R
     milestone: M4
-    size: M
+    size: L
     deps: [R05]
-    owns: [tests/Campfire.RichText.Fuzz/]
+    # The fuzzer found divergences in code owned by merged tasks, so R04 took over those paths
+    # to fix them itself (R02, R03, C04, M02, I02, and the mention code in M05's and I05's
+    # controllers). The owners' issues hold the findings: #20, #27, #17, #43, #41.
+    owns:
+      - tests/Campfire.RichText.Fuzz/
+      - src/Campfire.RichText/Sanitize/
+      - src/Campfire.RichText/Attachments/
+      - src/Campfire.RailsCompat/GlobalId/
+      - src/Campfire.Web/Helpers/Messages/
+      - src/Campfire.Jobs/WebPush/
+      - src/Campfire.Web/Controllers/Messages/WriteController.cs
+      - src/Campfire.Web/Controllers/Messages/ByBotsController.cs
     refs: [vectors/, reference-rust/reference-tools/richtext]
     deliver: >
       All six outputs across the 658 reference cases plus a differential fuzzer (OWASP XSS
       corpus, malformed nesting, huge inputs, Unicode edge cases, every SGID variant)
       against the reference sanitizer.
+      Handoff: the first attempt (commit 476b50c on this branch) built the gate and the fuzzer;
+      631/658 cases pass. The 27 failures and the fuzzer's other findings are written up on
+      #20 (sanitizer and content filters), #27 (attachments, auto_link), #17 (GlobalID
+      parsing), #43 (message helpers) and #41 (mentioned users). Fix #43's first item first:
+      a message body whose plain text raises makes the whole room page 500 instead of
+      rendering that one message blank, which any member can trigger. Prove it with a
+      controller test. In WriteController and ByBotsController, change only the mentioned-users
+      code. If a fix belongs in src/Campfire.RichText/Html/ (R01), such as Nokogiri's
+      null-byte check, file an issue instead.
     accept:
       - 658/658 cases equal on all six outputs
       - 1M fuzz iterations with zero disagreements and zero security-assertion failures
@@ -706,7 +726,7 @@ tasks:
     size: L
     deps: [R03, S02, W03]
     bench: true
-    owns: [src/Campfire.Web/Views/messages/_*, src/Campfire.Web/Views/messages/boosts/_*, src/Campfire.Web/Helpers/Messages/]
+    owns: [src/Campfire.Web/Views/messages/_*, src/Campfire.Web/Views/messages/boosts/_*]  # Helpers/Messages/ passed to R04
     refs: [reference/app/views/messages, reference/app/helpers/messages_helper.rb, reference/app/helpers/messages/attachment_presentation.rb, reference/app/helpers/emoji_helper.rb, reference/app/models/sound.rb]
     deliver: >
       _message, _presentation, _actions, _template, _unrenderable and boost partials;
@@ -748,7 +768,7 @@ tasks:
     size: L
     deps: [M02, R05, D03, W02]
     bench: true
-    owns: [src/Campfire.Web/Controllers/Messages/Write*, src/Campfire.Web/Views/messages/create*, src/Campfire.Web/Views/messages/destroy*, src/Campfire.Web/Views/messages/edit*, src/Campfire.Web/Views/messages/show*, src/Campfire.Web/Views/messages/room_not_found*]
+    owns: [src/Campfire.Web/Controllers/Messages/WriteRoutes.cs, src/Campfire.Web/Controllers/Messages/WriteServices.cs, src/Campfire.Web/Controllers/Messages/WriteViews.cs, src/Campfire.Web/Views/messages/create*, src/Campfire.Web/Views/messages/destroy*, src/Campfire.Web/Views/messages/edit*, src/Campfire.Web/Views/messages/show*, src/Campfire.Web/Views/messages/room_not_found*]
     refs: [reference/app/controllers/messages_controller.rb, reference/app/javascript/models/file_uploader.js]
     deliver: >
       Create (HTML and turbo_stream, form and multipart bodies, client_message_id, room_not_found),
@@ -898,7 +918,7 @@ tasks:
     milestone: M3
     size: L
     deps: [I01, I04]
-    owns: [src/Campfire.Jobs/WebPush/]
+    owns: []  # src/Campfire.Jobs/WebPush/ passed to R04
     refs: [reference/lib/web_push, reference/config/initializers/web_push.rb, reference/config/initializers/vapid.rb, reference/app/models/room/message_pusher.rb, reference/app/jobs/room/push_message_job.rb]
     deliver: VAPID ES256 JWT, RFC 8291 aes128gcm encryption, connection pool, endpoint restrictions and IP pinning, 404/410 subscription removal, MessagePusher recipient rules.
     accept:
@@ -934,7 +954,7 @@ tasks:
     milestone: M3
     size: L
     deps: [M05, M06, I01]
-    owns: [src/Campfire.Web/Controllers/Messages/ByBots*, src/Campfire.Web/Controllers/Messages/Boosts/ByBots*, src/Campfire.Jobs/Webhooks/, src/Campfire.Web/Views/messages/by_bots/, src/Campfire.Web/Views/messages/boosts/by_bots/]
+    owns: [src/Campfire.Web/Controllers/Messages/ByBotsRoutes.cs, src/Campfire.Web/Controllers/Messages/ByBotsWebhookReplies.cs, src/Campfire.Web/Controllers/Messages/Boosts/ByBots*, src/Campfire.Jobs/Webhooks/, src/Campfire.Web/Views/messages/by_bots/, src/Campfire.Web/Views/messages/boosts/by_bots/]
     refs: [reference/app/controllers/messages/by_bots_controller.rb, reference/app/controllers/messages/boosts/by_bots_controller.rb, reference/app/controllers/concerns/raw_request_body.rb, reference/app/models/webhook.rb, reference/app/jobs/bot/webhook_job.rb]
     deliver: Bot message/boost API (raw bodies, multipart, pagination headers, status/Location), webhook job (7s timeout, text vs attachment replies).
     accept:

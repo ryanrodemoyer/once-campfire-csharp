@@ -15,6 +15,8 @@ max_attempts: 3
 retry_after_minutes: 45
 poll_seconds: 120
 exclusive: [B02, B03, B04]
+# Allowed to start while a benchmark task drains the machine: R04 was already running.
+drain_exempt: [R04]
 
 agents:
   claude:
@@ -23,11 +25,9 @@ agents:
               --permission-mode, bypassPermissions]
     effort: medium
     effort_overrides: {R04: high, RT04: high}
-    # Rich-text sanitizer fuzzing and connection revocation are the two security-critical tasks
-    # left; B03 is on the critical path; X01 follows the owner's B05 run.
     slots: 2
-    # B03 and X01 moved to grok and gemini to spare Claude's quota.
-    queue: [R04, RT04]
+    # R04 moved to glm at 86% quota, after its first attempt; B03 and X01 to grok and gemini.
+    queue: [RT04]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
@@ -50,7 +50,8 @@ agents:
               "{prompt}"]
     # Attachments and the media toolchain go together; Q04 is harness work against the reference.
     slots: 2
-    queue: [M10, P02, Q04]
+    # R04, taken over from Claude, also fixes what its fuzzer found in merged tasks' code.
+    queue: [R04, M10, P02, Q04]
 
   deepseek:
     model: DeepSeek V4.1 Flash via OpenCode
