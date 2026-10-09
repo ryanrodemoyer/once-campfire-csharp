@@ -1,0 +1,498 @@
+#!/usr/bin/env python3
+"""Run the local multi-vendor swarm described in plans/swarm.yaml.
+
+  plans/bin/swarm status        one line per task: state, agent, PR, attempts
+  plans/bin/swarm tick          reconcile and dispatch once, then rewrite the dashboard
+  plans/bin/swarm run           tick every poll_seconds until every queued task has merged
+  plans/bin/swarm smoke         check each agent CLI can run headless and use a shell tool
+  plans/bin/swarm dashboard     rewrite .swarm/dashboard.html without dispatching anything
+
+A task is done when plans/status/<ID>.md is on origin/main. Pause the swarm by touching
+.swarm/PAUSE or labelling any open issue `pause-swarm`; running workers carry on, nothing new starts.
+Runtime state (pids, attempts, logs, events, dashboard) lives in .swarm/, which git ignores.
+"""
+
+import datetime as dt
+import html
+import json
+import os
+import re
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parents[2]
+STATE_DIR = ROOT / ".swarm"
+LOGS = STATE_DIR / "logs"
+STATE_FILE = STATE_DIR / "state.json"
+EVENTS = STATE_DIR / "events.log"
+DASHBOARD = STATE_DIR / "dashboard.html"
+POINTS = {"S": 1, "M": 2, "L": 4}
+
+
+# ---- inputs -------------------------------------------------------------------------------------
+
+def sh(*cmd, cwd=ROOT, check=True):
+    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    if check and result.returncode != 0:
+        raise RuntimeError(f"{' '.join(cmd)} failed: {result.stderr.strip()}")
+    return result.stdout
+
+
+def load_config():
+    return yaml.safe_load((ROOT / "plans/swarm.yaml").read_text())
+
+
+def load_tasks():
+    tasks = yaml.safe_load((ROOT / "plans/tasks.yaml").read_text())
+    tasks = tasks["tasks"] if isinstance(tasks, dict) else tasks
+    return {t["id"]: t for t in tasks}
+
+
+def load_issues():
+    return json.loads((ROOT / "plans/issues.json").read_text())
+
+
+def merged_ids():
+    out = sh("git", "ls-tree", "--name-only", "origin/main", "plans/status/")
+    return {Path(p).stem for p in out.split() if p.endswith(".md") and Path(p).stem != "README"}
+
+
+def open_prs():
+    out = sh("gh", "pr", "list", "--state", "open", "--limit", "100", "--json",
+             "number,headRefName,url,mergeable,statusCheckRollup,autoMergeRequest")
+    return {pr["headRefName"]: pr for pr in json.loads(out)}
+
+
+def paused():
+    if (STATE_DIR / "PAUSE").exists():
+        return True
+    out = sh("gh", "issue", "list", "--state", "open", "--label", "pause-swarm", "--json", "number",
+             check=False)
+    return bool(out.strip()) and out.strip() != "[]"
+
+
+def load_state():
+    if STATE_FILE.exists():
+        return json.loads(STATE_FILE.read_text())
+    return {"tasks": {}}
+
+
+def save_state(state):
+    STATE_FILE.write_text(json.dumps(state, indent=2, sort_keys=True))
+
+
+def event(message):
+    stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+    with EVENTS.open("a") as f:
+        f.write(f"{stamp}  {message}\n")
+    print(f"{stamp}  {message}")
+
+
+# ---- per-task facts -----------------------------------------------------------------------------
+
+def slug(title):
+    words = re.sub(r"[^a-z0-9 ]", " ", title.lower()).split()
+    return "-".join(w for w in words if w not in {"and", "the", "a", "of", "for", "on", "to"})[:40].strip("-")
+
+
+def branch_for(task):
+    return f"port/{task['id']}-{slug(task['title'])}"
+
+
+def worktree_for(config, task_id):
+    return (ROOT / config["worktrees"] / task_id).resolve()
+
+
+PROCS = {}  # workers started by this process, so exited ones aren't mistaken for live zombies
+
+
+def alive(pid):
+    if pid in PROCS:
+        return PROCS[pid].poll() is None
+    try:
+        os.kill(pid, 0)
+        return True
+    except (OSError, TypeError):
+        return False
+
+
+def checks_state(pr):
+    states = {(c.get("conclusion") or c.get("state") or c.get("status") or "").upper()
+              for c in pr.get("statusCheckRollup") or []}
+    if states & {"FAILURE", "ERROR", "CANCELLED", "TIMED_OUT", "ACTION_REQUIRED"}:
+        return "red"
+    if states - {"SUCCESS", "NEUTRAL", "SKIPPED", "COMPLETED"}:
+        return "pending"
+    return "green"
+
+
+def task_state(task_id, task, done, prs, state, config):
+    """One of: merged, running, pr-green, pr-pending, pr-red, conflicted, stuck, ready, waiting."""
+    if task_id in done:
+        return "merged"
+    record = state["tasks"].get(task_id, {})
+    if alive(record.get("pid")):
+        return "running"
+    pr = prs.get(branch_for(task))
+    exhausted = record.get("attempts", 0) >= config["max_attempts"]
+    if pr:
+        s = "conflicted" if pr.get("mergeable") == "CONFLICTING" else f"pr-{checks_state(pr)}"
+        return "stuck" if exhausted and s in ("conflicted", "pr-red") else s
+    if exhausted:
+        return "stuck"
+    return "ready" if all(d in done for d in task["deps"]) else "waiting"
+
+
+# ---- actions ------------------------------------------------------------------------------------
+
+def ensure_labels(config):
+    for name in config["agents"]:
+        sh("gh", "label", "create", f"agent:{name}", "--color", "5319e7", "--force",
+           "--description", f"Assigned to the local {name} worker", check=False)
+
+
+def prepare_worktree(config, task):
+    path = worktree_for(config, task["id"])
+    branch = branch_for(task)
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        remote = sh("git", "ls-remote", "--heads", "origin", branch).strip()
+        if remote:
+            sh("git", "worktree", "add", "-B", branch, str(path), f"origin/{branch}")
+        else:
+            sh("git", "worktree", "add", "-b", branch, str(path), "origin/main")
+        sh("git", "submodule", "update", "--init", "--recursive", cwd=path)
+    return path, branch
+
+
+def prompt_for(agent, config, task, issue, path, branch, prs):
+    card = sh("plans/bin/plan", "show", task["id"], cwd=path, check=False)
+    exclusive = task["id"] in config["exclusive"]
+    pr = prs.get(branch)
+    resume = (f"\nA previous attempt already pushed {branch} and opened {pr['url']}. Continue from "
+              f"there: read its state, fix what is red or conflicted, and see it through to merge.\n"
+              if pr else "")
+    machine = ("\nThis is a benchmark task. The swarm has reserved the machine for you: no other "
+               "agent is running, so measurements are not disturbed by build load.\n"
+               if exclusive else "")
+    return f"""You are the {agent} worker in a local multi-vendor swarm porting Campfire to C#.
+
+Your task is {task['id']}: {task['title']} (GitHub issue #{issue}).
+Your worktree is {path}, on branch {branch}, based on origin/main. Work only inside it. Other
+agents are working in sibling directories under {path.parent}; never read from or write to them,
+and never touch {ROOT}.
+{resume}{machine}
+First read AGENTS.md and plans/csharp-port.md in your worktree and follow them exactly. Here is the
+task card:
+
+{card}
+
+How to finish:
+1. Edit only the paths listed under the task's `owns`. If you need a change elsewhere, comment on
+   the owning task's issue instead.
+2. The Rails app in reference/ is the oracle: expected output comes from golden vectors, replay and
+   the reference, never from your own reading of the docs. Port the relevant reference/test cases
+   and run controller tests with CSRF protection on.
+3. Run bin/check until it is green. Its Ruby step runs through Docker; that is expected.
+4. Write plans/status/{task['id']}.md following plans/status/README.md, with evidence for every
+   acceptance criterion.
+5. Stage files by explicit path. Never run `git add -A` or `git add .`.
+6. Push, open a PR titled "[{task['id']}] {task['title']}" whose body says "Closes #{issue}",
+   then run `gh pr merge --auto --squash`.
+7. Watch CI with `gh pr checks --watch`. If it goes red, fix it and push. If main moves and the PR
+   conflicts, merge origin/main into your branch. You are done when the PR has merged.
+8. If you are blocked on something outside your task, comment on issue #{issue} explaining what
+   you need, and stop.
+Never benchmark before B02 and never publish numbers. Never work on issues labelled `human`.
+"""
+
+
+def launch(agent, config, task, issue, prs, state):
+    path, branch = prepare_worktree(config, task)
+    spec = config["agents"][agent]
+    effort = spec.get("effort_overrides", {}).get(task["id"], spec.get("effort", ""))
+    prompt = prompt_for(agent, config, task, issue, path, branch, prs)
+    fills = {"{prompt}": prompt, "{worktree}": str(path), "{effort}": effort}
+    cmd = [fills.get(part, part) for part in spec["command"]]
+
+    record = state["tasks"].setdefault(task["id"], {"attempts": 0})
+    record["attempts"] += 1
+    log = LOGS / f"{task['id']}-{record['attempts']}.log"
+    with log.open("w") as out:
+        proc = subprocess.Popen(cmd, cwd=path, stdout=out, stderr=subprocess.STDOUT,
+                                stdin=subprocess.DEVNULL, start_new_session=True)
+    PROCS[proc.pid] = proc
+    record.update(agent=agent, pid=proc.pid, log=str(log.relative_to(ROOT)),
+                  started=dt.datetime.now().isoformat(timespec="seconds"))
+
+    sh("gh", "issue", "edit", str(issue), "--add-label", "in-progress", "--add-label",
+       f"agent:{agent}", check=False)
+    sh("gh", "issue", "comment", str(issue), "--body",
+       f"Claimed by local swarm worker `{agent}` ({spec['model']}), attempt {record['attempts']}, "
+       f"on branch `{branch}`.", check=False)
+    event(f"dispatched {task['id']} to {agent} (attempt {record['attempts']}, pid {proc.pid})")
+
+
+def clean_up(config, task, issue, state):
+    path = worktree_for(config, task["id"])
+    if path.exists() and not sh("git", "status", "--porcelain", cwd=path, check=False).strip():
+        # --force only because worktrees contain submodules; it's clean, as checked above.
+        sh("git", "worktree", "remove", "--force", str(path), check=False)
+        sh("git", "branch", "-D", branch_for(task), check=False)
+    sh("gh", "issue", "edit", str(issue), "--remove-label", "in-progress", check=False)
+    state["tasks"].setdefault(task["id"], {})["cleaned"] = True
+    event(f"{task['id']} merged; worktree removed")
+
+
+def give_up(task, issue, state):
+    sh("gh", "issue", "edit", str(issue), "--add-label", "needs-human", "--remove-label",
+       "in-progress", check=False)
+    sh("gh", "issue", "comment", str(issue), "--body",
+       "The local swarm stopped retrying this task after its attempts ran out. Logs are in "
+       f"`.swarm/logs/{task['id']}-*.log` on the orchestrator machine.", check=False)
+    state["tasks"][task["id"]]["gave_up"] = True
+    event(f"{task['id']} is stuck after {state['tasks'][task['id']]['attempts']} attempts; "
+          "labelled needs-human")
+
+
+def tick(config, dispatch=True):
+    STATE_DIR.mkdir(exist_ok=True)
+    LOGS.mkdir(exist_ok=True)
+    sh("git", "fetch", "-q", "origin")
+    tasks, issues, state = load_tasks(), load_issues(), load_state()
+    done, prs = merged_ids(), open_prs()
+    states = {}
+    for agent, spec in config["agents"].items():
+        for task_id in spec["queue"]:
+            states[task_id] = task_state(task_id, tasks[task_id], done, prs, state, config)
+
+    for task_id, s in states.items() if dispatch else ():
+        record = state["tasks"].get(task_id, {})
+        pr = prs.get(branch_for(tasks[task_id]))
+        if s in ("pr-green", "pr-pending") and not pr.get("autoMergeRequest"):
+            sh("gh", "pr", "merge", pr["url"], "--auto", "--squash", check=False)
+            event(f"turned on auto-merge for {task_id}")
+        if s == "merged" and record.get("started") and not record.get("cleaned"):
+            clean_up(config, tasks[task_id], issues[task_id], state)
+        if s == "stuck" and not record.get("gave_up"):
+            give_up(tasks[task_id], issues[task_id], state)
+
+    if dispatch and not paused():
+        running = [t for t, s in states.items() if s == "running"]
+        exclusive_running = any(t in config["exclusive"] for t in running)
+        # A ready benchmark task drains the machine: nothing new starts until it can run alone.
+        draining = any(states.get(t) == "ready" for t in config["exclusive"])
+        for agent, spec in config["agents"].items():
+            if exclusive_running or any(state["tasks"].get(t, {}).get("agent") == agent
+                                        and states[t] == "running" for t in states):
+                continue
+            # A red or conflicted PR goes back to its own worker before anything new.
+            needs_fix = [t for t in spec["queue"] if states[t] in ("pr-red", "conflicted")
+                         and state["tasks"].get(t, {}).get("attempts", 0) < config["max_attempts"]]
+            ready = [t for t in spec["queue"] if states[t] == "ready"]
+            for task_id in needs_fix + ready:
+                exclusive = task_id in config["exclusive"]
+                if (exclusive and running) or (draining and not exclusive):
+                    continue
+                launch(agent, config, tasks[task_id], issues[task_id], prs, state)
+                states[task_id] = "running"
+                running.append(task_id)
+                exclusive_running = exclusive
+                break
+    save_state(state)
+    write_dashboard(config, tasks, states, state, done, prs)
+    return states
+
+
+# ---- dashboard ----------------------------------------------------------------------------------
+
+STATE_COLORS = {
+    "merged": "#2da44e", "running": "#bf8700", "pr-pending": "#0969da", "pr-green": "#1a7f37",
+    "pr-red": "#cf222e", "conflicted": "#cf222e", "stuck": "#82071e", "ready": "#8250df",
+    "waiting": "#6e7781", "human": "#57606a",
+}
+AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f"}
+
+
+def tail(path, lines=6):
+    try:
+        text = (ROOT / path).read_text(errors="replace").splitlines()
+        return "\n".join(line[:160] for line in text[-lines:])
+    except (OSError, TypeError):
+        return ""
+
+
+def mermaid(tasks, states, owner, done):
+    remaining = [t for t in tasks if t not in done]
+    lines = ["flowchart LR", f'  DONE["{len(done)} tasks merged"]:::merged']
+    for t in remaining:
+        s = "human" if t not in states else states[t]
+        label = f"{t} · {tasks[t]['size']}<br/><small>{html.escape(tasks[t]['title'][:30])}</small>"
+        who = f"<br/><small>{owner[t]}</small>" if t in owner else "<br/><small>owner</small>"
+        lines.append(f'  {t}["{label}{who}"]:::{s.replace("-", "_")}')
+    for t in remaining:
+        deps = [d for d in tasks[t]["deps"] if d not in done]
+        for d in deps:
+            lines.append(f"  {d} --> {t}")
+        if not deps and any(d in done for d in tasks[t]["deps"]):
+            lines.append(f"  DONE -.-> {t}")
+    for s, color in STATE_COLORS.items():
+        lines.append(f"  classDef {s.replace('-', '_')} fill:{color},color:#fff,stroke:{color}")
+    for t in remaining:
+        if t in owner:
+            lines.append(f"  style {t} stroke:{AGENT_COLORS.get(owner[t], '#000')},stroke-width:4px")
+    return "\n".join(lines)
+
+
+def write_dashboard(config, tasks, states, state, done, prs):
+    owner = {t: a for a, spec in config["agents"].items() for t in spec["queue"]}
+    total = len(tasks)
+    cards = []
+    for agent, spec in config["agents"].items():
+        current = next((t for t in spec["queue"] if states[t] == "running"), None)
+        record = state["tasks"].get(current, {}) if current else {}
+        pts_done = sum(POINTS[tasks[t]["size"]] for t in spec["queue"] if states[t] == "merged")
+        pts_all = sum(POINTS[tasks[t]["size"]] for t in spec["queue"])
+        chips = "".join(
+            f'<span class="chip" style="background:{STATE_COLORS[states[t]]}" '
+            f'title="{html.escape(tasks[t]["title"])}: {states[t]}">{t}</span>' for t in spec["queue"])
+        now = (f"<b>{current}</b> {html.escape(tasks[current]['title'])} · since "
+               f"{record.get('started', '')[11:16]} · attempt {record.get('attempts')}"
+               if current else "idle")
+        log = html.escape(tail(record.get("log"))) if current else ""
+        cards.append(f"""
+<section class="agent" style="border-top:4px solid {AGENT_COLORS.get(agent, '#000')}">
+  <h2>{agent}</h2><div class="model">{html.escape(spec['model'])}</div>
+  <div class="bar"><div style="width:{100 * pts_done // max(pts_all, 1)}%"></div></div>
+  <div class="model">{pts_done}/{pts_all} points</div>
+  <div class="now">{now}</div><div class="chips">{chips}</div>
+  {f'<pre>{log}</pre>' if log else ''}
+</section>""")
+
+    rows = []
+    for t in sorted(states, key=lambda t: list(STATE_COLORS).index(states[t])):
+        pr = prs.get(branch_for(tasks[t]))
+        link = f'<a href="{pr["url"]}">#{pr["url"].rsplit("/", 1)[1]}</a>' if pr else ""
+        rows.append(f'<tr><td><span class="chip" style="background:{STATE_COLORS[states[t]]}">'
+                    f'{states[t]}</span></td><td>{t}</td><td>{html.escape(tasks[t]["title"])}</td>'
+                    f'<td>{owner[t]}</td><td>{link}</td>'
+                    f'<td>{state["tasks"].get(t, {}).get("attempts", 0)}</td></tr>')
+    events = html.escape("\n".join(EVENTS.read_text().splitlines()[-25:][::-1])) if EVENTS.exists() else ""
+    legend = "".join(f'<span class="chip" style="background:{c}">{s}</span>'
+                     for s, c in STATE_COLORS.items())
+    pause = '<p class="paused">Paused: nothing new is being dispatched.</p>' if (STATE_DIR / "PAUSE").exists() else ""
+
+    DASHBOARD.write_text(f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="30"><title>Campfire Swarm</title>
+<style>
+:root {{ --bg:#f6f8fa; --fg:#1f2328; --card:#fff; --muted:#59636e; --line:#d1d9e0; }}
+@media (prefers-color-scheme: dark) {{ :root {{ --bg:#0d1117; --fg:#e6edf3; --card:#161b22; --muted:#9198a1; --line:#30363d; }} }}
+body {{ margin:0; padding:16px; background:var(--bg); color:var(--fg); font:14px/1.45 system-ui,sans-serif; }}
+h1 {{ font-size:20px; margin:0 0 4px; }} h2 {{ font-size:16px; margin:0; }} h3 {{ margin:24px 0 8px; }}
+.sub, .model {{ color:var(--muted); font-size:12px; }}
+.total {{ height:10px; background:var(--line); border-radius:5px; overflow:hidden; margin:8px 0 16px; }}
+.total div, .bar div {{ height:100%; background:#2da44e; }}
+.agents {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }}
+.agent {{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; min-width:0; }}
+.bar {{ height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin:8px 0 2px; }}
+.now {{ margin:8px 0; }} .chips {{ display:flex; flex-wrap:wrap; gap:4px; }}
+.chip {{ color:#fff; border-radius:10px; padding:1px 8px; font-size:12px; white-space:nowrap; }}
+pre {{ background:var(--bg); padding:8px; border-radius:6px; font-size:11px; overflow-x:auto; white-space:pre-wrap; word-break:break-word; max-height:140px; }}
+.graph {{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px; overflow-x:auto; }}
+.graph pre {{ max-height:none; background:none; }}
+table {{ border-collapse:collapse; width:100%; background:var(--card); }} td {{ border-bottom:1px solid var(--line); padding:4px 8px; }}
+.tablewrap {{ overflow-x:auto; }} a {{ color:#0969da; }} .paused {{ color:#cf222e; font-weight:600; }}
+</style></head><body>
+<h1>Campfire C# port · local swarm</h1>
+<div class="sub">{len(done)} of {total} tasks merged · updated {dt.datetime.now().strftime('%H:%M:%S')} · refreshes every 30s</div>
+{pause}
+<div class="total"><div style="width:{100 * len(done) // total}%"></div></div>
+<div class="agents">{''.join(cards)}</div>
+<h3>Remaining work</h3>
+<div class="chips" style="margin-bottom:8px">{legend}</div>
+<div class="graph"><pre class="mermaid">{html.escape(mermaid(tasks, states, owner, done))}</pre></div>
+<h3>Queued tasks</h3>
+<div class="tablewrap"><table>{''.join(rows)}</table></div>
+<h3>Events</h3><pre>{events}</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({{ startOnLoad: true, securityLevel: 'loose', theme:
+  matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default' }});</script>
+</body></html>""")
+
+
+# ---- commands -----------------------------------------------------------------------------------
+
+def cmd_status(config):
+    states = tick(config, dispatch=False)
+    tasks, state = load_tasks(), load_state()
+    owner = {t: a for a, spec in config["agents"].items() for t in spec["queue"]}
+    for t, s in states.items():
+        attempts = state["tasks"].get(t, {}).get("attempts", 0)
+        print(f"{t:5} {s:11} {owner[t]:7} attempts={attempts}  {tasks[t]['title']}")
+    print(f"dashboard: {DASHBOARD}")
+
+
+def cmd_run(config):
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
+    event("swarm started")
+    while True:
+        states = tick(config)
+        if all(s == "merged" or (s == "waiting" and t == "X01") for t, s in states.items()):
+            event("every queued task has merged; X01 waits on the owner's B05 run")
+            return
+        time.sleep(config["poll_seconds"])
+
+
+def cmd_smoke(config):
+    """Each agent writes `git --version` to ok.txt in a scratch directory, headless."""
+    base = STATE_DIR / "smoke"
+    prompt = ("Run the shell command `git --version` and write its exact output to a file named "
+              "ok.txt in the current directory. Then reply DONE.")
+    procs = {}
+    for agent, spec in config["agents"].items():
+        path = base / agent
+        path.mkdir(parents=True, exist_ok=True)
+        (path / "ok.txt").unlink(missing_ok=True)
+        fills = {"{prompt}": prompt, "{worktree}": str(path), "{effort}": spec.get("effort", "medium")}
+        cmd = [fills.get(part, part) for part in spec["command"]]
+        procs[agent] = subprocess.Popen(cmd, cwd=path, stdout=(path / "out.log").open("w"),
+                                        stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+    expected = sh("git", "--version").strip()
+    for agent, proc in procs.items():
+        try:
+            proc.wait(timeout=600)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        ok = base / agent / "ok.txt"
+        result = "ok" if ok.exists() and expected in ok.read_text() else f"FAILED, see {base / agent / 'out.log'}"
+        print(f"{agent:7} {result}")
+
+
+def main():
+    config = load_config()
+    command = sys.argv[1] if len(sys.argv) > 1 else "status"
+    if command == "tick":
+        ensure_labels(config)
+        tick(config)
+    elif command == "run":
+        ensure_labels(config)
+        cmd_run(config)
+    elif command == "dashboard":
+        tick(config, dispatch=False)
+        print(DASHBOARD)
+    elif command == "smoke":
+        cmd_smoke(config)
+    elif command == "status":
+        cmd_status(config)
+    else:
+        sys.exit(__doc__)
+
+
+if __name__ == "__main__":
+    main()

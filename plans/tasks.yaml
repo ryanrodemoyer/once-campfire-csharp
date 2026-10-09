@@ -1018,7 +1018,7 @@ tasks:
     lane: Q
     milestone: M3
     size: M
-    deps: [Q01, A02, A04, A05, A06, A07, A08, M06, M07, M08, M09, I05, S05]
+    deps: [Q01, A02, A04, A05, A06, A07, A08, M06, M07, M08, M09, M10, I05, S05]
     owns: [parity/route-coverage.json]
     refs: [vectors/campfire_routes.json]
     deliver: Every route/verb/format replayed; declared-but-unimplemented actions classified as expected 404s; no 501 stubs left.

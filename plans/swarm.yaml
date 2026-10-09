@@ -1,0 +1,47 @@
+# Local multi-vendor swarm: who runs what. Read by plans/bin/swarm.
+#
+# Each agent works one task at a time, in its own worktree at ../campfire-wt/<ID>, taking the
+# first task in its queue whose dependencies have all merged. Queues are balanced by size
+# (S=1, M=2, L=4 points) and keep each dependency chain with one agent to avoid handoffs.
+#
+# Rules the queues encode:
+# - Security work is reviewed across vendors: Claude writes R04 and RT04, Grok reviews them in Q08.
+# - B02, B03 and B04 are `exclusive`: they start only on an idle machine and nothing else starts
+#   while they run, so build load never leaks into a measurement.
+# - B05 and X02 are labelled `human` and never appear here.
+
+worktrees: ../campfire-wt
+max_attempts: 3
+poll_seconds: 120
+exclusive: [B02, B03, B04]
+
+agents:
+  claude:
+    model: Claude Opus 5.5 (medium; high on R04 and RT04)
+    command: [claude, -p, "{prompt}", --model, claude-opus-5-5, --effort, "{effort}",
+              --permission-mode, bypassPermissions]
+    effort: medium
+    effort_overrides: {R04: high, RT04: high}
+    # Rich-text sanitizer fuzzing and connection revocation are the two security-critical tasks
+    # left; B03 is on the critical path; X01 follows the owner's B05 run.
+    queue: [R04, RT04, B03, X01]
+
+  gemini:
+    model: Gemini 3.8 Flash (high) via Antigravity
+    command: [agy, -p, "{prompt}", --model, gemini-3.8-flash-high, --dangerously-skip-permissions]
+    # The route chain: small features, the coverage gate, then the Playwright and cable gates.
+    queue: [M09, Q06, Q02, Q07, Q05]
+
+  grok:
+    model: Grok 4.7 (high)
+    command: [grok, --cwd, "{worktree}", -m, grok-4.7, --reasoning-effort, high, --always-approve,
+              --output-format, plain, -p, "{prompt}"]
+    # The benchmark chain, plus the cross-vendor security review of R04 and RT04.
+    queue: [VS01, B06, B02, B04, Q08]
+
+  glm:
+    model: GLM 5.3 (high) via OpenCode
+    command: [opencode, run, --standalone, --auto, -m, "fireworks-ai/accounts/fireworks/models/glm-5p3#high",
+              "{prompt}"]
+    # Attachments and the media toolchain go together; Q04 is harness work against the reference.
+    queue: [M10, P02, Q04]
