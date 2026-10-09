@@ -288,14 +288,14 @@ def tick(config, dispatch=True):
         # A ready benchmark task drains the machine: nothing new starts until it can run alone.
         draining = any(states.get(t) == "ready" for t in config["exclusive"])
         for agent, spec in config["agents"].items():
-            if exclusive_running or any(state["tasks"].get(t, {}).get("agent") == agent
-                                        and states[t] == "running" for t in states):
-                continue
+            free = spec.get("slots", 1) - sum(states[t] == "running" for t in spec["queue"])
             # A red or conflicted PR goes back to its own worker before anything new.
             needs_fix = [t for t in spec["queue"] if states[t] in ("pr-red", "conflicted")
                          and state["tasks"].get(t, {}).get("attempts", 0) < config["max_attempts"]]
             ready = [t for t in spec["queue"] if states[t] == "ready"]
             for task_id in needs_fix + ready:
+                if free <= 0 or exclusive_running:
+                    break
                 exclusive = task_id in config["exclusive"]
                 if (exclusive and running) or (draining and not exclusive):
                     continue
@@ -303,7 +303,7 @@ def tick(config, dispatch=True):
                 states[task_id] = "running"
                 running.append(task_id)
                 exclusive_running = exclusive
-                break
+                free -= 1
     save_state(state)
     write_dashboard(config, tasks, states, state, done, prs)
     return states
@@ -361,29 +361,32 @@ def mermaid(tasks, states, owner, done):
     return "\n".join(lines)
 
 
+def running_task(config, tasks, state, task_id):
+    record = state["tasks"].get(task_id, {})
+    log = "\n".join(filter(None, [activity(config, task_id), tail(record.get("log"))]))
+    return (f'<div class="now"><b>{task_id}</b> {html.escape(tasks[task_id]["title"])} · since '
+            f'{record.get("started", "")[11:16]} · attempt {record.get("attempts")}</div>'
+            f'<pre>{html.escape(log)}</pre>')
+
+
 def write_dashboard(config, tasks, states, state, done, prs):
     owner = {t: a for a, spec in config["agents"].items() for t in spec["queue"]}
     total = len(tasks)
     cards = []
     for agent, spec in config["agents"].items():
-        current = next((t for t in spec["queue"] if states[t] == "running"), None)
-        record = state["tasks"].get(current, {}) if current else {}
+        current = [t for t in spec["queue"] if states[t] == "running"]
         pts_done = sum(POINTS[tasks[t]["size"]] for t in spec["queue"] if states[t] == "merged")
         pts_all = sum(POINTS[tasks[t]["size"]] for t in spec["queue"])
         chips = "".join(
             f'<span class="chip" style="background:{STATE_COLORS[states[t]]}" '
             f'title="{html.escape(tasks[t]["title"])}: {states[t]}">{t}</span>' for t in spec["queue"])
-        now = (f"<b>{current}</b> {html.escape(tasks[current]['title'])} · since "
-               f"{record.get('started', '')[11:16]} · attempt {record.get('attempts')}"
-               if current else "idle")
-        log = html.escape("\n".join(filter(None, [activity(config, current), tail(record.get("log"))]))) if current else ""
+        now = "".join(running_task(config, tasks, state, t) for t in current) or '<div class="now">idle</div>'
         cards.append(f"""
 <section class="agent" style="border-top:4px solid {AGENT_COLORS.get(agent, '#000')}">
   <h2>{agent}</h2><div class="model">{html.escape(spec['model'])}</div>
   <div class="bar"><div style="width:{100 * pts_done // max(pts_all, 1)}%"></div></div>
   <div class="model">{pts_done}/{pts_all} points</div>
-  <div class="now">{now}</div><div class="chips">{chips}</div>
-  {f'<pre>{log}</pre>' if log else ''}
+  <div class="chips">{chips}</div>{now}
 </section>""")
 
     rows = []
