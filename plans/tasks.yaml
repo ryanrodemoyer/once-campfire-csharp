@@ -992,12 +992,18 @@ tasks:
       in-process (Rails runs Resque workers beside Puma; JOB_CONCURRENCY sizes them); the revoker
       wired to the cable server; DomainSeams built from those three, never no-ops. Mirror
       tests/workflows/Server.cs, but with real jobs. B02 may have landed a temporary
-      ServerCommand with no-op seams to get the benchmark running; replace it.
+      ServerCommand with no-op seams to get the benchmark running; replace it. Also set
+      WebApp.ResetRemoteConnections to disconnect the user's cable connections (sign out, per
+      user.rb reset_remote_connections), and register every job handler with the runner
+      (MessageAttachmentJobs, AttachmentsJobs and the other RegisterWith methods). The requests
+      on #26 spell out the cable mount.
     accept:
       - The Docker image on a copy of the bench seed serves the room page, accepts a /cable
         connection, and a posted message reaches a subscribed cable client
       - A posted message to a room with a bot enqueues and runs the webhook job
-      - A composition test fails if any DomainSeams member is a no-op
+      - A composition test fails if any DomainSeams member is a no-op, or if any job type
+        enqueued in src/ has no registered handler
+      - Signing out sends the reference's disconnect to the user's cable connections
       - bench/bin/run --apps reference,csharp --routes post_message --reps 1 passes validation
 
   - id: P02
