@@ -36,7 +36,8 @@ public partial class View
         IsUnrenderable(message) ? Render(MessagesUnrenderable) : MessageTag(message.TagInfo, body);
 
     bool IsUnrenderable(MessageView message) =>
-        message.Creator is null || message.Boosts.Any(boost => boost.Booster is null) || MessagePresentation(message) is Presentation.Unrenderable;
+        message.Creator is null || message.Boosts.Any(boost => boost.Booster is null) || message.PlainTextFailed
+        || MessagePresentation(message) is Presentation.Unrenderable;
 
     /// <summary>
     /// <c>message_presentation(message)</c>: the attachment, the sound, or the rich text body

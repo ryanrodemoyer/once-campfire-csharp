@@ -2,6 +2,7 @@ using Campfire.Data.Queries;
 using Campfire.Data.Sqlite;
 using Campfire.RailsCompat.Crypto;
 using Campfire.RailsCompat.GlobalId;
+using Campfire.RailsCompat.Ruby;
 using Campfire.RailsCompat.Signing;
 using Campfire.RichText.Attachments;
 
@@ -43,10 +44,19 @@ public sealed class DatabaseAttachables(SqliteSession session, KeyGenerator keys
         {
             return SignedLookup.None;
         }
-        if (gid.ModelName == "User" && FindUser(gid.Id) is { } user)
+        if (gid.ModelName == "User" && !gid.Composite && FindUser(gid.Id) is { } user)
         {
             return new SignedLookup.User(user);
         }
+
+        // An existing Message renders messages/_message. A verified SGID for a missing one still
+        // falls through to MissingAttachable, which asks the class for a partial and raises.
+        if (gid.ModelName == "Message" && !gid.Composite && RubyString.ToIChecked(gid.Id) is long messageId && messageId > 0
+            && Messages.Find(session, messageId) is not null)
+        {
+            return new SignedLookup.Record(gid.ModelName, gid.Id);
+        }
+
         return new SignedLookup.MissingRecord(gid.ModelName);
     }
 
@@ -60,23 +70,25 @@ public sealed class DatabaseAttachables(SqliteSession session, KeyGenerator keys
         }
         if (parsed.ModelName == "User")
         {
-            return FindUser(parsed.Id);
+            // A composite model id is an array. User.find of that raises RecordNotFound, which
+            // Action Text rescues as a missing attachable.
+            return parsed.Composite ? null : FindUser(parsed.Id);
         }
         if (!OtherModels.TryGetValue(parsed.ModelName, out var exists))
         {
             result = GidLookupResult.Raises;
         }
-        else if (long.TryParse(parsed.Id, out var id) && exists(session, id))
+        else if (!parsed.Composite && RubyString.ToIChecked(parsed.Id) is long id && id > 0 && exists(session, id))
         {
             result = GidLookupResult.OtherModel;
         }
         return null;
     }
 
-    /// <summary>What a mention renders of the user, freshly signed.</summary>
+    /// <summary>What a mention renders of the user, freshly signed. The id is cast with <c>String#to_i</c>.</summary>
     public MentionUser? FindUser(string id)
     {
-        if (!long.TryParse(id, out var userId) || Users.Find(session, userId) is not { } user)
+        if (RubyString.ToIChecked(id) is not long userId || userId <= 0 || Users.Find(session, userId) is not { } user)
         {
             return null;
         }

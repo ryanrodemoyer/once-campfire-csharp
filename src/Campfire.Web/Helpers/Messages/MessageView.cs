@@ -20,6 +20,11 @@ namespace Campfire.Web.Helpers;
 /// <param name="PlainTextBody"><c>plain_text_body</c>: the body's plain text, else the attachment's filename, else "".</param>
 /// <param name="Attachment">The <c>attachment</c>'s blob, null when nothing is attached.</param>
 /// <param name="Boosts"><c>message.boosts.ordered</c>.</param>
+/// <param name="PlainTextFailed">
+/// <c>plain_text_body</c> raised. <c>message_tag</c> evaluates it for the emoji class before the
+/// block, and that rescue renders <c>messages/_unrenderable</c> instead of failing the page
+/// (<c>reference/app/helpers/messages_helper.rb</c>).
+/// </param>
 public sealed record MessageView(
     long Id,
     string ClientMessageId,
@@ -31,7 +36,8 @@ public sealed record MessageView(
     string? Body,
     string PlainTextBody,
     Blob? Attachment,
-    IReadOnlyList<BoostView> Boosts)
+    IReadOnlyList<BoostView> Boosts,
+    bool PlainTextFailed = false)
 {
     /// <summary>The record <c>dom_id</c> and form helpers read.</summary>
     public RecordKey Record => new(Message.ModelName, ClientMessageId);

@@ -42,9 +42,12 @@ public sealed record RemoteVideo(string Url, string ContentType, string? Width, 
 
 /// <summary>
 /// <c>ActionText::Attachables::MissingAttachable</c>, remembering the model a still-valid SGID
-/// named (<c>SignedGlobalID.parse(sgid).model_name</c>).
+/// named (<c>SignedGlobalID.parse(sgid).model_name</c>). <paramref name="RenderModelId"/> is set
+/// when that record exists: plain text is still the caption (the model defines no
+/// <c>attachable_plain_text_representation</c>), and the partial comes from
+/// <see cref="RenderContext.RenderLocatedModel"/>.
 /// </summary>
-public sealed record MissingAttachable(string? SignedModel) : Attachable;
+public sealed record MissingAttachable(string? SignedModel, string? RenderModelId = null) : Attachable;
 
 /// <summary><c>ActionText::Attachment</c>: the resolved attachable and the node's caption.</summary>
 public sealed record Attachment(Attachable Attachable, string? Caption);

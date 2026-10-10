@@ -1,12 +1,19 @@
 using System.Text.Json.Nodes;
+using Campfire.Data.Queries;
+using Campfire.Data.Records;
+using Campfire.Data.Sqlite;
 using Campfire.Jobs.WebPush;
+using Campfire.RailsCompat.Crypto;
+using Campfire.RailsCompat.Ruby;
 using Campfire.RichText.Attachments;
 using Campfire.RichText.Editing;
+using Campfire.RichText.Html;
 using Campfire.RichText.PlainText;
 using Campfire.RichText.Sanitize;
 using Campfire.Vectors;
 using Campfire.Web.Assets;
 using Campfire.Web.Helpers;
+using Campfire.Web.Helpers.Rails;
 using Campfire.Web.Routing;
 
 namespace Campfire.RichText.Fuzz;
@@ -77,6 +84,50 @@ public sealed record PipelineOutputs(
 
     static readonly Lazy<AssetBundle> Assets = new(() => AssetBundle.Build(AssetSources.InRepository(VectorFiles.Root), DateTimeOffset.UnixEpoch));
 
+    // Ruby's VM stack gives up at about this many message partials (measured in the reference
+    // image). Gumbo's tree-depth limit stops the HTML sooner when each level is deep; this only
+    // keeps a shallow body from overflowing the C# stack past the point Rails can reach.
+    const int maxLocatedPartials = 100;
+
+    static readonly AsyncLocal<int> LocatedDepth = new();
+
+    /// <summary>
+    /// <c>messages/_message</c> for a Message a signed GlobalID located. The body is the one the
+    /// fuzzer is rendering: the oracle writes it onto message 1 and does not export the rich text.
+    /// </summary>
+    public static string RenderLocatedMessage(SqliteSession session, KeyGenerator keys, string modelName, string modelId, string body, RenderContext context)
+    {
+        if (modelName != Message.ModelName || RubyString.ToIChecked(modelId) is not long id)
+        {
+            throw new RichTextRaisedException($"NoMethodError: undefined method 'to_partial_path' for class {modelName}");
+        }
+
+        var depth = LocatedDepth.Value;
+        if (depth >= maxLocatedPartials)
+        {
+            throw new HtmlParseException(HtmlParseException.TreeTooDeep);
+        }
+
+        var message = Messages.Find(session, id) ?? throw new RichTextRaisedException("ActiveRecord::RecordNotFound");
+        LocatedDepth.Value = depth + 1;
+        try
+        {
+            var loader = new MessageViews(keys, text => RichTextPlainText.ToPlainText(text, context));
+            var viewMessage = loader.WithBody(session, message, body);
+            var view = new View
+            {
+                Assets = Assets.Value,
+                Origin = new UrlBase("http", context.RequestHost ?? "example.com"),
+                RichTextContext = context,
+            };
+            return RubyValues.Render(View.Render(writer => view.MessagesMessage(writer, viewMessage))).ToString();
+        }
+        finally
+        {
+            LocatedDepth.Value = depth;
+        }
+    }
+
     /// <summary>What the port produces for <paramref name="body"/>, each output computed on its own as Rails does.</summary>
     public static PipelineOutputs FromPort(string body, RenderContext context) => new(
         Run(() => Present(body, context)),
@@ -84,14 +135,31 @@ public sealed record PipelineOutputs(
         Run(() => RichTextPlainText.ToPlainText(body, context)),
         Run(() => EditableContent.EditorValue(body, context)),
         Run(() => new JsonArray([.. MessagePusher.MentionedUserIds(body, context).Select(id => JsonValue.Create(id))]).ToJsonString()),
-        Run(() => ContentFilters.ApplyTextMessagePresentationFilters(body, context.RequestHost)));
+        Run(() => ContentFilters.ApplyTextMessagePresentationFilters(body, context.RequestHost, context)));
 
     // `message_presentation(message)` as the app gets there: MessageViews computes plain_text_body
     // (which `content_type` reads, inside the helper's rescue in Rails), then View picks the sound
     // or the text branch
+    // content_type reads plain_text_body inside message_presentation's rescue. A loggable failure
+    // renders ""; logging an invalid-UTF-8 message raises, and the message is unrenderable.
     static string Present(string body, RenderContext context)
     {
-        var plainTextBody = RichTextPlainText.PlainTextBody(body, null, context);
+        string plainTextBody;
+        try
+        {
+            plainTextBody = RichTextPlainText.PlainTextBody(body, null, context);
+        }
+        catch (RichTextRaisedException e) when (e.Unloggable)
+        {
+            throw;
+        }
+#pragma warning disable CA1031 // message_presentation rescues Exception.
+        catch (Exception)
+#pragma warning restore CA1031
+        {
+            return "";
+        }
+
         var view = new View { Assets = Assets.Value, Origin = new UrlBase("http", context.RequestHost!), RichTextContext = context };
         var message = new MessageView(1, "fuzz", DateTimeOffset.UnixEpoch, DateTimeOffset.UnixEpoch, 1, new MessageRoom(1, "Pets"), null, body, plainTextBody, null, []);
         return view.MessagePresentation(message) switch

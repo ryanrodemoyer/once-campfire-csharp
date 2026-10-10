@@ -32,6 +32,7 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
         {
             var body = bodies.GetValueOrDefault(message.Id);
             var attachment = BlobRecords.FindAttachedBlob(session, Message.ModelName, message.Id, "attachment");
+            var plain = PlainTextBody(body, attachment);
             var room = rooms.TryGetValue(message.RoomId, out var loaded) ? loaded : rooms[message.RoomId] = LoadRoom(session, message.RoomId);
             return new MessageView(
                 message.Id,
@@ -42,11 +43,24 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
                 room ?? throw new InvalidOperationException($"Message {message.Id}'s room {message.RoomId} is gone"),
                 users.GetValueOrDefault(message.CreatorId),
                 body,
-                PlainTextBody(body, attachment),
+                plain.Text,
                 attachment,
                 [.. boosts[message.Id].Select(boost => new BoostView(
-                    boost.Id, boost.Content, boost.CreatedAt, users.GetValueOrDefault(boost.BoosterId), boost.MessageId, message.RoomId))]);
+                    boost.Id, boost.Content, boost.CreatedAt, users.GetValueOrDefault(boost.BoosterId), boost.MessageId, message.RoomId))],
+                plain.Failed);
         })];
+    }
+
+    /// <summary>
+    /// <see cref="Load"/> for one message whose rich text body is <paramref name="body"/> rather
+    /// than the stored row. The differential fuzzer holds that body only in memory: the oracle
+    /// updates it in place and does not export <c>action_text_rich_texts</c>.
+    /// </summary>
+    public MessageView WithBody(SqliteSession session, Message message, string? body)
+    {
+        var loaded = Load(session, [message])[0];
+        var plain = PlainTextBody(body, loaded.Attachment);
+        return loaded with { Body = body, PlainTextBody = plain.Text, PlainTextFailed = plain.Failed };
     }
 
     /// <summary>The user's fields as the partials read them.</summary>
@@ -56,11 +70,22 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
         return MessageUser.From(user, TransferableUser.GenerateAvatarSignedId(keys, user.Id));
     }
 
-    // `body.to_plain_text.presence || attachment&.filename&.to_s || ""`
-    string PlainTextBody(string? body, Blob? attachment)
+    // `body.to_plain_text.presence || attachment&.filename&.to_s || ""`.
+    // message_tag calls this for the emoji class and rescues Exception, so one bad body blanks
+    // that message instead of failing the room page (reference/app/helpers/messages_helper.rb).
+    (string Text, bool Failed) PlainTextBody(string? body, Blob? attachment)
     {
-        var plainText = body is null ? "" : toPlainText(body);
-        return RubyValues.IsPresent(plainText) ? plainText : attachment?.Filename.ToString() ?? "";
+        try
+        {
+            var plainText = body is null ? "" : toPlainText(body);
+            return (RubyValues.IsPresent(plainText) ? plainText : attachment?.Filename.ToString() ?? "", false);
+        }
+#pragma warning disable CA1031 // Rails rescues Exception around the whole message tag.
+        catch (Exception)
+#pragma warning restore CA1031
+        {
+            return ("", true);
+        }
     }
 
     static MessageRoom? LoadRoom(SqliteSession session, long roomId)

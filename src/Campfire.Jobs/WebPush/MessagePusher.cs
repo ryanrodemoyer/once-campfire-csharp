@@ -5,6 +5,7 @@ using Campfire.Data.Sqlite;
 using Campfire.Jobs.Runner;
 using Campfire.RichText.Attachments;
 using Campfire.RichText.PlainText;
+using Campfire.RichText.Sanitize;
 using Campfire.Storage.Blobs;
 
 namespace Campfire.Jobs.WebPush;
@@ -85,7 +86,12 @@ public sealed class MessagePusher(SqliteDatabase database, WebPushPool pool, Fun
         {
             return [];
         }
-        return [.. AttachmentResolution.AttachmentNodes(RichTextRenderer.Load(body))
+        // Content.new canonicalizes trix attachments through Attachment.from_node before
+        // attachables re-reads them with Attachable.from_node. The first pass is what raises
+        // on a payload the strict locator would only reject.
+        var fragment = RichTextRenderer.Wrap(body);
+        ContentFilters.CanonicalizeContent(fragment, context);
+        return [.. AttachmentResolution.AttachmentNodes(fragment)
             .Select(node => AttachmentResolution.ActionTextAttachableFromNode(node, context))
             .OfType<Mention>()
             .Select(mention => mention.User.Id)
