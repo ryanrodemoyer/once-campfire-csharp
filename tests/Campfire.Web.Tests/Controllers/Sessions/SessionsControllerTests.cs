@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Campfire.Data.Events;
 using Campfire.RailsCompat.Cookies;
 using Campfire.Vectors;
+using Campfire.Web.Helpers.Rails;
 using Campfire.Web.Tests.Controllers.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -35,15 +36,7 @@ public sealed partial class SessionsControllerTests : IDisposable
 
     static readonly HashSet<string> SqliteStampedTables = ["memberships"];
 
-    // Differences outside this task, left out of the comparison and reported on the owning issue.
-    // Signing out sends `user.reset_remote_connections`' disconnect broadcast through
-    // WebApp.ResetRemoteConnections, which the server doesn't wire yet; and Rails' cookie jar sends
-    // the session_token it re-signed while authenticating as well as its deletion, where C02's jar
-    // sends only the deletion (browsers keep the last, so both sign out).
-    static readonly Dictionary<string, string> KnownDifferences = new()
-    {
-        ["sign out"] = "events and the re-signed session_token cookie",
-    };
+    static readonly Dictionary<string, string> KnownDifferences = [];
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -74,7 +67,7 @@ public sealed partial class SessionsControllerTests : IDisposable
             var after = Snapshot();
 
             var known = KnownDifferences.ContainsKey(name);
-            failures.AddRange(CompareResponse(sample["response"]!, actual, known).Select(failure => $"{name}: {failure}"));
+            failures.AddRange(CompareResponse(sample["response"]!, actual).Select(failure => $"{name}: {failure}"));
             if (!known)
             {
                 failures.AddRange(CompareEvents(sample["events"]!.AsArray(), app.Seams.Events).Select(failure => $"{name}: {failure}"));
@@ -159,7 +152,7 @@ public sealed partial class SessionsControllerTests : IDisposable
         return new Response(context.Response.StatusCode, context.Response.Headers, Encoding.UTF8.GetString(responseBody.ToArray()));
     }
 
-    IEnumerable<string> CompareResponse(JsonNode expected, Response actual, bool lastCookieOnly)
+    IEnumerable<string> CompareResponse(JsonNode expected, Response actual)
     {
         var status = expected["status"]!.GetValue<int>();
         if (status != actual.Status)
@@ -183,11 +176,6 @@ public sealed partial class SessionsControllerTests : IDisposable
             }
         }
         var wantCookies = Cookies(expected);
-        if (lastCookieOnly)
-        {
-            // Of the cookies set more than once, the last one, which is what the browser keeps.
-            wantCookies = [.. wantCookies.Where((cookie, i) => !wantCookies.Skip(i + 1).Any(later => CookieName(later) == CookieName(cookie)))];
-        }
         foreach (var failure in CompareCookies(wantCookies, [.. actual.Headers.SetCookie.Select(cookie => cookie!)]))
         {
             yield return failure;
@@ -286,7 +274,12 @@ public sealed partial class SessionsControllerTests : IDisposable
     static IEnumerable<string> CompareEvents(JsonArray expected, IReadOnlyList<SeamEvent> actual)
     {
         var want = expected.Select(node => $"broadcast {node!["broadcast"]!.GetValue<string>()} {node["payload"]!.GetValue<string>()}").ToList();
-        var have = actual.Select(seamEvent => seamEvent is Broadcast broadcast ? $"broadcast {broadcast.Stream} {broadcast.Payload}" : seamEvent.ToString()).ToList();
+        var have = actual.Select(seamEvent => seamEvent switch
+        {
+            Broadcast broadcast => $"broadcast {broadcast.Stream} {broadcast.Payload}",
+            Disconnect disconnect => $"broadcast action_cable/{RecordIdentifier.GidParam("User", disconnect.UserId)} {{\"type\":\"disconnect\",\"reconnect\":{(disconnect.Reconnect ? "true" : "false")}}}",
+            _ => seamEvent.ToString(),
+        }).ToList();
         if (!want.SequenceEqual(have))
         {
             yield return $"events [{string.Join(", ", have)}], expected [{string.Join(", ", want)}]";

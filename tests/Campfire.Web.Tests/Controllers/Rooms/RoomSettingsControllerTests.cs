@@ -345,6 +345,25 @@ public sealed class RoomSettingsControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Destroy_room_with_attachments()
+    {
+        var before = RoomCount();
+        var messageCount = (long)app.Scalar($"SELECT COUNT(*) FROM messages WHERE room_id = {designers}")!;
+        var attachmentCount = (long)app.Scalar($"SELECT COUNT(*) FROM active_storage_attachments a JOIN messages m ON a.record_id = m.id AND a.record_type = 'Message' WHERE m.room_id = {designers}")!;
+        Assert.True(attachmentCount > 0);
+
+        var response = await SendAsync(david, "DELETE", $"/rooms/{designers}");
+
+        AssertRedirectedTo("/", response);
+        Assert.Single(BroadcastsTo("rooms"));
+        Assert.Equal(before - 1, RoomCount());
+        Assert.Equal(0L, app.Scalar($"SELECT COUNT(*) FROM messages WHERE room_id = {designers}"));
+        Assert.Equal(0L, MembershipCount(designers));
+        Assert.Equal(0L, app.Scalar($"SELECT COUNT(*) FROM active_storage_attachments a JOIN messages m ON a.record_id = m.id AND a.record_type = 'Message' WHERE m.room_id = {designers}"));
+        Assert.Equal(attachmentCount, app.Seams.Jobs.OfType<Campfire.Data.MessageAttachments.PurgeBlobJob>().Count());
+    }
+
+    [Fact]
     public async Task Destroy_only_allowed_for_creators_or_those_who_can_administer()
     {
         var before = RoomCount();

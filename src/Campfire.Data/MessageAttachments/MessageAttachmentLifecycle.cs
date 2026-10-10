@@ -93,18 +93,24 @@ public static class MessageAttachmentLifecycle
     /// <c>blob.purge_later</c>). Everything else is <see cref="MessageLifecycle.Destroy"/>'s. The
     /// blob's row and files stay until the job runs them down, as Rails leaves them.
     /// </summary>
-    public static void DestroyWithAttachment(WriteTransaction transaction, DomainSeams seams, Message message, DateTimeOffset now)
+    public static void DestroyWithAttachment(WriteTransaction transaction, IJobQueue jobs, Message message, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(transaction);
-        ArgumentNullException.ThrowIfNull(seams);
+        ArgumentNullException.ThrowIfNull(jobs);
         ArgumentNullException.ThrowIfNull(message);
         var session = transaction.Session;
         if (Attachments.For(session, Message.ModelName, message.Id, AttachmentNames.Attachment) is { } attachment)
         {
             Attachments.Delete(session, attachment.Id);
-            transaction.AfterCommit(_ => seams.Jobs.Enqueue(new PurgeBlobJob(attachment.BlobId)));
+            transaction.AfterCommit(_ => jobs.Enqueue(new PurgeBlobJob(attachment.BlobId)));
         }
         MessageLifecycle.Destroy(transaction, message, now);
+    }
+
+    public static void DestroyWithAttachment(WriteTransaction transaction, DomainSeams seams, Message message, DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(seams);
+        DestroyWithAttachment(transaction, seams.Jobs, message, now);
     }
 
     /// <summary>

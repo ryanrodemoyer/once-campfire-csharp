@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Text;
 using System.Text.Json.Nodes;
-using Campfire.Data.Lifecycle;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -106,20 +106,14 @@ public abstract class RoomSettingsController : ApplicationController
     async ValueTask DestroyRoomAsync(Room destroyed)
     {
         var now = Now;
-        var hasAttachments = await ReadAsync(session => Messages.InRoom(session, destroyed.Id)
-            .Any(message => BlobRecords.FindAttachedBlob(session, Message.ModelName, message.Id, "attachment") is not null)).ConfigureAwait(false);
-        if (hasAttachments)
-        {
-            // A message's attachment is purged later (`has_one_attached`), which is M10's.
-            throw new NotImplementedRouteException("Destroying a room whose messages have attachments is M10's");
-        }
+        var seams = App.RequireSeams();
         await WriteAsync(transaction =>
         {
             var session = transaction.Session;
             Memberships.DeleteForRoom(session, destroyed.Id);
             foreach (var message in Messages.InRoom(session, destroyed.Id))
             {
-                MessageLifecycle.Destroy(transaction, message, now);
+                MessageAttachmentLifecycle.DestroyWithAttachment(transaction, seams, message, now);
             }
             Rooms.Delete(session, destroyed.Id);
         }).ConfigureAwait(false);

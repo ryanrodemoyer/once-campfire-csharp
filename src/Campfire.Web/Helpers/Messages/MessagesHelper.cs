@@ -112,8 +112,12 @@ public partial class View
             case "sound":
                 return Rescued(() => MessageSoundPresentation(message.Sound!));
             default:
+                if (message.Body is null)
+                {
+                    return new Presentation.Html("");
+                }
                 var context = RichTextContext ?? throw new InvalidOperationException("View.RichTextContext isn't set");
-                return Campfire.RichText.Attachments.MessagePresentation.Present(message.Body ?? "", context);
+                return Campfire.RichText.Attachments.MessagePresentation.Present(message.Body, context);
         }
     }
 

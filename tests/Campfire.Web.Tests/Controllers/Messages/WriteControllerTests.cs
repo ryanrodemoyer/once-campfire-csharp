@@ -25,12 +25,7 @@ public sealed partial class WriteControllerTests : IDisposable
 
     // Cases whose rendered message differs from the reference for a reason outside this task: the
     // body, its ETag and the broadcast payloads aren't compared; everything else is.
-    static readonly Dictionary<string, string> KnownDifferences = new()
-    {
-        // M02's message_presentation shows a message with no body row as an empty lexxy-content
-        // div; Rails raises and rescues it to "" (reported on #43).
-        ["member sends no body"] = "#43",
-    };
+    static readonly Dictionary<string, string> KnownDifferences = [];
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 

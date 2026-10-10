@@ -97,7 +97,6 @@ public sealed class CookieJar
         }
 
         cookies.Remove(name);
-        setCookies.Remove(name);
         deletedCookies[name] = options?.Clone() ?? new CookieOptions();
     }
 

@@ -1,4 +1,5 @@
 using Campfire.Data.Lifecycle;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.RailsCompat.Crypto;
@@ -81,7 +82,11 @@ public sealed class FirstRunsController : ApplicationController
             var administrator = UserLifecycle.Create(tx, name!, emailAddress, passwordDigest, now, UserRole.Administrator);
             if (staged is not null)
             {
-                BlobStorage.AttachOne(tx, staged, "User", administrator.Id, "avatar", now);
+                var attached = BlobStorage.AttachOne(tx, staged, "User", administrator.Id, "avatar", now);
+                if (!attached.Blob.IsAnalyzed)
+                {
+                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                }
             }
             var room = Rooms.Create(tx.Session, RoomType.Open, FirstRoomName, administrator.Id, now);
             tx.AfterCommit(after => Memberships.GrantTo(after, room, Users.ActiveIds(after)));
