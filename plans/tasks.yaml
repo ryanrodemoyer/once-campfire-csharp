@@ -1226,9 +1226,17 @@ tasks:
       profiler-free bench/bin/run numbers count as before/after.
       Stop when the top 5 bottlenecks are addressed or the last two changes each gained under 5%
       on all five workloads, whichever comes first.
+      Keep plans/perf-log.md as a lab notebook, committed as you go. Start with the B02 baseline
+      table. Then one entry per investigation: what the profile showed (top methods, allocation
+      and GC numbers, with the trace command used), the hypothesis, the change (files and commit),
+      before/after requests/sec and p99 for all five workloads with the % change, and the verdict:
+      kept, reverted, or inconclusive, and why. Record dead ends and surprises too. End with a
+      summary table of kept changes ranked by gain, the final numbers next to Rails and the
+      baseline, and what is still on the table.
     accept:
       - Each optimization lands with before/after numbers and a green replay gate
-      - plans/perf-log.md lists every change tried, kept or reverted, with its numbers
+      - plans/perf-log.md is a lab notebook a reader can follow without the code, written as the
+        work happens, not at the end
 
   - id: B04
     title: Runtime configuration matrix including Native AOT
