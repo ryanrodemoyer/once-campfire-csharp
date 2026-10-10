@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Text;
 using System.Text.Json.Nodes;
 using Campfire.Data.Events;
@@ -284,14 +283,14 @@ public sealed partial class MessagesWriteController : ApplicationController
     // The page is rendered first, so its content_for calls are in place for the layout.
     static ReadOnlyMemory<byte> RenderLayout(View view, string page)
     {
-        var buffer = new ArrayBufferWriter<byte>();
+        using var buffer = new PooledBufferWriter();
         view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(page));
         return buffer.WrittenMemory;
     }
 
     static string RenderString(Action<HtmlWriter> template)
     {
-        var buffer = new ArrayBufferWriter<byte>();
+        using var buffer = new PooledBufferWriter();
         template(new HtmlWriter(buffer));
         return Encoding.UTF8.GetString(buffer.WrittenSpan);
     }

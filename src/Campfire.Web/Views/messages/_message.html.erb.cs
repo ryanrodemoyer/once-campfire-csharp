@@ -1,7 +1,7 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
 
 <%# Bump this version when the message presentation filters change what they emit. Editing this line changes the template digest, which busts BOTH this fragment cache and the collection cache that keys on this partial's digest (helper Ruby changes alone don't). %>
-<% FragmentCache(() => { %>
+<% FragmentCache(w, message.Id, message.UpdatedAt, () => { %>
   <%= MessageTag(message, () => { %>
     <h2 class="message__day-separator"><%= LocalDatetimeTag(message.CreatedAt, "date") %></h2>
 

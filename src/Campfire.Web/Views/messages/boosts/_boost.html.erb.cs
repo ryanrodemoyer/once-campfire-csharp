@@ -1,4 +1,4 @@
-<% FragmentCache(() => { %>
+<% FragmentCache(w, boost.Id, boost.CreatedAt, () => { %>
   <div id="<%= RecordIdentifier.DomId(boost.Record) %>"
       class="boost boost-item flex-inline postion--relative max-width align-center fill-white gap"
       data-controller="boost-delete" data-boost-delete-perform-class="boost--deleting" data-boost-delete-reveal-class="expanded" data-boost-delete-booster-id-value="<%= boost.Booster!.Id %>">

@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Text;
 using Campfire.Data.Pagination;
 using Campfire.Data.Queries;
@@ -133,7 +132,7 @@ public sealed class MessagesIndexController : ApplicationController
 
     static string RenderString(Action<HtmlWriter> template)
     {
-        var buffer = new ArrayBufferWriter<byte>();
+        using var buffer = new PooledBufferWriter();
         template(new HtmlWriter(buffer));
         return Encoding.UTF8.GetString(buffer.WrittenSpan);
     }
