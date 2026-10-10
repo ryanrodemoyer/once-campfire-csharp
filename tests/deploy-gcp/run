@@ -1,0 +1,277 @@
+#!/usr/bin/env bash
+# Automated test suite for bin/deploy-gcp.
+# Tests every subcommand under --dry-run with stubbed gcloud and docker on PATH,
+# verifying that all commands match expectations, setup is idempotent, and no secrets leak.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+DEPLOY_BIN="${REPO_ROOT}/bin/deploy-gcp"
+STUBS_DIR="${SCRIPT_DIR}/stubs"
+
+# Prepend stubs directory to PATH so stub gcloud and docker are used
+export PATH="${STUBS_DIR}:${PATH}"
+
+PASSED=0
+FAILED=0
+
+pass() {
+  echo "  [PASS] $1"
+  PASSED=$((PASSED + 1))
+}
+
+fail() {
+  echo "  [FAIL] $1" >&2
+  if [ -n "${2:-}" ]; then
+    echo "         Details: $2" >&2
+  fi
+  FAILED=$((FAILED + 1))
+}
+
+assert_contains() {
+  local haystack="$1"
+  local needle="$2"
+  local msg="$3"
+  if echo "$haystack" | grep -F -q -- "$needle"; then
+    pass "$msg"
+  else
+    fail "$msg" "Expected output to contain: '$needle'"
+  fi
+}
+
+assert_not_contains() {
+  local haystack="$1"
+  local needle="$2"
+  local msg="$3"
+  if ! echo "$haystack" | grep -F -q -- "$needle"; then
+    pass "$msg"
+  else
+    fail "$msg" "Expected output NOT to contain: '$needle'"
+  fi
+}
+
+echo "=== Running tests for bin/deploy-gcp ==="
+
+# -----------------------------------------------------------------------------
+# Test 1: setup subcommand on a fresh project (resources do not exist)
+# -----------------------------------------------------------------------------
+echo "Test 1: 'setup' subcommand on fresh project (--dry-run)"
+export MOCK_RESOURCES_EXIST=0
+output=$(PROJECT_ID="PROJECT_ID" TLS_DOMAIN="chat.example.com" "$DEPLOY_BIN" --dry-run setup 2>&1)
+
+assert_contains "$output" "gcloud artifacts repositories create campfire" \
+  "Creates Artifact Registry repository"
+assert_contains "$output" "gcloud iam service-accounts create campfire-runner" \
+  "Creates dedicated service account"
+assert_contains "$output" "gcloud projects add-iam-policy-binding PROJECT_ID --member=serviceAccount:campfire-runner@PROJECT_ID.iam.gserviceaccount.com --role=roles/artifactregistry.reader" \
+  "Binds roles/artifactregistry.reader to service account"
+assert_contains "$output" "gcloud compute addresses create campfire-ip" \
+  "Reserves static external IP"
+assert_contains "$output" "gcloud compute firewall-rules create campfire-allow-http-https --allow=tcp:80,tcp:443 --target-tags=campfire-server" \
+  "Creates firewall rule allowing 80/443 on network tag"
+assert_contains "$output" "gcloud compute resource-policies create snapshot-schedule campfire-daily-snapshot" \
+  "Creates daily disk snapshot schedule"
+assert_contains "$output" "gcloud compute instances create campfire-vm --zone=us-central1-a --machine-type=e2-micro --boot-disk-size=30GB --boot-disk-type=pd-standard" \
+  "Creates Compute Engine VM with free-tier e2-micro and 30GB pd-standard disk"
+assert_contains "$output" "--service-account=campfire-runner@PROJECT_ID.iam.gserviceaccount.com" \
+  "Attaches dedicated service account to VM without service account keys"
+assert_contains "$output" "gcloud compute disks add-resource-policies campfire-vm --zone=us-central1-a --resource-policies=campfire-daily-snapshot" \
+  "Attaches daily snapshot schedule to persistent disk"
+assert_contains "$output" "gcloud compute ssh campfire-vm --zone=us-central1-a --project=PROJECT_ID --command" \
+  "Executes VM Docker initialization and secret generator via SSH"
+
+# -----------------------------------------------------------------------------
+# Test 2: setup idempotency (resources already exist)
+# -----------------------------------------------------------------------------
+echo "Test 2: 'setup' subcommand idempotency when resources exist (--dry-run)"
+export MOCK_RESOURCES_EXIST=1
+output_idempotent=$(PROJECT_ID="PROJECT_ID" TLS_DOMAIN="chat.example.com" "$DEPLOY_BIN" --dry-run setup 2>&1)
+
+assert_contains "$output_idempotent" "Artifact Registry repository 'campfire' already exists" \
+  "Detects existing Artifact Registry repo"
+assert_contains "$output_idempotent" "Service account 'campfire-runner@PROJECT_ID.iam.gserviceaccount.com' already exists" \
+  "Detects existing service account"
+assert_contains "$output_idempotent" "IAM role 'roles/artifactregistry.reader' already bound" \
+  "Detects existing IAM binding"
+assert_contains "$output_idempotent" "Static IP 'campfire-ip' already exists" \
+  "Detects existing static IP"
+assert_contains "$output_idempotent" "Firewall rule 'campfire-allow-http-https' already exists" \
+  "Detects existing firewall rule"
+assert_contains "$output_idempotent" "Snapshot schedule 'campfire-daily-snapshot' already exists" \
+  "Detects existing snapshot schedule"
+assert_contains "$output_idempotent" "VM instance 'campfire-vm' already exists" \
+  "Detects existing VM instance"
+assert_contains "$output_idempotent" "Snapshot policy 'campfire-daily-snapshot' already attached" \
+  "Detects existing snapshot policy attachment"
+
+# None of the creation commands should be executed/printed when resources exist
+assert_not_contains "$output_idempotent" "gcloud artifacts repositories create" \
+  "Does not re-create Artifact Registry repository"
+assert_not_contains "$output_idempotent" "gcloud iam service-accounts create" \
+  "Does not re-create service account"
+assert_not_contains "$output_idempotent" "gcloud projects add-iam-policy-binding" \
+  "Does not re-add IAM policy binding"
+assert_not_contains "$output_idempotent" "gcloud compute addresses create" \
+  "Does not re-create static IP"
+assert_not_contains "$output_idempotent" "gcloud compute firewall-rules create" \
+  "Does not re-create firewall rule"
+assert_not_contains "$output_idempotent" "gcloud compute resource-policies create" \
+  "Does not re-create snapshot schedule"
+assert_not_contains "$output_idempotent" "gcloud compute instances create" \
+  "Does not re-create VM instance"
+assert_not_contains "$output_idempotent" "gcloud compute disks add-resource-policies" \
+  "Does not re-attach snapshot schedule"
+
+# -----------------------------------------------------------------------------
+# Test 3: deploy subcommand
+# -----------------------------------------------------------------------------
+echo "Test 3: 'deploy' subcommand (--dry-run)"
+output_deploy=$(PROJECT_ID="PROJECT_ID" "$DEPLOY_BIN" --dry-run deploy 2>&1)
+
+assert_contains "$output_deploy" "docker build -t us-central1-docker.pkg.dev/PROJECT_ID/campfire/campfire:latest ." \
+  "Builds production Docker image with Artifact Registry tag"
+assert_contains "$output_deploy" "gcloud auth configure-docker us-central1-docker.pkg.dev --quiet" \
+  "Configures Docker credentials for Artifact Registry"
+assert_contains "$output_deploy" "docker push us-central1-docker.pkg.dev/PROJECT_ID/campfire/campfire:latest" \
+  "Pushes Docker image to Artifact Registry"
+assert_contains "$output_deploy" "gcloud compute ssh campfire-vm --zone=us-central1-a --project=PROJECT_ID --command" \
+  "SSHs into VM to pull and deploy container"
+assert_contains "$output_deploy" "docker pull us-central1-docker.pkg.dev/PROJECT_ID/campfire/campfire:latest" \
+  "Pulls image on VM using VM service account"
+assert_contains "$output_deploy" "docker run -d --name campfire --restart unless-stopped -p 80:80 -p 443:443 -v campfire-storage:/rails/storage --env-file /etc/campfire/campfire.env" \
+  "Runs container with restart unless-stopped, ports 80/443, storage volume, and root-only env file"
+
+# -----------------------------------------------------------------------------
+# Test 4: logs subcommand
+# -----------------------------------------------------------------------------
+echo "Test 4: 'logs' subcommand (--dry-run)"
+output_logs=$(PROJECT_ID="PROJECT_ID" "$DEPLOY_BIN" --dry-run logs 2>&1)
+
+assert_contains "$output_logs" "gcloud compute ssh campfire-vm --zone=us-central1-a --project=PROJECT_ID --command \"docker logs -f campfire\"" \
+  "Executes remote docker logs command via SSH"
+
+# -----------------------------------------------------------------------------
+# Test 5: ssh subcommand
+# -----------------------------------------------------------------------------
+echo "Test 5: 'ssh' subcommand (--dry-run)"
+output_ssh=$(PROJECT_ID="PROJECT_ID" "$DEPLOY_BIN" --dry-run ssh 2>&1)
+
+assert_contains "$output_ssh" "gcloud compute ssh campfire-vm --zone=us-central1-a --project=PROJECT_ID" \
+  "Executes gcloud compute ssh to instance"
+
+# -----------------------------------------------------------------------------
+# Test 6: backup subcommand
+# -----------------------------------------------------------------------------
+echo "Test 6: 'backup' subcommand (--dry-run)"
+output_backup=$(PROJECT_ID="PROJECT_ID" "$DEPLOY_BIN" --dry-run backup 2>&1)
+
+assert_contains "$output_backup" "docker exec campfire /hooks/pre-backup" \
+  "Executes pre-backup hook in container before snapshot"
+assert_contains "$output_backup" "gcloud compute disks snapshot campfire-vm --zone=us-central1-a --snapshot-names=" \
+  "Creates immediate persistent disk snapshot"
+
+# -----------------------------------------------------------------------------
+# Test 7: status subcommand
+# -----------------------------------------------------------------------------
+echo "Test 7: 'status' subcommand (--dry-run)"
+output_status=$(PROJECT_ID="PROJECT_ID" "$DEPLOY_BIN" --dry-run status 2>&1)
+
+assert_contains "$output_status" "gcloud compute instances describe campfire-vm --zone=us-central1-a --project=PROJECT_ID" \
+  "Queries VM instance status"
+assert_contains "$output_status" "gcloud compute addresses describe campfire-ip --region=us-central1 --project=PROJECT_ID" \
+  "Queries static external IP address"
+assert_contains "$output_status" "docker ps -a --filter name=campfire" \
+  "Queries container status via SSH"
+
+# -----------------------------------------------------------------------------
+# Test 8: Secret leak check
+# -----------------------------------------------------------------------------
+echo "Test 8: Secret leak check across all subcommands"
+ALL_OUTPUT="${output}
+${output_idempotent}
+${output_deploy}
+${output_logs}
+${output_ssh}
+${output_backup}
+${output_status}"
+
+# Check that no actual secret key material or private keys appear in output
+if echo "$ALL_OUTPUT" | grep -E -q -e "-----BEGIN [A-Z ]*PRIVATE KEY-----"; then
+  fail "No private key PEM blocks in output" "Found PEM block"
+else
+  pass "No private key PEM blocks in output"
+fi
+
+if echo "$ALL_OUTPUT" | grep -E -q "[0-9a-fA-F]{64,128}"; then
+  # Ensure no generated hex secrets appear
+  fail "No raw 64+ character hex keys in output" "Found hex string"
+else
+  pass "No raw 64+ character hex keys in output"
+fi
+
+# Ensure secrets are generated into root-only env file on VM
+assert_contains "$output" "chmod 600 /etc/campfire/campfire.env" \
+  "Env file permissions set to 600 (root-only read/write)"
+assert_contains "$output" "chown root:root /etc/campfire/campfire.env" \
+  "Env file owned by root:root"
+assert_contains "$output_deploy" "--env-file /etc/campfire/campfire.env" \
+  "Container loads secrets via --env-file without command-line exposure"
+
+# -----------------------------------------------------------------------------
+# Test 9: Configuration file loading and overrides
+# -----------------------------------------------------------------------------
+echo "Test 9: External configuration file (~/.config/campfire/deploy-gcp.env)"
+TEMP_CFG=$(mktemp)
+cat <<'EOF' > "$TEMP_CFG"
+PROJECT_ID=custom-project
+REGION=us-west1
+ZONE=us-west1-b
+TLS_DOMAIN=custom.example.com
+INSTANCE_NAME=custom-vm
+STATIC_IP_NAME=custom-ip
+EOF
+
+output_cfg=$("$DEPLOY_BIN" --dry-run --config "$TEMP_CFG" setup 2>&1)
+rm -f "$TEMP_CFG"
+
+assert_contains "$output_cfg" "custom-project" "Config file sets PROJECT_ID"
+assert_contains "$output_cfg" "us-west1" "Config file sets REGION"
+assert_contains "$output_cfg" "us-west1-b" "Config file sets ZONE"
+assert_contains "$output_cfg" "custom.example.com" "Config file sets TLS_DOMAIN"
+assert_contains "$output_cfg" "custom-vm" "Config file sets INSTANCE_NAME"
+assert_contains "$output_cfg" "custom-ip" "Config file sets STATIC_IP_NAME"
+
+# -----------------------------------------------------------------------------
+# Test 10: CLI flags override configuration file
+# -----------------------------------------------------------------------------
+echo "Test 10: CLI flags take highest precedence"
+TEMP_CFG2=$(mktemp)
+cat <<'EOF' > "$TEMP_CFG2"
+PROJECT_ID=file-project
+REGION=us-west1
+ZONE=us-west1-b
+EOF
+
+output_override=$("$DEPLOY_BIN" --dry-run --config "$TEMP_CFG2" --project "flag-project" --region "us-east1" --zone "us-east1-c" setup 2>&1)
+rm -f "$TEMP_CFG2"
+
+assert_contains "$output_override" "flag-project" "CLI flag overrides config file for PROJECT_ID"
+assert_contains "$output_override" "us-east1" "CLI flag overrides config file for REGION"
+assert_contains "$output_override" "us-east1-c" "CLI flag overrides config file for ZONE"
+assert_not_contains "$output_override" "file-project" "Config file PROJECT_ID was successfully overridden"
+
+# -----------------------------------------------------------------------------
+# Summary
+# -----------------------------------------------------------------------------
+echo ""
+echo "=== Test Summary ==="
+echo "Passed: $PASSED"
+echo "Failed: $FAILED"
+
+if [ "$FAILED" -gt 0 ]; then
+  echo "Tests FAILED" >&2
+  exit 1
+fi
+
+echo "All tests PASSED!"
+exit 0

@@ -1,0 +1,521 @@
+#!/usr/bin/env bash
+# Deploy ONCE Campfire to a single Google Cloud Compute Engine VM with persistent disk.
+# Public and secret-free: all identifiers and keys come from CLI flags, environment variables,
+# or ~/.config/campfire/deploy-gcp.env. Secrets are generated directly on the VM and never leave it.
+set -euo pipefail
+
+DEFAULT_CONFIG="${HOME}/.config/campfire/deploy-gcp.env"
+CONFIG_FILE="${CONFIG_FILE:-$DEFAULT_CONFIG}"
+
+# Configuration file values
+CFG_PROJECT_ID=""
+CFG_REGION=""
+CFG_ZONE=""
+CFG_DOMAIN=""
+CFG_INSTANCE_NAME=""
+CFG_REPO_NAME=""
+CFG_STATIC_IP_NAME=""
+CFG_FIREWALL_RULE=""
+CFG_NETWORK_TAG=""
+CFG_SERVICE_ACCOUNT_NAME=""
+CFG_SNAPSHOT_SCHEDULE=""
+CFG_MACHINE_TYPE=""
+CFG_DISK_SIZE=""
+CFG_DISK_TYPE=""
+CFG_IMAGE_TAG=""
+
+load_config() {
+  local cfg="$1"
+  if [ -f "$cfg" ]; then
+    while IFS='=' read -r key val || [ -n "$key" ]; do
+      key=$(echo "$key" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+      if [[ -z "$key" || "$key" =~ ^# ]]; then
+        continue
+      fi
+      val=$(echo "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+      val=$(echo "$val" | sed -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'$/\1/")
+      case "$key" in
+        PROJECT_ID|GCP_PROJECT_ID) CFG_PROJECT_ID="$val" ;;
+        REGION|GCP_REGION) CFG_REGION="$val" ;;
+        ZONE|GCP_ZONE) CFG_ZONE="$val" ;;
+        DOMAIN|TLS_DOMAIN) CFG_DOMAIN="$val" ;;
+        INSTANCE_NAME|GCP_INSTANCE_NAME) CFG_INSTANCE_NAME="$val" ;;
+        REPO_NAME|GCP_REPO_NAME) CFG_REPO_NAME="$val" ;;
+        STATIC_IP_NAME|GCP_STATIC_IP_NAME) CFG_STATIC_IP_NAME="$val" ;;
+        FIREWALL_RULE|GCP_FIREWALL_RULE) CFG_FIREWALL_RULE="$val" ;;
+        NETWORK_TAG|GCP_NETWORK_TAG) CFG_NETWORK_TAG="$val" ;;
+        SERVICE_ACCOUNT|GCP_SERVICE_ACCOUNT) CFG_SERVICE_ACCOUNT_NAME="$val" ;;
+        SNAPSHOT_SCHEDULE|GCP_SNAPSHOT_SCHEDULE) CFG_SNAPSHOT_SCHEDULE="$val" ;;
+        MACHINE_TYPE) CFG_MACHINE_TYPE="$val" ;;
+        DISK_SIZE) CFG_DISK_SIZE="$val" ;;
+        DISK_TYPE) CFG_DISK_TYPE="$val" ;;
+        IMAGE_TAG) CFG_IMAGE_TAG="$val" ;;
+      esac
+    done < "$cfg"
+  fi
+}
+
+usage() {
+  cat <<'EOF'
+Usage: bin/deploy-gcp [options] <subcommand>
+
+Deploy ONCE Campfire to a single Google Cloud Compute Engine VM.
+
+Subcommands:
+  setup     Provision Artifact Registry, static IP, firewall, VM, disk snapshot schedule, and service account
+  deploy    Build container image, push to Artifact Registry, pull and restart container on VM
+  logs      Stream live application logs from the container on the VM
+  ssh       SSH into the Compute Engine VM
+  backup    Trigger pre-backup hook and create an immediate persistent disk snapshot
+  status    Show status of VM instance, static IP, and running container
+
+Options:
+  --dry-run                 Print all gcloud and docker commands without executing them
+  --config <path>           Path to configuration file (default: ~/.config/campfire/deploy-gcp.env)
+  -p, --project <id>        Google Cloud project ID (env: PROJECT_ID or GCP_PROJECT_ID)
+  -r, --region <region>     Google Cloud region (default: us-central1)
+  -z, --zone <zone>         Google Cloud zone (default: <region>-a)
+  -d, --domain <domain>     TLS domain for Let's Encrypt certificate (env: TLS_DOMAIN or DOMAIN)
+  -i, --instance <name>     Compute Engine VM instance name (default: campfire-vm)
+  --repo <name>             Artifact Registry repository name (default: campfire)
+  --ip-name <name>          Static IP resource name (default: campfire-ip)
+  --firewall <name>         Firewall rule name (default: campfire-allow-http-https)
+  --network-tag <tag>       Network tag applied to VM (default: campfire-server)
+  --sa-name <name>          Service account name (default: campfire-runner)
+  --snapshot-schedule <name> Snapshot policy name (default: campfire-daily-snapshot)
+  --machine-type <type>     Compute Engine machine type (default: e2-micro)
+  --disk-size <size>        Persistent disk size (default: 30GB)
+  --disk-type <type>        Persistent disk type (default: pd-standard)
+  --tag <tag>               Container image tag (default: latest)
+  -h, --help                Show this help message
+
+Configuration file format:
+  PROJECT_ID=PROJECT_ID
+  REGION=us-central1
+  ZONE=us-central1-a
+  TLS_DOMAIN=chat.example.com
+EOF
+}
+
+# First pass: parse --config and --help before loading config
+TEMP_ARGS=("$@")
+while [ ${#TEMP_ARGS[@]} -gt 0 ]; do
+  arg="${TEMP_ARGS[0]}"
+  case "$arg" in
+    --config)
+      CONFIG_FILE="${TEMP_ARGS[1]}"
+      TEMP_ARGS=("${TEMP_ARGS[@]:2}")
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      TEMP_ARGS=("${TEMP_ARGS[@]:1}")
+      ;;
+  esac
+done
+
+# Load configuration file
+load_config "$CONFIG_FILE"
+
+# Initialize variables: Environment variables > Config file > Defaults
+DRY_RUN=false
+PROJECT_ID="${GCP_PROJECT_ID:-${PROJECT_ID:-${CFG_PROJECT_ID:-}}}"
+REGION="${GCP_REGION:-${REGION:-${CFG_REGION:-us-central1}}}"
+ZONE="${GCP_ZONE:-${ZONE:-${CFG_ZONE:-}}}"
+DOMAIN="${TLS_DOMAIN:-${DOMAIN:-${CFG_DOMAIN:-}}}"
+INSTANCE_NAME="${GCP_INSTANCE_NAME:-${INSTANCE_NAME:-${CFG_INSTANCE_NAME:-campfire-vm}}}"
+REPO_NAME="${GCP_REPO_NAME:-${REPO_NAME:-${CFG_REPO_NAME:-campfire}}}"
+STATIC_IP_NAME="${GCP_STATIC_IP_NAME:-${STATIC_IP_NAME:-${CFG_STATIC_IP_NAME:-campfire-ip}}}"
+FIREWALL_RULE="${GCP_FIREWALL_RULE:-${FIREWALL_RULE:-${CFG_FIREWALL_RULE:-campfire-allow-http-https}}}"
+NETWORK_TAG="${GCP_NETWORK_TAG:-${NETWORK_TAG:-${CFG_NETWORK_TAG:-campfire-server}}}"
+SERVICE_ACCOUNT_NAME="${GCP_SERVICE_ACCOUNT:-${SERVICE_ACCOUNT:-${CFG_SERVICE_ACCOUNT_NAME:-campfire-runner}}}"
+SNAPSHOT_SCHEDULE="${GCP_SNAPSHOT_SCHEDULE:-${SNAPSHOT_SCHEDULE:-${CFG_SNAPSHOT_SCHEDULE:-campfire-daily-snapshot}}}"
+MACHINE_TYPE="${MACHINE_TYPE:-${CFG_MACHINE_TYPE:-e2-micro}}"
+DISK_SIZE="${DISK_SIZE:-${CFG_DISK_SIZE:-30GB}}"
+DISK_TYPE="${DISK_TYPE:-${CFG_DISK_TYPE:-pd-standard}}"
+IMAGE_TAG="${IMAGE_TAG:-${CFG_IMAGE_TAG:-latest}}"
+SUBCOMMAND=""
+EXTRA_ARGS=()
+
+# Second pass: parse CLI options (which override environment variables and config file)
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    --config)
+      # Handled in first pass
+      shift 2
+      ;;
+    -p|--project)
+      PROJECT_ID="$2"
+      shift 2
+      ;;
+    -r|--region)
+      REGION="$2"
+      shift 2
+      ;;
+    -z|--zone)
+      ZONE="$2"
+      shift 2
+      ;;
+    -d|--domain)
+      DOMAIN="$2"
+      shift 2
+      ;;
+    -i|--instance)
+      INSTANCE_NAME="$2"
+      shift 2
+      ;;
+    --repo)
+      REPO_NAME="$2"
+      shift 2
+      ;;
+    --ip-name)
+      STATIC_IP_NAME="$2"
+      shift 2
+      ;;
+    --firewall)
+      FIREWALL_RULE="$2"
+      shift 2
+      ;;
+    --network-tag)
+      NETWORK_TAG="$2"
+      shift 2
+      ;;
+    --sa-name)
+      SERVICE_ACCOUNT_NAME="$2"
+      shift 2
+      ;;
+    --snapshot-schedule)
+      SNAPSHOT_SCHEDULE="$2"
+      shift 2
+      ;;
+    --machine-type)
+      MACHINE_TYPE="$2"
+      shift 2
+      ;;
+    --disk-size)
+      DISK_SIZE="$2"
+      shift 2
+      ;;
+    --disk-type)
+      DISK_TYPE="$2"
+      shift 2
+      ;;
+    --tag)
+      IMAGE_TAG="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    setup|deploy|logs|ssh|backup|status)
+      if [ -z "$SUBCOMMAND" ]; then
+        SUBCOMMAND="$1"
+      else
+        EXTRA_ARGS+=("$1")
+      fi
+      shift
+      ;;
+    *)
+      if [ -z "$SUBCOMMAND" ]; then
+        echo "Error: Unknown option or subcommand: $1" >&2
+        usage >&2
+        exit 1
+      else
+        EXTRA_ARGS+=("$1")
+      fi
+      shift
+      ;;
+  esac
+done
+
+if [ -z "$SUBCOMMAND" ]; then
+  echo "Error: Subcommand is required." >&2
+  usage >&2
+  exit 1
+fi
+
+# Apply zone default if unset
+ZONE="${ZONE:-${REGION}-a}"
+
+# Validate prerequisites and fill safe defaults for dry-run
+if [ "$DRY_RUN" = true ]; then
+  PROJECT_ID="${PROJECT_ID:-PROJECT_ID}"
+  DOMAIN="${DOMAIN:-chat.example.com}"
+else
+  if [ -z "$PROJECT_ID" ]; then
+    PROJECT_ID=$(gcloud config get-value project 2>/dev/null || true)
+  fi
+  if [ -z "$PROJECT_ID" ]; then
+    echo "Error: Project ID is required. Specify via --project, PROJECT_ID env, or config file." >&2
+    exit 1
+  fi
+  if [ -z "$DOMAIN" ] && [ "$SUBCOMMAND" = "setup" ]; then
+    echo "Error: TLS domain is required for setup. Specify via --domain, TLS_DOMAIN env, or config file." >&2
+    exit 1
+  fi
+fi
+
+SA_EMAIL="${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+REGISTRY_HOST="${REGION}-docker.pkg.dev"
+IMAGE_URI="${REGISTRY_HOST}/${PROJECT_ID}/${REPO_NAME}/campfire:${IMAGE_TAG}"
+
+print_cmd() {
+  local first=1
+  for arg in "$@"; do
+    if [ "$first" -eq 1 ]; then
+      first=0
+    else
+      printf " "
+    fi
+    if [[ "$arg" == *" "* || "$arg" == *$'\n'* || "$arg" == *$'\t'* ]]; then
+      printf '"%s"' "$arg"
+    else
+      printf "%s" "$arg"
+    fi
+  done
+  printf "\n"
+}
+
+# Command execution helper: in dry-run, format and echo the command; otherwise execute it.
+run_cmd() {
+  if [ "$DRY_RUN" = true ]; then
+    print_cmd "$@"
+    return 0
+  fi
+  "$@"
+}
+
+log_info() {
+  echo "==> $*" >&2
+}
+
+cmd_setup() {
+  log_info "Verifying Google Cloud resources in project '$PROJECT_ID' ($REGION / $ZONE)..."
+
+  # 1. Artifact Registry repository
+  if gcloud artifacts repositories describe "$REPO_NAME" --location="$REGION" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "Artifact Registry repository '$REPO_NAME' already exists in '$REGION' (skipping)"
+  else
+    run_cmd gcloud artifacts repositories create "$REPO_NAME" \
+      --repository-format=docker \
+      --location="$REGION" \
+      --description="Campfire container repository" \
+      --project="$PROJECT_ID"
+  fi
+
+  # 2. Service Account
+  if gcloud iam service-accounts describe "$SA_EMAIL" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "Service account '$SA_EMAIL' already exists (skipping)"
+  else
+    run_cmd gcloud iam service-accounts create "$SERVICE_ACCOUNT_NAME" \
+      --display-name="Campfire service account" \
+      --project="$PROJECT_ID"
+  fi
+
+  # 3. IAM Role Binding: roles/artifactregistry.reader only
+  local iam_roles
+  iam_roles=$(gcloud projects get-iam-policy "$PROJECT_ID" \
+    --filter="bindings.members:serviceAccount:${SA_EMAIL}" \
+    --format="value(bindings.role)" 2>/dev/null || true)
+  if echo "$iam_roles" | grep -q "roles/artifactregistry.reader"; then
+    echo "IAM role 'roles/artifactregistry.reader' already bound to '$SA_EMAIL' (skipping)"
+  else
+    run_cmd gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+      --member="serviceAccount:${SA_EMAIL}" \
+      --role="roles/artifactregistry.reader" \
+      --condition=None
+  fi
+
+  # 4. Static External IP
+  if gcloud compute addresses describe "$STATIC_IP_NAME" --region="$REGION" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "Static IP '$STATIC_IP_NAME' already exists in '$REGION' (skipping)"
+  else
+    run_cmd gcloud compute addresses create "$STATIC_IP_NAME" \
+      --region="$REGION" \
+      --project="$PROJECT_ID"
+  fi
+
+  # 5. Firewall Rule (80 and 443 for network tag)
+  if gcloud compute firewall-rules describe "$FIREWALL_RULE" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "Firewall rule '$FIREWALL_RULE' already exists (skipping)"
+  else
+    run_cmd gcloud compute firewall-rules create "$FIREWALL_RULE" \
+      --allow=tcp:80,tcp:443 \
+      --target-tags="$NETWORK_TAG" \
+      --description="Allow HTTP and HTTPS traffic to Campfire" \
+      --project="$PROJECT_ID"
+  fi
+
+  # 6. Daily Disk Snapshot Schedule
+  if gcloud compute resource-policies describe "$SNAPSHOT_SCHEDULE" --region="$REGION" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "Snapshot schedule '$SNAPSHOT_SCHEDULE' already exists in '$REGION' (skipping)"
+  else
+    run_cmd gcloud compute resource-policies create snapshot-schedule "$SNAPSHOT_SCHEDULE" \
+      --region="$REGION" \
+      --start-time="04:00" \
+      --daily-schedule \
+      --max-retention-days=14 \
+      --on-source-disk-delete=keep-auto-snapshots \
+      --project="$PROJECT_ID"
+  fi
+
+  # 7. Compute Engine VM Instance with persistent disk
+  if gcloud compute instances describe "$INSTANCE_NAME" --zone="$ZONE" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "VM instance '$INSTANCE_NAME' already exists in '$ZONE' (skipping)"
+  else
+    run_cmd gcloud compute instances create "$INSTANCE_NAME" \
+      --zone="$ZONE" \
+      --machine-type="$MACHINE_TYPE" \
+      --boot-disk-size="$DISK_SIZE" \
+      --boot-disk-type="$DISK_TYPE" \
+      --boot-disk-auto-delete \
+      --image-family="ubuntu-2404-lts" \
+      --image-project="ubuntu-os-cloud" \
+      --tags="$NETWORK_TAG" \
+      --address="$STATIC_IP_NAME" \
+      --service-account="$SA_EMAIL" \
+      --scopes="https://www.googleapis.com/auth/cloud-platform" \
+      --project="$PROJECT_ID"
+  fi
+
+  # 8. Attach snapshot schedule to the persistent disk
+  local attached_policies
+  attached_policies=$(gcloud compute disks describe "$INSTANCE_NAME" --zone="$ZONE" --project="$PROJECT_ID" --format="value(resourcePolicies)" 2>/dev/null || true)
+  if echo "$attached_policies" | grep -q "$SNAPSHOT_SCHEDULE"; then
+    echo "Snapshot policy '$SNAPSHOT_SCHEDULE' already attached to disk '$INSTANCE_NAME' (skipping)"
+  else
+    run_cmd gcloud compute disks add-resource-policies "$INSTANCE_NAME" \
+      --zone="$ZONE" \
+      --resource-policies="$SNAPSHOT_SCHEDULE" \
+      --project="$PROJECT_ID"
+  fi
+
+  # 9. Configure VM: install Docker and generate root-only secrets on the VM
+  # Note: SECRET_KEY_BASE and VAPID keys are generated directly on the VM into /etc/campfire/campfire.env
+  # and never printed, logged, passed as command-line arguments, or copied off the VM.
+  local vm_setup_script
+  vm_setup_script="which docker >/dev/null 2>&1 || (apt-get update -qq && apt-get install -y -qq docker.io && systemctl enable --now docker); mkdir -p /etc/campfire; if [ ! -f /etc/campfire/campfire.env ]; then KEY=\$(mktemp); openssl ecparam -name prime256v1 -genkey -noout -out \"\$KEY\" 2>/dev/null; PRIV=\$(openssl ec -in \"\$KEY\" -text -noout 2>/dev/null | awk \"/priv:/{f=1;next}/pub:/{f=0}f\" | tr -d \" :\n\"); PUB=\$(openssl ec -in \"\$KEY\" -text -noout 2>/dev/null | awk \"/pub:/{f=1;next}/ASN1/{f=0}f\" | tr -d \" :\n\"); rm -f \"\$KEY\"; VAPID_PRIV=\$(printf \"%s\" \"\$PRIV\" | xxd -r -p | base64 -w 0 | tr \"+/\" \"-_\" | tr -d \"=\"); VAPID_PUB=\$(printf \"%s\" \"\$PUB\" | xxd -r -p | base64 -w 0 | tr \"+/\" \"-_\" | tr -d \"=\"); SECRET_KEY=\$(openssl rand -hex 64); (umask 077 && cat <<EOF > /etc/campfire/campfire.env
+SECRET_KEY_BASE=\$SECRET_KEY
+VAPID_PRIVATE_KEY=\$VAPID_PRIV
+VAPID_PUBLIC_KEY=\$VAPID_PUB
+TLS_DOMAIN=${DOMAIN}
+RAILS_ENV=production
+EOF
+); chmod 600 /etc/campfire/campfire.env; chown root:root /etc/campfire/campfire.env; fi"
+
+  run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --project="$PROJECT_ID" \
+    --command "sudo bash -c '$vm_setup_script'"
+
+  log_info "Setup completed successfully."
+}
+
+cmd_deploy() {
+  log_info "Building production image '$IMAGE_URI'..."
+  run_cmd docker build -t "$IMAGE_URI" .
+
+  log_info "Configuring Docker credentials for Artifact Registry..."
+  run_cmd gcloud auth configure-docker "$REGISTRY_HOST" --quiet
+
+  log_info "Pushing image to Artifact Registry..."
+  run_cmd docker push "$IMAGE_URI"
+
+  log_info "Pulling and deploying container on VM '$INSTANCE_NAME'..."
+  local vm_deploy_cmd
+  vm_deploy_cmd="gcloud auth configure-docker $REGISTRY_HOST --quiet && docker pull $IMAGE_URI && (docker stop campfire 2>/dev/null || true) && (docker rm campfire 2>/dev/null || true) && docker run -d --name campfire --restart unless-stopped -p 80:80 -p 443:443 -v campfire-storage:/rails/storage --env-file /etc/campfire/campfire.env $IMAGE_URI"
+
+  run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --project="$PROJECT_ID" \
+    --command "$vm_deploy_cmd"
+
+  log_info "Deployment completed."
+}
+
+cmd_logs() {
+  log_info "Streaming container logs from '$INSTANCE_NAME'..."
+  local logs_cmd="docker logs -f campfire"
+  if [ ${#EXTRA_ARGS[@]} -gt 0 ]; then
+    logs_cmd="docker logs -f campfire ${EXTRA_ARGS[*]}"
+  fi
+  run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --project="$PROJECT_ID" \
+    --command "$logs_cmd"
+}
+
+cmd_ssh() {
+  log_info "Connecting to VM '$INSTANCE_NAME'..."
+  if [ ${#EXTRA_ARGS[@]} -gt 0 ]; then
+    run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+      --zone="$ZONE" \
+      --project="$PROJECT_ID" \
+      "${EXTRA_ARGS[@]}"
+  else
+    run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+      --zone="$ZONE" \
+      --project="$PROJECT_ID"
+  fi
+}
+
+cmd_backup() {
+  local timestamp
+  timestamp=$(date +%Y%m%d%H%M%S)
+  local snapshot_name="campfire-backup-${timestamp}"
+
+  log_info "Running SQLite pre-backup hook on '$INSTANCE_NAME'..."
+  run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --project="$PROJECT_ID" \
+    --command "docker exec campfire /hooks/pre-backup 2>/dev/null || true"
+
+  log_info "Creating disk snapshot '$snapshot_name'..."
+  run_cmd gcloud compute disks snapshot "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --snapshot-names="$snapshot_name" \
+    --project="$PROJECT_ID"
+
+  log_info "Backup snapshot '$snapshot_name' created."
+}
+
+cmd_status() {
+  log_info "Checking status of VM instance '$INSTANCE_NAME'..."
+  run_cmd gcloud compute instances describe "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --project="$PROJECT_ID" \
+    --format="table(name,status,zone,machineType.basename(),networkInterfaces[0].accessConfigs[0].natIP)"
+
+  log_info "Checking static external IP '$STATIC_IP_NAME'..."
+  run_cmd gcloud compute addresses describe "$STATIC_IP_NAME" \
+    --region="$REGION" \
+    --project="$PROJECT_ID" \
+    --format="table(name,address,status,region.basename())"
+
+  log_info "Checking Docker container status on '$INSTANCE_NAME'..."
+  run_cmd gcloud compute ssh "$INSTANCE_NAME" \
+    --zone="$ZONE" \
+    --project="$PROJECT_ID" \
+    --command "docker ps -a --filter name=campfire --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+}
+
+case "$SUBCOMMAND" in
+  setup) cmd_setup ;;
+  deploy) cmd_deploy ;;
+  logs) cmd_logs ;;
+  ssh) cmd_ssh ;;
+  backup) cmd_backup ;;
+  status) cmd_status ;;
+  *)
+    echo "Error: Unknown subcommand: $SUBCOMMAND" >&2
+    usage >&2
+    exit 1
+    ;;
+esac
