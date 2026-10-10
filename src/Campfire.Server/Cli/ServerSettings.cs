@@ -54,6 +54,12 @@ public sealed record ServerSettings
     /// <summary><c>RAILS_MAX_THREADS</c>: the database pool (reference/config/database.yml).</summary>
     public int MaxThreads { get; init; } = 10;
 
+    /// <summary><c>JOB_CONCURRENCY</c>: Resque worker count (reference/config/puma.rb).</summary>
+    public int JobConcurrency { get; init; } = DefaultJobConcurrency();
+
+    public static int DefaultJobConcurrency() =>
+        Math.Max(1, (int)Math.Ceiling(Environment.ProcessorCount * 0.666));
+
     /// <summary><c>APP_VERSION.presence || GIT_REVISION.presence || "0"</c> (reference/config/initializers/version.rb).</summary>
     public string AppVersion { get; init; } = "0";
 
@@ -94,6 +100,9 @@ public sealed record ServerSettings
             AssetsPath = Present("CAMPFIRE_ASSETS_PATH") ?? defaults.AssetsPath,
             Port = Integer("PORT", Present("PORT")) ?? defaults.Port,
             MaxThreads = Integer("RAILS_MAX_THREADS", Present("RAILS_MAX_THREADS")) ?? defaults.MaxThreads,
+            JobConcurrency = Integer("JOB_CONCURRENCY", Present("JOB_CONCURRENCY"))
+                ?? Integer("WEB_CONCURRENCY", Present("WEB_CONCURRENCY"))
+                ?? defaults.JobConcurrency,
             AppVersion = Present("APP_VERSION") ?? Present("GIT_REVISION") ?? defaults.AppVersion,
             GitRevision = env("GIT_REVISION"),
         };

@@ -1,8 +1,7 @@
+using Campfire.Data.Events;
 using Campfire.Data.Sqlite;
-using Campfire.RailsCompat.Crypto;
-using Campfire.Web;
+using Campfire.Server.Composition;
 using Campfire.Web.Assets;
-using Campfire.Web.Routing;
 
 namespace Campfire.Server.Cli;
 
@@ -39,7 +38,13 @@ public static class ServerCommand
     /// The app over an open database and asset bundle. Kestrel options on the command line or in
     /// <c>ASPNETCORE_URLS</c> override the <c>PORT</c> listener.
     /// </summary>
-    public static WebApplication Build(ServerSettings settings, string secretKeyBase, SqliteDatabase database, AssetBundle assets, string[] args)
+    public static WebApplication Build(
+        ServerSettings settings,
+        string secretKeyBase,
+        SqliteDatabase database,
+        AssetBundle assets,
+        string[] args,
+        TimeProvider? clock = null)
     {
         ArgumentNullException.ThrowIfNull(settings);
         ArgumentNullException.ThrowIfNull(assets);
@@ -55,33 +60,32 @@ public static class ServerCommand
             builder.WebHost.UseUrls($"http://0.0.0.0:{settings.Port}");
         }
 
+        var composition = ServerComposition.Compose(settings, secretKeyBase, database, assets, clock);
+
         builder.Services.AddSingleton(settings);
         builder.Services.AddSingleton(database);
         builder.Services.AddSingleton(assets);
-        builder.Services.AddSingleton(new KeyGenerator(secretKeyBase));
+        builder.Services.AddSingleton(composition.Keys);
+        builder.Services.AddSingleton(composition.Storage);
+        builder.Services.AddSingleton(composition.Seams);
+        builder.Services.AddSingleton(composition.CableServer);
+        builder.Services.AddSingleton(composition.JobRunner);
+        builder.Services.AddSingleton(composition.WebApp);
+        builder.Services.AddSingleton<IJobQueue>(composition.JobRunner);
+        builder.Services.AddSingleton<IBroadcaster>(composition.CableServer);
+        builder.Services.AddSingleton<IConnectionRevoker>(composition.Revoker);
+        builder.Services.AddSingleton(composition);
+        builder.Services.AddHostedService(_ => new CompositionShutdownService(composition));
 
         var app = builder.Build();
-        app.Run(Pipeline(settings, assets));
+        app.UseWebSockets();
+        app.Run(composition.Pipeline);
         return app;
     }
 
-    // The middleware Rails puts in front of the routes, in its order: AssumeSSL and SSL,
-    // ActionDispatch::Static, then the router (with ShowExceptions' public error pages).
-    static RequestDelegate Pipeline(ServerSettings settings, AssetBundle assets)
+    sealed class CompositionShutdownService(ServerComposition composition) : IHostedService
     {
-        var staticFiles = new StaticFiles(assets);
-        var router = new Router(Routes.Table, new ErrorPages(status => assets.Files.GetValueOrDefault($"/{status}.html")));
-        return async context =>
-        {
-            if (settings.Ssl)
-            {
-                RailsSsl.Apply(context);
-            }
-
-            if (!await staticFiles.TryServeAsync(context).ConfigureAwait(false))
-            {
-                await router.HandleAsync(context).ConfigureAwait(false);
-            }
-        };
+        public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public async Task StopAsync(CancellationToken cancellationToken) => await composition.DisposeAsync().ConfigureAwait(false);
     }
 }
