@@ -493,8 +493,8 @@ def tick(config, dispatch=True):
                 running.append(task_id)
                 exclusive_running = exclusive
                 free -= 1
+    write_dashboard(config, tasks, states, state, done, prs)  # may cache PR links in state
     save_state(state)
-    write_dashboard(config, tasks, states, state, done, prs)
     return states
 
 
@@ -559,6 +559,33 @@ def running_task(config, tasks, state, task_id):
             f'<pre>{html.escape(log)}</pre>')
 
 
+SIZE_NAMES = {"S": "small: under ~500 lines, about half an agent-day",
+              "M": "medium: ~500-1500 lines, about an agent-day",
+              "L": "large: ~1500-3000 lines, about two agent-days"}
+
+
+def pr_links(tasks, prs, state):
+    """Each task's PR, kept in state so a merged task keeps its link. PRs are titled "[ID] ...";
+    one listing of every PR fills in tasks not seen yet."""
+    links = state.setdefault("pr_links", {})
+    for t, task in tasks.items():
+        pr = prs.get(branch_for(task))
+        if pr:
+            links[t] = pr["url"]
+    if any(t not in links for t in tasks) and time.time() - state.get("pr_scan", 0) > 1800:
+        state["pr_scan"] = time.time()
+        out = sh("gh", "pr", "list", "--state", "all", "--limit", "1000", "--json", "title,url,state",
+                 check=False)
+        found = {}
+        for pr in sorted(json.loads(out or "[]"), key=lambda p: int(p["url"].rsplit("/", 1)[1])):
+            m = re.match(r"\[(\w+)\]", pr["title"])
+            if m and m.group(1) in tasks and (pr["state"] == "MERGED" or m.group(1) not in found):
+                found[m.group(1)] = pr["url"]  # the merged PR wins over closed attempts
+        for t, url in found.items():
+            links.setdefault(t, url)
+    return links
+
+
 def write_dashboard(config, tasks, states, state, done, prs):
     owner = {t: a for a, spec in config["agents"].items() for t in spec["queue"]}
     total = len(tasks)
@@ -579,13 +606,18 @@ def write_dashboard(config, tasks, states, state, done, prs):
   <div class="chips">{chips}</div>{now}
 </section>""")
 
-    rows = []
-    for t in sorted(states, key=lambda t: list(STATE_COLORS).index(states[t])):
-        pr = prs.get(branch_for(tasks[t]))
-        link = f'<a href="{pr["url"]}">#{pr["url"].rsplit("/", 1)[1]}</a>' if pr else ""
-        rows.append(f'<tr><td><span class="chip" style="background:{STATE_COLORS[states[t]]}">'
-                    f'{states[t]}</span></td><td>{t}</td><td>{html.escape(tasks[t]["title"])}</td>'
-                    f'<td>{owner[t]}</td><td>{link}</td>'
+    links = pr_links(tasks, prs, state)
+    every = {t: states.get(t) or ("merged" if t in done else "human" if "human" in str(tasks[t].get("labels", "")) or t in ("B05", "X02") else "waiting")
+             for t in tasks}
+    rows = ['<tr><th>State</th><th>Task</th><th>Title</th><th>Size</th><th>Agent</th><th>PR</th><th>Attempts</th></tr>']
+    for t in sorted(every, key=lambda t: (list(STATE_COLORS).index(every[t]), t)):
+        url = links.get(t)
+        link = f'<a href="{url}">#{url.rsplit("/", 1)[1]}</a>' if url else ""
+        agent = owner.get(t) or state["tasks"].get(t, {}).get("agent") or ("owner" if every[t] == "human" else "")
+        size = tasks[t]["size"]
+        rows.append(f'<tr><td><span class="chip" style="background:{STATE_COLORS[every[t]]}">'
+                    f'{every[t]}</span></td><td>{t}</td><td>{html.escape(tasks[t]["title"])}</td>'
+                    f'<td title="{SIZE_NAMES[size]}">{size}</td><td>{agent}</td><td>{link}</td>'
                     f'<td>{state["tasks"].get(t, {}).get("attempts", 0)}</td></tr>')
     events = html.escape("\n".join(EVENTS.read_text().splitlines()[-25:][::-1])) if EVENTS.exists() else ""
     legend = "".join(f'<span class="chip" style="background:{c}">{s}</span>'
@@ -611,7 +643,7 @@ h1 {{ font-size:20px; margin:0 0 4px; }} h2 {{ font-size:16px; margin:0; }} h3 {
 pre {{ background:var(--bg); padding:8px; border-radius:6px; font-size:11px; overflow-x:auto; white-space:pre-wrap; word-break:break-word; max-height:140px; }}
 .graph {{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px; overflow-x:auto; }}
 .graph pre {{ max-height:none; background:none; }}
-table {{ border-collapse:collapse; width:100%; background:var(--card); }} td {{ border-bottom:1px solid var(--line); padding:4px 8px; }}
+table {{ border-collapse:collapse; width:100%; background:var(--card); }} td, th {{ border-bottom:1px solid var(--line); padding:4px 8px; text-align:left; }}
 .tablewrap {{ overflow-x:auto; }} a {{ color:#0969da; }} .paused {{ color:#cf222e; font-weight:600; }}
 </style></head><body>
 <h1>Campfire C# port · local swarm</h1>
@@ -622,7 +654,7 @@ table {{ border-collapse:collapse; width:100%; background:var(--card); }} td {{ 
 <h3>Remaining work</h3>
 <div class="chips" style="margin-bottom:8px">{legend}</div>
 <div class="graph"><pre class="mermaid">{html.escape(mermaid(tasks, states, owner, done))}</pre></div>
-<h3>Queued tasks</h3>
+<h3>Project tasks</h3>
 <div class="tablewrap"><table>{''.join(rows)}</table></div>
 <h3>Events</h3><pre>{events}</pre>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
