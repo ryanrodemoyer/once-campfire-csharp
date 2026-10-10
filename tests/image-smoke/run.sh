@@ -23,6 +23,9 @@ cleanup() {
     docker logs "$name" >&2 2>&1 || true
   fi
   docker rm -f "$name" >/dev/null 2>&1 || true
+  # The container wrote its storage as uid 1000, which the host user may not be able to remove.
+  docker run --rm --user 0 --entrypoint /bin/sh -v "$work:/scratch" "$image" \
+    -c 'rm -rf /scratch/storage' >/dev/null 2>&1 || true
   rm -rf "$work"
   exit "$status"
 }
