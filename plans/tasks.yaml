@@ -34,6 +34,7 @@ lanes:
   Q:  Parity and QA gates
   VS: Vertical slice gate
   B:  Benchmarks and performance
+  U:  Upstream sync (moving the Rails pin)
   X:  Launch
 
 milestones:
@@ -1370,7 +1371,7 @@ tasks:
     lane: B
     milestone: M5
     size: M
-    deps: [B03, B04, B06, Q04, Q05, Q07, Q08, P02, P03, P04]
+    deps: [B03, B04, B06, Q04, Q05, Q07, Q08, P02, P03, P04, B07, B08, B09, Q11, Q13, P07, P08]
     owns: [bench/results/final-*]
     refs: [README.md benchmark table]
     deliver: >
@@ -1379,6 +1380,363 @@ tasks:
       toolchains and limitations recorded.
     accept:
       - Results include the Rails column measured on the same hardware; reproduction instructions verified by a second run
+
+  # ---------------------------------------------------------------- Upstream sync
+  # Rails moved on after our pin (345e637, Oct 5): 417 commits to edbc779 (Oct 9) that make every
+  # port cache complete pages, drop CSRF tokens from forms (Fetch Metadata), keep a message counter
+  # on rooms and fix many smaller things. The oracle is the pin, so the port follows it: U01 moves
+  # the pin and lists what broke; U02-U08 port the changes; Q11 proves every gate green again.
+  # Every U task may edit src/ and tests/ (swarm edit_anywhere): the original owners have merged.
+  - id: U01
+    title: Move the Rails pin to upstream main
+    lane: U
+    milestone: M4
+    size: M
+    deps: []
+    owns: [plans/upstream-sync.md]
+    refs: [reference/README.md, parity/bin/reference, parity/bin/seed, bench/README.md, assets/README.md]
+    deliver: >
+      Move the reference/ submodule from 345e637 to basecamp/once-campfire@edbc779 (main on
+      2026-10-09; the v1.5.2 tag predates the cache work). Besides src/ and tests/, this task may
+      edit the submodule pointer, the pin named in AGENTS.md, plans/csharp-port.md and
+      assets/README.md, and regenerate parity/.seed/. Rebuild campfire-reference:app (Ruby 4.0.7,
+      Puma 8) with parity/bin/reference, rebuild and verify the default seed (the schema gains
+      rooms.messages_count and two message indexes), and rebuild the frontend assets (four
+      Stimulus controllers and file_uploader.js changed). Check which Rails tree the benchmark's
+      reference image is built from (reference/ or reference-rust/reference/) and make it ours.
+      Then run every parity gate (replay, route coverage, screens, cable, state, continuity,
+      workflows) against the new reference and write plans/upstream-sync.md: (1) every
+      first-parent upstream commit from 345e637 to edbc779 that touches app/, config/, lib/ or
+      db/, each mapped to the U task that ports it (U02-U08; flag any that fit none), and (2)
+      every gate failure, each mapped the same way. Don't port behavior here. Keep bin/check
+      green with the smallest changes: a test that now fails because Rails changed is skipped
+      with a reason naming the U task that fixes it, and that task removes the skip.
+    accept:
+      - reference/ is at edbc779 and the reference image, seed and assets are rebuilt from it
+      - plans/upstream-sync.md maps every upstream app/config/lib/db commit and every gate failure to a task
+      - bin/check is green; every new skip names its U task
+
+  - id: U02
+    title: Room message counter and message indexes
+    lane: U
+    milestone: M4
+    size: S
+    deps: [U01]
+    owns: [tests/Campfire.Data.Tests/Upstream/U02/]
+    refs: [reference/db/migrate/20261007190000_add_messages_count_to_rooms.rb, reference/db/migrate/20261004225000_add_room_id_and_created_at_index_to_messages.rb, reference/db/migrate/20261005022000_add_room_id_and_updated_at_index_to_messages.rb, reference/app/models/room/messages_count.rb, reference/lib/tasks/room_messages_count.rake, reference/config/initializers/room_messages_count.rb, reference/app/models/message/pagination.rb, reference/test/models/room/]
+    deliver: >
+      Port the schema change: rooms.messages_count kept by SQLite triggers (installed and repaired
+      exactly as Room::MessagesCount does, including the db:prepare/migrate repair hooks), the
+      (room_id, created_at) and (room_id, updated_at) message indexes created only where missing,
+      and the bot pagination that now reads the counter. A database written by either app must
+      open in the other with the same schema_migrations, triggers and counts.
+    accept:
+      - Rails and C# produce identical schema (tables, indexes, triggers) and counts on the seed and after writes from either side (state differential)
+      - Ported room/messages_count tests pass
+
+  - id: U03
+    title: Header-only forgery protection and token-free pages
+    lane: U
+    milestone: M4
+    size: M
+    deps: [U01]
+    owns: [tests/Campfire.Web.Tests/Upstream/U03/]
+    refs: [reference/app/controllers/concerns/authentication.rb, reference/app/helpers/application_helper.rb, reference/app/views/layouts/application.html.erb, reference/app/javascript/models/file_uploader.js, reference/config/initializers/session_store.rb, reference/config/initializers/active_storage_authentication.rb, reference/test/controllers/fetch_metadata_test.rb, reference/README.md]
+    deliver: >
+      Rails now protects writes with Sec-Fetch-Site and Origin (Rails' header-only strategy)
+      instead of tokens: forms and the layout carry no authenticity token or csrf meta tags.
+      Port it exactly: GET/HEAD skip; same-origin and same-site pass; a present Origin must match
+      the effective URL; null/foreign origins and cross-site/none/invalid metadata fail; missing
+      metadata passes only over plain HTTP without forced TLS. Bot keys and signed direct uploads
+      keep their exceptions, and existing signed/encrypted cookies and token-bearing sessions stay
+      valid. Read the Rails gem source in the reference image for the strategy, not the docs.
+      Port fetch_metadata_test.rb with CSRF protection on, and update the replay normalizer so
+      pages are compared without blanking tokens.
+    accept:
+      - Every page is byte-equal to the reference with no token blanking in the replay gate
+      - The ported fetch_metadata cases and a Rails-issued pre-upgrade cookie both pass
+
+  - id: U04
+    title: Upstream changes to posting and unread state
+    lane: U
+    milestone: M4
+    size: M
+    deps: [U02]
+    owns: [tests/Campfire.Web.Tests/Upstream/U04/]
+    refs: [plans/upstream-sync.md, reference/app/models/message.rb, reference/app/models/message/broadcasts.rb, reference/app/models/message/searchable.rb, reference/app/models/membership.rb, reference/app/models/room/message_pusher.rb, reference/app/jobs/message/broadcast_unread_room_job.rb, reference/app/jobs/room/destroy_job.rb, reference/app/models/user/mentionable.rb, reference/app/models/message/mentionee.rb]
+    deliver: >
+      Port the write-path commits U01 maps here: messages, search entries and unread state created
+      atomically (7331d3a); the search entry rewritten only when the body or attachment changes;
+      the unread-room notice fanned out from a job, skipping members already unread or caught up,
+      keeping same-second events and Rails' timestamp ordering; push badge counts once per batch;
+      no empty push payloads; no room queries for messages without mentions (0aa339d); a room's
+      messages deleted in a job, one transaction each; the banned-user push fix. Port the matching
+      reference/test cases (message creation, searchable, mentionee, push, room, unread rooms).
+    accept:
+      - Every commit U01 mapped to U04 is ported, each with its reference tests
+      - Replay, cable and state gates are green for posting, editing, deleting and room deletion
+
+  - id: U05
+    title: Upstream changes to reading pages and queries
+    lane: U
+    milestone: M4
+    size: M
+    deps: [U02, U03]
+    owns: [tests/Campfire.Web.Tests/Upstream/U05/]
+    refs: [plans/upstream-sync.md, reference/app/controllers/users/sidebars_controller.rb, reference/app/models/room.rb, reference/app/models/rooms/direct.rb, reference/app/controllers/searches_controller.rb, reference/app/controllers/accounts_controller.rb, reference/app/views/messages/boosts/, reference/app/helpers/messages_helper.rb, reference/app/controllers/qr_code_controller.rb]
+    deliver: >
+      Port the read-path commits U01 maps here: sidebar directs and shared rooms queried
+      separately; direct room found with one query; search reads the newest matches off the
+      index, searches operator words as words and bounds accessible probes; a refresh finds
+      replaced messages through the index; one page of account members at a time with the same
+      filter on every page; boosts cached with their message and rendered from the preload;
+      token-free message controls and quick boost forms; request ports kept in copy links; the
+      complete auto-submit transfer form; invalid QR code requests rejected before rendering;
+      and the other view changes (PWA partials, refreshes, flash). Pages must stay byte-equal.
+    accept:
+      - Every commit U01 mapped to U05 is ported, each with its reference tests
+      - Replay and screen gates are green for room, messages, sidebar, search, accounts and QR routes
+
+  - id: U06
+    title: Upstream hardening of attachments, link previews and push
+    lane: U
+    milestone: M4
+    size: M
+    deps: [U01]
+    owns: [tests/Campfire.Web.Tests/Upstream/U06/]
+    refs: [plans/upstream-sync.md, reference/app/models/message/attachment.rb, reference/app/helpers/messages/attachment_presentation.rb, reference/lib/rails_ext/time_limited_video_previewer.rb, reference/app/views/active_storage/blobs/_blob.html.erb, reference/config/initializers/active_storage.rb, reference/app/controllers/unfurl_links_controller.rb, reference/app/models/opengraph/fetch.rb, reference/lib/web_push/, reference/config/initializers/web_push.rb, reference/app/models/push/subscription.rb]
+    deliver: >
+      Port the hardening commits U01 maps here: bounded attachment preview work and a
+      time-limited video previewer; a video poster only once its variant exists; files in rich
+      text shown by name without making previews; a message posted even when its attachment can't
+      be previewed; the whole unfurl, lookups included, under one deadline; http_proxy can't
+      bypass the pinned address; push connections pooled, pinned to the approved address, bounded
+      when idle, and a failed reconnect told apart from a dead idle connection. Port the matching
+      tests (attachment, opengraph fetch, unfurl controller, web_push connections/pool/persistent
+      request, push subscription).
+    accept:
+      - Every commit U01 mapped to U06 is ported, each with its reference tests
+      - Each SSRF and time bound is proven by a test that fails without the change
+
+  - id: U07
+    title: Complete-response cache and epoch-keyed fragments
+    lane: U
+    milestone: M5
+    size: M
+    bench: true
+    deps: [U03, U04, U05]
+    owns: [src/Campfire.Web/ResponseCache/, tests/Campfire.Web.Tests/ResponseCache/]
+    refs: [reference/app/controllers/concerns/cached_responses.rb, reference/app/models/response_cache.rb, reference/app/models/fragment_cache.rb, reference/app/models/record_cache.rb, reference/config/initializers/fragment_cache.rb, reference/test/controllers/cached_responses_test.rb, reference/test/controllers/fragment_cache_test.rb, reference/test/controllers/messages_caching_test.rb, reference/test/models/response_cache_test.rb, reference/test/models/record_cache_test.rb]
+    deliver: >
+      Port Rails' page cache. A read-only SQLite observer reads PRAGMA data_version (commits from
+      any writer, Rails included); the version is captured before authentication, checked at
+      lookup and again before a rendered page is admitted. Authenticated GET HTML for room,
+      messages, sidebar and search is cached complete, as identity and gzip bodies with a
+      precomputed weak ETag and Vary: Accept-Encoding, keyed as response_cache_key is, within
+      CAMPFIRE_RESPONSE_CACHE_MB (default 64, 0 disables), 1 MiB per entry, FIFO eviction. Every
+      hit still authenticates and authorizes against current records. 16 render locks collapse
+      concurrent cold misses. Skip as Rails skips: bot keys, flash, conditional requests, open
+      transactions, non-200, changed session. Nested message, boost and list fragments use a
+      separate 64 MiB store keyed by the captured version, origin, mount path, format, locale and
+      viewer/session digest, with content-validated message fragments kept across unrelated
+      commits as Rails keeps them. Port all five reference test files listed in refs. Measure
+      before/after with bench/bin/run on room, messages, sidebar and search (internal only).
+    accept:
+      - Ported cache tests pass, including foreign-writer invalidation (Rails writes, C# serves fresh) and no cross-user or cross-session reuse
+      - Replay gate is green with the cache on and with CAMPFIRE_RESPONSE_CACHE_MB=0
+      - Internal before/after numbers recorded in plans/status/U07.md
+
+  - id: U08
+    title: Background SQLite WAL checkpoint
+    lane: U
+    milestone: M5
+    size: S
+    deps: [U01]
+    owns: [src/Campfire.Data/Checkpoint/, tests/Campfire.Data.Tests/Checkpoint/]
+    refs: [reference/lib/rails_ext/sqlite_wal_checkpoint.rb, reference/config/initializers/sqlite_wal_checkpoint.rb, reference/config/database.yml, reference/test/lib/sqlite_wal_checkpoint_test.rb]
+    deliver: >
+      Checkpoint the WAL outside request threads as Rails now does: the same pragmas and
+      thresholds, the writer fallback that bounds WAL growth, interruptible shutdown, and
+      exclusive-lock ownership kept (4bcc745). Port sqlite_wal_checkpoint_test.rb.
+    accept:
+      - Ported checkpoint tests pass; WAL size stays bounded under a sustained posting run
+      - Shutdown during a checkpoint exits promptly and leaves the database consistent
+
+  # ---------------------------------------------------------------- Batch 2: gates, fixes, perf
+  - id: Q11
+    title: Every parity gate green on the new pin
+    lane: Q
+    milestone: M5
+    size: M
+    deps: [U02, U03, U04, U05, U06, U07, U08]
+    owns: [plans/parity-report.md]
+    refs: [plans/upstream-sync.md, parity/]
+    deliver: >
+      Run replay, route coverage, screens, cable, state, continuity and the Playwright workflows
+      against the edbc779 reference, with the response cache on and off. Fix what is red (this
+      task may edit src/ and tests/), and remove every skip U01 added. Write
+      plans/parity-report.md: each gate, its command, and its result.
+    accept:
+      - Every gate is green, with commands and results in plans/parity-report.md
+      - No U01 skips remain
+
+  - id: Q12
+    title: Fresh differential fuzz run
+    lane: Q
+    milestone: M5
+    size: S
+    deps: [Q11]
+    owns: [plans/fuzz-run-2.md]
+    refs: [plans/status/R04.md, tests/Campfire.RichText.Fuzz/]
+    deliver: >
+      Issue #188: rerun R04's live differential fuzzer against the new reference image long
+      enough to cover every sanitizer and content-filter entry point, and confirm R04's fixes
+      hold. Fix any new divergence (edit src/ and tests/ as needed, with a regression case).
+    accept:
+      - plans/fuzz-run-2.md records the run (corpus, duration, cases, divergences) and each fix
+
+  - id: Q13
+    title: Second security review
+    lane: Q
+    milestone: M5
+    size: M
+    deps: [Q11, Q12]
+    owns: [plans/security-review-2.md]
+    refs: [plans/security-review.md, reference/SECURITY.md]
+    deliver: >
+      Issue #189: a cross-vendor review of everything since Q08, focused on Fetch Metadata write
+      protection, the response and fragment caches (no reuse across users, sessions, origins or
+      permission changes), attachment, unfurl and push hardening, the GCP deploy script and the
+      production image. Each finding gets a severity, a reproduction and either a fix with a test
+      or a filed issue.
+    accept:
+      - plans/security-review-2.md lists every finding with severity and its fix or issue
+      - No open high or critical finding
+
+  - id: Q14
+    title: Deflake the OpenGraph pathological-page test
+    lane: Q
+    milestone: M4
+    size: S
+    deps: []
+    owns: [tests/Campfire.Jobs.Tests/OpenGraph/OpenGraphDocumentTests.cs]
+    refs: [tests/Campfire.Jobs.Tests/OpenGraph/OpenGraphDocumentTests.cs]
+    deliver: >
+      Issue #190: ScansPathologicalPagesQuickly asserts a 5 s wall-clock bound and fails on a
+      busy machine. Keep what it proves (scanning is linear, not quadratic) without a wall-clock
+      threshold, for example by comparing work at two input sizes or counting steps. Also
+      Campfire.Cable.Tests TurboStreamsChannelTests.A_signed_stream_name_confirms_and_delivers,
+      which timed out at 10 s in CI on 2026-10-10 (this task may edit tests/Campfire.Cable.Tests/):
+      wait on the event rather than a fixed delay.
+    accept:
+      - Both tests pass 50 runs in a row with the machine under full build load
+
+  - id: R06
+    title: Reject a null byte in HtmlElement.SetAttribute
+    lane: R
+    milestone: M4
+    size: S
+    deps: []
+    owns: [tests/Campfire.RichText.Tests/NullByte/]
+    refs: [src/Campfire.RichText/Html/HtmlNode.cs, src/Campfire.RichText/Sanitize/]
+    deliver: >
+      Issue #161: Nokogiri's node[name] = value raises ArgumentError "string contains null byte";
+      HtmlElement.SetAttribute stores the value. Raise the same error there (this task may edit
+      src/Campfire.RichText/), keep parse-time NUL handling as it is, and drop R04's call-site
+      workaround in NokogiriAttribute.Set if it becomes redundant. Prove it with a vector or a
+      reference run, not a hand-written expectation.
+    accept:
+      - SetAttribute with a NUL raises as Nokogiri does, proven against the reference; parse-time behavior unchanged
+
+  - id: P07
+    title: Media libraries in the production image
+    lane: P
+    milestone: M4
+    size: S
+    deps: []
+    owns: [tests/Campfire.Server.Tests/ProductionImage/]
+    refs: [docker/toolchain/Dockerfile, reference/Dockerfile, plans/status/P02.md]
+    deliver: >
+      Issue #187: the production Dockerfile has no libvips or ffmpeg, so thumbnails and video
+      previews fail. Install P02's pinned Debian packages (libvips42t64 8.16.1-1+deb13u1,
+      ffmpeg 7:7.1.5-0+deb13u1) in the runtime stage as docker/toolchain/Dockerfile does (this task
+      may edit Dockerfile). Check it against the built image: upload an image and a video, and
+      their variant and preview match the reference's bytes.
+    accept:
+      - In a container from the production image, an uploaded image gets its thumbnail and a video its preview, byte-equal to the reference
+
+  - id: P08
+    title: Smoke-test the production image in CI
+    lane: P
+    milestone: M4
+    size: S
+    deps: [P07]
+    owns: [tests/image-smoke/]
+    refs: [Dockerfile, bin/boot]
+    deliver: >
+      Issue #191: a CI job (a new .github/workflows/image.yml, which this task may add, driving scripts under tests/image-smoke/) builds the production image and runs it: bin/boot starts Thruster and
+      `campfire server`, /up answers 200, first run creates an account, a room page renders, a
+      message posts and arrives over /cable, and an uploaded image gets its thumbnail. It fails
+      the PR when any step fails.
+    accept:
+      - The workflow runs on PRs touching src/, Dockerfile or assets/ and is green on main
+
+  - id: B07
+    title: Measure on the shared verification harness
+    lane: B
+    milestone: M5
+    size: M
+    bench: true
+    deps: [U07, U08, Q11]
+    owns: [bench/verification/, bench/results/verify-*]
+    refs: [https://github.com/basecamp/once-campfire-verification, bench/README.md]
+    deliver: >
+      Every Campfire port is now published from basecamp/once-campfire-verification. Add it as a
+      pinned checkout (this task may edit .gitmodules) and a `csharp` app the way its Go, Rust and
+      C apps are defined, as a wrapper or patch under bench/verification/ that never edits the
+      checkout. Run its normal profile (16 clients, three alternating rounds) and its mixed-write
+      profile with Rails at edbc779 and C# on this machine, response-validated. Internal only:
+      never publish numbers before B05. Long commands: keep polling in the foreground until they
+      finish; a background command dies when your session ends.
+    accept:
+      - Raw results under bench/results/verify-*, every response validated, Rails and C# measured in the same session
+
+  - id: B08
+    title: Performance round 2 after the page cache
+    lane: B
+    milestone: M5
+    size: L
+    bench: true
+    deps: [B07]
+    owns: [plans/perf-log-2.md]
+    refs: [plans/perf-log.md, https://github.com/basecamp/once-campfire-verification/blob/main/docs/architecture.md]
+    deliver: >
+      Profile-guided work on what the page cache doesn't cover: cache misses under the mixed-write
+      profile, post_message, and cache hits themselves (authentication, lookup, write). Start with
+      issues #184 (reader-pool wait, 42% of room-page time) and #185 (fragment cache checked after
+      loading message data), then follow the profile. Same method, tools, stopping rule and
+      lab-notebook format as B03 (see its card and plans/perf-log.md), in plans/perf-log-2.md,
+      measured with B07's harness. Every change keeps all parity gates green.
+    accept:
+      - Each kept change has before/after numbers on B07's harness and a green replay gate
+      - plans/perf-log-2.md is a lab notebook written as the work happens, ending with a ranked summary and what is left
+
+  - id: B09
+    title: Native AOT build and runtime choice
+    lane: B
+    milestone: M5
+    size: S
+    deps: [B07]
+    owns: [bench/results/aot-*]
+    refs: [plans/status/B04.md, bench/results/]
+    deliver: >
+      Issue #186: the Native AOT publish fails, so B04 never measured it. Make it build (fix
+      trimming and AOT warnings in src/ as needed; this task may edit src/ and Dockerfile), then
+      measure JIT, ReadyToRun and Native AOT on B07's harness for throughput, p99, startup and
+      memory, and set the production image to the winner.
+    accept:
+      - Native AOT publishes with zero AOT/trim warnings and passes the replay gate
+      - bench/results/aot-* records all three configurations; Dockerfile uses the chosen one
 
   # ---------------------------------------------------------------- Launch
   - id: X01
