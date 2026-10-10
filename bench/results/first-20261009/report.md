@@ -17,6 +17,11 @@ csharp HEAD: 09090c8 (dirty: 1 files)
 
 Reps: reference 3, csharp 3. Cells: median [min–max].
 
+> **Post a message is not valid.** The C# image was built with `server-composition.patch`, which
+> gives `campfire server` a `WebApp` but no-op broadcaster, job queue and connection revoker. A
+> C# post skips the Turbo broadcast and job enqueue Rails does, so its numbers are not comparable.
+> P05 (#173) wires the real server; B03 re-measures posting after it. The four GET workloads stand.
+
 ### HTTP workload (requests/sec), 16 concurrent clients
 
 | HTTP workload (requests/sec) | Rails | C# |
@@ -25,7 +30,7 @@ Reps: reference 3, csharp 3. Cells: median [min–max].
 | Messages page | 327 | 266 |
 | Sidebar | 392 | 3,143 |
 | Search | 319 | 602 |
-| Post a message | 171 | 1,503 |
+| Post a message | 171 | 1,503 (not valid) |
 
 ### Startup and memory
 

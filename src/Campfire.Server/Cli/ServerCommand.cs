@@ -1,12 +1,8 @@
-using Campfire.Data.Events;
 using Campfire.Data.Sqlite;
 using Campfire.RailsCompat.Crypto;
-using Campfire.Storage.Blobs;
 using Campfire.Web;
 using Campfire.Web.Assets;
-using Campfire.Web.Pipeline;
 using Campfire.Web.Routing;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Campfire.Server.Cli;
 
@@ -64,38 +60,17 @@ public static class ServerCommand
         builder.Services.AddSingleton(assets);
         builder.Services.AddSingleton(new KeyGenerator(secretKeyBase));
 
-        var keys = new KeyGenerator(secretKeyBase);
-        var storage = BlobStorage.Local(settings.FilesPath, keys);
-        var (version, revision) = WebApp.VersionFrom(Environment.GetEnvironmentVariable);
-        var seams = new DomainSeams(new NoOpBroadcaster(), new NoOpJobQueue(), new NoOpConnectionRevoker());
-
-        var router = new Router(Routes.Table, new ErrorPages(status => assets.Files.GetValueOrDefault($"/{status}.html")));
-        var webApp = new WebApp
-        {
-            Database = database,
-            Keys = keys,
-            Router = router,
-            Assets = assets,
-            AssumeSsl = settings.Ssl,
-            AppVersion = version,
-            GitRevision = revision,
-            VapidPublicKey = settings.VapidPublicKey,
-            Storage = storage,
-            Seams = seams,
-            Logger = NullLogger.Instance,
-        };
-
         var app = builder.Build();
-        app.Run(Pipeline(settings, webApp));
+        app.Run(Pipeline(settings, assets));
         return app;
     }
 
     // The middleware Rails puts in front of the routes, in its order: AssumeSSL and SSL,
-    // ActionDispatch::Static, then the WebApp (which runs the router with Rack::Runtime,
-    // Rack::RequestId and Rack::Deflater), matching WebApp.HandleAsync.
-    static RequestDelegate Pipeline(ServerSettings settings, WebApp webApp)
+    // ActionDispatch::Static, then the router (with ShowExceptions' public error pages).
+    static RequestDelegate Pipeline(ServerSettings settings, AssetBundle assets)
     {
-        var staticFiles = new StaticFiles(webApp.Assets!);
+        var staticFiles = new StaticFiles(assets);
+        var router = new Router(Routes.Table, new ErrorPages(status => assets.Files.GetValueOrDefault($"/{status}.html")));
         return async context =>
         {
             if (settings.Ssl)
@@ -105,23 +80,8 @@ public static class ServerCommand
 
             if (!await staticFiles.TryServeAsync(context).ConfigureAwait(false))
             {
-                await webApp.HandleAsync(context).ConfigureAwait(false);
+                await router.HandleAsync(context).ConfigureAwait(false);
             }
         };
-    }
-
-    sealed class NoOpBroadcaster : IBroadcaster
-    {
-        public void Broadcast(string stream, string payload) { }
-    }
-
-    sealed class NoOpJobQueue : IJobQueue
-    {
-        public void Enqueue(Job job) { }
-    }
-
-    sealed class NoOpConnectionRevoker : IConnectionRevoker
-    {
-        public void Disconnect(long userId, bool reconnect) { }
     }
 }
