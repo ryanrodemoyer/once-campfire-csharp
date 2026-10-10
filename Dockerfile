@@ -11,14 +11,19 @@
 # bin/boot is the reference's `thrust bin/start-app` (reference/Procfile): Thruster, the same
 # binary the reference's gem ships, on 80 and, with TLS_DOMAIN, on 443 (certificates cached in
 # /rails/storage/thruster), in front of `campfire server` (db:prepare, then the app on PORT 3000).
-# The pinned media toolchain (libvips, ffmpeg) is task P02.
 #
-# The runtime is Debian trixie, as the reference's ruby:3.4-slim is, so P02 can add the same
-# Debian media libraries. Microsoft ships no Debian image for .NET 10, so the app is published
-# self-contained and needs only the libraries .NET itself loads.
+# The runtime is Debian trixie, as the reference's ruby:3.4-slim is, and takes the same pinned Debian
+# media packages (docker/toolchain/Dockerfile): libvips 8.16.1 and ffmpeg 7.1.5, the .debs the
+# reference image installs, so variants and previews are the reference's bytes. Microsoft ships no
+# Debian image for .NET 10, so the app is published self-contained and needs only the libraries .NET
+# itself loads.
 
 ARG DOTNET_SDK_VERSION=10.0
 ARG DEBIAN_RELEASE=trixie
+ARG LIBVIPS_PACKAGE_VERSION=8.16.1-1+deb13u1
+ARG FFMPEG_PACKAGE_VERSION=7:7.1.5-0+deb13u1
+# vectors/storage.json versions.ffmpeg: the first `ffmpeg -version` line.
+ARG FFMPEG_VERSION_LINE="ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
 
 
 # Restore, publish and build the frontend with the SDK, for the target architecture.
@@ -58,8 +63,16 @@ FROM docker.io/library/debian:${DEBIAN_RELEASE}-slim
 # ca-certificates: the system CA store, for webhooks, unfurling and Web Push. The libraries the .NET
 # runtime loads (libstdc++, libssl) are already in the slim image; ICU isn't needed, since
 # globalization is invariant.
+#
+# libvips (NetVips loads libvips.so.42 from the system) and ffmpeg/ffprobe on PATH: the media the
+# reference image installs with `apt-get install libvips ffmpeg`, pinned as docker/toolchain does.
+ARG LIBVIPS_PACKAGE_VERSION
+ARG FFMPEG_PACKAGE_VERSION
+ARG FFMPEG_VERSION_LINE
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y ca-certificates && \
+    apt-get install --no-install-recommends -y ca-certificates \
+      libvips42t64="${LIBVIPS_PACKAGE_VERSION}" ffmpeg="${FFMPEG_PACKAGE_VERSION}" && \
+    ffmpeg -version | head -1 | grep -qxF "${FFMPEG_VERSION_LINE}" && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Image metadata
