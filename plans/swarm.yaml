@@ -39,7 +39,8 @@ agents:
     # The route chain: small features, the coverage gate, then the Playwright and cable gates.
     slots: 2
     # R04 moved here from grok when Grok's usage balance ran out.
-    queue: [R04, M09, Q06, Q02, Q07, Q05, X01]
+    # P05 wires the real cable server, job runner and revoker into `campfire server`.
+    queue: [R04, M09, Q06, Q02, Q07, Q05, P05, X01]
 
   grok:
     model: Grok 4.7 (high)
