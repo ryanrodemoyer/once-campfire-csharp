@@ -967,7 +967,7 @@ tasks:
     milestone: M1
     size: M
     deps: [D01, W01]
-    owns: [Dockerfile, src/Campfire.Server/Program.cs, src/Campfire.Server/Cli/]
+    owns: [Dockerfile, src/Campfire.Server/Program.cs, src/Campfire.Server/Cli/Commands.cs, src/Campfire.Server/Cli/RailsSsl.cs, src/Campfire.Server/Cli/SecretKeyBase.cs]
     refs: [reference/Dockerfile, reference/bin/boot, once-campfire-go/Dockerfile]
     deliver: >
       Multi-stage image (non-root uid 1000, /rails/storage layout), env contract
@@ -975,6 +975,30 @@ tasks:
       `campfire server|db:prepare|backup` CLI, internal listener on :3000.
     accept:
       - Image boots on a copy of the seed and serves /up and the login page
+
+  - id: P05
+    title: Wire the production server
+    lane: P
+    milestone: M4
+    size: M
+    deps: [P01, RT01, RT04, I01, Q07]
+    owns: [src/Campfire.Server/Cli/ServerCommand.cs, src/Campfire.Server/Cli/ServerSettings.cs, src/Campfire.Server/Composition/, tests/Campfire.Server.Tests/Composition/]
+    refs: [reference/Procfile, reference/config/puma.rb, reference/config/cable.yml, reference/config/environments/production.rb, tests/workflows/Server.cs, reference-rust/plans/rust-conversion.md]
+    deliver: >
+      `campfire server` serves only the router: nothing in src/ builds the WebApp, the cable server,
+      the job runner or the connection revoker; only tests do. Compose the real thing in
+      src/Campfire.Server/Composition/: WebApp with the real Database, Keys, Storage and assets;
+      CableServer mounted at /cable with session-cookie authentication; JobRunner processing jobs
+      in-process (Rails runs Resque workers beside Puma; JOB_CONCURRENCY sizes them); the revoker
+      wired to the cable server; DomainSeams built from those three, never no-ops. Mirror
+      tests/workflows/Server.cs, but with real jobs. B02 may have landed a temporary
+      ServerCommand with no-op seams to get the benchmark running; replace it.
+    accept:
+      - The Docker image on a copy of the bench seed serves the room page, accepts a /cable
+        connection, and a posted message reaches a subscribed cable client
+      - A posted message to a room with a bot enqueues and runs the webhook job
+      - A composition test fails if any DomainSeams member is a no-op
+      - bench/bin/run --apps reference,csharp --routes post_message --reps 1 passes validation
 
   - id: P02
     title: Pinned media toolchain in the image
@@ -1202,7 +1226,11 @@ tasks:
     bench: true
     owns: [bench/results/first-*]
     refs: [README.md benchmark table]
-    deliver: Room, messages, sidebar, search and post measured against Rails on the same box, with replay parity proven for exactly those responses first.
+    deliver: >
+      Room, messages, sidebar, search and post measured against Rails on the same box, with replay
+      parity proven for exactly those responses first. Until P05 wires the real cable server and
+      job runner, post_message skips work Rails does: report it as not valid, and don't commit
+      changes to src/ (P05 owns the server composition).
     accept:
       - Every measured response is HTTP 200 and replay-equal to the reference; results labelled internal
 
@@ -1211,7 +1239,7 @@ tasks:
     lane: B
     milestone: M5
     size: L
-    deps: [B02, Q02]
+    deps: [B02, Q02, P05]
     owns: [plans/perf-log.md]
     refs: [once-campfire-go/bench/results/fragment-cache.md, reference-rust/plans/perf-attribution.md]
     deliver: >
@@ -1243,7 +1271,7 @@ tasks:
     lane: B
     milestone: M5
     size: M
-    deps: [B02, P01]
+    deps: [B02, P01, P05]
     owns: [bench/results/runtime-*]
     refs: [plans/csharp-port.md#benchmark-protocol]
     deliver: JIT (Dynamic PGO) vs ReadyToRun vs Native AOT, Server GC vs workstation, measured for throughput, p99, startup and memory.
