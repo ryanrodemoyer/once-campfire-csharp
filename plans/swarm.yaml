@@ -5,7 +5,7 @@
 # (S=1, M=2, L=4 points) and keep each dependency chain with one agent to avoid handoffs.
 #
 # Rules the queues encode:
-# - Security work is reviewed across vendors: R04 and RT04 were written by Claude, GLM and Grok,
+# - Security work is reviewed across vendors: R04 and RT04 were written by Claude, GLM, Grok and Gemini,
 #   so DeepSeek (dspro) reviews them in Q08.
 # - B02, B03 and B04 are `exclusive`: they start only on an idle machine and nothing else starts
 #   while they run, so build load never leaks into a measurement.
@@ -35,7 +35,8 @@ agents:
     command: [agy, -p, "{prompt}", --model, gemini-3.8-flash-high, --dangerously-skip-permissions]
     # The route chain: small features, the coverage gate, then the Playwright and cable gates.
     slots: 2
-    queue: [M09, Q06, Q02, Q07, Q05, X01]
+    # R04 moved here from grok when Grok's usage balance ran out.
+    queue: [R04, M09, Q06, Q02, Q07, Q05, X01]
 
   grok:
     model: Grok 4.7 (high)
@@ -45,7 +46,7 @@ agents:
     slots: 2
     # R04 and M10 moved here when Fireworks (glm, deepseek) ran out of credits, so Q08's review
     # of R04 went to dspro: a reviewer can't review its own work.
-    queue: [R04, M10, VS01, B06, B02, B03, B04]
+    queue: [M10, VS01, B06, B02, B03, B04]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
