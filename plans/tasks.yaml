@@ -1624,9 +1624,12 @@ tasks:
     deliver: >
       Issue #190: ScansPathologicalPagesQuickly asserts a 5 s wall-clock bound and fails on a
       busy machine. Keep what it proves (scanning is linear, not quadratic) without a wall-clock
-      threshold, for example by comparing work at two input sizes or counting steps.
+      threshold, for example by comparing work at two input sizes or counting steps. Also
+      Campfire.Cable.Tests TurboStreamsChannelTests.A_signed_stream_name_confirms_and_delivers,
+      which timed out at 10 s in CI on 2026-10-10 (this task may edit tests/Campfire.Cable.Tests/):
+      wait on the event rather than a fixed delay.
     accept:
-      - The test passes 50 runs in a row with the machine under full build load
+      - Both tests pass 50 runs in a row with the machine under full build load
 
   - id: R06
     title: Reject a null byte in HtmlElement.SetAttribute
