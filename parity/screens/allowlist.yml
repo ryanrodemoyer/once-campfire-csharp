@@ -1,0 +1,2 @@
+# Known, owned exceptions (format: reference-rust/parity/capture/allowlist.ts). Deliberate divergences
+# from the Rails app belong in README "Known differences"; list one here only when no mask can express it.

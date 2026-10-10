@@ -1,0 +1,18 @@
+#!/bin/sh
+# Entrypoint for the campfire-csharp-candidate parity image.
+#
+# FAKETIME   libfaketime spec: "@2026-03-02 16:00:00" starts the clock at that instant and lets it
+#            tick; "2026-03-02 16:00:00" freezes it there. Monotonic clocks stay real, so .NET's
+#            timers keep working. Same spec and library as the reference image's entrypoint.
+#            (Thruster is a static Go binary, so its clock stays real, as in the reference.)
+# CAMPFIRE_FROZEN_TIME  the app's own frozen clock; parity/screens/candidate sets it together with
+#            a frozen FAKETIME for --freeze.
+set -e
+
+if [ -n "$FAKETIME" ]; then
+  export LD_PRELOAD=/usr/local/lib/faketime/libfaketime.so.1
+  export FAKETIME_DONT_FAKE_MONOTONIC=1
+  export FAKETIME_DONT_RESET=1
+fi
+
+exec "$@"
