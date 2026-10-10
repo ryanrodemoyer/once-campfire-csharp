@@ -134,6 +134,19 @@ public class CookieJarTests
     }
 
     [Fact]
+    public void Setting_and_then_deleting_a_cookie_emits_both_headers_in_order()
+    {
+        var jar = CreateJar();
+        jar.Set("session_token", "abc");
+        jar.Delete("session_token");
+
+        var headers = jar.ToSetCookieHeaders(ssl: false, host: "h");
+        Assert.Equal(2, headers.Count);
+        Assert.StartsWith("session_token=abc", headers[0]);
+        Assert.StartsWith("session_token=;", headers[1]);
+    }
+
+    [Fact]
     public void Secure_cookies_require_ssl_or_onion()
     {
         var jar = CreateJar();

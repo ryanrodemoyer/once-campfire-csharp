@@ -60,6 +60,11 @@ sealed class MessagesApp : IDisposable
             Storage = BlobStorage.Local(Path.Combine(directory, "storage"), Keys),
             Seams = Seams.Seams,
             VapidPublicKey = ParityEnvironment("VAPID_PUBLIC_KEY"),
+            ResetRemoteConnections = user =>
+            {
+                Seams.Disconnect(user.Id, reconnect: true);
+                return Task.CompletedTask;
+            },
         };
     }
 
@@ -97,7 +102,10 @@ sealed class MessagesApp : IDisposable
     }
 
     /// <summary>A request through the whole app, as Kestrel would hand it over.</summary>
-    public async Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, string? body = null, string? contentType = null)
+    public Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, string? body = null, string? contentType = null) =>
+        SendAsync(method, target, headers, Encoding.UTF8.GetBytes(body ?? ""), contentType ?? (body is null ? null : "application/x-www-form-urlencoded"));
+
+    public async Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, byte[] body, string? contentType = null)
     {
         var context = new DefaultHttpContext();
         var query = target.IndexOf('?', StringComparison.Ordinal);
@@ -111,10 +119,9 @@ sealed class MessagesApp : IDisposable
         {
             context.Request.Headers[header] = value;
         }
-        context.Request.ContentType = contentType ?? (body is null ? null : "application/x-www-form-urlencoded");
-        var bytes = Encoding.UTF8.GetBytes(body ?? "");
-        context.Request.Body = new MemoryStream(bytes);
-        context.Request.ContentLength = bytes.Length;
+        context.Request.ContentType = contentType;
+        context.Request.Body = new MemoryStream(body);
+        context.Request.ContentLength = body.Length;
         var responseBody = new MemoryStream();
         context.Response.Body = responseBody;
         await App.HandleAsync(context);

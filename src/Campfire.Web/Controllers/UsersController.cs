@@ -1,4 +1,5 @@
 using Campfire.Data.Lifecycle;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.RailsCompat.Crypto;
@@ -109,7 +110,11 @@ public sealed class UsersController : ApplicationController
             var created = UserLifecycle.Create(tx, name!, emailAddress, passwordDigest, now);
             if (staged is not null)
             {
-                BlobStorage.AttachOne(tx, staged, User.ModelName, created.Id, "avatar", now);
+                var attached = BlobStorage.AttachOne(tx, staged, User.ModelName, created.Id, "avatar", now);
+                if (!attached.Blob.IsAnalyzed)
+                {
+                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                }
             }
             return created;
         }).ConfigureAwait(false);

@@ -1,3 +1,4 @@
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -72,10 +73,18 @@ public sealed class UsersProfilesController : ApplicationController
             switch (avatar)
             {
                 case AvatarChange.Upload:
-                    BlobStorage.AttachOne(tx, staged!, User.ModelName, user.Id, AttachmentNames.Avatar, now, Touch);
+                    var attachedUpload = BlobStorage.AttachOne(tx, staged!, User.ModelName, user.Id, AttachmentNames.Avatar, now, Touch);
+                    if (!attachedUpload.Blob.IsAnalyzed)
+                    {
+                        tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attachedUpload.Blob.Id)));
+                    }
                     break;
                 case AvatarChange.Existing existing:
-                    BlobStorage.AttachOne(tx, existing.Blob, User.ModelName, user.Id, AttachmentNames.Avatar, now, Touch);
+                    var attachedExisting = BlobStorage.AttachOne(tx, existing.Blob, User.ModelName, user.Id, AttachmentNames.Avatar, now, Touch);
+                    if (!attachedExisting.Blob.IsAnalyzed)
+                    {
+                        tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attachedExisting.Blob.Id)));
+                    }
                     break;
                 case AvatarChange.Remove:
                     UsersAvatarsController.DetachAvatar(tx, user.Id, now);

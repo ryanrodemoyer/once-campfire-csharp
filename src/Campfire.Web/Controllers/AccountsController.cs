@@ -1,4 +1,5 @@
 using System.Globalization;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -85,7 +86,11 @@ public sealed class AccountsController : ApplicationController
             var accountId = account.Id;
             if (staged is not null)
             {
-                BlobStorage.AttachOne(tx, staged, nameof(Account), accountId, AttachmentNames.Logo, now);
+                var attached = BlobStorage.AttachOne(tx, staged, nameof(Account), accountId, AttachmentNames.Logo, now);
+                if (!attached.Blob.IsAnalyzed)
+                {
+                    tx.AfterCommit(_ => app.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                }
             }
             else if (logo is not null)
             {

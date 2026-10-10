@@ -172,7 +172,7 @@ public sealed partial class ServerComposition : IAsyncDisposable
             session => new DatabaseAttachables(session, keys, clock.GetUtcNow()));
         botWebhooks.RegisterWith(runner, limits);
 
-        var removeBannedContent = new RemoveBannedContent(database, cableServer, clock);
+        var removeBannedContent = new RemoveBannedContent(database, cableServer, runner, clock);
         removeBannedContent.RegisterWith(runner, limits);
 
         var messagePusher = new MessagePusher(

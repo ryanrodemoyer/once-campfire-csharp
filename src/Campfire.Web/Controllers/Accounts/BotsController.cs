@@ -1,4 +1,5 @@
 using Campfire.Data.Lifecycle;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.RailsCompat.Params;
@@ -78,7 +79,11 @@ public sealed class AccountsBotsController : ApplicationController
             var created = UserLifecycle.Create(tx, name!, emailAddress: null, passwordDigest: null, now, role: UserRole.Bot, bio: null, botToken: User.GenerateBotToken());
             if (staged is not null)
             {
-                BlobStorage.AttachOne(tx, staged, User.ModelName, created.Id, AttachmentNames.Avatar, now);
+                var attached = BlobStorage.AttachOne(tx, staged, User.ModelName, created.Id, AttachmentNames.Avatar, now);
+                if (!attached.Blob.IsAnalyzed)
+                {
+                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                }
             }
             if (hasWebhook && webhookUrl is not null)
             {
@@ -145,7 +150,11 @@ public sealed class AccountsBotsController : ApplicationController
             var updated = Users.Update(tx.Session, b, now, name: name);
             if (staged is not null)
             {
-                BlobStorage.AttachOne(tx, staged, User.ModelName, b.Id, AttachmentNames.Avatar, now);
+                var attached = BlobStorage.AttachOne(tx, staged, User.ModelName, b.Id, AttachmentNames.Avatar, now);
+                if (!attached.Blob.IsAnalyzed)
+                {
+                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                }
             }
             return updated;
         }).ConfigureAwait(false);

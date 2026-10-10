@@ -1,5 +1,6 @@
 using Campfire.Data.Events;
 using Campfire.Data.Lifecycle;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -88,5 +89,26 @@ public sealed class RemoveBannedContentTests : IDisposable
         await new RemoveBannedContent(database, recorded, TimeProvider.System).PerformAsync(new RemoveBannedContentJob(kevin.Id), Cancellation);
 
         Assert.Empty(recorded.Events);
+    }
+
+    [Fact]
+    public async Task Performing_destroys_messages_with_attachments_and_enqueues_purge()
+    {
+        var kevin = Write(tx => UserLifecycle.Create(tx, "Kevin", "kevin@37signals.com", null, Now));
+        var hq = Write(tx => Rooms.CreateFor(tx.Session, RoomType.Open, "HQ", kevin.Id, [kevin.Id], Now));
+        var message = Post(hq, kevin, "file-msg", "File attached");
+        var blob = Write(tx => Blobs.Create(tx.Session, "blobkey123", "test.pdf", "application/pdf", "{}", "local", 100, "checksum", Now));
+        Write(tx => Attachments.Create(tx.Session, Message.ModelName, message.Id, AttachmentNames.Attachment, blob.Id, Now));
+
+        var job = new RemoveBannedContent(database, recorded, recorded, TimeProvider.System);
+        recorded.Clear();
+
+        await job.PerformAsync(new RemoveBannedContentJob(kevin.Id), Cancellation);
+
+        Assert.Empty(Read(session => Messages.ByCreator(session, kevin.Id)));
+        Assert.Null(Read(session => Attachments.For(session, Message.ModelName, message.Id, AttachmentNames.Attachment)));
+        var enqueued = Assert.Single(recorded.Events.OfType<Enqueued>());
+        var purge = Assert.IsType<PurgeBlobJob>(enqueued.Job);
+        Assert.Equal(blob.Id, purge.BlobId);
     }
 }

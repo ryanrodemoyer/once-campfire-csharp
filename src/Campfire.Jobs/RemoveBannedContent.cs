@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 using Campfire.Data.Events;
-using Campfire.Data.Lifecycle;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -15,8 +15,18 @@ namespace Campfire.Jobs;
 // `user.remove_banned_content` (reference/app/models/user/bannable.rb), which loads the user's
 // messages and, one at a time, destroys each in its own transaction, then broadcasts its removal
 // (`broadcast_remove`, reference/app/models/message/broadcasts.rb).
-public sealed class RemoveBannedContent(SqliteDatabase database, IBroadcaster broadcaster, TimeProvider clock)
+public sealed class RemoveBannedContent(SqliteDatabase database, IBroadcaster broadcaster, IJobQueue jobQueue, TimeProvider clock)
 {
+    public RemoveBannedContent(SqliteDatabase database, IBroadcaster broadcaster, TimeProvider clock)
+        : this(database, broadcaster, broadcaster as IJobQueue ?? new DiscardingJobQueue(), clock)
+    {
+    }
+
+    sealed class DiscardingJobQueue : IJobQueue
+    {
+        public void Enqueue(Job job) { }
+    }
+
     public void RegisterWith(JobRunner runner, JobQueueLimits? limits = null)
     {
         ArgumentNullException.ThrowIfNull(runner);
@@ -31,7 +41,7 @@ public sealed class RemoveBannedContent(SqliteDatabase database, IBroadcaster br
         {
             var room = await database.WriteAsync(transaction =>
             {
-                MessageLifecycle.Destroy(transaction, message, clock.GetUtcNow());
+                MessageAttachmentLifecycle.DestroyWithAttachment(transaction, jobQueue, message, clock.GetUtcNow());
                 return Rooms.Find(transaction.Session, message.RoomId);
             }, cancellationToken).ConfigureAwait(false);
             if (room is not null)
