@@ -1,0 +1,8 @@
+{
+ "path": "/users/me/sidebar",
+ "status": 200,
+ "content_type": "text/html; charset=utf-8",
+ "bytes": 31427,
+ "sha256": "c9bdbb498c6ab54f3b846e7fbe86e3c8f0708c9460cf144ba748bdebb20eda56",
+ "normalized_sha256": "01932a5ac619ec5006d6600178e9d1b4143823bcb6b38c5b15090a4ce03482b8"
+}

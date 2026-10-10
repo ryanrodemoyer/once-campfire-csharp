@@ -1,0 +1,8 @@
+{
+ "path": "/searches?q=coffee",
+ "status": 200,
+ "content_type": "text/html; charset=utf-8",
+ "bytes": 165519,
+ "sha256": "dae439bc805fadc94c64ececd29b8ec615db0e8fd3a17c151a4308123f3b5c08",
+ "normalized_sha256": "850a94c06395444f6c8d10e23aca46f55a82925221f433c6afd1a667fe61fa87"
+}

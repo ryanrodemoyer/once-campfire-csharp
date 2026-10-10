@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="view-transition" content="same-origin">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="ukDGv-9rSBUXPOn10nJzSDSDwQ_x8zu0Vf4QWKnlf_0rHktMDDw-4Lt6kGpKxnYMiHzMKSQ1dkTlljyriKywlQ" />
+    
+    <meta name="current-user-id" content="127326141" /><meta name="current-user-name" content="David" />
+    <meta name="action-cable-url" content="/cable">
+
+    <meta name="vapid-public-key" content="BEYXTBB5_jNhNzXDmx5KEU55Vbbd-u--Lk9rM5OFQvUkPIBwZJ9QzAq0zdEzFw6yTV8cTriz_qYBVicY02_VxTQ=">
+    <meta name="turbo-prefetch" content="true">
+
+    <link rel="manifest" href="/webmanifest.json">
+    <link rel="icon" href="/account/logo?v=20260101160000" type="image/png">
+    <link rel="apple-touch-icon" href="/account/logo?v=20260101160000">
+
+    <link rel="stylesheet" href="/assets/_reset-9c3efd7b.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/actiontext-7b8d51ea.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/animation-bcdb4bab.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/autocomplete-9de8c93f.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/avatars-279376ab.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/base-637a0ec8.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/boosts-da4032a8.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/buttons-c7d39fd4.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/code-333ae548.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/colorize-eb391ca0.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/colors-aee62523.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/composer-e490638a.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/embeds-c20d0a3a.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/filters-8a4d63ed.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/flash-a561c1e5.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/inputs-9e58a07c.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/layout-ff6ddfc6.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-content-0ff2f961.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-editor-2d5c7ebe.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-variables-3fef4323.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-2876c58e.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lightbox-af496d39.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/messages-c5485fef.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/nav-05e7183a.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/panels-af44ec6d.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/separators-172b3ab8.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/sidebar-0be58db9.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/signup-6e02d591.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/spinner-5a118f25.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/trix-65afdb1d.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/utilities-e2f32466.css" data-turbo-track="reload" />
+    
+
+    <script type="importmap" data-turbo-track="reload">{
+  "imports": {
+    "application": "/assets/application-a54c74a7.js",
+    "@hotwired/stimulus": "/assets/stimulus.min-4b1e420e.js",
+    "@hotwired/stimulus-loading": "/assets/stimulus-loading-1fc53fe7.js",
+    "@hotwired/turbo-rails": "/assets/turbo-a1e3a50a.js",
+    "@rails/actioncable": "/assets/actioncable.esm-e0ec9819.js",
+    "@rails/request.js": "/assets/@rails--request-3fc8489d.js",
+    "lexxy": "/assets/lexxy-a21f41d4.js",
+    "highlight.js": "/assets/highlight.js/core-4e141f64.js",
+    "initializers/autocomplete": "/assets/initializers/autocomplete-ba9abe45.js",
+    "initializers/current": "/assets/initializers/current-3a3b90da.js",
+    "initializers/highlight": "/assets/initializers/highlight-5bd558f1.js",
+    "initializers": "/assets/initializers/index-d2bbfae4.js",
+    "initializers/rich_text": "/assets/initializers/rich_text-f451a05e.js",
+    "lib/autocomplete/autocomplete_handler": "/assets/lib/autocomplete/autocomplete_handler-becd1e1a.js",
+    "lib/autocomplete/base_autocomplete_handler": "/assets/lib/autocomplete/base_autocomplete_handler-e29a896e.js",
+    "lib/autocomplete/collection": "/assets/lib/autocomplete/collection-3e251a0e.js",
+    "lib/autocomplete/constants": "/assets/lib/autocomplete/constants-17c2858b.js",
+    "lib/autocomplete/custom_elements/suggestion_option": "/assets/lib/autocomplete/custom_elements/suggestion_option-ac7846b3.js",
+    "lib/autocomplete/custom_elements/suggestion_select": "/assets/lib/autocomplete/custom_elements/suggestion_select-f0045305.js",
+    "lib/autocomplete/helpers": "/assets/lib/autocomplete/helpers-651308b9.js",
+    "lib/autocomplete/renderer": "/assets/lib/autocomplete/renderer-5caf6120.js",
+    "lib/autocomplete/selection": "/assets/lib/autocomplete/selection-862705bf.js",
+    "lib/autocomplete/suggestion_context": "/assets/lib/autocomplete/suggestion_context-b265ffb4.js",
+    "lib/autocomplete/suggestion_controller": "/assets/lib/autocomplete/suggestion_controller-10624c40.js",
+    "lib/autocomplete/suggestion_results_controller": "/assets/lib/autocomplete/suggestion_results_controller-91405749.js",
+    "lib/autocomplete/utils": "/assets/lib/autocomplete/utils-296fb278.js",
+    "lib/cookie": "/assets/lib/cookie-76006835.js",
+    "lib/rich_text/campfire_extension": "/assets/lib/rich_text/campfire_extension-f62f017b.js",
+    "lib/rich_text/cite_node": "/assets/lib/rich_text/cite_node-b4d2b89a.js",
+    "controllers/application": "/assets/controllers/application-f004202c.js",
+    "controllers/auto_submit_controller": "/assets/controllers/auto_submit_controller-ee52d396.js",
+    "controllers/autocomplete_controller": "/assets/controllers/autocomplete_controller-eaf5b07d.js",
+    "controllers/badge_dot_controller": "/assets/controllers/badge_dot_controller-e0d733c8.js",
+    "controllers/boost_delete_controller": "/assets/controllers/boost_delete_controller-29fd1686.js",
+    "controllers/composer_controller": "/assets/controllers/composer_controller-73c33f9f.js",
+    "controllers/copy_to_clipboard_controller": "/assets/controllers/copy_to_clipboard_controller-07e32f4d.js",
+    "controllers/drop_target_controller": "/assets/controllers/drop_target_controller-3a205782.js",
+    "controllers/element_removal_controller": "/assets/controllers/element_removal_controller-4526910a.js",
+    "controllers/filter_controller": "/assets/controllers/filter_controller-ca9769d5.js",
+    "controllers/form_controller": "/assets/controllers/form_controller-6f3d64db.js",
+    "controllers": "/assets/controllers/index-594ba2fb.js",
+    "controllers/lightbox_controller": "/assets/controllers/lightbox_controller-98fc07ca.js",
+    "controllers/local_time_controller": "/assets/controllers/local_time_controller-7daf3d0c.js",
+    "controllers/maintain_scroll_controller": "/assets/controllers/maintain_scroll_controller-1debbbfb.js",
+    "controllers/messages_controller": "/assets/controllers/messages_controller-3d90944a.js",
+    "controllers/notifications_controller": "/assets/controllers/notifications_controller-746d0662.js",
+    "controllers/popup_controller": "/assets/controllers/popup_controller-9f8ea824.js",
+    "controllers/presence_controller": "/assets/controllers/presence_controller-28f14aad.js",
+    "controllers/pwa_install_controller": "/assets/controllers/pwa_install_controller-3fe3fc5e.js",
+    "controllers/read_rooms_controller": "/assets/controllers/read_rooms_controller-8245522a.js",
+    "controllers/refresh_room_controller": "/assets/controllers/refresh_room_controller-4e4b6014.js",
+    "controllers/reply_controller": "/assets/controllers/reply_controller-278bb9cc.js",
+    "controllers/rooms_list_controller": "/assets/controllers/rooms_list_controller-64840fcd.js",
+    "controllers/scroll_into_view_controller": "/assets/controllers/scroll_into_view_controller-8a0bc733.js",
+    "controllers/search_results_controller": "/assets/controllers/search_results_controller-aab46974.js",
+    "controllers/sessions_controller": "/assets/controllers/sessions_controller-a9fdfe3d.js",
+    "controllers/soft_keyboard_controller": "/assets/controllers/soft_keyboard_controller-be1da837.js",
+    "controllers/sorted_list_controller": "/assets/controllers/sorted_list_controller-9f9ae485.js",
+    "controllers/sound_controller": "/assets/controllers/sound_controller-d3e5656e.js",
+    "controllers/toggle_class_controller": "/assets/controllers/toggle_class_controller-b67fa681.js",
+    "controllers/turbo_frame_controller": "/assets/controllers/turbo_frame_controller-9f4f722f.js",
+    "controllers/turbo_streaming_controller": "/assets/controllers/turbo_streaming_controller-04b85a80.js",
+    "controllers/typing_notifications_controller": "/assets/controllers/typing_notifications_controller-86906ab9.js",
+    "controllers/unfurl_controller": "/assets/controllers/unfurl_controller-4a868f9a.js",
+    "controllers/upload_preview_controller": "/assets/controllers/upload_preview_controller-9b8b26bb.js",
+    "controllers/web_share_controller": "/assets/controllers/web_share_controller-f7236b6f.js",
+    "helpers/dom_helpers": "/assets/helpers/dom_helpers-0f234176.js",
+    "helpers/navigator_helpers": "/assets/helpers/navigator_helpers-3c9f4c31.js",
+    "helpers/string_helpers": "/assets/helpers/string_helpers-40941ba8.js",
+    "helpers/timing_helpers": "/assets/helpers/timing_helpers-94d95529.js",
+    "helpers/turbo_helpers": "/assets/helpers/turbo_helpers-a3c01462.js",
+    "models/client_message": "/assets/models/client_message-de3c07cf.js",
+    "models/file_uploader": "/assets/models/file_uploader-d3a5c44b.js",
+    "models/message_formatter": "/assets/models/message_formatter-f39a0c5d.js",
+    "models/message_paginator": "/assets/models/message_paginator-b79013e3.js",
+    "models/scroll_manager": "/assets/models/scroll_manager-ed559629.js",
+    "models/typing_tracker": "/assets/models/typing_tracker-42a444a5.js",
+    "languages/bash": "/assets/languages/bash-13136668.js",
+    "languages/css": "/assets/languages/css-a7f2e40b.js",
+    "languages/diff": "/assets/languages/diff-94a335fe.js",
+    "languages/go": "/assets/languages/go-10465864.js",
+    "languages/java": "/assets/languages/java-95f3a30f.js",
+    "languages/javascript": "/assets/languages/javascript-18eb0dd8.js",
+    "languages/json": "/assets/languages/json-60184e1b.js",
+    "languages/python": "/assets/languages/python-8f48fd1a.js",
+    "languages/ruby": "/assets/languages/ruby-287ccd0f.js",
+    "languages/rust": "/assets/languages/rust-d48f93d8.js",
+    "languages/sql": "/assets/languages/sql-642be05a.js",
+    "languages/xml": "/assets/languages/xml-fa7f1eda.js"
+  }
+}</script>
+<link rel="modulepreload" href="/assets/application-a54c74a7.js">
+<link rel="modulepreload" href="/assets/stimulus.min-4b1e420e.js">
+<link rel="modulepreload" href="/assets/stimulus-loading-1fc53fe7.js">
+<link rel="modulepreload" href="/assets/turbo-a1e3a50a.js">
+<link rel="modulepreload" href="/assets/actioncable.esm-e0ec9819.js">
+<link rel="modulepreload" href="/assets/@rails--request-3fc8489d.js">
+<link rel="modulepreload" href="/assets/lexxy-a21f41d4.js">
+<link rel="modulepreload" href="/assets/highlight.js/core-4e141f64.js">
+<link rel="modulepreload" href="/assets/initializers/autocomplete-ba9abe45.js">
+<link rel="modulepreload" href="/assets/initializers/current-3a3b90da.js">
+<link rel="modulepreload" href="/assets/initializers/highlight-5bd558f1.js">
+<link rel="modulepreload" href="/assets/initializers/index-d2bbfae4.js">
+<link rel="modulepreload" href="/assets/initializers/rich_text-f451a05e.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/autocomplete_handler-becd1e1a.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/base_autocomplete_handler-e29a896e.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/collection-3e251a0e.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/constants-17c2858b.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/custom_elements/suggestion_option-ac7846b3.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/custom_elements/suggestion_select-f0045305.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/helpers-651308b9.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/renderer-5caf6120.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/selection-862705bf.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/suggestion_context-b265ffb4.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/suggestion_controller-10624c40.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/suggestion_results_controller-91405749.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/utils-296fb278.js">
+<link rel="modulepreload" href="/assets/lib/cookie-76006835.js">
+<link rel="modulepreload" href="/assets/lib/rich_text/campfire_extension-f62f017b.js">
+<link rel="modulepreload" href="/assets/lib/rich_text/cite_node-b4d2b89a.js">
+<link rel="modulepreload" href="/assets/controllers/application-f004202c.js">
+<link rel="modulepreload" href="/assets/controllers/auto_submit_controller-ee52d396.js">
+<link rel="modulepreload" href="/assets/controllers/autocomplete_controller-eaf5b07d.js">
+<link rel="modulepreload" href="/assets/controllers/badge_dot_controller-e0d733c8.js">
+<link rel="modulepreload" href="/assets/controllers/boost_delete_controller-29fd1686.js">
+<link rel="modulepreload" href="/assets/controllers/composer_controller-73c33f9f.js">
+<link rel="modulepreload" href="/assets/controllers/copy_to_clipboard_controller-07e32f4d.js">
+<link rel="modulepreload" href="/assets/controllers/drop_target_controller-3a205782.js">
+<link rel="modulepreload" href="/assets/controllers/element_removal_controller-4526910a.js">
+<link rel="modulepreload" href="/assets/controllers/filter_controller-ca9769d5.js">
+<link rel="modulepreload" href="/assets/controllers/form_controller-6f3d64db.js">
+<link rel="modulepreload" href="/assets/controllers/index-594ba2fb.js">
+<link rel="modulepreload" href="/assets/controllers/lightbox_controller-98fc07ca.js">
+<link rel="modulepreload" href="/assets/controllers/local_time_controller-7daf3d0c.js">
+<link rel="modulepreload" href="/assets/controllers/maintain_scroll_controller-1debbbfb.js">
+<link rel="modulepreload" href="/assets/controllers/messages_controller-3d90944a.js">
+<link rel="modulepreload" href="/assets/controllers/notifications_controller-746d0662.js">
+<link rel="modulepreload" href="/assets/controllers/popup_controller-9f8ea824.js">
+<link rel="modulepreload" href="/assets/controllers/presence_controller-28f14aad.js">
+<link rel="modulepreload" href="/assets/controllers/pwa_install_controller-3fe3fc5e.js">
+<link rel="modulepreload" href="/assets/controllers/read_rooms_controller-8245522a.js">
+<link rel="modulepreload" href="/assets/controllers/refresh_room_controller-4e4b6014.js">
+<link rel="modulepreload" href="/assets/controllers/reply_controller-278bb9cc.js">
+<link rel="modulepreload" href="/assets/controllers/rooms_list_controller-64840fcd.js">
+<link rel="modulepreload" href="/assets/controllers/scroll_into_view_controller-8a0bc733.js">
+<link rel="modulepreload" href="/assets/controllers/search_results_controller-aab46974.js">
+<link rel="modulepreload" href="/assets/controllers/sessions_controller-a9fdfe3d.js">
+<link rel="modulepreload" href="/assets/controllers/soft_keyboard_controller-be1da837.js">
+<link rel="modulepreload" href="/assets/controllers/sorted_list_controller-9f9ae485.js">
+<link rel="modulepreload" href="/assets/controllers/sound_controller-d3e5656e.js">
+<link rel="modulepreload" href="/assets/controllers/toggle_class_controller-b67fa681.js">
+<link rel="modulepreload" href="/assets/controllers/turbo_frame_controller-9f4f722f.js">
+<link rel="modulepreload" href="/assets/controllers/turbo_streaming_controller-04b85a80.js">
+<link rel="modulepreload" href="/assets/controllers/typing_notifications_controller-86906ab9.js">
+<link rel="modulepreload" href="/assets/controllers/unfurl_controller-4a868f9a.js">
+<link rel="modulepreload" href="/assets/controllers/upload_preview_controller-9b8b26bb.js">
+<link rel="modulepreload" href="/assets/controllers/web_share_controller-f7236b6f.js">
+<link rel="modulepreload" href="/assets/helpers/dom_helpers-0f234176.js">
+<link rel="modulepreload" href="/assets/helpers/navigator_helpers-3c9f4c31.js">
+<link rel="modulepreload" href="/assets/helpers/string_helpers-40941ba8.js">
+<link rel="modulepreload" href="/assets/helpers/timing_helpers-94d95529.js">
+<link rel="modulepreload" href="/assets/helpers/turbo_helpers-a3c01462.js">
+<link rel="modulepreload" href="/assets/models/client_message-de3c07cf.js">
+<link rel="modulepreload" href="/assets/models/file_uploader-d3a5c44b.js">
+<link rel="modulepreload" href="/assets/models/message_formatter-f39a0c5d.js">
+<link rel="modulepreload" href="/assets/models/message_paginator-b79013e3.js">
+<link rel="modulepreload" href="/assets/models/scroll_manager-ed559629.js">
+<link rel="modulepreload" href="/assets/models/typing_tracker-42a444a5.js">
+<link rel="modulepreload" href="/assets/languages/bash-13136668.js">
+<link rel="modulepreload" href="/assets/languages/css-a7f2e40b.js">
+<link rel="modulepreload" href="/assets/languages/diff-94a335fe.js">
+<link rel="modulepreload" href="/assets/languages/go-10465864.js">
+<link rel="modulepreload" href="/assets/languages/java-95f3a30f.js">
+<link rel="modulepreload" href="/assets/languages/javascript-18eb0dd8.js">
+<link rel="modulepreload" href="/assets/languages/json-60184e1b.js">
+<link rel="modulepreload" href="/assets/languages/python-8f48fd1a.js">
+<link rel="modulepreload" href="/assets/languages/ruby-287ccd0f.js">
+<link rel="modulepreload" href="/assets/languages/rust-d48f93d8.js">
+<link rel="modulepreload" href="/assets/languages/sql-642be05a.js">
+<link rel="modulepreload" href="/assets/languages/xml-fa7f1eda.js">
+<script type="module">import "application"</script>
+
+    
+  </head>
+
+  <body class="sidebar searches admin" data-controller="local-time lightbox">
+    <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
+
+    <nav id="nav">
+          <div class="searches__query flex align-center gap pad-block-start-half">
+      <div class="btn btn--reversed btn--faux align-center gap txt-nowrap">
+        <span class="overflow-ellipsis">“coffee”</span>
+        <span class="flex-item-no-shrink">13</span>
+</div>    </div>
+
+  <div class="searches__recents align-center gap pad-block-half overflow-y overflow-hide-scrollbar">
+      <a class="align-center gap room btn txt-nowrap" href="/searches?q=cuckoo">
+        <span class="overflow-ellipsis">“cuckoo”</span>
+</a>      <a class="align-center gap room btn txt-nowrap" href="/searches?q=Borgias">
+        <span class="overflow-ellipsis">“Borgias”</span>
+</a>      <a class="align-center gap room btn txt-nowrap" href="/searches?q=pizza">
+        <span class="overflow-ellipsis">“pizza”</span>
+</a>
+      <form class="button_to" method="post" action="http://127.0.0.1:4390/searches/clear"><input type="hidden" name="_method" value="delete" /><button class="btn searches__btn" data-turbo-confirm="Are you sure you want to clear your recent searches?" type="submit">
+        <img aria-hidden="true" src="/assets/broom-13d30a95.svg" />
+        <span class="for-screen-reader">Clear recent searches</span>
+</button><input type="hidden" name="authenticity_token" value="8TNlAYP6uZR6SGxHkNCbAhi4GbxgcIIzw7dIxVXVJ7zPtZsWZApyYAQ-jVkK0xbLpNvJlANUePPAx4JrVUINXg" /></form>  </div>
+
+    </nav>
+
+
+    <main id="main-content">
+      
+
+
+<div id="message-area" class="message-area">
+  <div class="message-area--empty min-width center">
+    <figure class="center pad">
+      <img aria-hidden="true" class="colorize--black translucent" src="/assets/search-5f29565f.svg" />
+    </figure>
+  </div>
+
+  <div id="search-results" class="messages searches__results" data-controller="search-results" data-search-results-target="messages" data-search-results-me-class="message--me" data-search-results-threaded-class="message--threaded" data-search-results-mentioned-class="message--mentioned" data-search-results-formatted-class="message--formatted">
+    
+  <div id="message_6434095e-cc52-50de-99e7-e3878818b363" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434510" data-message-timestamp="1772266020000" data-message-updated-at="1772266020000" data-sort-value="1772266020000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T08:07:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_6434095e-cc52-50de-99e7-e3878818b363">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434510"><time class="message__timestamp" datetime="2026-02-28T08:07:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434510">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="lzsp5qcA6hi9MdSfAGDAXbr2HcXE8q4KYOKTOMjRTEjGox-4R2zue7vrwe7ElF5Ahj5r9PmQHvcx_Efs-mPilA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="5qOyGZAZaSYnx6ECir-eLGbA4ZPg2_5coW6Eyu504-i3O4RHcHVtRSEdtHNOSwAxWgiXot25TqHwcFAe3MZNNA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="y4DBd1D3S4CCP7g2flJyzmdjyjknhVFqm2utkvDO4VaaGPcpsJtP44TlrUe6puzTW6u8CBrn4ZfKdXlGwnxPig" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="FK2EX-8D1jWyzFsM7EC9KqL9tn7yznma-ziead22JhdFNbIBD2_SVrQWTn0otCM3njXAT8-syWeqJkq97wSIyw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="_2Fhxg7dg-l7deNXnMdRuS6ZucGiIB598fQYdxvkRUqu-VeY7rGHin2v9iZYM8-kElHP8J9CroCg6syjKVbrlg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="k5Md1lXDEeOLFQdT5HzTMKg2xiKE0tg3FDJoBviq9M7CCyuIta8VgI3PEiIgiE0tlP6wE7mwaMpFLLzSyhhaEg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="2v3xRcyIU2E9BX4ReSmX3CZYhp_D59t-hcUMYvu5XPOLZccbLORXAjvfa2C93QnBGpDwrv6Fa4PU29i2yQvyLw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="popup#close" action="/messages/933434510/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="XU5PysIRFeI46Fl02gNsGT9eUPIOfJG9i4LZLG4II1kM1nmUIn0RgT4yTAUe9_IEA5YmwzMeIUDanA34XLqNhQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_6434095e-cc52-50de-99e7-e3878818b363" data-action="soft-keyboard#open popup#close" href="/messages/933434510/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434510">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_6434095e-cc52-50de-99e7-e3878818b363" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434510/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_6434095e-cc52-50de-99e7-e3878818b363" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>001. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_6434095e-cc52-50de-99e7-e3878818b363">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_6434095e-cc52-50de-99e7-e3878818b363" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_6434095e-cc52-50de-99e7-e3878818b363">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434510/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_b80fec6a-59f1-51eb-96db-8b546f827773" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434520" data-message-timestamp="1772270220000" data-message-updated-at="1772270220000" data-sort-value="1772270220000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T09:17:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_b80fec6a-59f1-51eb-96db-8b546f827773">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434520"><time class="message__timestamp" datetime="2026-02-28T09:17:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434520">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="wfH9yaSuIzsUpxf1D7b5TR4idOGqTPOxfU12Pw_ufgFz5xsOEPFVPC7Z_xY2swk_7guso95Jm2YYwkth07UKqw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="fSiECkyPUiAITWLH6or2q3_wousTYjNLeVaDTCFy6LjPPmLN-NAkJzIziiTTjwbZj9l6qWdnW5wc2b4S_SmcEg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="8A2pScg2SfuUytb_Vq9Fo14_SphOnnrsil6fBhAG_J9CG0-OfGk__K60PhxvqrXRrhaS2jqbEjvv0aJYzF2INQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="auefC-cVhcOAG-04VI6VzHMFhdpwmp6_XcB65FTM3CzY8XnMU0rzxLplBdtti2W-gyxdmASf9mg4T0e6iJeohg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="yAduZ-YRSe7SMxLUKVGJMVGs1hYNYR6VZ9Kpz8YkoPZ6EYigUk4_6ehN-jcQVHlDoYUOVHlkdkICXZSRGn_UXA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="u2XIPS2B2ck7htYMlRhG1v25f982T6Fdtzjh_-L_sTsJcy76md6vzgH4Pu-sHbakDZCnnUJKyYrSt9yhPqTFkQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="4LSqEZGo-TeSYJRolDLKf4Montw8NP15QH2NA6oQulBSokzWJfePMKgefIutNzoNcwFGnkgxla4l8rBddkvO-g" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="popup#close" action="/messages/933434520/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="vf0lNqg69-RZl52H99Js-gm4HcGoz7nif5eMqZdu_JQP68PxHGWB42PpdWTO15yI-ZHFg9zK0TUaGLH3SzWIPg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-action="soft-keyboard#open popup#close" href="/messages/933434520/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434520">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_b80fec6a-59f1-51eb-96db-8b546f827773" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434520/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_b80fec6a-59f1-51eb-96db-8b546f827773" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>011. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_b80fec6a-59f1-51eb-96db-8b546f827773">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_b80fec6a-59f1-51eb-96db-8b546f827773" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_b80fec6a-59f1-51eb-96db-8b546f827773">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434520/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_22e65d5d-67b5-58ac-8375-7c15f0e17434" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434530" data-message-timestamp="1772274420000" data-message-updated-at="1772274420000" data-sort-value="1772274420000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T10:27:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_22e65d5d-67b5-58ac-8375-7c15f0e17434">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434530"><time class="message__timestamp" datetime="2026-02-28T10:27:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434530">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="LfwfeAS-_464YiW4gdfq4afx6aO9YYYpsr7enLRD9A-a51ih4JRzkInKBjOoN3ycUF21QrbwqeZSGO4jIpqTrQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="26jC4DvVdPMvnWRgTU4E6GE7LKzyyWojufCamvMGKRZss4U53__47R41R-tkrpKVlpdwTflYRexZVqolZd9OtA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="qB5QJUYn1DqsWDPuLFgx7slVNuTFCr4I-GAqqwSgg04fBRf8og1YJJ3wEGUFuKeTPvlqBc6bkccYxhoUknnk7A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="uIHh6rGhHBrZN5GozIJP_921w4PsaSjSPSMlC6liZqkPmqYzVYuQBOifsiPlYtmCKhmfYuf4Bx3dhRW0P7sBCw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="B4qXRerLH69r-6Ut8Ac8momkTb580qEuSbFSvtGSkO-wkdCcDuGTsVpThqbZ56rnfggRX3dDjuGpF2IBR0v3TQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="PUNZ0_qdQqxiuRJV8mtRxK7D-YOCgUAEgZIUiA8GPMaKWB4KHrfOslMRMd7bi8e5WW-lYokQb8thNCQ3md9bZA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="6eWpWKlT4SO6e-v9odeFz5hZK1cfoHSz8UJ1ZbNdQh1e_u6BTXltPYvTyHaINxOyb_V3thQxW3wR5EXaJYQlvw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="popup#close" action="/messages/933434530/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="qIqBaZHzUaBzGuiBnx8RNTS0XW8m6wMdJQn_i5tXhJsfkcawddndvkKyywq2_4dIwxgBji16LNLFr880DY7jOQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-action="soft-keyboard#open popup#close" href="/messages/933434530/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434530">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434530/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>021. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_22e65d5d-67b5-58ac-8375-7c15f0e17434">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_22e65d5d-67b5-58ac-8375-7c15f0e17434" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_22e65d5d-67b5-58ac-8375-7c15f0e17434">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434530/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434540" data-message-timestamp="1772278620000" data-message-updated-at="1772278620000" data-sort-value="1772278620000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T11:37:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434540"><time class="message__timestamp" datetime="2026-02-28T11:37:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434540">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="b-x-cVrrZt18vCDnnQdoD_RRwbKZflMZDikL0hEtb-6W-lDOSv1VMvhyqw7PIHhtWHvg68kLesNAhqGPZXv6VQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="TmlCOJGBDrf2q_2hCkCUOH3hTlTptxLf79_Jlj-Eoiy3f2yHgZc9WHJldkhYZ4Ra0ctvDbnCOwWhcGPLS9I3lw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="DDIPu7Mq1mXD3IByPksVp9RPaKFi7WU2Ja_NGuDs-jL1JCEEozzlikcSC5tsbAXFeGVJ-DKYTOxrAGdHlLpviQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="V3IMMOMU7-dtmCf1Btl4JCS9llZTi1wh0QAmC4D7bOmuZCKP8wLcCOlWrBxU_mhGiJe3DwP-dfufr4xW9K35Ug" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="sRHOxYtNzyObvEz8Ygnk_pE3Q10BZhXFSpEWkq9C4BFIB-B6m1v8zB9yxxUwLvScPR1iBFETPB8EPrzP2xR1qg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="aIAy-Cy5z6dFLStEj87mAHJFYqltqPoNs2j9FynnX2qRlhxHPK_8SMHjoK3d6fZi3m9D8D3d09f9x1dKXbHK0Q" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="wFCHcz_t9f_m45bXfVfRpbeKHRihC86mo3nHbixfZyM5RqnML_vGEGItHT4vcMHHG6A8QfF-53zt1m0zWAnymA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="popup#close" action="/messages/933434540/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="FR7b_MlfIoX3VqGl9RvXh4TiSOmodxZRClUQa-Dmp5nsCPVD2UkRanOYKkynPMflKMhpsPgCP4tE-ro2lLAyIg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-action="soft-keyboard#open popup#close" href="/messages/933434540/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434540">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434540/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>031. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_f7ecf0bb-30eb-5d4b-8078-4e42bda71e1c">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434540/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434550" data-message-timestamp="1772282820000" data-message-updated-at="1772282820000" data-sort-value="1772282820000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T12:47:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434550"><time class="message__timestamp" datetime="2026-02-28T12:47:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434550">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="hMw3Ik__7cJYKzqOlTnCqLKh6sst9XggddXFzmAcp7Z7knGgSTie_gs-NI84udek9dbOWtfuypI432ZiyfJz0g" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="la1pG9yLBAValnUO7yvs9MNZjElcQy2Xaw8iuKatwiBq8y-Z2kx3OQmDew9Cq_n4hC6o2KZYnyUmBYEUD0MWRA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="xNJTIFh0negIQgQ3vycY8gJOnCBY__X0V9zhsi-xY8s7jBWiXrPu1FtXCjYSpw3-RTm4saLkR0Ya1kIehl-3rw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="5APhUqYnqq3hXdaUDLNQ4ZXGCnRUfs-O4nnxKJ-m2_AbXafQoODZkbJI2JWhM0Xt0rEu5a5lfTyvc1KENkgPlA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="ybENmf81V5eJaxmXIofF__1rEblsdfQoJ4kKjV5IHrY270sb-fIkq9p-F5aPB9Dzuhw1KJZuRppqg6kh96bK0g" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="9m413czhVFm44xar7n8qLRBi459w2khui2QY3N_wWw0JMHNfyiYnZev2GKpD_z8hVxXHDorB-tzGbrtwdh6PaQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="QWiwVjJBJeyM16aRR3PZk3CHYgCg4UANLbsJpl7h1oS-NvbUNIZW0N_CqJDq88yfN_BGkVr68r9gsaoK9w8C4A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="popup#close" action="/messages/933434550/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="--5bqAxY2LjDiRcP4vO5j4yuol08yCAu9Z4R9KrMdEwEsB0qCp-rhJCcGQ5Pc6yDy9mGzMbTkpy4lLJYAyKgKA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-action="soft-keyboard#open popup#close" href="/messages/933434550/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434550">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434550/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>041. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_46b162ee-7fa6-52db-a6b3-dc7952ab47d8">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434550/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_55f50781-03a6-5b43-a0f9-47d9fa31e141" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434560" data-message-timestamp="1772287020000" data-message-updated-at="1772287020000" data-sort-value="1772287020000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T13:57:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_55f50781-03a6-5b43-a0f9-47d9fa31e141">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434560"><time class="message__timestamp" datetime="2026-02-28T13:57:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434560">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="Q9o0uaThU9boADUDQPr9hgnt_ifRCN48KBr_0nICD1fCuJuueDYqcLA4uqN_iKXfTo2xf72dM019fD6e6Qd7Rg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="RMksA_QYG0nV0AOcRK2WSq0_zK8CVt4OgfxDpewKzpXFq4MUKM9i743ojDx7384T6l-D927DM3_UmoLpdw-6hA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="UCF3RnbRvB-M_LyQljCRw6VSTXq3jz-ci189Xa2y2-jRQ9hRqgbFudTEMzCpQsma4jICItsa0u3eOfwRNrev-Q" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="28rifiD2t3ZCBOjEqa0lrmVh4pr66ncpp6lK--Ogq8BaqE1p_CHO0Bo8Z2SW3333IgGtwpZ_mljyz4u3eKXf0Q" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="JXS6osJbp3z54A4dkPe1RvYrW99e0qrJQht3zJ7vuJ2kFhW1Hoze2qHYgb2vhe0fsUsUhzJHR7gXfbaABerMjA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="APeBR191LEUEsayGDD3wioDDbjUpWWyJEjusvXNSmBKBlS5Qg6JV41yJIyYzT6jTx6MhbUXMgfhHXW3x6FfsAw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="P8Osrn02ATMBGwuCu8TYRGe1422p_OTMQPF3T_1iLsq-oQO5oeF4lVkjhCKEtoAdINWsNcVpCb0Vl7YDZmda2w" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="popup#close" action="/messages/933434560/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="IXaD3Gocqty9TjI1tDaReFSm9kqQHbUxCPATRJomLPmgFCzLtsvTeuV2vZWLRMkhE8a5EvyIWEBdltIIASNY6A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-action="soft-keyboard#open popup#close" href="/messages/933434560/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434560">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434560/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>051. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_55f50781-03a6-5b43-a0f9-47d9fa31e141">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_55f50781-03a6-5b43-a0f9-47d9fa31e141" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_55f50781-03a6-5b43-a0f9-47d9fa31e141">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434560/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434570" data-message-timestamp="1772291220000" data-message-updated-at="1772291220000" data-sort-value="1772291220000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T15:07:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434570"><time class="message__timestamp" datetime="2026-02-28T15:07:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434570">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="V5F25qIYEZwRkYhxHOyJW36lOyhAStXICDG1n_Am8cQ-iRjaMv0gZ2a73HyU8XSTaNH93fXe0UCrQh8y3S7MnA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="t0v_CiLsg78HPNa-_FpZEIoaZ6N-3UT0V3ibsHSHtkfeU5E2sgmyRHAWgrN0R6TYnG6hVstJQHz0CzEdWY-LHw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="uJo3oz7o86RTxwVU0oFuh5-R8lMg6qC8mxAQRLpjyAzRglmfrg3CXyTtUVlanJNPieU0ppV-pDQ4Y7rpl2v1VA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="Tx2vbs0aYdMYxXkMVv7yPpCRuhDrxY_rgmMUGN9ynBEmBcFSXf9QKG_vLQHe4w_2huV85V5Ri2MhEL618nqhSQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="982g2GSzC-lNaRX7OZCDLz-uB_4cuVl3NvJvPc-2BCye1c7k9FY6EjpDQfaxjX7nKdrBC6ktXf-VgcWQ4r45dA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="zOmxf589K6kddhoGtSxfLmrGMTQv0IkmoC3Gk3CrETWl8d9DD9gaUmpcTgs9MaLmfLL3wZpEja4DXmw-XaMsbQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="8cxDVcmbQgpKEqVn-RF_VVGzwUA9dWOPlgYS7BKhPMWY1C1pWX5z8T048WpxDIKdR8cHtYjhZwc1dbhBP6kBnQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="popup#close" action="/messages/933434570/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="lNnyd4nZ2GjjFoF207vbnJLUkCy1a7I0kgpvyI84Yln9wZxLGTzpk5Q81XtbpiZUhKBW2QD_trwxecVlojBfAQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-action="soft-keyboard#open popup#close" href="/messages/933434570/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434570">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434570/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>061. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_5b55c267-e9ef-5ed8-a4a4-ca32a6983d22">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434570/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_0042eb25-3aca-5e30-8032-fc9945240288" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434580" data-message-timestamp="1772295420000" data-message-updated-at="1772295420000" data-sort-value="1772295420000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T16:17:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_0042eb25-3aca-5e30-8032-fc9945240288">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434580"><time class="message__timestamp" datetime="2026-02-28T16:17:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434580">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="wnA_LQh2ladgIGsGsNta1nZuDaFopdc-5-g2L00JrVhL90x7tVGkzcE2uUpzimYqIYJfwGqFr3fVCKT9wGBxNQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="eP-t5_p6uDDEM6bfjI5T4Zp1013KNvxD17obAO9u2mHxeN6xR12JWmUldJNP328dzZmBPMgWhArlWonSYgcGDA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="yv6vaewImWYd_2mhGf-aJB-g-CTiF242l3sArXssNN9Dedw_US-oDLzpu-3arqbYSEyqReA3Fn-lm5J_9kXosg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="KvEzGovMjwwiKipwdPYL1KnBkL-fWG-VHkCwtRGdXnKjdkBMNuu-ZoM8-Dy3pzco_i3C3p14F9wsoCJnnPSCHw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="L-1oMolbJYly0PE85HXY6SbM4r983NXgGmkXrJr1bZmmahtkNHwU49PGI3AnJOQVcSCw3n78rakoiYV-F5yx9A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="VlIjE_RSYCtm0C8v63n4Qw-UrdlLwqG5zl3m5bMvvejf1VBFSXVRQcfG_WMoKMS_WHj_uEni2fD8vXQ3PkZhhQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="of8r6P3QKOIUrRIq7G4zo9i-SM4okcBpBKSgMrCQadooeFi-QPcZiLW7wGYvPw9fj1IaryqxuCA2RDLgPfm1tw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="popup#close" action="/messages/933434580/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="JOJS0uIjGYQeUck3BQpPapNHhDvME56BbRgdZSClCD6tZSGEXwQo7r9HG3vGW3OWxKvWWs4z5shf-I-3rczUUw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_0042eb25-3aca-5e30-8032-fc9945240288" data-action="soft-keyboard#open popup#close" href="/messages/933434580/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434580">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_0042eb25-3aca-5e30-8032-fc9945240288" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434580/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_0042eb25-3aca-5e30-8032-fc9945240288" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>071. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_0042eb25-3aca-5e30-8032-fc9945240288">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_0042eb25-3aca-5e30-8032-fc9945240288" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_0042eb25-3aca-5e30-8032-fc9945240288">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434580/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434590" data-message-timestamp="1772299620000" data-message-updated-at="1772299620000" data-sort-value="1772299620000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T17:27:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434590"><time class="message__timestamp" datetime="2026-02-28T17:27:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434590">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="nbCQKIaXIOPj54JuRFtZjPnQXYgPAWSlqUD7zQvxxk3CsVJg7wnJpEDMpt31P6ufri9Lt4MomWvIsqAlUqogjQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="BMlmf02DGNuomN3mH1mgNkKPwBLbH15Zfu0vZZqPtTpbyKQ3JB3xnAuz-VWuPVIlFXDWLVc2o5cfH3SNw9RT-g" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="puJeJJljmk3at4HWq6O8XNLfWt2hMUPP_TtZNm_Vezj545xs8P1zCnmcpWUax05PhSBM4i0YvgGcyQLeNo6d-A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="AwVBRMjqoNrW6bXFTUEWssHp4Bm-mumS5KRcszHtT6dcBIMMoXRJnXXCkXb8JeShlhb2JjKzFFyFVgdbaLapZw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="0_JsPvJqI3t8Yk2j6rSOFJeBN5aIIbikvlWOHRXRzwWM8652m_TKPN9JaRBb0HwHwH4hqQQIRWrfp9X1TIopxQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="FJxozVXYO4ywD993hK3Jg4odrX0-A86qfFJu0PG83htLnaqFPEbSyxMk-8Q1yTuQ3eK7QrIqM2QdoDU4qOc42w" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="iGLmFRuPW7t-2kud9IsMKSHtFD9lzejgksJ63Az1IPfXYyRdchGy_N3xby5F7_46dhICAOnkFS7zMCE0Va7GNw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="popup#close" action="/messages/933434590/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="aU_s2IqBmwhjyCd-2T10QFJ49hiCNC0JWi1w7-Vjo682Ti6Q4x9yT8DjA81oWYZTBYfgJw4d0Mc73ysHvDhFbw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-action="soft-keyboard#open popup#close" href="/messages/933434590/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434590">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434590/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>081. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_7fe7b8a0-5a03-5df5-bd8c-804137865e68">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434590/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434600" data-message-timestamp="1772303820000" data-message-updated-at="1772303820000" data-sort-value="1772303820000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T18:37:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434600"><time class="message__timestamp" datetime="2026-02-28T18:37:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434600">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="APdfpQV2hKoHaUyGHz17ayiRArnxJP47FcgAMI0pTtjACvAf5GEmuz84gu7UrgjphNKfzHN6PYaW4i71TL7cmg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="nas3H0cHVmLbZ5VqzEnlw6vq_k1xUt56ovPYYwjWg6RdVpilphD0c-M2WwIH2pZBB6ljOPMMHcch2famyUER5g" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="sNjKo0-lvHhJKpiKlgxi2YG-_PDc7rYr4U_fa9PM4dFwJWUZrrIeaXF7VuJdnxFbLf1hhV6wdZZiZfGuEltzkw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="S-o0wmxkEQWQ7eeM51gwcUb5RHmqaoHVv7lX6JUtZuuLF5t4jXOzFKi8KeQsy0Pz6rrZDCg0Qmg8k3ktVLr0qQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="g7RfSVwzIKgRynAmZwSZ0oOeZ5-nxiNn8BRyMlPTAdhDSfDzvSSCuSmbvk6sl-pQL9366iWY4NpzPlz3kkSTmg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="yKGmx95XmJNAbFndQt93CI7rMYoNlghazgDZR1eDrkUIXAl9P0A6gng9l7WJTASKIqis_4_Iy-dNKveClhQ8Bw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="0izwwdySx7J3zEKKsHtIu30izaUkJg10xSvz8mensgsS0V97PYVlo0-djOJ76Ds50WFQ0KZ4zslGAd03pjAgSQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="popup#close" action="/messages/933434600/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="auohG1PMa56QrMXzzgFql7Flogr28xwoYM0ek8Y8uO2qF46hstvJj6j9C5sFkhkVHSY_f3St35Xj5zBWB6sqrw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-action="soft-keyboard#open popup#close" href="/messages/933434600/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434600">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434600/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>091. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_177b4a42-66c6-5c69-92e4-7796f1e2a57c">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434600/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_2f7e70ea-2c09-5896-912e-9eef95f309e9" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434610" data-message-timestamp="1772308020000" data-message-updated-at="1772308020000" data-sort-value="1772308020000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T19:47:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_2f7e70ea-2c09-5896-912e-9eef95f309e9">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434610"><time class="message__timestamp" datetime="2026-02-28T19:47:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434610">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="dkY69U0EWK2-H_i5TvAqtdC7a_PIxC3OUXEddKSaszDDZV6MfVPVc-Ry3icyz9dy63rxKd4k4ei6LET22UM5IA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="vArlMtOpTU2OExFLs1YoopcwYy_Z92p6J0rGXr0KGlEJKYFL4_7Ak9R-N9XPadVlrPH59c8XplzMF5_cwNOQQQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="teXjfU3gvbk9LPXPSWzjrfhH465Tkr2_NUhtrXwsY8gAxocEfbcwZ2dB01E1Ux5qw4Z5dEVycZneFTQvAfXp2A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="0HazU2efq8wowzd0dszblWAX-6MCjRaiUl8oAlOMbLZlVdcqV8gmEnKuEeoK8yZSW9ZheRRt2oS5AnGALlXmpg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="XYUq_iI8Ew7XSzfswAu3sGmBn5DpXZzpxL9XcFgeyRjopk6HEmue0I0mEXK8NEp3UkAFSv-9UM8v4g7yJcdDCA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="OaiV5vH6DLnEgwrbPXNKZo8Iqm9OgTs0cvDSDCpEOe2Mi_Gfwa2BZ57uLEVBTLehtMkwtVhh9xKZrYuOV52z_Q" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="d6ZdkAmcCFXHQAwLS8tXlYNBoqtq3cUjeTQjB0DUkEfChTnpOcuFi50tKpU39KpSuIA4cXw9CQWSaXqFPQ0aVw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="popup#close" action="/messages/933434610/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="xWQDmdDgujnEge0Km8FM-2TyiGTvH1elHdPULJFDx_twR2fg4Lc3557sy5Tn_rE8XzMSvvn_m4P2jo2u7JpN6w" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-action="soft-keyboard#open popup#close" href="/messages/933434610/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434610">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434610/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>101. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_2f7e70ea-2c09-5896-912e-9eef95f309e9">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_2f7e70ea-2c09-5896-912e-9eef95f309e9" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_2f7e70ea-2c09-5896-912e-9eef95f309e9">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434610/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_1cfce27b-1cb6-5002-bf47-4638b8be817f" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434620" data-message-timestamp="1772312220000" data-message-updated-at="1772312220000" data-sort-value="1772312220000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-02-28T20:57:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_1cfce27b-1cb6-5002-bf47-4638b8be817f">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/486777696/@933434620"><time class="message__timestamp" datetime="2026-02-28T20:57:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/486777696/@933434620">All Talk</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="1_EEq0Ntnd2PHqTfLScMbshjOvi3n1nOitfEaVqhp1cYH51l1J5mYq5bmL3kCEOfLkBaacwQ8Z8WbLQvhtPIhQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="FSWJVSqLPIF5mtGK-rcy91p2jjv7ZEiennvS0iG96gHayxCbvXjHPljf7egzmH0GvFXuqoDr4M8CwKKU_c-F0w" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="lFFyrQkhOvWz_ClFzZBnNP8TSXuGJX2gZojZMjuwzcVbv-tjntLBSpK5FScEvyjFGTAp6v2q1fH6M6l058KiFw" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="gaRqV_EpS-d1w4LuvAk0scoga0h2hdWN839Vu7nygfROSvOZZtqwWFSGvox1JntALAML2Q0KfdxvxCX9ZYDuJg" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="0dMgOQFtlOvdI1BIPf63XV4-iw_JIYNVj0snMcUkFwQePbn3lp5vVPxmbCr00fisuB3rnrKuKwQT8Fd3GVZ41g" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="9cmYoDrPakeS7ljcy_IhRqPZos8sYPDHQWo9NdqApk86JwFurTyR-LOrZL4C3W63RfrCXlfvWJbd0U1zBvLJnQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="p5HtS-PLxDABmZMRmmy4h06KmXQmrDXPDQZfxWvdQqpof3SFdDg_jyDcr3NTQ_d2qKn55V0jnZ6RvS-Dt68teA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="popup#close" action="/messages/933434620/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="4tNmAc23RdrkXtePsf21SoVnxL_sVJk4plG-_wBmOm8tPf_PWkS-ZcUb6-140vq7Y0SkLpfbMWk66s653BRVvQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-action="soft-keyboard#open popup#close" href="/messages/933434620/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/486777696/@933434620">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" title="Edit" aria-label="Edit" href="/rooms/486777696/messages/933434620/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>111. Coffee machine is fixed!</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_1cfce27b-1cb6-5002-bf47-4638b8be817f">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_1cfce27b-1cb6-5002-bf47-4638b8be817f" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_1cfce27b-1cb6-5002-bf47-4638b8be817f">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434620/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+  <div id="message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" class="message " data-controller="reply" data-user-id="149087659" data-message-id="933434483" data-message-timestamp="1772355720000" data-message-updated-at="1772355720000" data-sort-value="1772355720000" data-messages-target="message" data-search-results-target="message" data-refresh-room-target="message" data-reply-composer-outlet="#composer">
+    <h2 class="message__day-separator"><time datetime="2026-03-01T09:02:00Z" data-local-time-target="date"></time></h2>
+
+    <figure class="avatar message__avatar">
+      <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" /></a>
+    </figure>
+
+    <turbo-frame id="edit_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31">
+      <div class="message__body">
+        <div class="message__body-content">
+          <div class="message__meta">
+            <h3 class="message__heading">
+              <span class="message__author" title="Jason">
+                <strong data-reply-target="author">Jason</strong>
+              </span>
+              <a target="_top" class="message__permalink" href="/rooms/654632876/@933434483"><time class="message__timestamp" datetime="2026-03-01T09:02:00Z" data-local-time-target="time"></time></a>
+              <span class="message__room">
+                <a target="_top" data-reply-target="link" href="/rooms/654632876/@933434483">Designers</a>
+              </span>
+            </h3>
+            
+<div class="message__actions" data-controller="soft-keyboard">
+  <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top">
+    <summary class="btn message__action-btn message__options-btn">
+      <img class="colorize--black" aria-hidden="true" src="/assets/menu-dots-horizontal-f6a5d793.svg" width="20" height="20" />
+      <span class="for-screen-reader">Message options</span>
+    </summary>
+
+    <div class="message__actions-menu border shadow" data-popup-target="menu">
+      <div class="quick-boosts">
+          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="8wkwEh8PL-7aZA9hQ6-ND8I6ZvaNPlWmTs-lyUzefk9iQPJGuRVjKriSfQgzVz39frmdOTXgBzT4L-m4QU35_Q" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👍" />
+            <button name="button" type="submit" title="Thumbs up" class="btn message__action-btn" data-emoji="👍">
+              <figure class="margin-none boost-character">👍</figure>
+              <span class="for-screen-reader">Thumbs up</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="_ed0P1PLJQ6ORiWU-ezZNqMPDzfZVfR0xwup5lnrxElsrrZr9dFpyuywV_2JFGnEH4z0-GGLpuZx6-WXVHhD-w" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👏" />
+            <button name="button" type="submit" title="Clapping" class="btn message__action-btn" data-emoji="👏">
+              <figure class="margin-none boost-character">👏</figure>
+              <span class="for-screen-reader">Clapping</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="HNyBIILDbLwX3NkUVK6oxGobu9oRXjvoz51VxkMZfF2NlUN0JNkgeHUqq30kVhg21phAFamAaXp5fRm3Tor77w" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="👋" />
+            <button name="button" type="submit" title="Waving hand" class="btn message__action-btn" data-emoji="👋">
+              <figure class="margin-none boost-character">👋</figure>
+              <span class="for-screen-reader">Waving hand</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="iNS_y21dkjIxyfr0VdruCrsOfnTZvaJrleiO695_dn4ZnX2fy0fe9lM_iJ0lIl74B42Fu2Fj8PkjCMKa0-zxzA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="💪" />
+            <button name="button" type="submit" title="Muscle" class="btn message__action-btn" data-emoji="💪">
+              <figure class="margin-none boost-character">💪</figure>
+              <span class="for-screen-reader">Muscle</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="t51lsu26YPBrz4FZpR6swZej7kue8qQbMOWo2xN8SC4m1KfmS6AsNAk58zDV5hwzKyAVhCYs9omGBeSqHu_PnA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="❤️" />
+            <button name="button" type="submit" title="Red heart" class="btn message__action-btn" data-emoji="❤️">
+              <figure class="margin-none boost-character">❤️</figure>
+              <span class="for-screen-reader">Red heart</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="uyQPaa7YU_k7sgcbeVUcv7sAAL2gJHyWDIFuy1iKzh8qbc09CMIfPVlEdXIJraxNB4P7chj6LgS6YSK6VRlJrQ" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="😂" />
+            <button name="button" type="submit" title="Face with tears of joy" class="btn message__action-btn" data-emoji="😂">
+              <figure class="margin-none boost-character">😂</figure>
+              <span class="for-screen-reader">Face with tears of joy</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="VdBkTrLQX2oU9J84lzxG4psZELRrjM2zOat8vhEexirEmaYaFMoTrnYC7VHnxPYQJ5rre9NSnyGPSzDPHI1BmA" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🎉" />
+            <button name="button" type="submit" title="Party popper" class="btn message__action-btn" data-emoji="🎉">
+              <figure class="margin-none boost-character">🎉</figure>
+              <span class="for-screen-reader">Party popper</span>
+</button></form>          <form data-turbo-frame="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="popup#close" action="/messages/933434483/boosts" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="EsICLp38YYTUbcZzJnPFfp78xDTWr7ojPL5xsWQmxGKDi8B6O-YtQLabtBpWi3WMIn8_-25x6LGKXj3AabVD0A" />
+            <input type="hidden" name="boost[content]" id="boost_content" value="🔥" />
+            <button name="button" type="submit" title="Fire" class="btn message__action-btn" data-emoji="🔥">
+              <figure class="margin-none boost-character">🔥</figure>
+              <span class="for-screen-reader">Fire</span>
+</button></form>
+        <a class="btn message__action-btn message__boost-btn" data-turbo-frame="new_boost_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-action="soft-keyboard#open popup#close" href="/messages/933434483/boosts/new">
+          <img class="colorize--black" aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">New boost</span>
+</a>      </div>
+
+      <div class="flex flex-wrap border-top margin-block-start-half pad-block-start-half message__actions-grid">
+          <button class="btn message__action-btn center full-width" data-action="reply#reply" title="Reply" aria-label="Reply">
+            <img class="colorize--black" aria-hidden="true" src="/assets/reply-edb77e33.svg" width="20" height="20" />
+</button>
+        <button class="btn message__action-btn center full-width" title="Copy link" aria-label="Copy link" data-controller="copy-to-clipboard" data-action="copy-to-clipboard#copy" data-copy-to-clipboard-success-class="btn--success" data-copy-to-clipboard-content-value="http://127.0.0.1:4390/rooms/654632876/@933434483">
+          <img class="colorize--black" aria-hidden="true" src="/assets/link-e546a5df.svg" width="20" height="20" />
+</button>
+        <a class="btn message__action-btn center full-width message__edit-btn" data-turbo-frame="edit_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" title="Edit" aria-label="Edit" href="/rooms/654632876/messages/933434483/edit">
+          <img class="colorize--black" aria-hidden="true" src="/assets/pencil-cf9d28aa.svg" width="20" height="20" />
+</a>      </div>
+    </div>
+</details></div>
+
+          </div>
+          <div id="presentation_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" dir="auto" data-reply-target="body" data-messages-target="body">
+  <div class="lexxy-content">
+  <p>Coffee first, then the launch plan.</p>
+</div>
+
+</div>
+
+          <turbo-frame id="boosting_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31">
+  <div class="boosts flex flex-wrap align-center gap full-width" style="--column-gap: 0.4ch; --row-gap: 0"
+      data-controller="turbo-streaming" data-action="turbo:submit-start->turbo-streaming#unsubscribe">
+    <div class="flex-inline flex-wrap gap" id="boosts_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31" data-turbo-streaming-target="container">
+      
+    </div>
+
+    <turbo-frame id="new_boost_message_2a9800dd-7eef-59fa-9ff0-a4880faeda31">
+      <div class="flex-inline message__boost-inline" data-controller="soft-keyboard">
+        <a class="boost__action txt-small btn" action="soft-keyboard#open" href="/messages/933434483/boosts/new">
+          <img aria-hidden="true" src="/assets/boost-4a7bab66.svg" width="20" height="20" />
+          <span class="for-screen-reader">Add a boost</span>
+</a>      </div>
+</turbo-frame>  </div>
+</turbo-frame>
+        </div>
+      </div>
+    </turbo-frame>
+</div>
+</div></div>
+
+
+
+      <footer id="footer">
+          <div class="composer flex align-end gap">
+    <a class="btn flex-item-no-shrink margin-block-end" style="view-transition-name: input-switcher; --btn-border-radius: 0.5em" href="/rooms/104393281">
+      <img aria-hidden="true" src="/assets/arrow-left-abe40556.svg" />
+      <span class="for-screen-reader">Exit search </span>
+</a>
+    <form class="margin-block flex-item-grow contain flex align-center gap" data-controller="form" data-action="keydown.esc-&gt;form#cancel" action="/searches" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="kW_p_yDaS909Zc_QwgLyz6ZG4VkbEWLxisPSKmTjULh-wc2uQktkMSRTb2MODbg6L70HZqJymNOdiboefplPVA" />
+      <div class="composer__input flex align-center flex-item-grow gap full-width input input--actor min-width">
+        <img aria-hidden="true" class="composer__input-hint colorize--black" style="view-transition-name: input-btn;" src="/assets/search-5f29565f.svg" width="20" height="20" />
+
+        <input value="coffee" class="searches__input input flex-item-grow" role="searchbox" aria-label="search" autofocus="autofocus" required="required" type="text" name="q" id="q" />
+
+        <a data-form-target="cancel" role="button" class="searches__reset" href="/searches">
+          <img aria-hidden="true" class="colorize--black" src="/assets/remove-0e7a045d.svg" width="14" height="14" />
+          <span class="for-screen-reader">Clear search field</span>
+</a>
+        <button name="button" type="submit" class="btn btn--reversed flex-item-no-shrink txt-small" style="--btn-border-radius: 0.5em">
+          <img aria-hidden="true" src="/assets/arrow-up-f96b3895.svg" />
+          <span class="for-screen-reader">Search</span>
+</button>      </div>
+</form>  </div>
+
+      </footer>
+    </main>
+
+    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+        <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
+      <a class="align-center gap room btn txt-nowrap" href="/searches?q=cuckoo">
+        <span class="overflow-ellipsis">“cuckoo”</span>
+</a>      <a class="align-center gap room btn txt-nowrap" href="/searches?q=Borgias">
+        <span class="overflow-ellipsis">“Borgias”</span>
+</a>      <a class="align-center gap room btn txt-nowrap" href="/searches?q=pizza">
+        <span class="overflow-ellipsis">“pizza”</span>
+</a>
+      <form class="button_to" method="post" action="http://127.0.0.1:4390/searches/clear"><input type="hidden" name="_method" value="delete" /><button class="btn searches__btn" data-turbo-confirm="Are you sure you want to clear your recent searches?" type="submit">
+        <img aria-hidden="true" src="/assets/broom-13d30a95.svg" />
+        <span class="for-screen-reader">Clear recent searches</span>
+</button><input type="hidden" name="authenticity_token" value="u3UOBgeF5hsAByeMuFmeE2l4bA-yckb-bR7Khbg6KuWF8_AR4HUt735xxpIiWhPa1Ru8J9FWvD5ubgAruK0ABw" /></form>  </div>
+
+    </aside>
+
+    <dialog class="lightbox" aria-label="Image Viewer (Press escape to close)" data-lightbox-target="dialog" data-action="close->lightbox#reset">
+  <img src="" class="lightbox__image" data-lightbox-target="zoomedImage" />
+
+  <form method="dialog" class="lightbox__btn">
+    <button class="btn">
+      <img aria-hidden="true" src="/assets/remove-0e7a045d.svg" />
+      <span class="for-screen-reader">Close image viewer</span>
+    </button>
+  </form>
+
+  <a href="" class="lightbox__btn--download btn hide-in-ios-pwa" data-lightbox-target="download">
+    <img aria-hidden="true" src="/assets/download-04029899.svg" />
+    <span class="for-screen-reader">Download file</span>
+  </a>
+
+  <button class="lightbox__btn--share btn"
+      data-controller="web-share"
+      data-action="web-share#share"
+      data-web-share-files-value=""
+      data-lightbox-target="share">
+    <img aria-hidden="true" src="/assets/share-bf28da4f.svg" />
+    <span class="for-screen-reader">Share file</span>
+  </button>
+</dialog>
+
+
+    <a href="https://once.com" id="app-logo" target="_blank" aria-label="Once software from 37signals home page">
+      <img alt="Campfire logo" width="256" height="216" src="/assets/campfire-icon-3d9986c5.png" />
+    </a>
+  </body>
+</html>
