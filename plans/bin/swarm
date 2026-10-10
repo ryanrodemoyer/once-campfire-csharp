@@ -7,7 +7,9 @@
   plans/bin/swarm smoke         check each agent CLI can run headless and use a shell tool
   plans/bin/swarm dashboard     rewrite .swarm/dashboard.html without dispatching anything
 
-A task is done when plans/status/<ID>.md is on origin/main. Pause the swarm by touching
+A task is done when plans/status/<ID>.md is on origin/main. Tasks listed under `review` in swarm.yaml
+don't turn on auto-merge themselves: once their PR is green, the reviewer agent reads it and posts a
+verdict comment; the swarm merges on APPROVE and sends CHANGES back to the author. Pause the swarm by touching
 .swarm/PAUSE or labelling any open issue `pause-swarm`; running workers carry on, nothing new starts.
 Runtime state (pids, attempts, logs, events, dashboard) lives in .swarm/, which git ignores.
 """
@@ -64,7 +66,7 @@ def merged_ids():
 
 def open_prs():
     out = sh("gh", "pr", "list", "--state", "open", "--limit", "100", "--json",
-             "number,headRefName,url,mergeable,statusCheckRollup,autoMergeRequest")
+             "number,headRefName,headRefOid,url,mergeable,statusCheckRollup,autoMergeRequest")
     return {pr["headRefName"]: pr for pr in json.loads(out)}
 
 
@@ -158,12 +160,43 @@ def task_state(task_id, task, done, prs, state, config):
     exhausted = failed_attempts(record) >= config["max_attempts"]
     if pr:
         s = "conflicted" if pr.get("mergeable") == "CONFLICTING" else f"pr-{checks_state(pr)}"
-        return "stuck" if exhausted and s in ("conflicted", "pr-red") else s
+        if s == "pr-green" and reviewed(config, task_id):
+            s = review_state(record, pr)
+        return "stuck" if exhausted and s in ("conflicted", "pr-red", "changes") else s
     if exhausted:
         return "stuck"
     if cooling(record, config):
         return "cooling"
     return "ready" if all(d in done for d in task["deps"]) else "waiting"
+
+
+def reviewed(config, task_id):
+    return task_id in config.get("review", {}).get("tasks", [])
+
+
+def review_state(record, pr):
+    """For a reviewed task's green PR: approved, changes (the author must address the review of this
+    head) or reviewing (a review of this head is running or due)."""
+    review = record.get("review", {})
+    if review.get("head") == pr["headRefOid"]:
+        if review.get("verdict") == "APPROVE":
+            return "pr-green"
+        if review.get("verdict") == "CHANGES":
+            return "changes"
+    return "reviewing"
+
+
+def read_verdict(pr):
+    """The reviewer's verdict on the PR's head: the last comment starting `REVIEW <sha12>: ...`."""
+    out = sh("gh", "pr", "view", pr["url"], "--json", "comments", check=False)
+    tag = f"REVIEW {pr['headRefOid'][:12]}:"
+    for comment in reversed(json.loads(out or "{}").get("comments", [])):
+        body = comment.get("body", "").strip()
+        if body.startswith(tag):
+            verdict = body[len(tag):].split()[0].strip(".").upper() if body[len(tag):].split() else ""
+            if verdict in ("APPROVE", "CHANGES"):
+                return verdict, body
+    return None, None
 
 
 # ---- actions ------------------------------------------------------------------------------------
@@ -188,7 +221,7 @@ def prepare_worktree(config, task):
     return path, branch
 
 
-def prompt_for(agent, config, task, issue, path, branch, prs, state):
+def prompt_for(agent, config, task, issue, path, branch, prs, state, feedback=None):
     # The main checkout's card, not the worktree's: a retried worktree can predate a card edit.
     card = sh("plans/bin/plan", "show", task["id"], check=False)
     exclusive = task["id"] in config["exclusive"]
@@ -202,11 +235,29 @@ def prompt_for(agent, config, task, issue, path, branch, prs, state):
     machine = ("\nThis is a benchmark task. The swarm has reserved the machine for you: no other "
                "agent is running, so measurements are not disturbed by build load.\n"
                if exclusive else "")
-    owns_rule = ("1. Besides the paths under `owns`, you may edit any file under src/ and tests/: the tasks\n"
-                 "   that own them have merged and you have the machine to yourself.\n"
+    if feedback:
+        resume = (f"\nThe reviewer requested changes on {pr['url']}. Address every point below, push, and "
+                  f"reply on the PR saying what you changed. If you disagree with a point, explain why "
+                  f"in that reply instead of changing the code.\n\n{feedback[:8000]}\n")
+    owns_rule = ("1. Besides the paths under `owns`, you may edit any file under src/ and tests/, and any other\n"
+                 "   path the card names: the tasks that own them have merged.\n"
                  if task["id"] in config.get("edit_anywhere", []) else
                  "1. Edit only the paths listed under the task's `owns`. If you need a change elsewhere, comment on\n"
                  "   the owning task's issue instead.\n")
+    if reviewed(config, task["id"]):
+        reviewer = config["review"]["reviewer"]
+        merge = (f"6. Push and open a PR titled \"[{task['id']}] {task['title']}\" whose body says \"Closes #{issue}\".\n"
+                 f"   Do NOT turn on auto-merge: {reviewer} reviews this task once CI is green, and the swarm\n"
+                 f"   merges it on approval or sends you the requested changes.\n"
+                 f"7. Watch CI with `gh pr checks --watch`. If it goes red, fix it and push. If main moves and the PR\n"
+                 f"   conflicts, merge origin/main into your branch. You are done when CI is green on your last push.\n")
+        finish = "End your turn only when CI is green on your last push or you are blocked as in step 8."
+    else:
+        merge = (f"6. Push, open a PR titled \"[{task['id']}] {task['title']}\" whose body says \"Closes #{issue}\",\n"
+                 f"   then run `gh pr merge --auto --squash`.\n"
+                 f"7. Watch CI with `gh pr checks --watch`. If it goes red, fix it and push. If main moves and the PR\n"
+                 f"   conflicts, merge origin/main into your branch. You are done when the PR has merged.\n")
+        finish = "End your turn only when the PR has merged or you are blocked as in step 8."
     return f"""You are the {agent} worker in a local multi-vendor swarm porting Campfire to C#.
 
 Your task is {task['id']}: {task['title']} (GitHub issue #{issue}).
@@ -227,26 +278,24 @@ How to finish:
 4. Write plans/status/{task['id']}.md following plans/status/README.md, with evidence for every
    acceptance criterion.
 5. Stage files by explicit path. Never run `git add -A` or `git add .`.
-6. Push, open a PR titled "[{task['id']}] {task['title']}" whose body says "Closes #{issue}",
-   then run `gh pr merge --auto --squash`.
-7. Watch CI with `gh pr checks --watch`. If it goes red, fix it and push. If main moves and the PR
-   conflicts, merge origin/main into your branch. You are done when the PR has merged.
-   If CI fails in a test your change doesn't touch, it may be flaky (Q09 is fixing two known
+{merge}   If CI fails in a test your change doesn't touch, it may be flaky (Q09 is fixing two known
    ones). Re-run the failed job once with `gh run rerun <run-id> --failed` before changing code.
 8. If you are blocked on something outside your task, comment on issue #{issue} explaining what
    you need, and stop.
 You are running headless: nobody will come back to you, and your session ends the moment you end
-your turn. Never stop to wait for a build, container, test run or CI; keep polling until it is done
-and carry on. End your turn only when the PR has merged or you are blocked as in step 8.
+your turn, and anything you started in the background dies with it. Run long commands (Docker builds,
+benchmarks, bin/check) in the foreground with a long timeout; if your shell backgrounds one, poll it
+until it finishes. Never stop to wait for a build, container, test run or CI; keep polling until it
+is done and carry on. {finish}
 Never benchmark before B02 and never publish numbers. Never work on issues labelled `human`.
 """
 
 
-def launch(agent, config, task, issue, prs, state):
+def launch(agent, config, task, issue, prs, state, feedback=None):
     path, branch = prepare_worktree(config, task)
     spec = config["agents"][agent]
     effort = spec.get("effort_overrides", {}).get(task["id"], spec.get("effort", ""))
-    prompt = prompt_for(agent, config, task, issue, path, branch, prs, state)
+    prompt = prompt_for(agent, config, task, issue, path, branch, prs, state, feedback)
     fills = {"{prompt}": prompt, "{worktree}": str(path), "{effort}": effort}
     cmd = [fills.get(part, part) for part in spec["command"]]
 
@@ -266,6 +315,94 @@ def launch(agent, config, task, issue, prs, state):
        f"Claimed by local swarm worker `{agent}` ({spec['model']}), attempt {record['attempts']}, "
        f"on branch `{branch}`.", check=False)
     event(f"dispatched {task['id']} to {agent} (attempt {record['attempts']}, pid {proc.pid})")
+
+
+def review_prompt(reviewer, config, task, issue, path, pr):
+    card = sh("plans/bin/plan", "show", task["id"], check=False)
+    tag = f"REVIEW {pr['headRefOid'][:12]}:"
+    return f"""You are the {reviewer} reviewer in a local multi-vendor swarm porting Campfire to C#.
+
+Review {pr['url']}, task {task['id']}: {task['title']} (issue #{issue}), at commit {pr['headRefOid']}.
+The author's worktree is {path}, checked out at that commit on the author's branch. Read anything in it and run tests or
+gates there, but never edit, commit, push or merge: your only output is one PR comment.
+
+Read AGENTS.md and plans/csharp-port.md first. The task card:
+
+{card}
+
+Check, in this order:
+1. Correctness against the Rails app in reference/, the oracle: read the reference files the change
+   ports and compare behavior, not style. Expected output must come from vectors, replay or the
+   reference, never hand-written guesses.
+2. Every acceptance criterion is met and plans/status/{task['id']}.md proves it with real evidence.
+3. Security: authentication and authorization on every path, no data shared across users or
+   sessions, input bounds, SSRF and injection.
+4. Tests cover the change, including the failure cases, and CI is green.
+Ignore style nits and anything outside the diff (`gh pr diff {pr['url']}`).
+
+Then post exactly one comment with `gh pr comment {pr['url']} --body-file <file>`. Its first line must
+be either `{tag} APPROVE` or `{tag} CHANGES`, nothing else on that line. Use CHANGES only for
+defects that must be fixed before merge: wrong behavior versus the reference, a security problem,
+an unmet acceptance criterion, or missing evidence. List each one with the file, line, what is wrong,
+how to see it, and the fix. Put optional suggestions under a separate "Non-blocking" heading.
+You are running headless; your session ends when you end your turn. Run long commands in the
+foreground. End your turn only after the comment is posted.
+"""
+
+
+def launch_review(config, task, issue, pr, state):
+    reviewer = config["review"]["reviewer"]
+    spec = config["agents"][reviewer]
+    path = worktree_for(config, task["id"])
+    if not path.exists():
+        path, _ = prepare_worktree(config, task)
+    # The author has stopped and pushed: put its branch at the PR head, which is what gets reviewed.
+    sh("git", "fetch", "-q", "origin", branch_for(task), cwd=path, check=False)
+    sh("git", "checkout", "-q", "-B", branch_for(task), f"origin/{branch_for(task)}", cwd=path, check=False)
+    prompt = review_prompt(reviewer, config, task, issue, path, pr)
+    fills = {"{prompt}": prompt, "{worktree}": str(path), "{effort}": spec.get("effort", "")}
+    cmd = [fills.get(part, part) for part in spec["command"]]
+    record = state["tasks"].setdefault(task["id"], {"attempts": 0})
+    review = record.setdefault("review", {})
+    if review.get("head") != pr["headRefOid"]:
+        review.update(head=pr["headRefOid"], verdict=None, tries=0)
+        review["rounds"] = review.get("rounds", 0) + 1
+    review["tries"] = review.get("tries", 0) + 1
+    log = LOGS / f"{task['id']}-review-{review['rounds']}-{review['tries']}.log"
+    with log.open("w") as out:
+        proc = subprocess.Popen(cmd, cwd=path, stdout=out, stderr=subprocess.STDOUT,
+                                stdin=subprocess.DEVNULL, start_new_session=True)
+    PROCS[proc.pid] = proc
+    review.update(pid=proc.pid, log=str(log.relative_to(ROOT)), agent=reviewer)
+    event(f"{reviewer} reviewing {task['id']} at {pr['headRefOid'][:12]} (round {review['rounds']})")
+
+
+def settle_review(config, task, issue, pr, state):
+    """Called for a reviewing task whose reviewer isn't running: record a posted verdict, or start
+    (or retry) the review, or hand the task to a human when reviews keep failing or bouncing."""
+    record = state["tasks"].setdefault(task["id"], {"attempts": 0})
+    review = record.get("review", {})
+    limits = config["review"]
+    if review.get("head") == pr["headRefOid"] and review.get("pid"):
+        verdict, body = read_verdict(pr)
+        review.pop("pid", None)
+        if verdict:
+            review.update(verdict=verdict, feedback=body)
+            event(f"{task['id']} review round {review['rounds']}: {verdict}")
+            return verdict
+    same_head = review.get("head") == pr["headRefOid"]
+    if (same_head and review.get("tries", 0) >= 2) or (
+            not same_head and review.get("rounds", 0) >= limits.get("max_rounds", 3)):
+        if not review.get("escalated"):
+            review["escalated"] = True
+            sh("gh", "issue", "edit", str(issue), "--add-label", "needs-human", check=False)
+            sh("gh", "issue", "comment", str(issue), "--body",
+               f"The review of {pr['url']} didn't settle (round {review.get('rounds')}). A human should "
+               "read the review comments and merge or redirect it.", check=False)
+            event(f"{task['id']} review escalated to needs-human")
+        return None
+    launch_review(config, task, issue, pr, state)
+    return None
 
 
 def clean_up(config, task, issue, state):
@@ -304,7 +441,8 @@ def tick(config, dispatch=True):
     for task_id, s in states.items() if dispatch else ():
         record = state["tasks"].get(task_id, {})
         pr = prs.get(branch_for(tasks[task_id]))
-        if s in ("pr-green", "pr-pending") and not pr.get("autoMergeRequest"):
+        if s in ("pr-green", "pr-pending") and not pr.get("autoMergeRequest") and (
+                not reviewed(config, task_id) or s == "pr-green"):
             sh("gh", "pr", "merge", pr["url"], "--auto", "--squash", check=False)
             event(f"turned on auto-merge for {task_id}")
         if s == "merged" and record.get("started") and not record.get("cleaned"):
@@ -317,11 +455,25 @@ def tick(config, dispatch=True):
         exclusive_running = any(t in config["exclusive"] for t in running)
         # A ready benchmark task drains the machine: nothing new starts until it can run alone.
         draining = any(states.get(t) == "ready" for t in config["exclusive"])
+        for task_id in [t for t, s in states.items() if s == "reviewing"]:
+            record = state["tasks"].get(task_id, {})
+            if alive(record.get("review", {}).get("pid")) or exclusive_running or draining:
+                continue
+            pr = prs[branch_for(tasks[task_id])]
+            verdict = settle_review(config, tasks[task_id], issues[task_id], pr, state)
+            if verdict == "APPROVE":
+                sh("gh", "pr", "merge", pr["url"], "--auto", "--squash", check=False)
+                event(f"turned on auto-merge for {task_id} after review")
+                states[task_id] = "pr-green"
+            elif verdict == "CHANGES":
+                states[task_id] = "changes"
         for agent, spec in config["agents"].items():
             free = spec.get("slots", 1) - sum(states[t] == "running" for t in spec["queue"])
             # A red or conflicted PR goes back to its own worker before anything new.
-            needs_fix = [t for t in spec["queue"] if states[t] in ("pr-red", "conflicted")
+            needs_fix = [t for t in spec["queue"] if states[t] in ("pr-red", "conflicted", "changes")
                          and failed_attempts(state["tasks"].get(t, {})) < config["max_attempts"]]
+            if agent == config.get("review", {}).get("reviewer"):
+                free -= sum(alive(state["tasks"].get(t, {}).get("review", {}).get("pid")) for t in states)
             ready = [t for t in spec["queue"] if states[t] == "ready"]
             for task_id in needs_fix + ready:
                 if free <= 0 or exclusive_running:
@@ -330,7 +482,13 @@ def tick(config, dispatch=True):
                 exempt = task_id in config.get("drain_exempt", [])
                 if (exclusive and running) or (draining and not exclusive and not exempt):
                     continue
-                launch(agent, config, tasks[task_id], issues[task_id], prs, state)
+                feedback = None
+                if states[task_id] == "changes":
+                    review = state["tasks"][task_id]["review"]
+                    feedback, review["verdict"] = review.get("feedback"), "ADDRESSED"
+                    # Answering a review isn't a failed attempt.
+                    state["tasks"][task_id]["handoffs"] = state["tasks"][task_id].get("handoffs", 0) + 1
+                launch(agent, config, tasks[task_id], issues[task_id], prs, state, feedback)
                 states[task_id] = "running"
                 running.append(task_id)
                 exclusive_running = exclusive
@@ -345,9 +503,10 @@ def tick(config, dispatch=True):
 STATE_COLORS = {
     "merged": "#2da44e", "running": "#bf8700", "pr-pending": "#0969da", "pr-green": "#1a7f37",
     "pr-red": "#cf222e", "conflicted": "#cf222e", "stuck": "#82071e", "ready": "#8250df",
-    "waiting": "#6e7781", "cooling": "#9a6700", "human": "#57606a",
+    "waiting": "#6e7781", "cooling": "#9a6700", "human": "#57606a", "reviewing": "#0550ae",
+    "changes": "#bc4c00",
 }
-AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe", "dspro": "#7c3aed"}
+AGENT_COLORS = {"claude": "#d97757", "gemini": "#4285f4", "grok": "#9a9a9a", "glm": "#16a37f", "deepseek": "#4d6bfe", "dspro": "#7c3aed", "haiku": "#c2410c"}
 
 
 def activity(config, task_id):

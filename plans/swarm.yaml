@@ -6,8 +6,11 @@
 #
 # Rules the queues encode:
 # - Security work is reviewed across vendors: R04 and RT04 were written by Claude, GLM, Grok and Gemini,
-#   so DeepSeek (dspro) reviews them in Q08.
-# - B02, B03 and B04 are `exclusive`: they start only on an idle machine and nothing else starts
+#   so DeepSeek (dspro) reviews them in Q08, and the second security review (Q13) too.
+# - Batch 2 (the upstream sync, U01-U08, and the fixes from issues #161 and #184-#191): Claude takes
+#   the hard, security-critical work (the pin, forgery protection, the page cache, perf round 2),
+#   Gemini the ports and gates, Haiku the small fixes, and dspro reviews every PR before it merges.
+# - Benchmark tasks are `exclusive`: they start only on an idle machine and nothing else starts
 #   while they run, so build load never leaks into a measurement.
 # - B05 and X02 are labelled `human` and never appear here.
 
@@ -15,23 +18,28 @@ worktrees: ../campfire-wt
 max_attempts: 3
 retry_after_minutes: 45
 poll_seconds: 120
-exclusive: [B02, B03, B04]
+exclusive: [B02, B03, B04, B07, B08, B09]
 # Allowed to start while a benchmark task drains the machine: they were already running.
 drain_exempt: [R04, M10]
-# May edit src/ and tests/ beyond their `owns`: B03's performance work touches code all over the app
-# and runs alone; Q10's card names the few files it fixes. Every owner of those files has merged.
-edit_anywhere: [B03, Q10]
+# May edit src/ and tests/ (and other paths their card names) beyond their `owns`: their work fixes
+# code whose owners have all merged. Concurrent ones resolve conflicts by merging main.
+edit_anywhere: [B03, Q10, U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12, Q13, R06, P07, P08, B07, B08, B09]
+# Each listed task's green PR is reviewed by `reviewer` before it merges (plans/bin/swarm): APPROVE
+# merges it, CHANGES sends it back to its author. After max_rounds reviews it goes to a human.
+review:
+  reviewer: dspro
+  max_rounds: 3
+  tasks: [U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12, Q14, R06, P07, P08, B08, B09]
 
 agents:
   claude:
-    model: Claude Opus 5.5 (medium; high on R04 and RT04)
+    model: Claude Opus 5.5 (medium)
     command: [claude, -p, "{prompt}", --model, claude-opus-5-5, --effort, "{effort}",
               --permission-mode, bypassPermissions]
     effort: medium
-    effort_overrides: {R04: high, RT04: high}
     slots: 2
-    # R04 moved to glm at 86% quota, after its first attempt; B03 and X01 to grok and gemini.
-    queue: [RT04]
+    # Fresh quota: the pin, forgery protection, the page cache and perf round 2.
+    queue: [U01, U03, U07, B08]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
@@ -41,7 +49,8 @@ agents:
     # R04 moved here from grok when Grok's usage balance ran out.
     # P05 wires the real cable server, job runner and revoker into `campfire server`.
     # Q10 finishes fixes that agents requested on issues after those issues closed.
-    queue: [R04, M09, Q06, Q02, Q07, Q05, P05, Q10, P06, X01]
+    # Batch 2: the upstream ports and gates, the verification harness and AOT.
+    queue: [U02, U04, U05, U06, U08, Q11, Q12, B07, B09, X01]
 
   grok:
     model: Grok 4.7 (high)
@@ -81,4 +90,13 @@ agents:
     # Cheap ($0.21/M in, $0.02/M cache read); takes P02 (continuing glm's attempt) and Q04.
     slots: 2
     # The benchmark chain moved here from grok when Grok's usage balance ran out.
-    queue: [P02, Q09, Q04, Q08, B06, B02, B03, B04]
+    # Batch 2: reviews every PR in `review` (counted against these slots) and does Q13.
+    queue: [Q13]
+
+  haiku:
+    model: Claude Haiku 5.5 via OpenRouter (OpenCode)
+    command: [opencode, run, --standalone, --auto, -m, "openrouter/anthropic/claude-haiku-5.5",
+              "{prompt}"]
+    # Cheap and fast ($0.10/M in, $0.50/M out) for small, well-specified fixes.
+    slots: 2
+    queue: [P07, Q14, R06, P08]
