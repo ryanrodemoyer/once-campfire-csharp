@@ -1,4 +1,5 @@
 using System.Threading.Channels;
+using Campfire.Data.Checkpoint;
 using Campfire.Data.Schema;
 
 namespace Campfire.Data.Sqlite;
@@ -145,6 +146,7 @@ public sealed class SqliteDatabase : IDisposable
             while (writes.Reader.TryRead(out var write))
             {
                 write(writerSession);
+                WriterCheckpointFallback.CheckpointIfLarge(writerSession, Path);
             }
         }
     }

@@ -26,7 +26,7 @@ public class SqliteDatabaseTests
     static Dictionary<string, long> Pragmas(SqliteSession session) =>
         RailsPragmas.Keys.ToDictionary(pragma => pragma, pragma => session.Scalar<long>($"PRAGMA {pragma}"));
 
-    // SQLite3Adapter::DEFAULT_PRAGMAS and `timeout: 5000`. synchronous=normal reads back as 1.
+    // SQLite3Adapter::DEFAULT_PRAGMAS, database.yml's `pragmas:` and `timeout: 5000`. synchronous=normal reads back as 1.
     static readonly Dictionary<string, long> RailsPragmas = new()
     {
         ["busy_timeout"] = 5000,
@@ -35,6 +35,7 @@ public class SqliteDatabaseTests
         ["mmap_size"] = 134217728,
         ["journal_size_limit"] = 67108864,
         ["cache_size"] = 2000,
+        ["wal_autocheckpoint"] = 0,
     };
 
     [Fact]

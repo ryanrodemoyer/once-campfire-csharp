@@ -11,7 +11,8 @@ public static class SqliteConnections
     // `timeout: 5000`
     public const int BusyTimeoutMilliseconds = 5000;
 
-    // SQLite3Adapter::DEFAULT_PRAGMAS
+    // SQLite3Adapter::DEFAULT_PRAGMAS, then database.yml's `pragmas:`. The last one keeps commits from
+    // checkpointing the WAL on the writer: SqliteWalCheckpoint does it off the request threads.
     public static readonly IReadOnlyList<KeyValuePair<string, string>> Pragmas =
     [
         new("foreign_keys", "ON"),
@@ -20,6 +21,7 @@ public static class SqliteConnections
         new("mmap_size", "134217728"),
         new("journal_size_limit", "67108864"),
         new("cache_size", "2000"),
+        new("wal_autocheckpoint", "0"),
     ];
 
     public static SqliteConnection Open(string path, bool readOnly = false)

@@ -1,3 +1,4 @@
+using Campfire.Data.Checkpoint;
 using Campfire.Data.Events;
 using Campfire.Data.Sqlite;
 using Campfire.Server.Composition;
@@ -20,14 +21,26 @@ public static class ServerCommand
         var database = Commands.PrepareDatabase(settings, settings.MaxThreads);
         try
         {
-            await using var app = Build(settings, secretKeyBase, database, assets, args);
-            await app.RunAsync().ConfigureAwait(false);
+            var checkpoint = new SqliteWalCheckpoint(settings.DatabasePath, settings.Resolve(walCheckpointLock), message => Console.Error.WriteLine(message));
+            checkpoint.Start();
+            try
+            {
+                await using var app = Build(settings, secretKeyBase, database, assets, args);
+                await app.RunAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                checkpoint.Stop();
+            }
         }
         finally
         {
             Commands.Close(database);
         }
     }
+
+    // reference/lib/rails_ext/sqlite_wal_checkpoint.rb's LOCK_PATH.
+    const string walCheckpointLock = "tmp/pids/sqlite_wal_checkpoint.lock";
 
     static AssetBundle LoadAssets(ServerSettings settings) =>
         Directory.Exists(Path.Combine(settings.AssetsDirectory, "public"))
