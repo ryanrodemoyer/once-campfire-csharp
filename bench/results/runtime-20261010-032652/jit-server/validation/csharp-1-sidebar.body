@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Campfire</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="view-transition" content="same-origin">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="hjg_P9yLlDtigt9gS5O8xq0M5vN5R-zXlLj2nKzBilaaFbrHObEebbTs-fOadien0bNMi9F3zBDS0UAjZZ1yWA" />
+    
+    <meta name="current-user-id" content="127326141" /><meta name="current-user-name" content="David" />
+    <meta name="action-cable-url" content="/cable">
+
+    <meta name="vapid-public-key" content="BEYXTBB5_jNhNzXDmx5KEU55Vbbd-u--Lk9rM5OFQvUkPIBwZJ9QzAq0zdEzFw6yTV8cTriz_qYBVicY02_VxTQ=">
+    <meta name="turbo-prefetch" content="true">
+
+    <link rel="manifest" href="/webmanifest.json">
+    <link rel="icon" href="/account/logo?v=20260101160000" type="image/png">
+    <link rel="apple-touch-icon" href="/account/logo?v=20260101160000">
+
+    <link rel="stylesheet" href="/assets/_reset-9c3efd7b.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/actiontext-7b8d51ea.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/animation-bcdb4bab.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/autocomplete-9de8c93f.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/avatars-279376ab.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/base-637a0ec8.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/boosts-da4032a8.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/buttons-c7d39fd4.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/code-333ae548.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/colorize-eb391ca0.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/colors-aee62523.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/composer-e490638a.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/embeds-c20d0a3a.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/filters-8a4d63ed.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/flash-a561c1e5.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/inputs-9e58a07c.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/layout-ff6ddfc6.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-content-0ff2f961.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-editor-2d5c7ebe.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-variables-3fef4323.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lexxy-2876c58e.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/lightbox-af496d39.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/messages-c5485fef.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/nav-05e7183a.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/panels-af44ec6d.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/separators-172b3ab8.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/sidebar-0be58db9.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/signup-6e02d591.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/spinner-5a118f25.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/trix-65afdb1d.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/utilities-e2f32466.css" data-turbo-track="reload" />
+    
+
+    <script type="importmap" data-turbo-track="reload">{
+  "imports": {
+    "application": "/assets/application-a54c74a7.js",
+    "@hotwired/stimulus": "/assets/stimulus.min-4b1e420e.js",
+    "@hotwired/stimulus-loading": "/assets/stimulus-loading-1fc53fe7.js",
+    "@hotwired/turbo-rails": "/assets/turbo-a1e3a50a.js",
+    "@rails/actioncable": "/assets/actioncable.esm-e0ec9819.js",
+    "@rails/request.js": "/assets/@rails--request-3fc8489d.js",
+    "lexxy": "/assets/lexxy-a21f41d4.js",
+    "highlight.js": "/assets/highlight.js/core-4e141f64.js",
+    "initializers/autocomplete": "/assets/initializers/autocomplete-ba9abe45.js",
+    "initializers/current": "/assets/initializers/current-3a3b90da.js",
+    "initializers/highlight": "/assets/initializers/highlight-5bd558f1.js",
+    "initializers": "/assets/initializers/index-d2bbfae4.js",
+    "initializers/rich_text": "/assets/initializers/rich_text-f451a05e.js",
+    "lib/autocomplete/autocomplete_handler": "/assets/lib/autocomplete/autocomplete_handler-becd1e1a.js",
+    "lib/autocomplete/base_autocomplete_handler": "/assets/lib/autocomplete/base_autocomplete_handler-e29a896e.js",
+    "lib/autocomplete/collection": "/assets/lib/autocomplete/collection-3e251a0e.js",
+    "lib/autocomplete/constants": "/assets/lib/autocomplete/constants-17c2858b.js",
+    "lib/autocomplete/custom_elements/suggestion_option": "/assets/lib/autocomplete/custom_elements/suggestion_option-ac7846b3.js",
+    "lib/autocomplete/custom_elements/suggestion_select": "/assets/lib/autocomplete/custom_elements/suggestion_select-f0045305.js",
+    "lib/autocomplete/helpers": "/assets/lib/autocomplete/helpers-651308b9.js",
+    "lib/autocomplete/renderer": "/assets/lib/autocomplete/renderer-5caf6120.js",
+    "lib/autocomplete/selection": "/assets/lib/autocomplete/selection-862705bf.js",
+    "lib/autocomplete/suggestion_context": "/assets/lib/autocomplete/suggestion_context-b265ffb4.js",
+    "lib/autocomplete/suggestion_controller": "/assets/lib/autocomplete/suggestion_controller-10624c40.js",
+    "lib/autocomplete/suggestion_results_controller": "/assets/lib/autocomplete/suggestion_results_controller-91405749.js",
+    "lib/autocomplete/utils": "/assets/lib/autocomplete/utils-296fb278.js",
+    "lib/cookie": "/assets/lib/cookie-76006835.js",
+    "lib/rich_text/campfire_extension": "/assets/lib/rich_text/campfire_extension-f62f017b.js",
+    "lib/rich_text/cite_node": "/assets/lib/rich_text/cite_node-b4d2b89a.js",
+    "controllers/application": "/assets/controllers/application-f004202c.js",
+    "controllers/auto_submit_controller": "/assets/controllers/auto_submit_controller-ee52d396.js",
+    "controllers/autocomplete_controller": "/assets/controllers/autocomplete_controller-eaf5b07d.js",
+    "controllers/badge_dot_controller": "/assets/controllers/badge_dot_controller-e0d733c8.js",
+    "controllers/boost_delete_controller": "/assets/controllers/boost_delete_controller-29fd1686.js",
+    "controllers/composer_controller": "/assets/controllers/composer_controller-73c33f9f.js",
+    "controllers/copy_to_clipboard_controller": "/assets/controllers/copy_to_clipboard_controller-07e32f4d.js",
+    "controllers/drop_target_controller": "/assets/controllers/drop_target_controller-3a205782.js",
+    "controllers/element_removal_controller": "/assets/controllers/element_removal_controller-4526910a.js",
+    "controllers/filter_controller": "/assets/controllers/filter_controller-ca9769d5.js",
+    "controllers/form_controller": "/assets/controllers/form_controller-6f3d64db.js",
+    "controllers": "/assets/controllers/index-594ba2fb.js",
+    "controllers/lightbox_controller": "/assets/controllers/lightbox_controller-98fc07ca.js",
+    "controllers/local_time_controller": "/assets/controllers/local_time_controller-7daf3d0c.js",
+    "controllers/maintain_scroll_controller": "/assets/controllers/maintain_scroll_controller-1debbbfb.js",
+    "controllers/messages_controller": "/assets/controllers/messages_controller-3d90944a.js",
+    "controllers/notifications_controller": "/assets/controllers/notifications_controller-746d0662.js",
+    "controllers/popup_controller": "/assets/controllers/popup_controller-9f8ea824.js",
+    "controllers/presence_controller": "/assets/controllers/presence_controller-28f14aad.js",
+    "controllers/pwa_install_controller": "/assets/controllers/pwa_install_controller-3fe3fc5e.js",
+    "controllers/read_rooms_controller": "/assets/controllers/read_rooms_controller-8245522a.js",
+    "controllers/refresh_room_controller": "/assets/controllers/refresh_room_controller-4e4b6014.js",
+    "controllers/reply_controller": "/assets/controllers/reply_controller-278bb9cc.js",
+    "controllers/rooms_list_controller": "/assets/controllers/rooms_list_controller-64840fcd.js",
+    "controllers/scroll_into_view_controller": "/assets/controllers/scroll_into_view_controller-8a0bc733.js",
+    "controllers/search_results_controller": "/assets/controllers/search_results_controller-aab46974.js",
+    "controllers/sessions_controller": "/assets/controllers/sessions_controller-a9fdfe3d.js",
+    "controllers/soft_keyboard_controller": "/assets/controllers/soft_keyboard_controller-be1da837.js",
+    "controllers/sorted_list_controller": "/assets/controllers/sorted_list_controller-9f9ae485.js",
+    "controllers/sound_controller": "/assets/controllers/sound_controller-d3e5656e.js",
+    "controllers/toggle_class_controller": "/assets/controllers/toggle_class_controller-b67fa681.js",
+    "controllers/turbo_frame_controller": "/assets/controllers/turbo_frame_controller-9f4f722f.js",
+    "controllers/turbo_streaming_controller": "/assets/controllers/turbo_streaming_controller-04b85a80.js",
+    "controllers/typing_notifications_controller": "/assets/controllers/typing_notifications_controller-86906ab9.js",
+    "controllers/unfurl_controller": "/assets/controllers/unfurl_controller-4a868f9a.js",
+    "controllers/upload_preview_controller": "/assets/controllers/upload_preview_controller-9b8b26bb.js",
+    "controllers/web_share_controller": "/assets/controllers/web_share_controller-f7236b6f.js",
+    "helpers/dom_helpers": "/assets/helpers/dom_helpers-0f234176.js",
+    "helpers/navigator_helpers": "/assets/helpers/navigator_helpers-3c9f4c31.js",
+    "helpers/string_helpers": "/assets/helpers/string_helpers-40941ba8.js",
+    "helpers/timing_helpers": "/assets/helpers/timing_helpers-94d95529.js",
+    "helpers/turbo_helpers": "/assets/helpers/turbo_helpers-a3c01462.js",
+    "models/client_message": "/assets/models/client_message-de3c07cf.js",
+    "models/file_uploader": "/assets/models/file_uploader-d3a5c44b.js",
+    "models/message_formatter": "/assets/models/message_formatter-f39a0c5d.js",
+    "models/message_paginator": "/assets/models/message_paginator-b79013e3.js",
+    "models/scroll_manager": "/assets/models/scroll_manager-ed559629.js",
+    "models/typing_tracker": "/assets/models/typing_tracker-42a444a5.js",
+    "languages/bash": "/assets/languages/bash-13136668.js",
+    "languages/css": "/assets/languages/css-a7f2e40b.js",
+    "languages/diff": "/assets/languages/diff-94a335fe.js",
+    "languages/go": "/assets/languages/go-10465864.js",
+    "languages/java": "/assets/languages/java-95f3a30f.js",
+    "languages/javascript": "/assets/languages/javascript-18eb0dd8.js",
+    "languages/json": "/assets/languages/json-60184e1b.js",
+    "languages/python": "/assets/languages/python-8f48fd1a.js",
+    "languages/ruby": "/assets/languages/ruby-287ccd0f.js",
+    "languages/rust": "/assets/languages/rust-d48f93d8.js",
+    "languages/sql": "/assets/languages/sql-642be05a.js",
+    "languages/xml": "/assets/languages/xml-fa7f1eda.js"
+  }
+}</script>
+<link rel="modulepreload" href="/assets/application-a54c74a7.js">
+<link rel="modulepreload" href="/assets/stimulus.min-4b1e420e.js">
+<link rel="modulepreload" href="/assets/stimulus-loading-1fc53fe7.js">
+<link rel="modulepreload" href="/assets/turbo-a1e3a50a.js">
+<link rel="modulepreload" href="/assets/actioncable.esm-e0ec9819.js">
+<link rel="modulepreload" href="/assets/@rails--request-3fc8489d.js">
+<link rel="modulepreload" href="/assets/lexxy-a21f41d4.js">
+<link rel="modulepreload" href="/assets/highlight.js/core-4e141f64.js">
+<link rel="modulepreload" href="/assets/initializers/autocomplete-ba9abe45.js">
+<link rel="modulepreload" href="/assets/initializers/current-3a3b90da.js">
+<link rel="modulepreload" href="/assets/initializers/highlight-5bd558f1.js">
+<link rel="modulepreload" href="/assets/initializers/index-d2bbfae4.js">
+<link rel="modulepreload" href="/assets/initializers/rich_text-f451a05e.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/autocomplete_handler-becd1e1a.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/base_autocomplete_handler-e29a896e.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/collection-3e251a0e.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/constants-17c2858b.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/custom_elements/suggestion_option-ac7846b3.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/custom_elements/suggestion_select-f0045305.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/helpers-651308b9.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/renderer-5caf6120.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/selection-862705bf.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/suggestion_context-b265ffb4.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/suggestion_controller-10624c40.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/suggestion_results_controller-91405749.js">
+<link rel="modulepreload" href="/assets/lib/autocomplete/utils-296fb278.js">
+<link rel="modulepreload" href="/assets/lib/cookie-76006835.js">
+<link rel="modulepreload" href="/assets/lib/rich_text/campfire_extension-f62f017b.js">
+<link rel="modulepreload" href="/assets/lib/rich_text/cite_node-b4d2b89a.js">
+<link rel="modulepreload" href="/assets/controllers/application-f004202c.js">
+<link rel="modulepreload" href="/assets/controllers/auto_submit_controller-ee52d396.js">
+<link rel="modulepreload" href="/assets/controllers/autocomplete_controller-eaf5b07d.js">
+<link rel="modulepreload" href="/assets/controllers/badge_dot_controller-e0d733c8.js">
+<link rel="modulepreload" href="/assets/controllers/boost_delete_controller-29fd1686.js">
+<link rel="modulepreload" href="/assets/controllers/composer_controller-73c33f9f.js">
+<link rel="modulepreload" href="/assets/controllers/copy_to_clipboard_controller-07e32f4d.js">
+<link rel="modulepreload" href="/assets/controllers/drop_target_controller-3a205782.js">
+<link rel="modulepreload" href="/assets/controllers/element_removal_controller-4526910a.js">
+<link rel="modulepreload" href="/assets/controllers/filter_controller-ca9769d5.js">
+<link rel="modulepreload" href="/assets/controllers/form_controller-6f3d64db.js">
+<link rel="modulepreload" href="/assets/controllers/index-594ba2fb.js">
+<link rel="modulepreload" href="/assets/controllers/lightbox_controller-98fc07ca.js">
+<link rel="modulepreload" href="/assets/controllers/local_time_controller-7daf3d0c.js">
+<link rel="modulepreload" href="/assets/controllers/maintain_scroll_controller-1debbbfb.js">
+<link rel="modulepreload" href="/assets/controllers/messages_controller-3d90944a.js">
+<link rel="modulepreload" href="/assets/controllers/notifications_controller-746d0662.js">
+<link rel="modulepreload" href="/assets/controllers/popup_controller-9f8ea824.js">
+<link rel="modulepreload" href="/assets/controllers/presence_controller-28f14aad.js">
+<link rel="modulepreload" href="/assets/controllers/pwa_install_controller-3fe3fc5e.js">
+<link rel="modulepreload" href="/assets/controllers/read_rooms_controller-8245522a.js">
+<link rel="modulepreload" href="/assets/controllers/refresh_room_controller-4e4b6014.js">
+<link rel="modulepreload" href="/assets/controllers/reply_controller-278bb9cc.js">
+<link rel="modulepreload" href="/assets/controllers/rooms_list_controller-64840fcd.js">
+<link rel="modulepreload" href="/assets/controllers/scroll_into_view_controller-8a0bc733.js">
+<link rel="modulepreload" href="/assets/controllers/search_results_controller-aab46974.js">
+<link rel="modulepreload" href="/assets/controllers/sessions_controller-a9fdfe3d.js">
+<link rel="modulepreload" href="/assets/controllers/soft_keyboard_controller-be1da837.js">
+<link rel="modulepreload" href="/assets/controllers/sorted_list_controller-9f9ae485.js">
+<link rel="modulepreload" href="/assets/controllers/sound_controller-d3e5656e.js">
+<link rel="modulepreload" href="/assets/controllers/toggle_class_controller-b67fa681.js">
+<link rel="modulepreload" href="/assets/controllers/turbo_frame_controller-9f4f722f.js">
+<link rel="modulepreload" href="/assets/controllers/turbo_streaming_controller-04b85a80.js">
+<link rel="modulepreload" href="/assets/controllers/typing_notifications_controller-86906ab9.js">
+<link rel="modulepreload" href="/assets/controllers/unfurl_controller-4a868f9a.js">
+<link rel="modulepreload" href="/assets/controllers/upload_preview_controller-9b8b26bb.js">
+<link rel="modulepreload" href="/assets/controllers/web_share_controller-f7236b6f.js">
+<link rel="modulepreload" href="/assets/helpers/dom_helpers-0f234176.js">
+<link rel="modulepreload" href="/assets/helpers/navigator_helpers-3c9f4c31.js">
+<link rel="modulepreload" href="/assets/helpers/string_helpers-40941ba8.js">
+<link rel="modulepreload" href="/assets/helpers/timing_helpers-94d95529.js">
+<link rel="modulepreload" href="/assets/helpers/turbo_helpers-a3c01462.js">
+<link rel="modulepreload" href="/assets/models/client_message-de3c07cf.js">
+<link rel="modulepreload" href="/assets/models/file_uploader-d3a5c44b.js">
+<link rel="modulepreload" href="/assets/models/message_formatter-f39a0c5d.js">
+<link rel="modulepreload" href="/assets/models/message_paginator-b79013e3.js">
+<link rel="modulepreload" href="/assets/models/scroll_manager-ed559629.js">
+<link rel="modulepreload" href="/assets/models/typing_tracker-42a444a5.js">
+<link rel="modulepreload" href="/assets/languages/bash-13136668.js">
+<link rel="modulepreload" href="/assets/languages/css-a7f2e40b.js">
+<link rel="modulepreload" href="/assets/languages/diff-94a335fe.js">
+<link rel="modulepreload" href="/assets/languages/go-10465864.js">
+<link rel="modulepreload" href="/assets/languages/java-95f3a30f.js">
+<link rel="modulepreload" href="/assets/languages/javascript-18eb0dd8.js">
+<link rel="modulepreload" href="/assets/languages/json-60184e1b.js">
+<link rel="modulepreload" href="/assets/languages/python-8f48fd1a.js">
+<link rel="modulepreload" href="/assets/languages/ruby-287ccd0f.js">
+<link rel="modulepreload" href="/assets/languages/rust-d48f93d8.js">
+<link rel="modulepreload" href="/assets/languages/sql-642be05a.js">
+<link rel="modulepreload" href="/assets/languages/xml-fa7f1eda.js">
+<script type="module">import "application"</script>
+
+    
+  </head>
+
+  <body class="admin" data-controller="local-time lightbox">
+    <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
+
+    <nav id="nav">
+      
+    </nav>
+
+
+    <main id="main-content">
+      <turbo-frame data-turbo-permanent="true" data-controller="rooms-list read-rooms turbo-frame" data-rooms-list-unread-class="unread" data-action="presence:present@window->rooms-list#read read-rooms:read->rooms-list#read turbo:frame-load->rooms-list#loaded refresh-room:visible@window->turbo-frame#reload" id="user_sidebar" target="_top">
+  <turbo-cable-stream-source channel="Turbo::StreamsChannel" signed-stream-name="InJvb21zIg==--60a2ff565fb2226042c779b5711156db1d1cc48f89e6f59c94e4bf1da3f0945c"></turbo-cable-stream-source>
+  <turbo-cable-stream-source channel="Turbo::StreamsChannel" signed-stream-name="IloybGtPaTh2WTJGdGNHWnBjbVV2VlhObGNpOHhNamN6TWpZeE5ERTpyb29tcyI=--09af904f289002fca1337b027cd00933c76f783dd56bd0fa5d4f9cebd3500a9f"></turbo-cable-stream-source>
+
+  <div class="sidebar__container overflow-y overflow-hide-scrollbar"
+      data-controller="badge-dot"
+      data-badge-dot-unread-class="unread"
+      data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize">
+    <turbo-frame id="direct_rooms_control" target="_top">
+      <div class="directs gap overflow-x overflow-hide-scrollbar">
+        <a class="direct direct__new" data-turbo-frame="_self" href="/rooms/directs/new">
+          <span class="avatar avatar--icon">
+            <img aria-hidden="true" class="colorize--black" src="/assets/messages-add-d229e6c2.svg" width="20" height="20" />
+          </span>
+
+          <span class="direct__author flex max-width min-width border-radius pad-inline-half">
+            <span class="for-screen-reader">New</span>
+            <span class="txt-small overflow-clip">Ping</span>
+          </span>
+</a>
+        <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#updateItem">
+          
+  <a class="direct unread" id="list_rooms_direct_699448325" data-rooms-list-target="room" data-room-id="699448325" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-number="1772460000000" href="/rooms/699448325">
+      <span class="avatar">
+        <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzEyMDY0NTQ4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--24266f3c12491a2bac3805904b69ddeab0735455b7506b41b2cafe75aa085301/avatar?v=20260102190000" width="48" height="48" />
+      </span>
+
+    <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+      <span class="txt-nowrap overflow-ellipsis">
+        <span class="for-screen-reader">Ping with</span>
+          Kevin
+      </span>
+    </span>
+</a>
+  <a class="direct unread" id="list_rooms_direct_699448329" data-rooms-list-target="room" data-room-id="699448329" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-number="1772456400000" href="/rooms/699448329">
+      <div class="avatar__group">
+          <span class="avatar">
+            <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="20" height="20" />
+          </span>
+          <span class="avatar">
+            <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzEyMDY0NTQ4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--24266f3c12491a2bac3805904b69ddeab0735455b7506b41b2cafe75aa085301/avatar?v=20260102190000" width="20" height="20" />
+          </span>
+          <span class="avatar">
+            <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTUzLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--fb7c18bffeb78aebcbda5445ccc959fd4f68670b8549c1e7f84ac46d5699b15c/avatar?v=20260102180000" width="20" height="20" />
+          </span>
+      </div>
+
+    <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+      <span class="txt-nowrap overflow-ellipsis">
+        <span class="for-screen-reader">Ping with</span>
+          J, K, and J
+      </span>
+    </span>
+</a>
+  <a class="direct" id="list_rooms_direct_186869642" data-rooms-list-target="room" data-room-id="186869642" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-number="1772449380000" href="/rooms/186869642">
+      <span class="avatar">
+        <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar?v=20260125160000" width="48" height="48" />
+      </span>
+
+    <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+      <span class="txt-nowrap overflow-ellipsis">
+        <span class="for-screen-reader">Ping with</span>
+          Jason
+      </span>
+    </span>
+</a>
+        </div>
+
+        <div contents>
+          <form class="button_to" method="post" action="/rooms/directs?user_ids%5B%5D=394959859"><button class="direct borderless fill-transparent unpad" type="submit">
+  <span class="avatar">
+    <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6Mzk0OTU5ODU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--48059d515a972512c695caed73bb6d52d0b1a84609515f2e0de0748414b0da37/avatar?v=20260102200000" />
+  </span>
+
+  <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+    <span class="txt-nowrap overflow-ellipsis">
+      <span class="for-screen-reader">Start a ping with</span>
+      Bender
+    </span>
+  </span>
+</button><input type="hidden" name="authenticity_token" value="YOEXrc6Nu0e_KARoLizQgur46GRBnY_62C6QYwK-aaU113Muqg6jDJvVXy4-GbLykNr47ddm80hgapKTqY6kVA" /></form><form class="button_to" method="post" action="/rooms/directs?user_ids%5B%5D=773523956"><button class="direct borderless fill-transparent unpad" type="submit">
+  <span class="avatar">
+    <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU2LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3082ce6e219f07d789fa73ff1dbcb901211ea80c27c9b679e277ca21bd416ce4/avatar?v=20260125160100" />
+  </span>
+
+  <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+    <span class="txt-nowrap overflow-ellipsis">
+      <span class="for-screen-reader">Start a ping with</span>
+      Deploy
+    </span>
+  </span>
+</button><input type="hidden" name="authenticity_token" value="Vt6KE2NOeT3Z2y54YUnXHd-q-8WmVV3w1xX3B2CNrtUD6O6QB81hdv0mdT5xfLVtpYjrTDCuIUJvUfX3y71jJA" /></form><form class="button_to" method="post" action="/rooms/directs?user_ids%5B%5D=773523958"><button class="direct borderless fill-transparent unpad" type="submit">
+  <span class="avatar">
+    <img aria-hidden="true" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTU4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--189e4e371430cb20e4621d79d0e75e6e15256a92650ae7ab3fc6c5704a7236d5/avatar?v=20260203160000" />
+  </span>
+
+  <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+    <span class="txt-nowrap overflow-ellipsis">
+      <span class="for-screen-reader">Start a ping with</span>
+      Lonely
+    </span>
+  </span>
+</button><input type="hidden" name="authenticity_token" value="kBNsQjYxNjGECsa9OqAeZubxykr2Yk9yIvfhLdpsD6zFJQjBUrIueqD3nfsqlXwWnNPaw2CZM8Cas-PdcVzCXQ" /></form>
+        </div>
+      </div>
+    </turbo-frame>
+
+    <div class="rooms position-relative flex flex-column gap">
+      <div id="shared_rooms" contents data-controller="sorted-list">
+          <a id="list_rooms_open_104393281" data-rooms-list-target="room" data-room-id="104393281" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-name="All Pets" style="--column-gap: 0.5em" class="align-center gap room btn txt-nowrap" href="/rooms/104393281">
+  <span class="overflow-ellipsis">All Pets</span>
+</a>
+          <a id="list_rooms_closed_486777696" data-rooms-list-target="room" data-room-id="486777696" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-name="All Talk" style="--column-gap: 0.5em" class="align-center gap room btn txt-nowrap unread" href="/rooms/486777696">
+  <span class="overflow-ellipsis">All Talk</span>
+</a>
+          <a id="list_rooms_closed_699448328" data-rooms-list-target="room" data-room-id="699448328" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-name="Broken" style="--column-gap: 0.5em" class="align-center gap room btn txt-nowrap" href="/rooms/699448328">
+  <span class="overflow-ellipsis">Broken</span>
+</a>
+          <a id="list_rooms_closed_654632876" data-rooms-list-target="room" data-room-id="654632876" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-name="Designers" style="--column-gap: 0.5em" class="align-center gap room btn txt-nowrap" href="/rooms/654632876">
+  <span class="overflow-ellipsis">Designers</span>
+</a>
+          <a id="list_rooms_open_201306877" data-rooms-list-target="room" data-room-id="201306877" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-name="HQ" style="--column-gap: 0.5em" class="align-center gap room btn txt-nowrap" href="/rooms/201306877">
+  <span class="overflow-ellipsis">HQ</span>
+</a>
+          <a id="list_rooms_closed_699448326" data-rooms-list-target="room" data-room-id="699448326" data-badge-dot-target="unread" data-sorted-list-target="item" data-sorted-list-name="Quiet Corner" style="--column-gap: 0.5em" class="align-center gap room btn txt-nowrap" href="/rooms/699448326">
+  <span class="overflow-ellipsis">Quiet Corner</span>
+</a>
+      </div>
+
+        <a class="rooms__new-btn btn room align-center gap txt-reversed" aria-label="New Chat Room" href="/rooms/opens/new">
+          <img aria-hidden="true" style="view-transition-name: new-room" src="/assets/add-f232d8a6.svg" width="20" height="20" />
+</a>    </div>
+
+    <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
+      <img aria-hidden="true" src="/assets/menu-5462dfd3.svg" width="20" height="20" />
+      <span class="for-screen-reader">Open menu</span>
+    </button>
+  </div>
+
+  <div class="flex align-end sidebar__tools gap justify-end">
+    <a class="btn avatar flex-item-no-shrink sidebar__tool" href="/users/me/profile">
+      <img aria-hidden="true" style="view-transition-name: avatar-127326141" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar?v=20260102160000" width="48" height="48" />
+      <span class="for-screen-reader">My Settings</span>
+</a>
+    <a class="btn align-center gap txt-reversed sidebar__tool" href="/account/edit">
+      <img aria-hidden="true" style="view-transition-name: account-settings" src="/assets/settings-aee56972.svg" width="20" height="20" />
+      <span class="for-screen-reader">Account Settings</span>
+</a>  </div>
+</turbo-frame>
+
+      <footer id="footer">
+        
+      </footer>
+    </main>
+
+    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+      
+    </aside>
+
+    <dialog class="lightbox" aria-label="Image Viewer (Press escape to close)" data-lightbox-target="dialog" data-action="close->lightbox#reset">
+  <img src="" class="lightbox__image" data-lightbox-target="zoomedImage" />
+
+  <form method="dialog" class="lightbox__btn">
+    <button class="btn">
+      <img aria-hidden="true" src="/assets/remove-0e7a045d.svg" />
+      <span class="for-screen-reader">Close image viewer</span>
+    </button>
+  </form>
+
+  <a href="" class="lightbox__btn--download btn hide-in-ios-pwa" data-lightbox-target="download">
+    <img aria-hidden="true" src="/assets/download-04029899.svg" />
+    <span class="for-screen-reader">Download file</span>
+  </a>
+
+  <button class="lightbox__btn--share btn"
+      data-controller="web-share"
+      data-action="web-share#share"
+      data-web-share-files-value=""
+      data-lightbox-target="share">
+    <img aria-hidden="true" src="/assets/share-bf28da4f.svg" />
+    <span class="for-screen-reader">Share file</span>
+  </button>
+</dialog>
+
+
+    <a href="https://once.com" id="app-logo" target="_blank" aria-label="Once software from 37signals home page">
+      <img alt="Campfire logo" width="256" height="216" src="/assets/campfire-icon-3d9986c5.png" />
+    </a>
+  </body>
+</html>
