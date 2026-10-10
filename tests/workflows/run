@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+# Run ported system tests as Playwright workflows against Rails reference, C# candidate, or both.
+#
+# Usage:
+#   tests/workflows/run                      # Run all workflows against both reference (3100) and candidate (3200)
+#   tests/workflows/run --server URL         # Run workflows against a specific server URL
+#   tests/workflows/run --suite NAME         # Run only a specific suite (boosting_messages, composer, etc.)
+#   tests/workflows/run --report FILE        # Write JSON results to FILE
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+cd "$ROOT"
+
+SERVER=""
+SUITE=""
+REPORT=""
+EXTRA_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --server)
+      SERVER="$2"
+      shift 2
+      ;;
+    --suite)
+      SUITE="$2"
+      shift 2
+      ;;
+    --report)
+      REPORT="$2"
+      shift 2
+      ;;
+    http://*|https://*)
+      SERVER="$1"
+      shift
+      ;;
+    *)
+      EXTRA_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# Ensure node_modules installed
+if [ ! -d "tests/workflows/node_modules" ]; then
+  echo "Installing workflow test dependencies..."
+  npm --prefix tests/workflows install
+fi
+
+# Build seed if not already built
+if [ ! -f "parity/.seed/default/db/production.sqlite3" ]; then
+  echo "Building default parity seed..."
+  SEED_RECORD=0 parity/bin/seed build default
+fi
+
+# Build assets if not present
+if [ ! -d "artifacts/assets/public" ]; then
+  echo "Building static assets..."
+  bin/build-assets
+fi
+
+wait_for_server() {
+  local url="$1"
+  for _ in $(seq 1 60); do
+    if curl -fsS -o /dev/null "$url/up" 2>/dev/null; then
+      return 0
+    fi
+    sleep 0.5
+  done
+  echo "Timed out waiting for $url to come up" >&2
+  return 1
+}
+
+run_against_server() {
+  local server_url="$1"
+  local runner_args=("--server" "$server_url")
+  if [ -n "$SUITE" ]; then
+    runner_args+=("--suite" "$SUITE")
+  fi
+  if [ -n "$REPORT" ]; then
+    runner_args+=("--report" "$REPORT")
+  fi
+  if [ ${#EXTRA_ARGS[@]} -gt 0 ]; then
+    runner_args+=("${EXTRA_ARGS[@]}")
+  fi
+
+  node tests/workflows/runner.mjs "${runner_args[@]}"
+}
+
+if [ -n "$SERVER" ]; then
+  echo "Running Playwright workflows against $SERVER..."
+  run_against_server "$SERVER"
+  exit 0
+fi
+
+echo "=== Running Playwright workflows against both reference and candidate ==="
+
+REF_PORT=3100
+CAND_PORT=3200
+CAND_PID=""
+
+cleanup() {
+  echo "Cleaning up servers..."
+  if [ -n "$CAND_PID" ] && kill -0 "$CAND_PID" 2>/dev/null; then
+    kill -TERM "$CAND_PID" 2>/dev/null || true
+    wait "$CAND_PID" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+
+echo "1. Starting Rails reference on port $REF_PORT..."
+parity/bin/reference down --port "$REF_PORT" >/dev/null 2>&1 || true
+parity/bin/reference up --seed default --port "$REF_PORT"
+wait_for_server "http://127.0.0.1:$REF_PORT"
+
+echo "2. Running workflows against Rails reference..."
+run_against_server "http://127.0.0.1:$REF_PORT"
+echo "✔ All workflows passed against Rails reference"
+
+echo "3. Starting C# candidate on port $CAND_PORT..."
+CAND_DIR="parity/.seed/.instances/$CAND_PORT"
+rm -rf "$CAND_DIR"
+mkdir -p "$CAND_DIR/db" "$CAND_DIR/storage"
+cp -a parity/.seed/default/db/. "$CAND_DIR/db/"
+cp -a parity/.seed/default/storage/. "$CAND_DIR/storage/"
+
+dotnet run tests/workflows/Server.cs -- "$CAND_PORT" "$CAND_DIR/db/production.sqlite3" "$CAND_DIR/storage" artifacts/assets >/dev/null 2>&1 &
+CAND_PID=$!
+wait_for_server "http://127.0.0.1:$CAND_PORT"
+
+echo "4. Running workflows against C# candidate..."
+run_against_server "http://127.0.0.1:$CAND_PORT"
+echo "✔ All workflows passed against C# candidate"
+
+echo "=== All workflows passed against both reference and candidate! ==="

@@ -5,7 +5,8 @@
 # (S=1, M=2, L=4 points) and keep each dependency chain with one agent to avoid handoffs.
 #
 # Rules the queues encode:
-# - Security work is reviewed across vendors: Claude writes R04 and RT04, Grok reviews them in Q08.
+# - Security work is reviewed across vendors: R04 and RT04 were written by Claude, GLM, Grok and Gemini,
+#   so DeepSeek (dspro) reviews them in Q08.
 # - B02, B03 and B04 are `exclusive`: they start only on an idle machine and nothing else starts
 #   while they run, so build load never leaks into a measurement.
 # - B05 and X02 are labelled `human` and never appear here.
@@ -15,8 +16,8 @@ max_attempts: 3
 retry_after_minutes: 45
 poll_seconds: 120
 exclusive: [B02, B03, B04]
-# Allowed to start while a benchmark task drains the machine: R04 was already running.
-drain_exempt: [R04]
+# Allowed to start while a benchmark task drains the machine: they were already running.
+drain_exempt: [R04, M10]
 
 agents:
   claude:
@@ -34,7 +35,8 @@ agents:
     command: [agy, -p, "{prompt}", --model, gemini-3.8-flash-high, --dangerously-skip-permissions]
     # The route chain: small features, the coverage gate, then the Playwright and cable gates.
     slots: 2
-    queue: [M09, Q06, Q02, Q07, Q05, X01]
+    # R04 moved here from grok when Grok's usage balance ran out.
+    queue: [R04, M09, Q06, Q02, Q07, Q05, X01]
 
   grok:
     model: Grok 4.7 (high)
@@ -42,7 +44,9 @@ agents:
               --output-format, plain, -p, "{prompt}"]
     # The benchmark chain, plus the cross-vendor security review of R04 and RT04.
     slots: 2
-    queue: [VS01, B06, B02, B03, B04, Q08]
+    # R04 and M10 moved here when Fireworks (glm, deepseek) ran out of credits, so Q08's review
+    # of R04 went to dspro: a reviewer can't review its own work.
+    queue: [M10, VS01, B06, B02, B03, B04]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
@@ -52,7 +56,8 @@ agents:
     slots: 2
     # R04, taken over from Claude, also fixes what its fuzzer found in merged tasks' code.
     # P02 and Q04 moved to dspro so glm can focus on R04 and M10.
-    queue: [R04, M10]
+    # Out of Fireworks credits: R04 and M10 moved to grok.
+    queue: []
 
   deepseek:
     model: DeepSeek V4.1 Flash via OpenCode
@@ -60,7 +65,8 @@ agents:
               "fireworks-ai/accounts/fireworks/models/deepseek-v4p1-flash", "{prompt}"]
     # Added to take load off Claude's quota.
     slots: 1
-    queue: [Q09]
+    # Out of Fireworks credits: Q09 moved to dspro.
+    queue: []
 
   dspro:
     model: DeepSeek V4 Pro via OpenRouter (OpenCode)
@@ -68,4 +74,4 @@ agents:
               "{prompt}"]
     # Cheap ($0.21/M in, $0.02/M cache read); takes P02 (continuing glm's attempt) and Q04.
     slots: 2
-    queue: [P02, Q04]
+    queue: [P02, Q09, Q04, Q08]

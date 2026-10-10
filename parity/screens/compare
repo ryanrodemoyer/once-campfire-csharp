@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Compare the Rails reference against the C# candidate, state by state, using the Rust port's
+# Playwright capture engine.
+#
+#   parity/screens/compare [--seed NAME] [--only GLOBS] [--matrix lean|full] [--workers N]
+#                          [--out DIR] [--no-allowlist]
+#
+# Starts both servers with their clocks frozen at the seed's instant (so anything derived from the
+# clock — transfer link expiries, QR codes, timestamps — is the same on both), captures every
+# state in the inventory, compares them, and writes a report. Mutating states get fresh isolated
+# servers of their own (--isolated N, default 3).
+#
+# The lean matrix (default): Chromium, desktop and phone, light and dark, plus the smoke set on
+# Firefox and WebKit. The full matrix: the whole support matrix, for release checks.
+#
+# Requires:
+#   parity/bin/reference build   (reference image)
+#   parity/screens/candidate build (candidate image)
+#   parity/bin/seed build        (seeds)
+#
+# PORT REFERENCE_PORT CANDIDATE_PORT set the base ports (default 4111, 4112).
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+PARITY=$ROOT/parity
+REFERENCE_RUST=$ROOT/reference-rust
+CAPTURE_PARITY=$REFERENCE_RUST/parity
+
+# Source our own capture runtime (mounts both project roots)
+source "$PARITY/screens/run.sh"
+
+SEED=default TIME="" ONLY="" MATRIX=lean WORKERS="" OUT="" NO_ALLOWLIST="" ISOLATED=3 BREAKPOINTS="include"
+REF_PORT=${REFERENCE_PORT:-4111}
+CAND_PORT=${CANDIDATE_PORT:-4112}
+REFERENCE=$PARITY/bin/reference
+CANDIDATE=$PARITY/screens/candidate
+
+die() { echo "screens/compare: $*" >&2; exit 1; }
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --seed)       SEED=$2; shift 2 ;;
+    --time)       TIME=$2; shift 2 ;;
+    --only)       ONLY=$2; shift 2 ;;
+    --matrix)     MATRIX=$2; shift 2 ;;
+    --workers)    WORKERS=$2; shift 2 ;;
+    --out)        OUT=$2; shift 2 ;;
+    --isolated)   ISOLATED=$2; shift 2 ;;
+    --breakpoints) BREAKPOINTS=$2; shift 2 ;;
+    --no-allowlist) NO_ALLOWLIST=1; shift ;;
+    *)            die "unknown option: $1" ;;
+  esac
+done
+
+# Seed clock
+seed_clock() {
+  local labels=$PARITY/.seed/$SEED/labels.json
+  [ -f "$labels" ] || die "no seed $SEED at $labels; run parity/bin/seed build $SEED"
+  python3 -c 'import json,sys; l=json.load(open(sys.argv[1])); print(l.get("clock.now") or (l.get("clock") or {}).get("now") or "")' "$labels"
+}
+
+clock=${TIME:-$(seed_clock)}
+[ -n "$clock" ] || die "seed $SEED records no clock.now; pass --time"
+
+mkdir -p "$PARITY/out"
+
+# Build capture args. Use the C# project's seed directory (accessible inside Docker because run.sh
+# mounts both the C# and Rust project roots) and our allowlist.
+args=(
+  --seed "$SEED" --time "$clock" --matrix "$MATRIX"
+  --seed-dir "$PARITY/.seed"
+  --expected "http://127.0.0.1:$REF_PORT" --actual "http://127.0.0.1:$CAND_PORT"
+  --expected-name reference --actual-name candidate
+  --isolated "$ISOLATED" --breakpoints "$BREAKPOINTS"
+  --allowlist "$PARITY/screens/allowlist.yml"
+)
+[ -n "$ONLY" ] && args+=(--only "$ONLY")
+[ -n "$WORKERS" ] && args+=(--workers "$WORKERS")
+[ -n "$OUT" ] && args+=(--out "$OUT")
+[ -n "$NO_ALLOWLIST" ] && args+=(--no-allowlist)
+
+# Ports: isolated slots k = 1..N on P + 1000 * k (parity/capture/run.ts isolatedUrl)
+REF_PORTS=("$REF_PORT") CAND_PORTS=("$CAND_PORT")
+for k in $(seq 1 "$ISOLATED"); do
+  REF_PORTS+=($((REF_PORT + 1000 * k)))
+  CAND_PORTS+=($((CAND_PORT + 1000 * k)))
+done
+
+# Cleanup
+cleanup() {
+  parity_cleanup
+  for p in "${REF_PORTS[@]}"; do "$REFERENCE" down --port "$p" >/dev/null 2>&1 || true; done
+  for p in "${CAND_PORTS[@]}"; do "$CANDIDATE" down --port "$p" >/dev/null 2>&1 || true; done
+}
+trap cleanup EXIT INT TERM
+
+# Start the reset loop for mutating states.
+# The capture engine's isolatedUrl maps slot k to port P + 1000 * k.
+# Our candidate runs a fresh instance there, frozen at the seed instant.
+start_reset_loop "'$CANDIDATE' reset --port {port} --seed '$SEED' --time '$clock'"
+
+echo "screens/compare: reference :$REF_PORT vs candidate :$CAND_PORT (seed $SEED, clock frozen at $clock)" >&2
+
+# Start reference and candidate in parallel, both frozen at the seed instant
+"$REFERENCE" up --seed "$SEED" --port "$REF_PORT" --time "$clock" --freeze >/dev/null &
+ref_pid=$!
+"$CANDIDATE" up --seed "$SEED" --port "$CAND_PORT" --time "$clock" --freeze >/dev/null
+wait "$ref_pid" || die "reference didn't come up"
+
+# Run the comparison inside the Playwright image
+status=0
+run_in_image compare "${args[@]}" --reset "$RESET_ARG" --isolated "$ISOLATED" &
+compare_pid=$!
+wait "$compare_pid" || status=$?
+
+stop_reset_loop
+
+exit $status
