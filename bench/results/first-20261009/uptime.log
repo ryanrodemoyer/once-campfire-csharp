@@ -1,0 +1,12 @@
+22:27:30 reference rep 1 start:  22:27:30 up 4 days,  7:52,  1 user,  load average: 1.81, 2.64, 2.60
+22:33:36 reference rep 1 end:    22:33:36 up 4 days,  7:59,  1 user,  load average: 3.80, 3.61, 3.20
+22:33:36 csharp rep 1 start:  22:33:36 up 4 days,  7:59,  1 user,  load average: 3.80, 3.61, 3.20
+22:37:11 csharp rep 1 end:    22:37:11 up 4 days,  8:02,  1 user,  load average: 4.19, 3.72, 3.28
+22:37:11 csharp rep 2 start:  22:37:11 up 4 days,  8:02,  1 user,  load average: 4.19, 3.72, 3.28
+22:41:26 csharp rep 2 end:    22:41:26 up 4 days,  8:06,  1 user,  load average: 4.39, 3.66, 3.30
+22:41:26 reference rep 2 start:  22:41:26 up 4 days,  8:06,  1 user,  load average: 4.39, 3.66, 3.30
+22:45:22 reference rep 2 end:    22:45:22 up 4 days,  8:10,  1 user,  load average: 4.27, 3.20, 3.12
+22:45:22 reference rep 3 start:  22:45:22 up 4 days,  8:10,  1 user,  load average: 4.27, 3.20, 3.12
+22:49:18 reference rep 3 end:    22:49:18 up 4 days,  8:14,  1 user,  load average: 3.12, 2.78, 2.93
+22:49:18 csharp rep 3 start:  22:49:18 up 4 days,  8:14,  1 user,  load average: 3.12, 2.78, 2.93
+22:52:53 csharp rep 3 end:    22:52:53 up 4 days,  8:18,  1 user,  load average: 4.66, 3.40, 3.10
