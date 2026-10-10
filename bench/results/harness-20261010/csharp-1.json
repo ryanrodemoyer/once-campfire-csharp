@@ -1,0 +1,85 @@
+{
+ "app": "csharp",
+ "rep": 1,
+ "cold_start_ms": 214,
+ "validated": true,
+ "memory": {
+  "idle_current_mb": 77,
+  "idle_anon_mb": 64,
+  "peak_current_mb": 147,
+  "peak_anon_mb": 123,
+  "cgroup_peak_mb": 149
+ },
+ "http": [
+  {
+   "avg_bytes": 83,
+   "conc": 1,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 6.011,
+    "mean_ms": 0.18,
+    "n": 43146,
+    "p50_ms": 0.166,
+    "p90_ms": 0.244,
+    "p99_ms": 0.414
+   },
+   "ok": 43146,
+   "path": "/up",
+   "rps": 5393.1,
+   "secs": 8.0,
+   "statuses": {
+    "200": 43146
+   },
+   "route": "up"
+  },
+  {
+   "avg_bytes": 83,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 10.463,
+    "mean_ms": 1.2,
+    "n": 106730,
+    "p50_ms": 1.108,
+    "p90_ms": 1.897,
+    "p99_ms": 2.855
+   },
+   "ok": 106730,
+   "path": "/up",
+   "rps": 13339.8,
+   "secs": 8.0,
+   "statuses": {
+    "200": 106730
+   },
+   "route": "up"
+  },
+  {
+   "avg_bytes": 83,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 21.055,
+    "mean_ms": 4.62,
+    "n": 110698,
+    "p50_ms": 4.375,
+    "p90_ms": 7.427,
+    "p99_ms": 11.007
+   },
+   "ok": 110698,
+   "path": "/up",
+   "rps": 13831.7,
+   "secs": 8.0,
+   "statuses": {
+    "200": 110698
+   },
+   "route": "up"
+  }
+ ],
+ "cable": [],
+ "upload": {},
+ "loadavg_start": "1.47 2.65 3.09 2/3827 1608657",
+ "loadavg_end": "4.45 3.21 3.25 2/3888 1609752"
+}
