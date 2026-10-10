@@ -1006,6 +1006,49 @@ tasks:
       - Signing out sends the reference's disconnect to the user's cable connections
       - bench/bin/run --apps reference,csharp --routes post_message --reps 1 passes validation
 
+  - id: P06
+    title: Deploy to a single Google Cloud VM
+    lane: P
+    milestone: M4
+    size: M
+    deps: [P01, P05]
+    owns: [docs/deploy-gcp.md, bin/deploy-gcp, tests/deploy-gcp/]
+    refs: [Dockerfile, src/Campfire.Server/Cli/ServerSettings.cs, reference/README.md]
+    deliver: >
+      A public runbook (docs/deploy-gcp.md) and a script (bin/deploy-gcp) that run the production
+      image on one Compute Engine VM with a persistent disk, the way ONCE Campfire is meant to run:
+      one box, SQLite and uploads on local disk, Thruster getting a Let's Encrypt certificate from
+      TLS_DOMAIN. Explain why Cloud Run doesn't fit (no persistent disk for SQLite, one instance
+      only, CPU throttling stalls jobs) and mention Litestream as the route if it must.
+      Subcommands: `setup` (Artifact Registry repo, static IP, firewall rule for 80/443 on a
+      network tag, VM with Docker, a dedicated service account with only
+      roles/artifactregistry.reader, a daily disk snapshot schedule), `deploy` (build, push, pull
+      on the VM, restart with --restart unless-stopped), `logs`, `ssh`, `backup` (snapshot now)
+      and `status`. Idempotent: re-running `setup` changes nothing that exists. `--dry-run`
+      prints every gcloud and docker command without running it. Default to the free-tier
+      machine (e2-micro, pd-standard up to 30 GB in us-central1, us-west1 or us-east1) and say
+      what each resource costs. Cover custom domains, including Cloudflare's proxy (SSL mode Full
+      or Full (strict), never Flexible, which loops), and how to update, back up, restore from a
+      snapshot and rotate SECRET_KEY_BASE (it signs everyone out).
+      Public and secret-free: the repo is public. Every project id, region, zone, domain, IP and
+      name comes from flags, environment variables or a config file outside the repo
+      (~/.config/campfire/deploy-gcp.env by default), with placeholders like PROJECT_ID and
+      chat.example.com in the docs. SECRET_KEY_BASE and VAPID keys are generated on the VM into a
+      root-only env file and never printed, logged, passed as a command-line argument, stored in
+      instance metadata or copied off the VM. No service account keys: the VM pulls with its own
+      service account. Don't run the script against a real Google Cloud project; test it with
+      --dry-run and a stubbed gcloud and docker on PATH.
+    accept:
+      - Every subcommand's --dry-run output is checked by tests under tests/deploy-gcp/ with stub
+        gcloud and docker, including that setup is idempotent and that no secret appears in any
+        command line or output
+      - shellcheck passes on bin/deploy-gcp
+      - A scan of the committed files finds no IP address, project id, email, real domain or key
+        material, only placeholders; the command and its output are in the status file
+      - docs/deploy-gcp.md takes a reader with gcloud installed from nothing to a running HTTPS
+        site, and covers update, backup, restore, custom domain with Cloudflare, secret rotation,
+        costs and teardown
+
   - id: P02
     title: Pinned media toolchain in the image
     lane: P

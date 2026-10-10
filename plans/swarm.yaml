@@ -41,7 +41,7 @@ agents:
     # R04 moved here from grok when Grok's usage balance ran out.
     # P05 wires the real cable server, job runner and revoker into `campfire server`.
     # Q10 finishes fixes that agents requested on issues after those issues closed.
-    queue: [R04, M09, Q06, Q02, Q07, Q05, P05, Q10, X01]
+    queue: [R04, M09, Q06, Q02, Q07, Q05, P05, Q10, P06, X01]
 
   grok:
     model: Grok 4.7 (high)
