@@ -38,8 +38,8 @@ agents:
               --permission-mode, bypassPermissions]
     effort: medium
     slots: 2
-    # Fresh quota: the pin, forgery protection, the page cache and perf round 2.
-    queue: [U01, U03, U07, B08]
+    # Near its quota: finishes U01 only. U03, U07 and B08 moved to gemini.
+    queue: [U01]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
@@ -49,8 +49,9 @@ agents:
     # R04 moved here from grok when Grok's usage balance ran out.
     # P05 wires the real cable server, job runner and revoker into `campfire server`.
     # Q10 finishes fixes that agents requested on issues after those issues closed.
-    # Batch 2: the upstream ports and gates, the verification harness and AOT.
-    queue: [U02, U04, U05, U06, U08, Q11, Q12, B07, B09, X01]
+    # Batch 2: the upstream ports and gates, the verification harness and AOT; and, from claude,
+    # forgery protection (U03), the page cache (U07) and perf round 2 (B08).
+    queue: [U02, U03, U04, U05, U07, Q11, Q12, B07, B09, B08, X01]
 
   grok:
     model: Grok 4.7 (high)
@@ -99,4 +100,14 @@ agents:
               "{prompt}"]
     # Cheap and fast ($0.10/M in, $0.50/M out) for small, well-specified fixes.
     slots: 2
-    queue: [P07, Q14, R06, P08]
+    # U08 (WAL checkpoint) moved here from gemini to shorten gemini's queue.
+    queue: [P07, Q14, R06, P08, U08]
+
+  vertex:
+    model: Gemini 3.8 Flash (high) via Vertex AI (OpenCode)
+    command: [opencode, run, --standalone, --auto, -m, "google-vertex/gemini-3.8-flash#high",
+              "{prompt}"]
+    # Paid from a small Vertex credit: one slot, one medium task taken off gemini's queue.
+    # Check spend with `opencode stats --standalone --days 0 --models`.
+    slots: 1
+    queue: [U06]
