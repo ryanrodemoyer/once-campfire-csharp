@@ -39,15 +39,25 @@ public static class SchemaPreparer
             {
                 throw new PendingMigrationsException(pending);
             }
+            EnsureAdditions(session);
+            RoomMessagesCount.Ensure(session);
             return PrepareResult.UpToDate;
         }
 
         WriteTransaction.Run(session, transaction =>
         {
             LoadSchema(transaction.Session, environment, clock);
+            EnsureAdditions(transaction.Session);
+            RoomMessagesCount.Ensure(transaction.Session);
             return true;
         });
         return PrepareResult.Loaded;
+    }
+
+    public static void EnsureAdditions(SqliteSession session)
+    {
+        session.Execute("""CREATE INDEX IF NOT EXISTS "index_messages_on_room_id_and_created_at" ON "messages" ("room_id", "created_at")""");
+        session.Execute("""CREATE INDEX IF NOT EXISTS "index_messages_on_room_id_and_updated_at" ON "messages" ("room_id", "updated_at")""");
     }
 
     public static List<string> PendingMigrations(SqliteSession session)
@@ -68,8 +78,9 @@ public static class SchemaPreparer
         }
 
         // ConnectionAdapters::SchemaStatements#assume_migrated_upto_version inserts the schema's
-        // version first, then the other migrations, newest first.
-        foreach (var version in RailsSchema.MigrationVersions.Reverse())
+        // version first, then the other migrations in ascending order.
+        session.Execute("""INSERT INTO "schema_migrations" ("version") VALUES (@version)""", ("@version", RailsSchema.MigrationVersions[^1]));
+        foreach (var version in RailsSchema.MigrationVersions.Take(RailsSchema.MigrationVersions.Length - 1))
         {
             session.Execute("""INSERT INTO "schema_migrations" ("version") VALUES (@version)""", ("@version", version));
         }

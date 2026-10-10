@@ -46,13 +46,14 @@ public sealed record Room(
     RoomType Type,
     long CreatorId,
     DateTimeOffset CreatedAt,
-    DateTimeOffset UpdatedAt)
+    DateTimeOffset UpdatedAt,
+    long MessagesCount = 0)
 {
     // The polymorphic name Rails gives rooms (`base_class`), e.g. in GlobalIDs.
     public const string ModelName = "Room";
 
     internal const string Columns = """
-        "rooms"."id", "rooms"."name", "rooms"."type", "rooms"."creator_id", "rooms"."created_at", "rooms"."updated_at"
+        "rooms"."id", "rooms"."name", "rooms"."type", "rooms"."creator_id", "rooms"."created_at", "rooms"."updated_at", "rooms"."messages_count"
         """;
 
     public bool IsOpen => Type == RoomType.Open;
@@ -71,5 +72,6 @@ public sealed record Room(
         RoomTypes.FromClassName(reader.GetString(at + 2)),
         reader.GetInt64(at + 3),
         Db.ReadTime(reader, at + 4),
-        Db.ReadTime(reader, at + 5));
+        Db.ReadTime(reader, at + 5),
+        reader.GetInt64(at + 6));
 }
