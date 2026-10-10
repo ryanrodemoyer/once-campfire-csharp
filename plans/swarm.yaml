@@ -18,6 +18,9 @@ poll_seconds: 120
 exclusive: [B02, B03, B04]
 # Allowed to start while a benchmark task drains the machine: they were already running.
 drain_exempt: [R04, M10]
+# May edit src/ and tests/ beyond their `owns`: performance work touches code all over the app, every
+# owner has merged, and exclusive tasks run alone.
+edit_anywhere: [B03]
 
 agents:
   claude:

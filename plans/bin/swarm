@@ -202,6 +202,11 @@ def prompt_for(agent, config, task, issue, path, branch, prs, state):
     machine = ("\nThis is a benchmark task. The swarm has reserved the machine for you: no other "
                "agent is running, so measurements are not disturbed by build load.\n"
                if exclusive else "")
+    owns_rule = ("1. Besides the paths under `owns`, you may edit any file under src/ and tests/: the tasks\n"
+                 "   that own them have merged and you have the machine to yourself.\n"
+                 if task["id"] in config.get("edit_anywhere", []) else
+                 "1. Edit only the paths listed under the task's `owns`. If you need a change elsewhere, comment on\n"
+                 "   the owning task's issue instead.\n")
     return f"""You are the {agent} worker in a local multi-vendor swarm porting Campfire to C#.
 
 Your task is {task['id']}: {task['title']} (GitHub issue #{issue}).
@@ -215,9 +220,7 @@ task card:
 {card}
 
 How to finish:
-1. Edit only the paths listed under the task's `owns`. If you need a change elsewhere, comment on
-   the owning task's issue instead.
-2. The Rails app in reference/ is the oracle: expected output comes from golden vectors, replay and
+{owns_rule}2. The Rails app in reference/ is the oracle: expected output comes from golden vectors, replay and
    the reference, never from your own reading of the docs. Port the relevant reference/test cases
    and run controller tests with CSRF protection on.
 3. Run bin/check until it is green. Its Ruby step runs through Docker; that is expected.
