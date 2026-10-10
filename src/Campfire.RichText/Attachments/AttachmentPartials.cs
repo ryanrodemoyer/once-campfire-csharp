@@ -17,7 +17,7 @@ public static partial class AttachmentPartials
     /// Renders <paramref name="attachment"/>'s partial. <paramref name="renderContent"/> renders a
     /// content attachment's own content (<c>ContentAttachment#to_html</c>).
     /// </summary>
-    public static string Render(Attachment attachment, Func<string, string> renderContent)
+    public static string Render(Attachment attachment, Func<string, string> renderContent, RenderContext context)
     {
         var html = attachment.Attachable switch
         {
@@ -26,7 +26,7 @@ public static partial class AttachmentPartials
             ContentAttachment content => RenderContentAttachment(content, renderContent),
             RemoteImage image => RenderRemoteImage(image, attachment.Caption),
             RemoteVideo video => RenderRemoteVideo(video, attachment.Caption),
-            MissingAttachable missing => RenderMissingAttachable(missing),
+            MissingAttachable missing => RenderMissingAttachable(missing, context),
             _ => throw new InvalidOperationException($"Unknown attachable {attachment.Attachable}"),
         };
         return RubyText.Chomp(html);
@@ -89,10 +89,18 @@ public static partial class AttachmentPartials
     /// as a concern answer; <c>User</c> includes it through a plain module, so a mention of a
     /// deleted user raises (and <c>message_presentation</c> renders nothing).
     /// </summary>
-    static string RenderMissingAttachable(MissingAttachable missing) =>
-        missing.SignedModel is null
+    static string RenderMissingAttachable(MissingAttachable missing, RenderContext context)
+    {
+        // The record exists: render its partial (messages/_message). The caller sanitizes it.
+        if (missing.RenderModelId is not null && context.RenderLocatedModel is { } render)
+        {
+            return render(missing.SignedModel ?? "", missing.RenderModelId, context);
+        }
+
+        return missing.SignedModel is null
             ? "☒"
             : throw new RichTextRaisedException($"NoMethodError: undefined method 'to_missing_attachable_partial_path' for class {missing.SignedModel}");
+    }
 
     /// <summary>
     /// <c>image_tag(url, width:, height:)</c> for a remote image. A source that isn't a URL goes

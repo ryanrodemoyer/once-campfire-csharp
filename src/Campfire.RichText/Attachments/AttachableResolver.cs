@@ -23,6 +23,12 @@ public abstract record SignedLookup
     /// <summary>The signature verified (<c>SignedGlobalID.parse</c> succeeds) but the record is gone.</summary>
     public sealed record MissingRecord(string ModelName) : SignedLookup;
 
+    /// <summary>
+    /// The signature verified and the record exists, and it isn't a <c>User</c>. Action Text renders
+    /// that record's own partial (<c>messages/_message</c> for a <c>Message</c>).
+    /// </summary>
+    public sealed record Record(string ModelName, string ModelId) : SignedLookup;
+
     /// <summary>Bad signature, wrong purpose, expired, or not an SGID at all.</summary>
     public sealed record Invalid : SignedLookup;
 
@@ -57,7 +63,12 @@ public interface IAttachableResolver
     MentionUser? FindGid(string gid, out GidLookupResult result);
 }
 
-/// <summary>Everything rendering reads from the request and the app.</summary>
-/// <param name="Resolver">The app's records.</param>
-/// <param name="RequestHost"><c>Current.request_host</c></param>
-public sealed record RenderContext(IAttachableResolver Resolver, string? RequestHost);
+/// <summary>
+/// Everything rendering reads from the request and the app. <paramref name="RenderLocatedModel"/>
+/// renders a located record's partial; without it, a verified record that isn't a user still
+/// raises <c>to_missing_attachable_partial_path</c>.
+/// </summary>
+public sealed record RenderContext(
+    IAttachableResolver Resolver,
+    string? RequestHost,
+    Func<string, string, RenderContext, string>? RenderLocatedModel = null);

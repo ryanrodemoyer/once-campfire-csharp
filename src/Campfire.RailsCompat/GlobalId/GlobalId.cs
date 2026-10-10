@@ -1,51 +1,119 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using Campfire.RailsCompat.Crypto;
 
 namespace Campfire.RailsCompat.GlobalId;
 
 /// <summary>
-/// A parsed GlobalID URI (<c>URI::GID</c>): <c>gid://&lt;app&gt;/&lt;Model&gt;/&lt;id&gt;[?params]</c>.
-/// Query parameters (e.g. <c>?expires_in</c>) are dropped.
+/// A parsed GlobalID URI (<c>URI::GID</c>, globalid 1.3.0): <c>gid://&lt;app&gt;/&lt;Model&gt;/&lt;id&gt;[?params]</c>.
+/// The app is an RFC2396 host, the path segments are RFC2396 path segments (<c>:</c> included, so
+/// <c>Rooms::Open</c> parses), and the model id is <c>CGI.unescape</c>d. Query parameters
+/// (e.g. <c>?expires_in</c>) and a fragment are accepted and dropped. A string
+/// <c>URI::GID.parse</c> rejects — a trailing newline, an underscore in the host, a non-URI
+/// character — is null, which is what <c>GlobalID.parse</c> returns after rescuing
+/// <c>URI::Error</c>.
 /// </summary>
-public sealed record GlobalId(string App, string ModelName, string Id)
+public sealed partial record GlobalId(string App, string ModelName, string Id)
 {
     public const string DefaultApp = "campfire";
+
+    /// <summary>
+    /// True when the model id is more than one path segment. Rails then holds an array, and
+    /// <c>find</c> does not cast it with <c>to_i</c>.
+    /// </summary>
+    public bool Composite { get; init; }
+
+    // RFC2396 via URI::GID (globalid 1.3.0). The scheme must be the lowercase `gid`
+    // (`check_scheme`). Userinfo (`gid://cao@fire/...`) is accepted and dropped; the app is the
+    // host. Underscore is legal in the query and not in the host. The query is dropped, and
+    // URI.split accepts any byte there, including controls (`gid://app/User/1?\x7Fx`).
+    [GeneratedRegex(
+        @"\Agid://(?:(?:[A-Za-z0-9\-_.!~*'();:&=+$,]|%[0-9A-Fa-f]{2})*@)?(?<host>(?:[A-Za-z0-9\-.]|%[0-9A-Fa-f]{2})+)(?<path>(?:/(?:[A-Za-z0-9\-_.!~*'():@&=+$,]|%[0-9A-Fa-f]{2})*)+)(?:\?[\s\S]*)?(?:#(?<fragment>[^\s#]*))?\z",
+        RegexOptions.CultureInvariant)]
+    private static partial Regex GidUri();
 
     public static GlobalId Create(string modelName, object id, string app = DefaultApp) =>
         new(app, modelName, id.ToString()!);
 
-    /// <summary>Parses a GID string: <c>gid://&lt;app&gt;/&lt;Model&gt;/&lt;id&gt;[?params]</c>.</summary>
+    /// <summary>Parses a GID string the way <c>GlobalID.parse</c> accepts a <c>gid://</c> URI.</summary>
     public static GlobalId? Parse(string? gid)
     {
-        if (string.IsNullOrEmpty(gid) || !gid.StartsWith("gid://", StringComparison.Ordinal))
+        if (string.IsNullOrEmpty(gid))
         {
             return null;
         }
 
-        var rest = gid["gid://".Length..];
-        var queryIdx = rest.IndexOf('?');
-        if (queryIdx >= 0)
+        // URI::RFC3986_PARSER.split requires uri.ascii_only? and raises URI::InvalidURIError otherwise
+        for (var i = 0; i < gid.Length; i++)
         {
-            rest = rest[..queryIdx];
+            if (gid[i] > 127)
+            {
+                return null;
+            }
         }
 
-        var slash1 = rest.IndexOf('/');
-        if (slash1 <= 0) return null;
-        var app = rest[..slash1];
-
-        var path = rest[(slash1 + 1)..];
-        var slash2 = path.IndexOf('/');
-        if (slash2 <= 0) return null;
-        var modelName = path[..slash2];
-        var id = path[(slash2 + 1)..];
-
-        if (string.IsNullOrEmpty(app) || string.IsNullOrEmpty(modelName) || string.IsNullOrEmpty(id))
+        var match = GidUri().Match(gid);
+        if (!match.Success)
         {
             return null;
         }
 
-        return new GlobalId(app, modelName, id);
+        var segments = match.Groups["path"].Value.Split('/');
+        // path begins with '/', so segments[0] is empty
+        if (segments.Length < 3 || segments[1].Length == 0)
+        {
+            return null;
+        }
+
+        var rawIds = segments[2..];
+        // split(delimiter, 20) folds the tail into the last part, and a '/' there fails validation
+        if (rawIds.Length > 20)
+        {
+            return null;
+        }
+
+        var ids = rawIds.Where(part => part.Length > 0).Select(CgiUnescape).ToArray();
+        if (ids.Length == 0)
+        {
+            return null;
+        }
+
+        return new GlobalId(match.Groups["host"].Value, segments[1], ids.Length == 1 ? ids[0] : string.Join('/', ids))
+        {
+            Composite = ids.Length > 1,
+        };
     }
+
+    /// <summary><c>CGI.unescape</c>: <c>+</c> is a space, then <c>%HH</c> bytes are read as UTF-8.</summary>
+    static string CgiUnescape(string value)
+    {
+        if (value.IndexOf('%') < 0 && value.IndexOf('+') < 0)
+        {
+            return value;
+        }
+
+        var bytes = new List<byte>(value.Length);
+        for (var i = 0; i < value.Length; i++)
+        {
+            var c = value[i];
+            if (c == '+')
+            {
+                bytes.Add((byte)' ');
+            }
+            else if (c == '%' && i + 2 < value.Length && IsHex(value[i + 1]) && IsHex(value[i + 2]))
+            {
+                bytes.Add(Convert.ToByte(value.Substring(i + 1, 2), 16));
+                i += 2;
+            }
+            else
+            {
+                bytes.AddRange(Encoding.UTF8.GetBytes(c.ToString()));
+            }
+        }
+        return Encoding.UTF8.GetString(bytes.ToArray());
+    }
+
+    static bool IsHex(char c) => c is (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F');
 
     /// <summary>
     /// <c>GlobalID#to_param</c>: URL-safe Base64 without padding, as used in Turbo stream names.

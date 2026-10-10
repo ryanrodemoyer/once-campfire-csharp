@@ -48,7 +48,7 @@ public static class RichTextRenderer
     /// <c>ContentAttachment#to_html</c> (the content partial, without the layout).
     /// </summary>
     public static string RenderAttachment(Attachment attachment, RenderContext context) =>
-        AttachmentPartials.Render(attachment, content => RenderContent(Load(content), context) + "\n");
+        AttachmentPartials.Render(attachment, content => RenderContent(Load(content), context) + "\n", context);
 
     /// <summary>
     /// <c>Content#render_attachments</c> with <c>render_action_text_attachments</c>' block: each
@@ -132,7 +132,7 @@ public static class RichTextRenderer
             var sanitized = SafeListSanitizer.Sanitize(content, SafeList.ActionText);
             if (!RubyText.IsBlank(sanitized))
             {
-                node.SetAttribute("content", sanitized);
+                NokogiriAttribute.Set(node, "content", sanitized);
             }
         }
     }
@@ -154,7 +154,7 @@ public static class RichTextRenderer
             };
             if (value is not null)
             {
-                element.SetAttribute(name, value);
+                NokogiriAttribute.Set(element, name, value);
             }
         }
         if (element.Attributes.Count == 0)

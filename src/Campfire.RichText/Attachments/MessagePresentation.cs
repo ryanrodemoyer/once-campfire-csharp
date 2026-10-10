@@ -24,7 +24,7 @@ public static class MessagePresentation
     /// <exception cref="HtmlParseException">The body exceeds Gumbo's limits.</exception>
     public static string Render(string body, RenderContext context)
     {
-        var filtered = ContentFilters.ApplyTextMessagePresentationFilters(body, context.RequestHost);
+        var filtered = ContentFilters.ApplyTextMessagePresentationFilters(body, context.RequestHost, context);
         var rendered = RichTextRenderer.RenderWithLayout(RichTextRenderer.Wrap(filtered), context);
         return RailsAutoLink.Apply(rendered, SafeList.AutoLink);
     }
@@ -43,7 +43,9 @@ public static class MessagePresentation
         {
             return new Presentation.Unrenderable();
         }
-        catch (Exception e) when (e is RichTextRaisedException or HtmlParseException or RubyUriException or InvalidOperationException)
+#pragma warning disable CA1031 // message_presentation rescues Exception (reference/app/helpers/messages_helper.rb).
+        catch (Exception)
+#pragma warning restore CA1031
         {
             return new Presentation.Html("");
         }

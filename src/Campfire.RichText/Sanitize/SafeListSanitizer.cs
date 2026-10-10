@@ -237,12 +237,12 @@ public static partial class SafeListSanitizer
         {
             // Format without spaces matching Loofah/Crass
             var formatted = declarations.Select(d => $"{d.Property}:{d.Value};").ToArray();
-            element.SetAttribute("style", string.Concat(formatted));
+            NokogiriAttribute.Set(element, "style", string.Concat(formatted));
             return;
         }
 
         var kept = declarations.Where(IsAllowed).Select(d => $"{d.Property}:{d.Value};").ToArray();
-        element.SetAttribute("style", string.Concat(kept));
+        NokogiriAttribute.Set(element, "style", string.Concat(kept));
     }
 
     public static bool AllowedUri(string uri)

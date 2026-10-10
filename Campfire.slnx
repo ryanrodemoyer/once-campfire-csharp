@@ -16,6 +16,7 @@
     <Project Path="tests/Campfire.Data.Tests/Campfire.Data.Tests.csproj" />
     <Project Path="tests/Campfire.Jobs.Tests/Campfire.Jobs.Tests.csproj" />
     <Project Path="tests/Campfire.RailsCompat.Tests/Campfire.RailsCompat.Tests.csproj" />
+    <Project Path="tests/Campfire.RichText.Fuzz/Campfire.RichText.Fuzz.csproj" />
     <Project Path="tests/Campfire.RichText.Tests/Campfire.RichText.Tests.csproj" />
     <Project Path="tests/Campfire.Server.Tests/Campfire.Server.Tests.csproj" />
     <Project Path="tests/Campfire.Storage.Tests/Campfire.Storage.Tests.csproj" />

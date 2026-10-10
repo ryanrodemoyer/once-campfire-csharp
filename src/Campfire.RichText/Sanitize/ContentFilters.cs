@@ -1,5 +1,8 @@
 using System.Text;
+using Campfire.RailsCompat.Ruby;
+using Campfire.RichText.Attachments;
 using Campfire.RichText.Html;
+using Campfire.RichText.PlainText;
 
 namespace Campfire.RichText.Sanitize;
 
@@ -18,22 +21,41 @@ public static class ContentFilters
         CommentHandling = System.Text.Json.JsonCommentHandling.Skip
     };
 
-    public static string ApplyTextMessagePresentationFilters(string html, string? requestHost = null)
+    /// <summary>
+    /// <c>ContentFilters::TextMessagePresentationFilters.apply</c>. When <paramref name="context"/>
+    /// is set, <c>RemoveSoloUnfurledLinkText#applicable?</c> has evaluated <c>content.to_plain_text</c>
+    /// (both sides of <c>==</c>), which resolves every attachment. Callers that only compare
+    /// sanitized markup omit it.
+    /// </summary>
+    public static string ApplyTextMessagePresentationFilters(string html, string? requestHost = null, RenderContext? context = null)
     {
-        if (string.IsNullOrWhiteSpace(html))
+        if (context is not null)
+        {
+            _ = RichTextPlainText.ToPlainText(html, context);
+        }
+
+        // String#strip, not Unicode trim: NBSP and the other Unicode spaces stay.
+        if (string.IsNullOrEmpty(html) || RubyString.Strip(html).Length == 0)
         {
             return string.Empty;
         }
 
-        var fragment = HtmlParser.ParseFragment(html.Trim());
+        var fragment = HtmlParser.ParseFragment(RubyString.Strip(html));
         CanonicalizeContent(fragment);
         ApplyRemoveSoloUnfurledLinkText(fragment, requestHost);
         ApplySanitizeTags(fragment);
         var sanitized = SafeListSanitizer.Sanitize(fragment.ToHtml(), SafeList.ContentFilter);
-        return sanitized.Trim();
+        return RubyString.Strip(sanitized);
     }
 
-    public static void CanonicalizeContent(HtmlFragment fragment)
+    /// <summary>
+    /// <c>ActionText::Content.new</c>'s canonicalization. When <paramref name="trixAttachables"/>
+    /// is set, each converted trix attachment is loaded with <c>Attachment.from_node</c> the way
+    /// <c>fragment_by_converting_trix_attachments</c> does, so a payload that raises there raises
+    /// <c>mentioned_users</c> too. Callers that only rewrite markup omit it: a raw
+    /// <c>action-text-attachment</c> is not loaded again.
+    /// </summary>
+    public static void CanonicalizeContent(HtmlFragment fragment, RenderContext? trixAttachables = null)
     {
         // 1. Convert trix attachments: [data-trix-attachment]
         var trixNodes = fragment.Descendants().OfType<HtmlElement>()
@@ -52,9 +74,14 @@ public static class ContentFilters
                 try
                 {
                     using var doc = System.Text.Json.JsonDocument.Parse(jsonStr, JsonOptions);
+                    // nil and false become {}; any other non-Hash is truthy and `#merge` raises.
                     if (doc.RootElement.ValueKind == System.Text.Json.JsonValueKind.Array)
                     {
                         throw new InvalidOperationException("undefined method 'merge' for an instance of Array");
+                    }
+                    if (doc.RootElement.ValueKind is not (System.Text.Json.JsonValueKind.Object or System.Text.Json.JsonValueKind.Null or System.Text.Json.JsonValueKind.False))
+                    {
+                        throw new InvalidOperationException("undefined method 'merge'");
                     }
                     if (doc.RootElement.ValueKind == System.Text.Json.JsonValueKind.Object)
                     {
@@ -91,9 +118,9 @@ public static class ContentFilters
                 ("width", "width"),
                 ("height", "height"),
                 ("previewable", "previewable"),
-                ("content", "content"),
-                ("caption", "caption"),
                 ("presentation", "presentation"),
+                ("caption", "caption"),
+                ("content", "content"),
             ];
 
             foreach (var (trix, dashed) in trixAttrs)
@@ -113,7 +140,13 @@ public static class ContentFilters
                 var replacement = new HtmlElement("action-text-attachment", HtmlNamespace.Html);
                 foreach (var attr in attPairs)
                 {
-                    replacement.SetAttribute(attr.Name, attr.Value);
+                    NokogiriAttribute.Set(replacement, attr.Name, attr.Value);
+                }
+                // from_attributes → from_node. The node's markup is what gets stored; the
+                // attachable is only resolved so a raising SGID fails the whole content.
+                if (trixAttachables is not null)
+                {
+                    _ = AttachmentResolution.AttachmentFromNode(replacement, trixAttachables);
                 }
                 node.Parent?.ReplaceChild(node, [replacement]);
             }
@@ -230,8 +263,9 @@ public static class ContentFilters
 
     static string? GetSoloUnfurledUrl(HtmlElement node, string? requestHost)
     {
+        // from_node uses filename.present?. A newline is blank, so the href is not read.
         var filename = node.GetAttribute("filename");
-        if (!string.IsNullOrEmpty(filename))
+        if (!RubyText.IsBlank(filename))
         {
             return OpengraphEmbedUrl.WebUrl(node.GetAttribute("href"), requestHost);
         }
@@ -268,7 +302,7 @@ public static class ContentFilters
             return url ?? string.Empty;
         }
 
-        var trimmed = url.Trim();
+        var trimmed = RubyString.Strip(url);
         var isTwitter = TwitterDomains.Any(d => trimmed.Contains(d, StringComparison.OrdinalIgnoreCase));
         if (!isTwitter)
         {
@@ -285,7 +319,13 @@ public static class ContentFilters
             uri.Query = null;
             return uri.ToUriString();
         }
-        catch
+        catch (RubyUriInvalidComponentException)
+        {
+            // normalize_tweet_url rescues URI::InvalidURIError only. InvalidComponentError
+            // (a mailto whose opaque part URI rejects) propagates out of the filter.
+            throw;
+        }
+        catch (RubyUriException)
         {
             return url;
         }

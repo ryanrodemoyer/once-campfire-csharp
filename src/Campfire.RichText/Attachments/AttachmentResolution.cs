@@ -31,11 +31,15 @@ public static partial class AttachmentResolution
 
     static readonly JsonDocumentOptions RubyJson = new() { CommentHandling = JsonCommentHandling.Skip };
 
-    public static bool IsAttachment(HtmlNode node) => node is HtmlElement element && element.IsHtml(TagName);
+    public static bool IsAttachment(HtmlNode node) => node is HtmlElement element && element.Name == TagName;
 
-    /// <summary>The attachment elements under <paramref name="root"/>, in document order (<c>css("action-text-attachment")</c>).</summary>
+    /// <summary>
+    /// The attachment elements under <paramref name="root"/>, in document order
+    /// (<c>css("action-text-attachment")</c>). Nokogiri matches that selector by local name in
+    /// every namespace, so an attachment inside SVG or MathML counts.
+    /// </summary>
     public static List<HtmlElement> AttachmentNodes(HtmlParentNode root) =>
-        root.Descendants().OfType<HtmlElement>().Where(e => e.IsHtml(TagName)).ToList();
+        root.Descendants().OfType<HtmlElement>().Where(e => e.Name == TagName).ToList();
 
     /// <summary>
     /// Campfire's <c>ActionText::Attachment.from_node</c> (<c>reference/lib/rails_ext/action_text_attachables.rb</c>):
@@ -70,6 +74,13 @@ public static partial class AttachmentResolution
         if (signed is SignedLookup.User found)
         {
             return new Mention(found.Value);
+        }
+
+        // locate_signed wins over a content attachment. A Message renders messages/_message;
+        // its plain text is the caption, because the model defines none of its own.
+        if (signed is SignedLookup.Record located)
+        {
+            return new MissingAttachable(located.ModelName, located.ModelId);
         }
 
         var contentType = node.GetAttribute("content-type");
@@ -170,8 +181,10 @@ public static partial class AttachmentResolution
             ? value
             : null;
 
-    // JSON.parse takes the bytes as UTF-8; when they aren't, its error message quotes them and
-    // logging that message raises in turn
+    // JSON.parse takes the bytes as UTF-8. Its error message quotes 32 bytes from the parser
+    // cursor (json parser.c, PARSE_ERROR_FRAGMENT_LEN), and logging that quote raises when the
+    // quote itself isn't valid UTF-8. Bytes outside the quote don't matter: a document can be
+    // invalid UTF-8 and still log.
     static JsonElement ParseJson(byte[] bytes)
     {
         var text = Encoding.UTF8.GetString(bytes);
@@ -182,11 +195,85 @@ public static partial class AttachmentResolution
         }
         catch (JsonException)
         {
-            throw new RichTextRaisedException("JSON::ParserError", unloggable: !IsValidUtf8(bytes));
+            throw new RichTextRaisedException("JSON::ParserError", unloggable: !JsonErrorIsLoggable(bytes));
         }
     }
 
-    static bool IsValidUtf8(byte[] bytes) => System.Text.Unicode.Utf8.IsValid(bytes);
+    /// <summary>
+    /// Whether <c>JSON::ParserError#message</c> can be logged. The quote is the bytes at the
+    /// parser cursor, stopped at ASCII whitespace or NUL, with a trailing partial UTF-8 character
+    /// trimmed (<c>build_parse_error_message</c>).
+    /// </summary>
+    static bool JsonErrorIsLoggable(byte[] bytes)
+    {
+        int cursor;
+        try
+        {
+            JsonDocument.Parse(bytes, RubyJson);
+            // The raw bytes parsed and the replaced string did not: the quote isn't what failed.
+            return true;
+        }
+        catch (JsonException e)
+        {
+            cursor = JsonCursor(bytes, e);
+        }
+
+        if ((uint)cursor >= (uint)bytes.Length)
+        {
+            return true;
+        }
+
+        var len = 0;
+        while (len < 32 && cursor + len < bytes.Length)
+        {
+            var ch = bytes[cursor + len];
+            if (ch is 0 or (byte)'\n' or (byte)' ' or (byte)'\t' or (byte)'\r')
+            {
+                break;
+            }
+            len++;
+        }
+
+        if (len == 0)
+        {
+            // No bounded quote: sprintf reads from the cursor through the next NUL.
+            var end = cursor;
+            while (end < bytes.Length && bytes[end] != 0)
+            {
+                end++;
+            }
+            return System.Text.Unicode.Utf8.IsValid(bytes.AsSpan(cursor, end - cursor));
+        }
+
+        // buffer[len] is the last copied byte; drop a trailing continuation, then one lead byte.
+        var n = len;
+        while (n > 0 && bytes[cursor + n - 1] >= 0x80 && bytes[cursor + n - 1] < 0xC0)
+        {
+            n--;
+        }
+        if (n > 0 && bytes[cursor + n - 1] >= 0xC0)
+        {
+            n--;
+        }
+        return System.Text.Unicode.Utf8.IsValid(bytes.AsSpan(cursor, n));
+    }
+
+    static int JsonCursor(byte[] bytes, JsonException error)
+    {
+        var offset = 0;
+        var lineNumber = error.LineNumber.GetValueOrDefault();
+        for (var line = 0L; line < lineNumber && offset < bytes.Length; line++)
+        {
+            var newline = Array.IndexOf(bytes, (byte)'\n', offset);
+            if (newline < 0)
+            {
+                return bytes.Length;
+            }
+            offset = newline + 1;
+        }
+        var column = (int)error.BytePositionInLine.GetValueOrDefault();
+        return column < 0 ? offset : offset + column;
+    }
 
     /// <summary><c>Base64.strict_decode64(message) rescue Base64.urlsafe_decode64(message)</c></summary>
     static byte[] DecodeBase64(string message) =>
