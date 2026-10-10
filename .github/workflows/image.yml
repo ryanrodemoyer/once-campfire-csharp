@@ -1,0 +1,42 @@
+name: Image
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "assets/**"
+      - "Dockerfile"
+      - "reference"
+      - "tests/image-smoke/**"
+      - ".github/workflows/image.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "assets/**"
+      - "Dockerfile"
+      - "reference"
+      - "tests/image-smoke/**"
+      - ".github/workflows/image.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - run: tests/image-smoke/run.sh
