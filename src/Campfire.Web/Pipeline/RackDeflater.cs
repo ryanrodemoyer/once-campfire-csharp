@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.IO.Compression;
 using Microsoft.AspNetCore.Http;
 
@@ -190,12 +191,25 @@ public static class RackDeflater
 
     static byte[] Gzip(ReadOnlyMemory<byte> body)
     {
-        using var compressed = new MemoryStream();
-        using (var gzip = new GZipStream(compressed, CompressionLevel.Optimal, leaveOpen: true))
+        // A rented buffer avoids the MemoryStream's internal array resizes. The room page is
+        // 464 KB raw and ~44 KB compressed, so 65536 covers most responses.
+        var buffer = ArrayPool<byte>.Shared.Rent(Math.Max(65536, body.Length / 10));
+        try
         {
-            gzip.Write(body.Span);
+            using var compressed = new MemoryStream(buffer);
+            using (var gzip = new GZipStream(compressed, CompressionLevel.Optimal, leaveOpen: true))
+            {
+                gzip.Write(body.Span);
+            }
+            var length = (int)compressed.Position;
+            var result = new byte[length];
+            Array.Copy(buffer, result, length);
+            return result;
         }
-        return compressed.ToArray();
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 
     static byte[] Encoding8(string text) => System.Text.Encoding.UTF8.GetBytes(text);

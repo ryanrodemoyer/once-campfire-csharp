@@ -79,11 +79,29 @@ public partial class View
         return sentence.Length > 0 ? sentence : forUserName;
     }
 
+    // The template version: bump this when the message presentation filters change so every
+    // cached fragment is invalidated. Must match the comment in _message.html.erb.cs.
+    const int messageFragmentVersion = 1;
+
     /// <summary>
-    /// <c>cache key do ... end</c>. A cached fragment holds exactly the bytes its block renders,
-    /// so the block renders every time.
+    /// <c>cache [message, "presentation-v3"] do ... end</c>: emits the cached bytes on a hit,
+    /// or renders the block and stores the result on a miss. The cache is shared across requests
+    /// so a message whose content hasn't changed since its last render reuses the same bytes.
     /// </summary>
-    public static void FragmentCache(Action body) => body();
+    public void FragmentCache(HtmlWriter w, long messageId, DateTimeOffset updatedAt, Action body)
+    {
+        var cached = FragmentCacheStore.Get(messageId, updatedAt, messageFragmentVersion);
+        if (cached is not null)
+        {
+            w.WriteLiteral(cached);
+            return;
+        }
+
+        // Capture the block's output, cache it, and emit it.
+        var captured = w.CaptureBytes(body);
+        FragmentCacheStore.Set(messageId, updatedAt, messageFragmentVersion, captured);
+        w.WriteLiteral(captured);
+    }
 
     Presentation PresentMessage(MessageView message)
     {

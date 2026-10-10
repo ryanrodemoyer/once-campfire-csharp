@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Text;
 using Campfire.Data.Pagination;
 using Campfire.Data.Queries;
@@ -148,7 +147,7 @@ public sealed class RoomsController : ApplicationController
     // application layout.
     static ReadOnlyMemory<byte> RenderLayout(View view, string page, bool turboFrame)
     {
-        var buffer = new ArrayBufferWriter<byte>();
+        using var buffer = new PooledBufferWriter();
         if (turboFrame)
         {
             view.TurboRailsFrameLayout(new HtmlWriter(buffer), new SafeString(page));
@@ -162,7 +161,7 @@ public sealed class RoomsController : ApplicationController
 
     static string RenderString(Action<HtmlWriter> template)
     {
-        var buffer = new ArrayBufferWriter<byte>();
+        using var buffer = new PooledBufferWriter();
         template(new HtmlWriter(buffer));
         return Encoding.UTF8.GetString(buffer.WrittenSpan);
     }

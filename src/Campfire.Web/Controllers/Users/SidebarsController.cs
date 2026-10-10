@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Text;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
@@ -97,7 +96,7 @@ public sealed class UsersSidebarsController : ApplicationController
         {
             var view = NewView(session);
             var body = RenderString(w => template(view, w));
-            var buffer = new ArrayBufferWriter<byte>();
+            using var buffer = new PooledBufferWriter();
             if (Request.IsTurboFrameRequest)
             {
                 view.TurboRailsFrameLayout(new HtmlWriter(buffer), new SafeString(body));
@@ -135,7 +134,7 @@ public sealed class UsersSidebarsController : ApplicationController
 
     static string RenderString(Action<HtmlWriter> template)
     {
-        var buffer = new ArrayBufferWriter<byte>();
+        using var buffer = new PooledBufferWriter();
         template(new HtmlWriter(buffer));
         return Encoding.UTF8.GetString(buffer.WrittenSpan);
     }

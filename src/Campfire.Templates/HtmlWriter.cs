@@ -76,6 +76,27 @@ public sealed class HtmlWriter(IBufferWriter<byte> output)
         return new SafeString(Encoding.UTF8.GetString(captured.WrittenSpan));
     }
 
+    /// <summary>
+    /// Like <see cref="Capture"/> but returns the raw UTF-8 bytes, avoiding the decode/re-encode
+    /// round trip when the result is cached as bytes.
+    /// </summary>
+    public byte[] CaptureBytes(Action body)
+    {
+        ArgumentNullException.ThrowIfNull(body);
+        var previous = output;
+        var captured = new ArrayBufferWriter<byte>();
+        output = captured;
+        try
+        {
+            body();
+        }
+        finally
+        {
+            output = previous;
+        }
+        return captured.WrittenSpan.ToArray();
+    }
+
     void WriteFormatted<T>(T value) where T : IUtf8SpanFormattable
     {
         var span = output.GetSpan(20);

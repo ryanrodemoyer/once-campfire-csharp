@@ -72,6 +72,15 @@ public partial class View
 
     /// <summary><c>@body_class</c>.</summary>
     public string? BodyClass { get; set; }
+
+    /// <summary>
+    /// Fragment cache for message partials. Shared across requests (process-wide) so a message
+    /// whose content hasn't changed reuses its last rendered bytes.
+    /// </summary>
+    public MessageFragmentCache FragmentCacheStore { get; init; } = new();
+
+    /// <summary>The writer the currently executing template writes to. Set before each template call.</summary>
+    internal HtmlWriter? CurrentWriter { get; set; }
 }
 
 /// <summary>What the helpers read from <c>Current.user</c>.</summary>
