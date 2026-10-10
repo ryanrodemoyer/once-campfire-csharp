@@ -308,8 +308,10 @@ internal sealed class CableConnection<TUser> : IFrameSink
         }
         else
         {
-            Deliver(new Frame(CableProtocol.Confirmation(channel.Identifier)));
+            // Rails confirms only once pubsub#subscribe has succeeded (actioncable channel/streams.rb),
+            // so a client that sees the confirmation never misses a broadcast to its stream.
             channel.StartStreams(this);
+            Deliver(new Frame(CableProtocol.Confirmation(channel.Identifier)));
         }
     }
 

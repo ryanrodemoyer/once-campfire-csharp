@@ -150,31 +150,47 @@ public sealed class OpenGraphDocumentTests
         Assert.Equal(expected, OpenGraphMetadata.Sanitize(OpenGraphMetadata.StripTags(input)));
     }
 
-    /// <summary>Pages as large as a fetch allows, built to make a parser do quadratic work, scan in linear time.</summary>
+    /// <summary>
+    /// Pages as large as a fetch allows, built to make a parser do quadratic work. Scanning is linear,
+    /// so a page twice as long allocates about twice the bytes, not four times. The bytes are counted
+    /// rather than timed, so a busy machine can't fail the test.
+    /// </summary>
     [Fact]
-    public void ScansPathologicalPagesQuickly()
+    public void ScansPathologicalPagesInLinearWork()
     {
-        static string Fill(string open, Func<int, string> item, string close)
+        static string Fill(string open, Func<int, string> item, string close, int size)
         {
             var page = new StringBuilder(open);
-            for (var i = 0; page.Length <= OpenGraphFetch.MaxBodySize - close.Length - 64; i++)
+            for (var i = 0; page.Length <= size - close.Length - 64; i++)
             {
                 page.Append(item(i));
             }
             return page.Append(close).ToString();
         }
 
-        string[] pages =
+        Func<int, string>[] pages =
         [
-            Fill("<meta property=\"og:title\" content=\"x\" ", i => $"a{i:D7} ", ">"),
-            Fill("<meta charset=utf-8>", i => $"<meta property=\"og:t{i}\" content=\"x\">", "<meta property=\"og:title\" content=\"x\">"),
-            Fill("<meta property=\"og:title\" content=\"", _ => "&amp;\u00E9", "\">"),
+            size => Fill("<meta property=\"og:title\" content=\"x\" ", i => $"a{i:D7} ", ">", size),
+            size => Fill("<meta charset=utf-8>", i => $"<meta property=\"og:t{i}\" content=\"x\">", "<meta property=\"og:title\" content=\"x\">", size),
+            size => Fill("<meta property=\"og:title\" content=\"", _ => "&amp;\u00E9", "\">", size),
         ];
+        // Warm up first, so one-time initialization (the entity table, the charset regex) is not counted.
+        Attributes(ogPage);
         foreach (var page in pages)
         {
-            var started = System.Diagnostics.Stopwatch.StartNew();
-            Assert.Equal("title", Attributes(page)[0].Key);
-            Assert.True(started.Elapsed < TimeSpan.FromSeconds(5), $"{started.Elapsed} for {page[..60]}");
+            var half = AllocatedBytes(page(OpenGraphFetch.MaxBodySize / 2));
+            var full = AllocatedBytes(page(OpenGraphFetch.MaxBodySize));
+            Assert.True(full < 3 * half, $"{full} bytes for a full page, {half} for half: more than linear");
         }
+    }
+
+    static long AllocatedBytes(string html)
+    {
+        var page = Encoding.UTF8.GetBytes(html);
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        var attributes = OpenGraphDocument.OpenGraphAttributes(page);
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+        Assert.Equal("title", attributes[0].Key);
+        return allocated;
     }
 }
