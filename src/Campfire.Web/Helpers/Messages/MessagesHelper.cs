@@ -81,10 +81,10 @@ public partial class View
 
     // The template version: bump this when the message presentation filters change so every
     // cached fragment is invalidated. Must match the comment in _message.html.erb.cs.
-    const int messageFragmentVersion = 1;
+    const int messageFragmentVersion = 5;
 
     /// <summary>
-    /// <c>cache [message, "presentation-v3"] do ... end</c>: emits the cached bytes on a hit,
+    /// <c>cache [message, "presentation-v5"] do ... end</c>: emits the cached bytes on a hit,
     /// or renders the block and stores the result on a miss. The cache is shared across requests
     /// so a message whose content hasn't changed since its last render reuses the same bytes.
     /// </summary>
@@ -108,7 +108,7 @@ public partial class View
         switch (message.ContentType)
         {
             case "attachment":
-                return Rescued(() => new AttachmentPresentation(this, message.Attachment!).Render());
+                return Rescued(() => new AttachmentPresentation(this, message.Attachment!, message.IsThumbProcessed, message.IsPosterProcessed).Render());
             case "sound":
                 return Rescued(() => MessageSoundPresentation(message.Sound!));
             default:

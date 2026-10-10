@@ -31,8 +31,14 @@ public sealed class OpenGraphFetch : IDisposable
     public const int MaxBodySize = 5 * 1024 * 1024;
     public const int MaxRedirects = 10;
 
-    /// <summary><c>Net::HTTP#read_timeout</c>'s default.</summary>
-    public static readonly TimeSpan ReadTimeout = RestrictedHttpHandlers.NetHttpDefaultTimeout;
+    /// <summary><c>Opengraph::Fetch::TIMEOUT</c>: 7 seconds to connect, read and write.</summary>
+    public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(7);
+
+    /// <summary>Operation timeout (to connect, read and write).</summary>
+    public TimeSpan Timeout { get; set; } = DefaultTimeout;
+
+    /// <summary>Backward-compatible alias for <see cref="Timeout"/>.</summary>
+    public TimeSpan ReadTimeout => Timeout;
 
     readonly HttpMessageInvoker http;
 
@@ -121,7 +127,7 @@ public sealed class OpenGraphFetch : IDisposable
         request.Headers.TryAddWithoutValidation("User-Agent", "Ruby");
         request.Headers.TryAddWithoutValidation("Host", HostHeader(url.Host, port, https));
 
-        using var timeout = Timeout(cancellationToken);
+        using var timeout = CreateTimeoutSource(cancellationToken);
         return await http.SendAsync(request, timeout.Token).ConfigureAwait(false);
     }
 
@@ -149,7 +155,7 @@ public sealed class OpenGraphFetch : IDisposable
     /// Reads the body in chunks, giving up once it runs over the limit: the
     /// <c>Content-Length</c> header can be wrong or missing.
     /// </summary>
-    static async Task<byte[]?> SizeRestrictedBodyAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    async Task<byte[]?> SizeRestrictedBodyAsync(HttpResponseMessage response, CancellationToken cancellationToken)
     {
         var stream = Inflated(response, await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false));
         await using (stream.ConfigureAwait(false))
@@ -159,7 +165,7 @@ public sealed class OpenGraphFetch : IDisposable
             while (true)
             {
                 int read;
-                using (var timeout = Timeout(cancellationToken))
+                using (var timeout = CreateTimeoutSource(cancellationToken))
                 {
                     read = await stream.ReadAsync(buffer, timeout.Token).ConfigureAwait(false);
                 }
@@ -188,10 +194,10 @@ public sealed class OpenGraphFetch : IDisposable
             _ => body,
         };
 
-    static CancellationTokenSource Timeout(CancellationToken cancellationToken)
+    CancellationTokenSource CreateTimeoutSource(CancellationToken cancellationToken)
     {
         var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(ReadTimeout);
+        timeout.CancelAfter(Timeout);
         return timeout;
     }
 

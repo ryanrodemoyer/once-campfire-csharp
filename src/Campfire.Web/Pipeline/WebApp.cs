@@ -54,6 +54,12 @@ public sealed partial class WebApp
     /// <summary>The session cookie store's options (<c>_campfire_session</c>, 20 years).</summary>
     public RailsCompat.Session.SessionConfig SessionConfig { get; init; } = new();
 
+    /// <summary>Timeout deadline for link unfurling, overriding <c>UnfurlLinksController.Deadline</c>.</summary>
+    public TimeSpan? UnfurlDeadline { get; set; }
+
+    /// <summary>Max pixels limit for attachment thumbnails, overriding <c>NamedVariants.ThumbnailMaxPixels</c>.</summary>
+    public long? ThumbnailMaxPixels { get; set; }
+
     /// <summary>
     /// <c>config/initializers/version.rb</c> from the environment: <c>APP_VERSION.presence ||
     /// GIT_REVISION.presence || "0"</c>, and <c>GIT_REVISION</c> as it is.

@@ -71,6 +71,7 @@ public static class RichTextPlainText
         RemoteImage => $"[{attachment.Caption ?? "Image"}]",
         // Lexxy's RemoteVideo
         RemoteVideo video => $"[{attachment.Caption ?? video.Filename ?? "Video"}]",
+        BlobAttachable blob => $"[{attachment.Caption ?? blob.Filename}]",
         MissingAttachable => attachment.Caption ?? "",
         _ => throw new InvalidOperationException($"Unknown attachable {attachment.Attachable}"),
     };

@@ -57,6 +57,36 @@ public static class BlobRecords
             "WHERE a.record_type = @record_type AND a.record_id = @record_id AND a.name = @name LIMIT 1",
             ("@record_type", recordType), ("@record_id", recordId), ("@name", name));
 
+    /// <summary>Batch loads attached blobs for multiple records.</summary>
+    public static Dictionary<long, Blob> FindAttachedBlobs(SqliteSession session, string recordType, IReadOnlyList<long> recordIds, string name)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(recordIds);
+        if (recordIds.Count == 0) return [];
+        var placeholders = string.Join(",", recordIds.Select((_, i) => $"@id{i}"));
+        (string Name, object? Value)[] parameters = [.. recordIds.Select((id, i) => ($"@id{i}", (object?)id)), ("@record_type", recordType), ("@name", name)];
+        return session.Query(
+            $"SELECT a.record_id, {blobColumns} FROM active_storage_blobs b JOIN active_storage_attachments a ON a.blob_id = b.id " +
+            $"WHERE a.record_type = @record_type AND a.name = @name AND a.record_id IN ({placeholders})",
+            reader => (RecordId: reader.GetInt64(0), Blob: ReadBlobAt(reader, 1)),
+            parameters).ToDictionary(p => p.RecordId, p => p.Blob);
+    }
+
+    /// <summary>Finds attached blob IDs for multiple records.</summary>
+    public static Dictionary<long, long> FindAttachmentBlobIds(SqliteSession session, string recordType, IReadOnlyList<long> recordIds, string name)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(recordIds);
+        if (recordIds.Count == 0) return [];
+        var placeholders = string.Join(",", recordIds.Select((_, i) => $"@id{i}"));
+        (string Name, object? Value)[] parameters = [.. recordIds.Select((id, i) => ($"@id{i}", (object?)id)), ("@record_type", recordType), ("@name", name)];
+        return session.Query(
+            $"SELECT a.record_id, a.blob_id FROM active_storage_attachments a " +
+            $"WHERE a.record_type = @record_type AND a.name = @name AND a.record_id IN ({placeholders})",
+            reader => (RecordId: reader.GetInt64(0), BlobId: reader.GetInt64(1)),
+            parameters).ToDictionary(p => p.RecordId, p => p.BlobId);
+    }
+
     /// <summary><c>record.&lt;name&gt;_attachment</c> for <c>has_one_attached</c>.</summary>
     public static Attachment? FindAttachment(SqliteSession session, string recordType, long recordId, string name)
     {
@@ -118,16 +148,18 @@ public static class BlobRecords
         return rows.Count > 0 ? rows[0] : null;
     }
 
-    static Blob ReadBlob(SqliteDataReader row) => new(
-        row.GetInt64(0),
-        row.GetString(1),
-        new Filename(row.GetString(2)),
-        row.IsDBNull(3) ? null : row.GetString(3),
-        row.IsDBNull(4) ? [] : ParseMetadata(row.GetString(4)),
-        row.GetString(5),
-        row.GetInt64(6),
-        row.IsDBNull(7) ? null : row.GetString(7),
-        ReadTime(row, 8));
+    static Blob ReadBlob(SqliteDataReader row) => ReadBlobAt(row, 0);
+
+    static Blob ReadBlobAt(SqliteDataReader row, int offset) => new(
+        row.GetInt64(offset + 0),
+        row.GetString(offset + 1),
+        new Filename(row.GetString(offset + 2)),
+        row.IsDBNull(offset + 3) ? null : row.GetString(offset + 3),
+        row.IsDBNull(offset + 4) ? [] : ParseMetadata(row.GetString(offset + 4)),
+        row.GetString(offset + 5),
+        row.GetInt64(offset + 6),
+        row.IsDBNull(offset + 7) ? null : row.GetString(offset + 7),
+        ReadTime(row, offset + 8));
 
     static Attachment ReadAttachment(SqliteDataReader row) =>
         new(row.GetInt64(0), row.GetString(1), row.GetString(2), row.GetInt64(3), row.GetInt64(4), ReadTime(row, 5));

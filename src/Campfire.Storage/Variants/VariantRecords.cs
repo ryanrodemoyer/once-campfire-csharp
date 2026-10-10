@@ -28,13 +28,26 @@ public static class VariantRecords
         return rows.Count > 0 ? rows[0] : null;
     }
 
-    /// <summary><c>blob.variant_records</c>, oldest first.</summary>
+    /// <summary><c>blob.variant_records, oldest first.</c></summary>
     public static List<VariantRecord> ForBlob(SqliteSession session, long blobId)
     {
         ArgumentNullException.ThrowIfNull(session);
         return session.Query(
             """SELECT "id", "blob_id", "variation_digest" FROM "active_storage_variant_records" WHERE "blob_id" = @blob_id ORDER BY "id" """,
             Read, ("@blob_id", blobId));
+    }
+
+    /// <summary><c>blob.variant_records</c> for multiple blobs.</summary>
+    public static List<VariantRecord> ForBlobs(SqliteSession session, IReadOnlyList<long> blobIds)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(blobIds);
+        if (blobIds.Count == 0) return [];
+        var placeholders = string.Join(",", blobIds.Select((_, i) => $"@id{i}"));
+        (string Name, object? Value)[] parameters = [.. blobIds.Select((id, i) => ($"@id{i}", (object?)id))];
+        return session.Query(
+            $"SELECT \"id\", \"blob_id\", \"variation_digest\" FROM \"active_storage_variant_records\" WHERE \"blob_id\" IN ({placeholders})",
+            Read, parameters);
     }
 
     /// <summary><c>record.image</c>: the variant's file, or null if its attachment is gone.</summary>

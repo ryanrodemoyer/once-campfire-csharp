@@ -7,6 +7,7 @@ using Campfire.RichText.Attachments;
 using Campfire.RichText.PlainText;
 using Campfire.Storage.Blobs;
 using Campfire.Storage.Media;
+using Campfire.Storage.Variants;
 using Campfire.Web.Helpers;
 using Campfire.Web.Pipeline;
 using DataQueries = Campfire.Data.Queries;
@@ -100,7 +101,7 @@ public sealed partial class MessagesWriteController
     // The bot API and a webhook's attachment reply run the same processing.
     async ValueTask ProcessAttachmentAsync(Message message) =>
         await MessageAttachmentProcessing.ProcessAsync(
-            App.Database, App.Keys, App.RequireStorage(), App.RequireSeams(), App.Clock, RequestUrl.Host, Now, message, RequestAborted).ConfigureAwait(false);
+            App.Database, App.Keys, App.RequireStorage(), App.RequireSeams(), App.Clock, RequestUrl.Host, Now, message, App.ThumbnailMaxPixels ?? NamedVariants.ThumbnailMaxPixels, RequestAborted).ConfigureAwait(false);
 
     // `blob.analyze` — `ensure_attachment_analyzed`'s half of process_attachment, and
     // ActiveStorage::AnalyzeJob#perform's: the analyzer's metadata read outside the writer, then

@@ -6,6 +6,7 @@ using Campfire.RailsCompat.Crypto;
 using Campfire.Storage.Blobs;
 using Campfire.Storage.Media;
 using Campfire.Storage.Variants;
+using Campfire.Web.Helpers;
 
 namespace Campfire.Web.Controllers;
 
@@ -34,6 +35,19 @@ static class MessageAttachmentProcessing
         string? host,
         DateTimeOffset now,
         Message message,
+        CancellationToken cancellationToken) =>
+        await ProcessAsync(database, keys, storage, seams, clock, host, now, message, NamedVariants.ThumbnailMaxPixels, cancellationToken).ConfigureAwait(false);
+
+    public static async Task ProcessAsync(
+        SqliteDatabase database,
+        KeyGenerator keys,
+        BlobStorage storage,
+        DomainSeams seams,
+        TimeProvider clock,
+        string? host,
+        DateTimeOffset now,
+        Message message,
+        long maxPixels,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(database);
@@ -47,38 +61,78 @@ static class MessageAttachmentProcessing
         // `ensure_attachment_analyzed`: `attachment&.analyze`.
         await MessagesWriteController.AnalyzeAsync(database, keys, storage, host, blob, now).ConfigureAwait(false);
 
+        blob = await database.ReadAsync(session => BlobRecords.FindBlob(session, blob.Id), cancellationToken).ConfigureAwait(false) ?? blob;
+
+        if (TooManyPixelsToPreview(blob, maxPixels))
+        {
+            return;
+        }
+
         var media = new MediaProcessor(storage);
         var processor = new VariantProcessor(database, clock);
-        if (blob.IsVideo)
+        try
         {
-            var preview = Representable.Preview(blob, NamedVariants.VideoPreview);
-            var (hadPreviewImage, hadVariant) = await database.ReadAsync(session =>
+            if (blob.IsVideo)
             {
-                var image = BlobRecords.FindAttachedBlob(session, VariantProcessor.PreviewImageRecordType, blob.Id, VariantProcessor.PreviewImageName);
-                return (image is not null,
-                    image is not null && VariantRecords.Find(session, image.Id, Representable.Variant(image, preview.Variation).Variation.Digest) is not null);
-            }, cancellationToken).ConfigureAwait(false);
-            var presented = await processor.ProcessedAsync(preview, media.RenderPreviewImage, media.TransformVariant, cancellationToken).ConfigureAwait(false);
-            if (!hadPreviewImage)
-            {
-                await EnqueueAnalysisAsync(database, seams, VariantProcessor.PreviewImageRecordType, blob.Id, VariantProcessor.PreviewImageName, cancellationToken).ConfigureAwait(false);
+                var preview = Representable.Preview(blob, NamedVariants.VideoPoster);
+                var (hadPreviewImage, hadVariant) = await database.ReadAsync(session =>
+                {
+                    var image = BlobRecords.FindAttachedBlob(session, VariantProcessor.PreviewImageRecordType, blob.Id, VariantProcessor.PreviewImageName);
+                    return (image is not null,
+                        image is not null && VariantRecords.Find(session, image.Id, Representable.Variant(image, preview.Variation).Variation.Digest) is not null);
+                }, cancellationToken).ConfigureAwait(false);
+                var presented = await processor.ProcessedAsync(preview, media.RenderPreviewImage, media.TransformVariant, cancellationToken).ConfigureAwait(false);
+                if (!hadPreviewImage)
+                {
+                    await EnqueueAnalysisAsync(database, seams, VariantProcessor.PreviewImageRecordType, blob.Id, VariantProcessor.PreviewImageName, cancellationToken).ConfigureAwait(false);
+                }
+                if (!hadVariant && presented is { IsAnalyzed: false })
+                {
+                    seams.Jobs.Enqueue(new AnalyzeBlobJob(presented.Id));
+                }
             }
-            if (!hadVariant && presented is { IsAnalyzed: false })
+            else if (Representable.IsRepresentable(blob))
             {
-                seams.Jobs.Enqueue(new AnalyzeBlobJob(presented.Id));
+                var variant = Representable.Variant(blob, NamedVariants.MessageThumb);
+                var hadRecord = await database.ReadAsync(
+                    session => VariantRecords.Find(session, blob.Id, variant.Variation.Digest) is not null, cancellationToken).ConfigureAwait(false);
+                var image = await processor.ProcessedAsync(variant, media.TransformVariant, cancellationToken).ConfigureAwait(false);
+                if (!hadRecord && image is { IsAnalyzed: false })
+                {
+                    seams.Jobs.Enqueue(new AnalyzeBlobJob(image.Id));
+                }
             }
         }
-        else if (Representable.IsRepresentable(blob))
+        catch (MediaException)
         {
-            var variant = Representable.Variant(blob, NamedVariants.MessageThumb);
-            var hadRecord = await database.ReadAsync(
-                session => VariantRecords.Find(session, blob.Id, variant.Variation.Digest) is not null, cancellationToken).ConfigureAwait(false);
-            var image = await processor.ProcessedAsync(variant, media.TransformVariant, cancellationToken).ConfigureAwait(false);
-            if (!hadRecord && image is { IsAnalyzed: false })
-            {
-                seams.Jobs.Enqueue(new AnalyzeBlobJob(image.Id));
-            }
+            // A file that ffmpeg or libvips can't decode is still the message: post it without a preview.
+            // Rails.logger.warn "Posted #{attachment.filename} without a preview: #{error.class}: #{error.message.lines.first&.chomp}"
         }
+    }
+
+    /// <summary>
+    /// <c>too_many_pixels_to_preview?</c>: Decoding a picture, or a video's frame, costs in proportion to its
+    /// pixels, however small the file.
+    /// </summary>
+    public static bool TooManyPixelsToPreview(Blob blob, long? maxPixels = null)
+    {
+        var limit = maxPixels ?? NamedVariants.ThumbnailMaxPixels;
+        if (blob.IsImage || blob.IsVideo)
+        {
+            if (blob.Metadata.TryGetPropertyValue("width", out var widthNode) &&
+                blob.Metadata.TryGetPropertyValue("height", out var heightNode) &&
+                widthNode is not null && heightNode is not null)
+            {
+                var width = RubyNumber.From(widthNode)?.ToDouble();
+                var height = RubyNumber.From(heightNode)?.ToDouble();
+                if (width is { } w && height is { } h)
+                {
+                    return w * h > limit;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     // `analyze_blob_later` — `blob.analyze_later unless blob.analyzed?` — for an attachment that

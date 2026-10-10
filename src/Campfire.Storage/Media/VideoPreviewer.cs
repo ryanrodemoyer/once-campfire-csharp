@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Campfire.Storage.Media;
 
@@ -15,10 +16,13 @@ public static class VideoPreviewer
     /// (vectors/storage.json records it).
     /// </summary>
     public const string DefaultArguments =
-        @"-vf 'select=eq(n\,0)+eq(key\,1)+gt(scene\,0.015),loop=loop=-1:size=2,trim=start_frame=1' -frames:v 1 -f image2";
+        @"-vf 'select=eq(n\,0)+eq(key\,1)+gt(scene\,0.015)+gte(t\,5),loop=loop=-1:size=2,trim=start_frame=1' -frames:v 1 -f image2";
+
+    /// <summary><c>TimeLimitedVideoPreviewer::TIME_LIMIT</c>: 10 seconds.</summary>
+    public static TimeSpan DefaultTimeLimit { get; set; } = TimeSpan.FromSeconds(10);
 
     /// <summary><c>ActiveStorage.paths[:ffmpeg] || "ffmpeg"</c>.</summary>
-    public const string FfmpegPath = "ffmpeg";
+    public static string FfmpegPath { get; set; } = "ffmpeg";
 
     static readonly Lazy<bool> FfmpegExists = new(() => Succeeds(FfmpegPath, "-version"));
 
@@ -45,11 +49,12 @@ public static class VideoPreviewer
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(output);
+        var effectiveTimeout = timeout ?? DefaultTimeLimit;
         string[] argv = [FfmpegPath, "-i", input, .. Shellwords.Split(arguments), "-"];
-        var result = Subprocess.Run(argv, output, timeout);
+        var result = Subprocess.Run(argv, output, effectiveTimeout == Timeout.InfiniteTimeSpan ? null : effectiveTimeout);
         if (result.TimedOut)
         {
-            throw new PreviewException($"{FfmpegPath} timed out after {timeout}");
+            throw new PreviewException($"{FfmpegPath} took longer than {effectiveTimeout.TotalSeconds.ToString("0.##", CultureInfo.InvariantCulture)} seconds");
         }
         if (result.ExitCode != 0)
         {

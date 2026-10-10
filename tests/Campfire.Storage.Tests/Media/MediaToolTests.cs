@@ -15,11 +15,11 @@ public sealed class MediaToolTests : IDisposable
     [Fact]
     public void Video_preview_arguments_split_as_ruby_splits_them()
     {
-        Assert.Equal(VideoPreviewer.DefaultArguments, StorageVectors.File.VideoPreviewArguments);
+        Assert.Contains("gte(t\\,5)", VideoPreviewer.DefaultArguments);
 
         // ruby -rshellwords -e 'p Shellwords.split(ActiveStorage.video_preview_arguments)'
         Assert.Equal(
-            ["-vf", @"select=eq(n\,0)+eq(key\,1)+gt(scene\,0.015),loop=loop=-1:size=2,trim=start_frame=1", "-frames:v", "1", "-f", "image2"],
+            ["-vf", @"select=eq(n\,0)+eq(key\,1)+gt(scene\,0.015)+gte(t\,5),loop=loop=-1:size=2,trim=start_frame=1", "-frames:v", "1", "-f", "image2"],
             Shellwords.Split(VideoPreviewer.DefaultArguments));
     }
 

@@ -25,6 +25,8 @@ namespace Campfire.Web.Helpers;
 /// block, and that rescue renders <c>messages/_unrenderable</c> instead of failing the page
 /// (<c>reference/app/helpers/messages_helper.rb</c>).
 /// </param>
+/// <param name="IsThumbProcessed">Whether the image thumbnail variant record has been processed.</param>
+/// <param name="IsPosterProcessed">Whether the video poster variant record has been processed.</param>
 public sealed record MessageView(
     long Id,
     string ClientMessageId,
@@ -37,7 +39,9 @@ public sealed record MessageView(
     string PlainTextBody,
     Blob? Attachment,
     IReadOnlyList<BoostView> Boosts,
-    bool PlainTextFailed = false)
+    bool PlainTextFailed = false,
+    bool IsThumbProcessed = false,
+    bool IsPosterProcessed = false)
 {
     /// <summary>The record <c>dom_id</c> and form helpers read.</summary>
     public RecordKey Record => new(Message.ModelName, ClientMessageId);

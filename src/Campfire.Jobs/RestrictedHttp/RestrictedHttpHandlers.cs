@@ -31,7 +31,7 @@ public static class RestrictedHttpHandlers
 
     /// <summary><c>Opengraph::Fetch</c>: http or https on any port, through the guard.</summary>
     public static SocketsHttpHandler OpenGraph(PrivateNetworkGuard guard, Dialer? dial = null) =>
-        Guarded(GuardedConnect(guard, dial ?? DialTcpAsync, httpsOnly: false));
+        Guarded(GuardedConnect(guard, dial ?? DialTcpAsync, httpsOnly: false), Campfire.Jobs.OpenGraph.OpenGraphFetch.DefaultTimeout);
 
     /// <summary>
     /// <c>WebPush::PersistentRequest</c> with an <c>endpoint_ip</c>: https on port 443 only
@@ -53,12 +53,12 @@ public static class RestrictedHttpHandlers
         UseCookies = false,
     };
 
-    static SocketsHttpHandler Guarded(Func<SocketsHttpConnectionContext, CancellationToken, ValueTask<Stream>> connect) => new()
+    static SocketsHttpHandler Guarded(Func<SocketsHttpConnectionContext, CancellationToken, ValueTask<Stream>> connect, TimeSpan? connectTimeout = null) => new()
     {
         AllowAutoRedirect = false,
         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
         ConnectCallback = connect,
-        ConnectTimeout = NetHttpDefaultTimeout,
+        ConnectTimeout = connectTimeout ?? NetHttpDefaultTimeout,
         PooledConnectionLifetime = TimeSpan.Zero,
         UseCookies = false,
         UseProxy = false,

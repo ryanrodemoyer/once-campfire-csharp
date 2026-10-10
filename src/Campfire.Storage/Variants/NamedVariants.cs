@@ -12,6 +12,9 @@ public static class NamedVariants
     /// <summary><c>Message::THUMBNAIL_MAX_HEIGHT</c>.</summary>
     public const long ThumbnailMaxHeight = 800;
 
+    /// <summary><c>Message::THUMBNAIL_MAX_PIXELS</c>: 250 million pixels.</summary>
+    public static long ThumbnailMaxPixels { get; set; } = 250_000_000;
+
     /// <summary>Message <c>attachment</c>'s <c>:thumb</c>: <c>resize_to_limit: [1200, 800]</c>.</summary>
     public static Transformations MessageThumb { get; } = new(("resize_to_limit", new[] { ThumbnailMaxWidth, ThumbnailMaxHeight }));
 

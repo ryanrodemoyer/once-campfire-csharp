@@ -40,6 +40,9 @@ public sealed record RemoteImage(string Url, string? Width, string? Height) : At
 /// <summary>Lexxy's <c>ActionText::Attachables::RemoteVideo</c></summary>
 public sealed record RemoteVideo(string Url, string ContentType, string? Width, string? Height, string? Filename) : Attachable;
 
+/// <summary>Action Text file embed: <c>reference/app/views/active_storage/blobs/_blob.html.erb</c>.</summary>
+public sealed record BlobAttachable(string Filename, long ByteSize, string Extension) : Attachable;
+
 /// <summary>
 /// <c>ActionText::Attachables::MissingAttachable</c>, remembering the model a still-valid SGID
 /// named (<c>SignedGlobalID.parse(sgid).model_name</c>). <paramref name="RenderModelId"/> is set

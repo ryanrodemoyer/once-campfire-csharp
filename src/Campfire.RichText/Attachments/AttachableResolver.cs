@@ -20,6 +20,9 @@ public abstract record SignedLookup
     /// <summary>The signature verified and the user exists.</summary>
     public sealed record User(MentionUser Value) : SignedLookup;
 
+    /// <summary>The signature verified and the blob exists.</summary>
+    public sealed record StoredBlob(BlobAttachable Value) : SignedLookup;
+
     /// <summary>The signature verified (<c>SignedGlobalID.parse</c> succeeds) but the record is gone.</summary>
     public sealed record MissingRecord(string ModelName) : SignedLookup;
 

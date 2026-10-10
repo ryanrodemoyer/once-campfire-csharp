@@ -4,6 +4,7 @@ using Campfire.Data.Sqlite;
 using Campfire.RailsCompat.Crypto;
 using Campfire.RailsCompat.Signing;
 using Campfire.Storage.Blobs;
+using Campfire.Storage.Variants;
 
 namespace Campfire.Web.Helpers;
 
@@ -28,10 +29,44 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
         var users = Users.WhereIds(session, userIds).ToDictionary(user => user.Id, User);
         var rooms = new Dictionary<long, MessageRoom?>();
 
+        var attachments = BlobRecords.FindAttachedBlobs(session, Message.ModelName, ids, "attachment");
+        var imageBlobs = attachments.Values.Where(b => b.IsVariable).ToList();
+        var processedThumbBlobIds = new HashSet<long>();
+        if (imageBlobs.Count > 0)
+        {
+            var digests = imageBlobs.ToDictionary(b => b.Id, b => Representable.Variant(b, NamedVariants.MessageThumb).Variation.Digest);
+            var records = Campfire.Storage.Variants.VariantRecords.ForBlobs(session, [.. digests.Keys]);
+            foreach (var rec in records)
+            {
+                if (digests.TryGetValue(rec.BlobId, out var expectedDigest) && rec.VariationDigest == expectedDigest)
+                {
+                    processedThumbBlobIds.Add(rec.BlobId);
+                }
+            }
+        }
+
+        var videoBlobIds = attachments.Values.Where(b => b.IsVideo).Select(b => b.Id).ToList();
+        var videoPreviewBlobIds = BlobRecords.FindAttachmentBlobIds(session, VariantProcessor.PreviewImageRecordType, videoBlobIds, VariantProcessor.PreviewImageName);
+        var processedPosterPreviewIds = new HashSet<long>();
+        if (videoPreviewBlobIds.Count > 0)
+        {
+            var posterDigest = new Variation(NamedVariants.VideoPoster).Digest;
+            var records = Campfire.Storage.Variants.VariantRecords.ForBlobs(session, [.. videoPreviewBlobIds.Values]);
+            foreach (var rec in records)
+            {
+                if (rec.VariationDigest == posterDigest)
+                {
+                    processedPosterPreviewIds.Add(rec.BlobId);
+                }
+            }
+        }
+
         return [.. messages.Select(message =>
         {
             var body = bodies.GetValueOrDefault(message.Id);
-            var attachment = BlobRecords.FindAttachedBlob(session, Message.ModelName, message.Id, "attachment");
+            var attachment = attachments.GetValueOrDefault(message.Id);
+            var isThumbProcessed = attachment is not null && processedThumbBlobIds.Contains(attachment.Id);
+            var isPosterProcessed = attachment is not null && videoPreviewBlobIds.TryGetValue(attachment.Id, out var previewBlobId) && processedPosterPreviewIds.Contains(previewBlobId);
             var plain = PlainTextBody(body, attachment);
             var room = rooms.TryGetValue(message.RoomId, out var loaded) ? loaded : rooms[message.RoomId] = LoadRoom(session, message.RoomId);
             return new MessageView(
@@ -47,7 +82,9 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
                 attachment,
                 [.. boosts[message.Id].Select(boost => new BoostView(
                     boost.Id, boost.Content, boost.CreatedAt, users.GetValueOrDefault(boost.BoosterId), boost.MessageId, message.RoomId))],
-                plain.Failed);
+                plain.Failed,
+                isThumbProcessed,
+                isPosterProcessed);
         })];
     }
 
