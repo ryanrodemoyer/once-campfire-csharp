@@ -33,6 +33,9 @@ LOGS = STATE_DIR / "logs"
 STATE_FILE = STATE_DIR / "state.json"
 EVENTS = STATE_DIR / "events.log"
 DASHBOARD = STATE_DIR / "dashboard.html"
+SESSIONS = STATE_DIR / "sessions"
+CLAUDE_PROJECTS = Path.home() / ".claude/projects"
+AGY = Path.home() / ".gemini/antigravity-cli"
 POINTS = {"S": 1, "M": 2, "L": 4}
 
 
@@ -308,6 +311,9 @@ def launch(agent, config, task, issue, prs, state, feedback=None):
     PROCS[proc.pid] = proc
     record.update(agent=agent, pid=proc.pid, log=str(log.relative_to(ROOT)),
                   started=dt.datetime.now().isoformat(timespec="seconds"))
+    record.setdefault("sessions", []).append(
+        {"label": f"attempt {record['attempts']}", "agent": agent, "log": record["log"],
+         "started": time.time(), "cwd": str(path), "pid": proc.pid})
 
     sh("gh", "issue", "edit", str(issue), "--add-label", "in-progress", "--add-label",
        f"agent:{agent}", check=False)
@@ -374,6 +380,10 @@ def launch_review(config, task, issue, pr, state):
                                 stdin=subprocess.DEVNULL, start_new_session=True)
     PROCS[proc.pid] = proc
     review.update(pid=proc.pid, log=str(log.relative_to(ROOT)), agent=reviewer)
+    record.setdefault("sessions", []).append(
+        {"label": f"review {review['rounds']}" + (f".{review['tries']}" if review["tries"] > 1 else ""),
+         "agent": reviewer, "log": review["log"], "started": time.time(), "cwd": str(path),
+         "pid": proc.pid})
     event(f"{reviewer} reviewing {task['id']} at {pr['headRefOid'][:12]} (round {review['rounds']})")
 
 
@@ -498,6 +508,204 @@ def tick(config, dispatch=True):
     return states
 
 
+# ---- session pages ------------------------------------------------------------------------------
+# Every agent CLI keeps a transcript: Claude in ~/.claude/projects/<worktree path>/<session>.jsonl,
+# Antigravity (Gemini) in ~/.gemini/antigravity-cli/brain/<conversation>/, and OpenCode streams
+# its steps to our log. Each session gets a readable page in .swarm/sessions/, linked from the
+# dashboard, refreshed while the session runs.
+
+def iso_epoch(stamp):
+    try:
+        return dt.datetime.fromisoformat(stamp.replace("Z", "+00:00")).timestamp()
+    except (AttributeError, ValueError):
+        return 0
+
+
+def first_stamp(path, key):
+    try:
+        with open(path) as f:
+            for line in f:
+                stamp = json.loads(line).get(key)
+                if stamp:
+                    return iso_epoch(stamp)
+    except (OSError, ValueError):
+        pass
+    return 0
+
+
+def claude_transcript(session):
+    folder = CLAUDE_PROJECTS / re.sub(r"[^A-Za-z0-9]", "-", session["cwd"])
+    files = sorted(folder.glob("*.jsonl"), key=lambda f: first_stamp(f, "timestamp")) if folder.exists() else []
+    later = [f for f in files if first_stamp(f, "timestamp") >= session["started"] - 30]
+    return str(later[0]) if later else None
+
+
+def agy_transcript(session):
+    try:
+        conversation = json.loads((AGY / "cache/last_conversations.json").read_text()).get(session["cwd"])
+    except (OSError, ValueError):
+        return None
+    path = AGY / "brain" / str(conversation) / ".system_generated/logs/transcript.jsonl"
+    return str(path) if conversation and path.exists() and first_stamp(path, "created_at") >= session["started"] - 30 else None
+
+
+def task_sessions(task_id, record, config):
+    """The task's sessions, oldest first: those recorded at launch, plus older ones found on disk."""
+    sessions = record.get("sessions", [])
+    for session in sessions:
+        if not session.get("transcript"):
+            finder = {"claude": claude_transcript, "gemini": agy_transcript}.get(session["agent"])
+            session["transcript"] = finder(session) if finder else None
+    known = {x["log"] for x in sessions} | {x.get("transcript") for x in sessions}
+    older = []
+    for log in sorted(LOGS.glob(f"{task_id}-*.log"), key=lambda f: f.stat().st_mtime):
+        rel = str(log.relative_to(ROOT))
+        if rel not in known and log.stat().st_size > 0:
+            parts = log.stem[len(task_id) + 1:].split("-")
+            label = (f"review {parts[1]}" + (f".{parts[2]}" if parts[2:] != ["1"] else "")
+                     if parts[0] == "review" else f"attempt {parts[0]}")
+            older.append({"label": label, "agent": "", "log": rel, "started": log.stat().st_mtime})
+    cwd = str(worktree_for(config, task_id))
+    folder = CLAUDE_PROJECTS / re.sub(r"[^A-Za-z0-9]", "-", cwd)
+    for f in folder.glob("*.jsonl") if folder.exists() else []:
+        if str(f) not in known:
+            older.append({"label": "transcript", "agent": "claude", "transcript": str(f),
+                          "started": first_stamp(f, "timestamp")})
+    agy = agy_transcript({"cwd": cwd, "started": 0})
+    if agy and agy not in known:
+        older.append({"label": "transcript", "agent": "gemini", "transcript": agy,
+                      "started": first_stamp(agy, "created_at")})
+    return sorted(older, key=lambda x: x["started"]) + sessions
+
+
+def clip(text, limit=2000):
+    text = text if isinstance(text, str) else json.dumps(text, indent=1)
+    return text if len(text) <= limit else text[:limit] + f"\n… ({len(text) - limit} more characters)"
+
+
+def entry(kind, body, stamp=None, fold=False):
+    when = dt.datetime.fromtimestamp(stamp).strftime("%H:%M:%S") if stamp else ""
+    body = html.escape(clip(body, 3000 if fold else 6000))
+    inner = f"<details><summary>{html.escape(body.splitlines()[0][:140] if body else '')}</summary><pre>{body}</pre></details>" \
+        if fold else f"<pre>{body}</pre>"
+    return f'<div class="e {kind}"><span class="k">{kind}</span><span class="t">{when}</span>{inner}</div>'
+
+
+def claude_entries(path):
+    out = []
+    for line in open(path, errors="replace"):
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        if d.get("type") not in ("user", "assistant"):
+            continue
+        stamp, content = iso_epoch(d.get("timestamp", "")), d.get("message", {}).get("content")
+        if isinstance(content, str):
+            out.append(entry("prompt" if not out else "user", content, stamp, fold=not out))
+            continue
+        for block in content or []:
+            kind = block.get("type")
+            if kind == "text" and block.get("text", "").strip():
+                out.append(entry("says", block["text"], stamp))
+            elif kind == "thinking" and block.get("thinking", "").strip():
+                out.append(entry("thinks", block["thinking"], stamp))
+            elif kind == "tool_use":
+                args = block.get("input", {})
+                shown = args.get("command") or args.get("file_path") or args.get("pattern") or args
+                out.append(entry(f"tool {block.get('name')}", shown, stamp))
+            elif kind == "tool_result":
+                result = block.get("content")
+                if isinstance(result, list):
+                    result = "\n".join(x.get("text", "") for x in result if isinstance(x, dict))
+                out.append(entry("result", result or "", stamp, fold=True))
+    return out
+
+
+def agy_entries(path):
+    out = []
+    for line in open(path, errors="replace"):
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        stamp = iso_epoch(d.get("created_at", ""))
+        if d.get("type") == "USER_INPUT":
+            out.append(entry("prompt", d.get("content", ""), stamp, fold=True))
+            continue
+        if d.get("thinking"):
+            out.append(entry("thinks", d["thinking"], stamp))
+        if d.get("type") == "PLANNER_RESPONSE" and d.get("content"):
+            out.append(entry("says", d["content"], stamp))
+        for call in d.get("tool_calls") or []:
+            args = call.get("args", {})
+            shown = args.get("CommandLine") or args.get("AbsolutePath") or args.get("TargetFile") or args
+            out.append(entry(f"tool {call.get('name')}", shown, stamp))
+        if d.get("type") in ("GENERIC", "SYSTEM_MESSAGE") and d.get("content"):
+            out.append(entry("result", d["content"], stamp, fold=True))
+    return out
+
+
+def text_entries(path):
+    text = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", Path(path).read_text(errors="replace"))
+    return [f"<pre class=\"log\">{html.escape(text[-400_000:])}</pre>"]
+
+
+def session_page(task_id, title, session, live):
+    """Write the session's page if its source changed; return its path relative to .swarm/."""
+    source = Path(session.get("transcript") or ROOT / session["log"])
+    name = re.sub(r"[^A-Za-z0-9.-]", "_", f"{task_id}-{session['label']}-{int(session['started'])}") + ".html"
+    page = SESSIONS / name
+    try:
+        if page.exists() and page.stat().st_mtime >= source.stat().st_mtime and not live:
+            return f"sessions/{name}"
+        parts = (claude_entries(source) if source.suffix == ".jsonl" and CLAUDE_PROJECTS in source.parents
+                 else agy_entries(source) if source.suffix == ".jsonl" else text_entries(source))
+    except OSError:
+        return None
+    SESSIONS.mkdir(exist_ok=True)
+    refresh = '<meta http-equiv="refresh" content="20">' if live else ""
+    status = "running, refreshes every 20s" if live else "finished"
+    page.write_text(f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+{refresh}<title>{task_id} {html.escape(session['label'])}</title>
+<style>
+:root {{ --bg:#f6f8fa; --fg:#1f2328; --card:#fff; --muted:#59636e; --line:#d1d9e0; }}
+@media (prefers-color-scheme: dark) {{ :root {{ --bg:#0d1117; --fg:#e6edf3; --card:#161b22; --muted:#9198a1; --line:#30363d; }} }}
+body {{ margin:0; padding:16px; background:var(--bg); color:var(--fg); font:14px/1.45 system-ui,sans-serif; }}
+h1 {{ font-size:18px; margin:0 0 4px; }} .sub {{ color:var(--muted); font-size:12px; margin-bottom:12px; }}
+.e {{ background:var(--card); border:1px solid var(--line); border-left:4px solid var(--line); border-radius:6px; padding:6px 10px; margin:6px 0; }}
+.k {{ font-weight:600; font-size:12px; margin-right:8px; }} .t {{ color:var(--muted); font-size:12px; }}
+.says {{ border-left-color:#2da44e; }} .thinks {{ border-left-color:#8250df; }} .result {{ border-left-color:#6e7781; }}
+.e[class*="tool"] {{ border-left-color:#bf8700; }} .prompt {{ border-left-color:#0969da; }}
+pre {{ margin:4px 0 0; white-space:pre-wrap; word-break:break-word; font-size:12px; }}
+.thinks pre {{ color:var(--muted); }} details summary {{ cursor:pointer; color:var(--muted); font-size:12px; }}
+pre.log {{ background:var(--card); border:1px solid var(--line); border-radius:6px; padding:10px; }}
+a {{ color:#0969da; }}
+</style></head><body>
+<h1>{task_id} · {html.escape(title)}</h1>
+<div class="sub">{html.escape(session['label'])} · {html.escape(session.get('agent') or 'agent unknown')} ·
+started {dt.datetime.fromtimestamp(session['started']).strftime('%b %d %H:%M')} · {status} ·
+source <code>{html.escape(str(source))}</code> · <a href="../dashboard.html">dashboard</a></div>
+{''.join(parts)}
+<div id="end"></div>
+<script>{'scrollTo(0, document.body.scrollHeight);' if live else ''}</script>
+</body></html>""")
+    return f"sessions/{name}"
+
+
+def session_links(task_id, title, record, config):
+    links = []
+    for session in task_sessions(task_id, record, config):
+        live = alive(session.get("pid")) if session.get("pid") else False
+        href = session_page(task_id, title, session, live)
+        if href:
+            label = html.escape(session["label"] + (f" ({session['agent']})" if session.get("agent") else ""))
+            dot = ' <span class="live">●</span>' if live else ""
+            links.append(f'<a href="{href}">{label}</a>{dot}')
+    return links
+
+
 # ---- dashboard ----------------------------------------------------------------------------------
 
 STATE_COLORS = {
@@ -554,8 +762,10 @@ def mermaid(tasks, states, owner, done):
 def running_task(config, tasks, state, task_id):
     record = state["tasks"].get(task_id, {})
     log = "\n".join(filter(None, [activity(config, task_id), tail(record.get("log"))]))
+    watch = session_links(task_id, tasks[task_id]["title"], record, config)[-1:]
     return (f'<div class="now"><b>{task_id}</b> {html.escape(tasks[task_id]["title"])} · since '
-            f'{record.get("started", "")[11:16]} · attempt {record.get("attempts")}</div>'
+            f'{record.get("started", "")[11:16]} · attempt {record.get("attempts")} · '
+            f'{"watch: " + watch[0] if watch else ""}</div>'
             f'<pre>{html.escape(log)}</pre>')
 
 
@@ -612,7 +822,7 @@ def write_dashboard(config, tasks, states, state, done, prs):
         state["repo_url"] = sh("gh", "repo", "view", "--json", "url", "-q", ".url", check=False).strip()
     every = {t: states.get(t) or ("merged" if t in done else "human" if "human" in str(tasks[t].get("labels", "")) or t in ("B05", "X02") else "waiting")
              for t in tasks}
-    rows = ['<tr><th>State</th><th>Task</th><th>Title</th><th>Size</th><th>Agent</th><th>Issue</th><th>PR</th><th>Attempts</th></tr>']
+    rows = ['<tr><th>State</th><th>Task</th><th>Title</th><th>Size</th><th>Agent</th><th>Issue</th><th>PR</th><th>Sessions</th><th>Attempts</th></tr>']
     for t in sorted(every, key=lambda t: (list(STATE_COLORS).index(every[t]), t)):
         url = links.get(t)
         link = f'<a href="{url}">#{url.rsplit("/", 1)[1]}</a>' if url else ""
@@ -622,7 +832,7 @@ def write_dashboard(config, tasks, states, state, done, prs):
         size = tasks[t]["size"]
         rows.append(f'<tr><td><span class="chip" style="background:{STATE_COLORS[every[t]]}">'
                     f'{every[t]}</span></td><td>{t}</td><td>{html.escape(tasks[t]["title"])}</td>'
-                    f'<td title="{SIZE_NAMES[size]}">{size}</td><td>{agent}</td><td>{issue}</td><td>{link}</td>'
+                    f'<td title="{SIZE_NAMES[size]}">{size}</td><td>{agent}</td><td>{issue}</td><td>{link}</td><td>{"<br>".join(session_links(t, tasks[t]["title"], state["tasks"].get(t, {}), config))}</td>'
                     f'<td>{state["tasks"].get(t, {}).get("attempts", 0)}</td></tr>')
     events = html.escape("\n".join(EVENTS.read_text().splitlines()[-25:][::-1])) if EVENTS.exists() else ""
     legend = "".join(f'<span class="chip" style="background:{c}">{s}</span>'
@@ -649,7 +859,7 @@ pre {{ background:var(--bg); padding:8px; border-radius:6px; font-size:11px; ove
 .graph {{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px; overflow-x:auto; }}
 .graph pre {{ max-height:none; background:none; }}
 table {{ border-collapse:collapse; width:100%; background:var(--card); }} td, th {{ border-bottom:1px solid var(--line); padding:4px 8px; text-align:left; }}
-.tablewrap {{ overflow-x:auto; }} a {{ color:#0969da; }} .paused {{ color:#cf222e; font-weight:600; }}
+.tablewrap {{ overflow-x:auto; }} .live {{ color:#2da44e; }} a {{ color:#0969da; }} .paused {{ color:#cf222e; font-weight:600; }}
 </style></head><body>
 <h1>Campfire C# port · local swarm</h1>
 <div class="sub">{len(done)} of {total} tasks merged · updated {dt.datetime.now().strftime('%H:%M:%S')} · refreshes every 30s</div>
