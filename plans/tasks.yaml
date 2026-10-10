@@ -1218,8 +1218,17 @@ tasks:
       Profile-guided optimization (dotnet-trace, dotnet-counters, allocation profiling) -
       message fragment cache, pooled UTF-8 writers, prepared statements, fewer DB hops,
       Server GC/DATAS settings. Every change keeps all parity gates green.
+      Profiling: the tools are installed at ~/.dotnet/tools (not on PATH), and the app image has no
+      SDK. Profile a Release build run outside Docker against a copy of the bench seed, driven by
+      the bench load generator; or set DOTNET_EnableEventPipe with an output path on a mounted
+      volume. Read traces as text: `dotnet-trace report <file> topN`, `dotnet-counters collect
+      --format csv`, and the gc-verbose profile for allocations. Profile in separate runs; only
+      profiler-free bench/bin/run numbers count as before/after.
+      Stop when the top 5 bottlenecks are addressed or the last two changes each gained under 5%
+      on all five workloads, whichever comes first.
     accept:
       - Each optimization lands with before/after numbers and a green replay gate
+      - plans/perf-log.md lists every change tried, kept or reverted, with its numbers
 
   - id: B04
     title: Runtime configuration matrix including Native AOT
