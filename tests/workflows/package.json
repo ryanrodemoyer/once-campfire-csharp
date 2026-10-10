@@ -1,0 +1,13 @@
+{
+  "name": "campfire-workflows",
+  "version": "1.0.0",
+  "description": "Ported system tests as Playwright workflows for Campfire Rails vs C# parity",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node runner.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.50.0"
+  }
+}
