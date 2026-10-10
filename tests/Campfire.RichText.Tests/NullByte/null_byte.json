@@ -1,0 +1,218 @@
+{
+  "assignments": [
+    {
+      "name": "new attribute, value with NUL in the middle",
+      "attribute": "title",
+      "value": "a\u0000b",
+      "result": {
+        "error": "ArgumentError",
+        "message": "string contains null byte"
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ]
+      ]
+    },
+    {
+      "name": "new attribute, value that is only NUL",
+      "attribute": "title",
+      "value": "\u0000",
+      "result": {
+        "error": "ArgumentError",
+        "message": "string contains null byte"
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ]
+      ]
+    },
+    {
+      "name": "new attribute, value with NUL at the end",
+      "attribute": "title",
+      "value": "ab\u0000",
+      "result": {
+        "error": "ArgumentError",
+        "message": "string contains null byte"
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ]
+      ]
+    },
+    {
+      "name": "existing attribute, value with NUL",
+      "attribute": "class",
+      "value": "x\u0000y",
+      "result": {
+        "error": "ArgumentError",
+        "message": "string contains null byte"
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ]
+      ]
+    },
+    {
+      "name": "style attribute, value with NUL",
+      "attribute": "style",
+      "value": "color: red\u0000",
+      "result": {
+        "error": "ArgumentError",
+        "message": "string contains null byte"
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ]
+      ]
+    },
+    {
+      "name": "name with NUL",
+      "attribute": "da\u0000ta",
+      "value": "x",
+      "result": {
+        "error": "ArgumentError",
+        "message": "string contains null byte"
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ]
+      ]
+    },
+    {
+      "name": "value with the escaped text &#0;",
+      "attribute": "title",
+      "value": "a&#0;b",
+      "result": {
+        "ok": null
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ],
+        [
+          "title",
+          "a&#0;b"
+        ]
+      ]
+    },
+    {
+      "name": "value with other control characters",
+      "attribute": "title",
+      "value": "a\u0001\u001fb",
+      "result": {
+        "ok": null
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ],
+        [
+          "title",
+          "a\u0001\u001fb"
+        ]
+      ]
+    },
+    {
+      "name": "empty value",
+      "attribute": "title",
+      "value": "",
+      "result": {
+        "ok": null
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ],
+        [
+          "title",
+          ""
+        ]
+      ]
+    },
+    {
+      "name": "value with unicode",
+      "attribute": "title",
+      "value": "é 😀 שלום",
+      "result": {
+        "ok": null
+      },
+      "attributes_after": [
+        [
+          "class",
+          "a"
+        ],
+        [
+          "title",
+          "é 😀 שלום"
+        ]
+      ]
+    }
+  ],
+  "parse": [
+    {
+      "name": "NUL in an attribute value",
+      "html": "<p title=\"a\u0000b\">x</p>",
+      "to_html": "<p title=\"a�b\">x</p>",
+      "attributes": [
+        [
+          "title",
+          "a�b"
+        ]
+      ]
+    },
+    {
+      "name": "NUL in an attribute name",
+      "html": "<p da\u0000ta=\"x\">x</p>",
+      "to_html": "<p da�ta=\"x\">x</p>",
+      "attributes": [
+        [
+          "da�ta",
+          "x"
+        ]
+      ]
+    },
+    {
+      "name": "NUL in text",
+      "html": "<p>a\u0000b</p>",
+      "to_html": "<p>ab</p>",
+      "attributes": []
+    },
+    {
+      "name": "NUL-only attribute value",
+      "html": "<p title=\"\u0000\">x</p>",
+      "to_html": "<p title=\"�\">x</p>",
+      "attributes": [
+        [
+          "title",
+          "�"
+        ]
+      ]
+    },
+    {
+      "name": "escaped NUL reference",
+      "html": "<p title=\"a&#0;b\">x</p>",
+      "to_html": "<p title=\"a�b\">x</p>",
+      "attributes": [
+        [
+          "title",
+          "a�b"
+        ]
+      ]
+    }
+  ]
+}

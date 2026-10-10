@@ -140,7 +140,7 @@ public static class ContentFilters
                 var replacement = new HtmlElement("action-text-attachment", HtmlNamespace.Html);
                 foreach (var attr in attPairs)
                 {
-                    NokogiriAttribute.Set(replacement, attr.Name, attr.Value);
+                    replacement.SetAttribute(attr.Name, attr.Value);
                 }
                 // from_attributes → from_node. The node's markup is what gets stored; the
                 // attachable is only resolved so a raising SGID fails the whole content.
