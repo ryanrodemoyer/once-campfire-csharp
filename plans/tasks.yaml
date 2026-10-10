@@ -1173,6 +1173,41 @@ tasks:
       - The root cause of each flake is written up in the status file
 
   # ---------------------------------------------------------------- Vertical slice
+  - id: Q10
+    title: Finish the requests left on closed issues
+    lane: Q
+    milestone: M4
+    size: M
+    deps: [P05]
+    owns: [tests/Campfire.Web.Tests/Cleanup/]
+    refs: [reference/app/models/user/avatar.rb, reference/app/jobs/remove_banned_content_job.rb, reference/app/controllers/rooms_controller.rb]
+    deliver: >
+      Agents asked for these fixes on issues that had already closed, so nobody made them. Each
+      issue's comment describes the fix. Q10 may edit the files below beyond its owns (swarm
+      edit_anywhere); stay inside them.
+      (1) #63: rooms#destroy returns 501 when a message has an attachment. In
+      src/Campfire.Web/Controllers/Rooms/SettingsController.cs, destroy each message with
+      MessageAttachmentLifecycle.DestroyWithAttachment and drop the NotImplementedRouteException.
+      (2) #30: RemoveBannedContent (src/Campfire.Jobs/RemoveBannedContent.cs) leaves a banned
+      user's attachments behind. Give it the job queue and use DestroyWithAttachment, and update
+      its construction in src/Campfire.Server/Composition/.
+      (3) #24: attaching an avatar or account logo never enqueues ActiveStorage::AnalyzeJob
+      (AnalyzeBlobJob). Enqueue it after commit, as Attachment#analyze_blob_later does, at every
+      BlobStorage.AttachOne call in FirstRunsController, UsersController, Users/ProfilesController,
+      Accounts/BotsController and AccountsController, unless the blob is already analyzed.
+      (4) #43: a message with no body row presents as "" (Rails' rescue), not an empty
+      lexxy-content, in src/Campfire.Web/Helpers/Messages/MessagesHelper.cs. Remove the "member
+      sends no body" known difference from WriteControllerTests.
+      (5) #16: CookieJar (src/Campfire.RailsCompat/Cookies/) emits only the deletion when a request
+      sets and then deletes a cookie; Rails emits both Set-Cookie headers in order. Match it, and
+      drop the lastCookieOnly special case for "sign out" in SessionsControllerTests.
+      Comment on each issue when its fix lands.
+    accept:
+      - Each of the five behaviors matches the reference, proven by a test against reference
+        vectors or output (new tests under tests/Campfire.Web.Tests/Cleanup/ or the existing suites)
+      - The 501 and both known-difference special cases are gone
+      - bin/check is green
+
   - id: VS01
     title: Vertical slice gate
     lane: VS
