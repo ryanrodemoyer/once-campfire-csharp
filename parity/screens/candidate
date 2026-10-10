@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+# Run the candidate (C#) app for the parity harness. Same interface as
+# reference-rust/parity/bin/candidate.
+#
+#   parity/screens/candidate build                      build campfire-csharp:app (/Dockerfile) and the
+#                                                       campfire-csharp-candidate parity image on top of it
+#   parity/screens/candidate up   [--seed NAME] [--port N] [--time ISO8601 [--freeze]] [-e K=V]
+#   parity/screens/candidate down [--port N | --all [--everyone]]
+#   parity/screens/candidate logs [--port N] [-f]
+#   parity/screens/candidate ps   [--everyone]
+#   parity/screens/candidate reset --port N [--seed NAME] [--time ISO8601]
+#
+# `up` starts an instance on a fresh copy of parity/.seed/NAME (default: default) listening on
+# 127.0.0.1:N (default 3200), with the reference's environment (parity/.env.reference), CPU cap
+# (PARITY_CPUS, default 2) and storage layout (/rails/storage/{db,files}). --time starts the server
+# clock at that instant through libfaketime and lets it tick, exactly as for the reference; with
+# --freeze it stays there (FAKETIME frozen, and CAMPFIRE_FROZEN_TIME for the app's own clock).
+#
+# `reset` starts a fresh instance on port N from the seed with a frozen clock. It's the
+# --reset-host hook for comparisons that include mutating states, which get isolated servers on
+# ports P + 1000 * k.
+#
+# Docker only: the C# app has no native runtime here.
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+PARITY=$ROOT/parity
+SEEDS=${PARITY_SEED_DIR:-$PARITY/.seed}
+INSTANCES=$SEEDS/.candidates
+APP_IMAGE=${PARITY_CANDIDATE_APP_IMAGE:-campfire-csharp:app}
+IMAGE=${PARITY_CANDIDATE_IMAGE:-campfire-csharp-candidate}
+ENV_FILE=$PARITY/.env.reference
+DEFAULT_PORT=3200
+OWNER=${PARITY_OWNER:-${CLAUDE_CODE_SESSION_ID:-$(id -un)}}
+
+die() { echo "candidate: $*" >&2; exit 1; }
+log() { echo "candidate: $*" >&2; }
+
+SEED="" PORT="" TIME="" FREEZE="" FOLLOW="" ALL="" EVERYONE="" EXTRA_ENV=()
+
+parse_options() {
+  REST=()
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --seed)    SEED=$2; shift 2 ;;
+      --port)    PORT=$2; shift 2 ;;
+      --time)    TIME=$2; shift 2 ;;
+      --freeze)  FREEZE=1; shift ;;
+      -e)        EXTRA_ENV+=("$2"); shift 2 ;;
+      -f|--follow) FOLLOW=1; shift ;;
+      --all)     ALL=1; shift ;;
+      --everyone) EVERYONE=1; shift ;;
+      --)        shift; REST+=("$@"); break ;;
+      *)         REST+=("$@"); break ;;
+    esac
+  done
+}
+
+# Same spec as parity/bin/reference: "@T" ticks from T, "T" is frozen at T.
+faketime_spec() {
+  [ -n "$TIME" ] || return 0
+  local t
+  t=$(date -u -d "$TIME" '+%Y-%m-%d %H:%M:%S') || die "can't parse --time $TIME"
+  if [ -n "$FREEZE" ]; then echo "$t"; else echo "@$t"; fi
+}
+
+copy_seed_into() {
+  local seed=$1 dir=$2
+  mkdir -p "$dir/db" "$dir/storage"
+  [ -f "$SEEDS/$seed/db/production.sqlite3" ] || die "seed '$seed' isn't built: parity/bin/seed build $seed"
+  cp -a --reflink=auto "$SEEDS/$seed/db/." "$dir/db/"
+  cp -a --reflink=auto "$SEEDS/$seed/storage/." "$dir/storage/"
+}
+
+container() { echo "campfire-csharp-candidate-$1"; }
+instance_dir() { echo "$INSTANCES/$1"; }
+alive() { [ "$(docker inspect -f '{{.State.Running}}' "$(container "$1")" 2>/dev/null)" = "true" ]; }
+
+wait_until_up() {
+  local port=$1
+  for _ in $(seq 1 240); do
+    curl -fsS -o /dev/null "http://127.0.0.1:$port/up" 2>/dev/null && return 0
+    alive "$port" || { docker logs "$(container "$port")" 2>&1 | tail -n 40 >&2; die "instance on port $port exited during boot"; }
+    sleep 0.25
+  done
+  docker logs "$(container "$port")" 2>&1 | tail -n 40 >&2
+  die "instance on port $port didn't come up within 60s"
+}
+
+env_args() {
+  local spec; spec=$(faketime_spec)
+  printf '%s\n' --env-file "$ENV_FILE"
+  if [ -n "$spec" ]; then printf '%s\n' -e "FAKETIME=$spec"; fi
+  if [ -n "$FREEZE" ] && [ -n "$TIME" ]; then
+    printf '%s\n' -e "CAMPFIRE_FROZEN_TIME=$(date -u -d "$TIME" '+%Y-%m-%dT%H:%M:%SZ')"
+  fi
+  local e; for e in "${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}"; do printf '%s\n' -e "$e"; done
+}
+
+up() {
+  local port=$1 seed=$2 dir; dir=$(instance_dir "$port")
+  docker rm -f "$(container "$port")" >/dev/null 2>&1 || true
+  rm -rf "$dir"; copy_seed_into "$seed" "$dir"
+  local args=(); mapfile -t args < <(env_args)
+  docker run -d --name "$(container "$port")" \
+    --label parity.seed="$seed" --label parity.candidate.port="$port" --label parity.owner="$OWNER" \
+    --cpus "${PARITY_CPUS:-2}" \
+    --user "$(id -u):$(id -g)" \
+    -p "127.0.0.1:$port:3000" \
+    "${args[@]}" \
+    -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" \
+    "$IMAGE" >/dev/null
+  wait_until_up "$port"
+}
+
+down() {
+  docker rm -f "$(container "$1")" >/dev/null 2>&1 || true
+  rm -rf "$(instance_dir "$1")"
+}
+
+# The caller's instances (every instance with --everyone).
+ports() {
+  local owner=(); [ -n "$EVERYONE" ] || owner=(--filter "label=parity.owner=$OWNER")
+  docker ps -a --filter label=parity.candidate.port "${owner[@]}" --format '{{.Label "parity.candidate.port"}}'
+}
+
+build() {
+  log "building $APP_IMAGE from /Dockerfile"
+  docker build -t "$APP_IMAGE" -f "$ROOT/Dockerfile" \
+    --build-arg APP_VERSION=parity --build-arg GIT_REVISION="$(git -C "$ROOT" rev-parse HEAD)" \
+    "$ROOT"
+  log "building $IMAGE from parity/screens/docker/Dockerfile"
+  docker build -t "$IMAGE" --build-arg BASE_IMAGE="$APP_IMAGE" "$PARITY/screens/docker"
+}
+
+seed_clock() {
+  local labels=$SEEDS/$1/labels.json
+  [ -f "$labels" ] || die "no seed $1 at $labels; run parity/bin/seed build $1"
+  python3 -c 'import json,sys; l=json.load(open(sys.argv[1])); print(l.get("clock.now") or (l.get("clock") or {}).get("now") or "")' "$labels"
+}
+
+# Start a fresh instance on PORT from the seed, frozen at TIME.
+reset() {
+  local port=${PORT:?reset needs --port} seed=${SEED:-default}
+  local time=${TIME:-$(seed_clock "$seed")}
+  TIME=$time FREEZE=1 up "$port" "$seed"
+}
+
+cmd=${1:-help}; shift || true
+parse_options "$@"
+set -- "${REST[@]+"${REST[@]}"}"
+
+case "$cmd" in
+  build)
+    build ;;
+  up)
+    port=${PORT:-$DEFAULT_PORT} seed=${SEED:-default}
+    up "$port" "$seed"
+    echo "http://127.0.0.1:$port  (seed: $seed, candidate${TIME:+, time: $(faketime_spec)})" ;;
+  down)
+    if [ -n "$ALL" ]; then
+      for p in $(ports); do down "$p"; done
+    else
+      down "${PORT:-$DEFAULT_PORT}"
+    fi ;;
+  logs)
+    if [ -n "$FOLLOW" ]; then docker logs -f "$(container "${PORT:-$DEFAULT_PORT}")"
+    else docker logs "$(container "${PORT:-$DEFAULT_PORT}")"; fi ;;
+  ps)
+    for p in $(ports); do
+      if alive "$p"; then echo "$p up"; else echo "$p down"; fi
+    done ;;
+  reset)
+    reset ;;
+  help|-h|--help)
+    sed -n '2,/^set -euo/p' "$0" | sed '$d; s/^# \{0,1\}//' ;;
+  *)
+    die "unknown command $cmd (try help)" ;;
+esac
