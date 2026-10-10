@@ -46,7 +46,8 @@ agents:
     slots: 2
     # R04 and M10 moved here when Fireworks (glm, deepseek) ran out of credits, so Q08's review
     # of R04 went to dspro: a reviewer can't review its own work.
-    queue: [M10, VS01, B06, B02, B03, B04]
+    # Out of usage balance (402): R04 moved to gemini, the benchmark chain to dspro.
+    queue: []
 
   glm:
     model: GLM 5.3 (high) via OpenCode
@@ -74,4 +75,5 @@ agents:
               "{prompt}"]
     # Cheap ($0.21/M in, $0.02/M cache read); takes P02 (continuing glm's attempt) and Q04.
     slots: 2
-    queue: [P02, Q09, Q04, Q08]
+    # The benchmark chain moved here from grok when Grok's usage balance ran out.
+    queue: [P02, Q09, Q04, Q08, B06, B02, B03, B04]
