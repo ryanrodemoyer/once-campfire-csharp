@@ -1201,9 +1201,12 @@ tasks:
       (5) #16: CookieJar (src/Campfire.RailsCompat/Cookies/) emits only the deletion when a request
       sets and then deletes a cookie; Rails emits both Set-Cookie headers in order. Match it, and
       drop the lastCookieOnly special case for "sign out" in SessionsControllerTests.
+      (6) #26: if P05 didn't already, set WebApp.ResetRemoteConnections so sign out disconnects the
+      user's cable connections, and register every job handler (each RegisterWith) with the
+      server's runner in src/Campfire.Server/Composition/.
       Comment on each issue when its fix lands.
     accept:
-      - Each of the five behaviors matches the reference, proven by a test against reference
+      - Each of the six behaviors matches the reference, proven by a test against reference
         vectors or output (new tests under tests/Campfire.Web.Tests/Cleanup/ or the existing suites)
       - The 501 and both known-difference special cases are gone
       - bin/check is green
