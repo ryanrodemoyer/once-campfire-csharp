@@ -1,3 +1,5 @@
+using Campfire.RichText.Attachments;
+
 namespace Campfire.RichText.Html;
 
 // The tree Nokogiri hands Action Text and Loofah for an HTML5 document: libxml2 nodes built from
@@ -234,9 +236,16 @@ public sealed class HtmlElement : HtmlParentNode
         return null;
     }
 
-    /// <summary>Nokogiri's <c>node[name] = value</c>: updates in place, or appends a new attribute.</summary>
+    /// <summary>
+    /// Nokogiri's <c>node[name] = value</c>: updates in place, or appends a new attribute. A NUL in the
+    /// name or the value raises, as <c>StringValueCStr</c> does, before anything is stored.
+    /// </summary>
     public void SetAttribute(string qualifiedName, string value)
     {
+        if (qualifiedName.Contains('\0') || value.Contains('\0'))
+        {
+            throw new RichTextRaisedException("ArgumentError: string contains null byte");
+        }
         var existing = FindAttribute(qualifiedName);
         if (existing is not null)
         {

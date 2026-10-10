@@ -132,7 +132,7 @@ public static class RichTextRenderer
             var sanitized = SafeListSanitizer.Sanitize(content, SafeList.ActionText);
             if (!RubyText.IsBlank(sanitized))
             {
-                NokogiriAttribute.Set(node, "content", sanitized);
+                node.SetAttribute("content", sanitized);
             }
         }
     }
@@ -154,7 +154,7 @@ public static class RichTextRenderer
             };
             if (value is not null)
             {
-                NokogiriAttribute.Set(element, name, value);
+                element.SetAttribute(name, value);
             }
         }
         if (element.Attributes.Count == 0)
