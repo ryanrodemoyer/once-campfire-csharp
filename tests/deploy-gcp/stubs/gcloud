@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Stub gcloud CLI for testing deploy-gcp without real GCP credentials or network access.
+if [ -n "${STUB_GCLOUD_LOG:-}" ]; then
+  echo "gcloud $*" >> "$STUB_GCLOUD_LOG"
+fi
+
+# Simulate existence based on MOCK_RESOURCES_EXIST environment variable (default: 0 = not found)
+EXIST="${MOCK_RESOURCES_EXIST:-0}"
+
+cmd="${1:-}"
+shift || true
+
+case "$cmd" in
+  config)
+    sub="${1:-}"
+    shift || true
+    if [ "$sub" = "get-value" ]; then
+      echo "${MOCK_PROJECT_ID:-PROJECT_ID}"
+      exit 0
+    fi
+    ;;
+  artifacts)
+    sub="${1:-}"
+    shift || true
+    if [ "$sub" = "repositories" ]; then
+      action="${1:-}"
+      shift || true
+      if [ "$action" = "describe" ]; then
+        if [ "$EXIST" = "1" ]; then
+          echo "Repository exists"
+          exit 0
+        else
+          exit 1
+        fi
+      fi
+    fi
+    ;;
+  iam)
+    sub="${1:-}"
+    shift || true
+    if [ "$sub" = "service-accounts" ]; then
+      action="${1:-}"
+      shift || true
+      if [ "$action" = "describe" ]; then
+        if [ "$EXIST" = "1" ]; then
+          echo "Service account exists"
+          exit 0
+        else
+          exit 1
+        fi
+      fi
+    fi
+    ;;
+  projects)
+    sub="${1:-}"
+    shift || true
+    if [ "$sub" = "get-iam-policy" ]; then
+      if [ "$EXIST" = "1" ]; then
+        echo "roles/artifactregistry.reader"
+      fi
+      exit 0
+    fi
+    ;;
+  compute)
+    sub="${1:-}"
+    shift || true
+    case "$sub" in
+      addresses)
+        action="${1:-}"
+        shift || true
+        if [ "$action" = "describe" ]; then
+          if [ "$EXIST" = "1" ]; then
+            echo "STATIC_IP_PLACEHOLDER"
+            exit 0
+          else
+            exit 1
+          fi
+        fi
+        ;;
+      firewall-rules)
+        action="${1:-}"
+        shift || true
+        if [ "$action" = "describe" ]; then
+          if [ "$EXIST" = "1" ]; then
+            echo "Firewall rule exists"
+            exit 0
+          else
+            exit 1
+          fi
+        fi
+        ;;
+      resource-policies)
+        action="${1:-}"
+        shift || true
+        if [ "$action" = "describe" ]; then
+          if [ "$EXIST" = "1" ]; then
+            echo "Policy exists"
+            exit 0
+          else
+            exit 1
+          fi
+        fi
+        ;;
+      instances)
+        action="${1:-}"
+        shift || true
+        if [ "$action" = "describe" ]; then
+          if [ "$EXIST" = "1" ]; then
+            echo "RUNNING"
+            exit 0
+          else
+            exit 1
+          fi
+        fi
+        ;;
+      disks)
+        action="${1:-}"
+        shift || true
+        if [ "$action" = "describe" ]; then
+          if [ "$EXIST" = "1" ]; then
+            echo "campfire-daily-snapshot"
+            exit 0
+          else
+            exit 1
+          fi
+        fi
+        ;;
+    esac
+    ;;
+  auth)
+    # gcloud auth configure-docker
+    exit 0
+    ;;
+esac
+
+exit 0

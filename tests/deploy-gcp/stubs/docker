@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Stub docker CLI for testing deploy-gcp without Docker daemon.
+if [ -n "${STUB_DOCKER_LOG:-}" ]; then
+  echo "docker $*" >> "$STUB_DOCKER_LOG"
+fi
+
+exit 0
