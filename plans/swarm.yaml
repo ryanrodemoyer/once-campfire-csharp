@@ -23,7 +23,7 @@ exclusive: [B02, B03, B04, B07, B08, B09]
 drain_exempt: [R04, M10]
 # May edit src/ and tests/ (and other paths their card names) beyond their `owns`: their work fixes
 # code whose owners have all merged. Concurrent ones resolve conflicts by merging main.
-edit_anywhere: [B03, Q10, U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12, Q13, R06, P07, P08, B07, B08, B09]
+edit_anywhere: [B03, Q10, Q14, U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12, Q13, R06, P07, P08, B07, B08, B09]
 # Each listed task's green PR is reviewed by `reviewer` before it merges (plans/bin/swarm): APPROVE
 # merges it, CHANGES sends it back to its author. After max_rounds reviews it goes to a human.
 review:
