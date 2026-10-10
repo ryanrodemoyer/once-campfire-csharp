@@ -6,7 +6,7 @@ namespace Campfire.Web.Tests.Assets;
 
 // The bundle built from this checkout, and the golden output the reference app produced for the
 // same sources: `assets:precompile` and the real Rails helpers, exported by
-// reference-rust/crates/assets/script/export_reference.rb into its tests/reference/.
+// reference-rust/crates/assets/script/export_reference.rb into Reference/ (see assets/README.md).
 static class ReferenceAssets
 {
     public static string RepositoryRoot { get; } = FindRepositoryRoot();
@@ -17,7 +17,7 @@ static class ReferenceAssets
     public static AssetBundle Bundle => LazyBundle.Value;
 
     public static string Fixture(string name) =>
-        File.ReadAllText(Path.Combine(RepositoryRoot, "reference-rust", "crates", "assets", "tests", "reference", name));
+        File.ReadAllText(Path.Combine(RepositoryRoot, "tests", "Campfire.Web.Tests", "Assets", "Reference", name));
 
     public static JsonElement JsonFixture(string name)
     {

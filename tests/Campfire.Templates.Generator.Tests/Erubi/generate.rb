@@ -4,9 +4,15 @@
 #   reference-views.json        the text/code/expression stream ActionView's Erubi produces for
 #                               every reference/app/views/**/*.erb
 #
-# The reference pins rails@1a02651 (8.2.0.alpha) and erubi 1.13.1. Run with erubi 1.13.1 and
-# actionview 8.1.4: its template/handlers/erb.rb, erb/erubi.rb and buffers.rb are byte-identical to
-# the pinned commit's.
+# Run it with the reference's own ActionView and erubi, inside its image (the gem lines below then
+# name versions the bundle doesn't have, so they're skipped):
+#
+#   docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" -w /rails --entrypoint bundle \
+#     campfire-reference:app exec ruby -e 'module Kernel; private def gem(*) = true; end; load ARGV[0]' \
+#     /work/tests/Campfire.Templates.Generator.Tests/Erubi/generate.rb
+#
+# Or on the host, with erubi 1.13.1 and actionview 8.1.4, whose template/handlers/erb.rb,
+# erb/erubi.rb and buffers.rb match the pinned Rails':
 #
 #   gem install erubi -v 1.13.1 && gem install actionview -v 8.1.4
 #   ruby tests/Campfire.Templates.Generator.Tests/Erubi/generate.rb

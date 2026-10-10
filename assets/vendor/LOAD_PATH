@@ -12,5 +12,4 @@ vendor:action_text-trix/app/assets/javascripts
 vendor:action_text-trix/app/assets/stylesheets
 vendor:actioncable/app/assets/javascripts
 vendor:activestorage/app/assets/javascripts
-vendor:actionview/app/assets/javascripts
 vendor:lexxy/app/javascript

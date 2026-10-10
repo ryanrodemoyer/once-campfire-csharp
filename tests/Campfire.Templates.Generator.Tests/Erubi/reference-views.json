@@ -1110,15 +1110,15 @@
     ],
     [
       "text",
-      "\n        <label class=\"switch\">\n          <input type=\"checkbox\"\n                class=\"switch__input\"\n                "
+      "\n        <label class=\"switch\">\n          "
     ],
     [
       "expr",
-      " \"checked\" if Current.account.settings.restrict_room_creation_to_administrators? "
+      " tag.input type: \"checkbox\", class: \"switch__input\",\n                checked: Current.account.settings.restrict_room_creation_to_administrators?,\n                data: { action: \"change->form#submit\" } "
     ],
     [
       "text",
-      "\n                data-action=\"change->form#submit\">\n          <span class=\"switch__btn round\"></span>\n          <span class=\"for-screen-reader\">\n            Must be admin to create new rooms\n          </span>\n        </label>\n\n"
+      "\n          <span class=\"switch__btn round\"></span>\n          <span class=\"for-screen-reader\">\n            Must be admin to create new rooms\n          </span>\n        </label>\n\n"
     ],
     [
       "code",
@@ -1178,7 +1178,7 @@
     ],
     [
       "code",
-      "         if @administrators.any? && @members.any? \n"
+      "         if @administrators.any? && @page.records.any? \n"
     ],
     [
       "text",
@@ -1194,7 +1194,7 @@
     ],
     [
       "expr",
-      " render partial: \"accounts/users/user\", collection: @members, as: :user "
+      " render partial: \"accounts/users/user\", collection: @page.records, as: :user "
     ],
     [
       "text",
@@ -1501,6 +1501,72 @@
       "    </div>\n  </actiontext-opengraph-embed>\n</figure>\n"
     ]
   ],
+  "active_storage/blobs/_blob.html.erb": [
+    [
+      "code",
+      "\n\n\n"
+    ],
+    [
+      "text",
+      "<figure class=\"attachment attachment--file attachment--"
+    ],
+    [
+      "expr",
+      " blob.filename.extension "
+    ],
+    [
+      "text",
+      "\">\n  <figcaption class=\"attachment__caption\">\n"
+    ],
+    [
+      "code",
+      "     if caption = blob.try(:caption) \n"
+    ],
+    [
+      "text",
+      "      "
+    ],
+    [
+      "expr",
+      " caption "
+    ],
+    [
+      "text",
+      "\n"
+    ],
+    [
+      "code",
+      "     else \n"
+    ],
+    [
+      "text",
+      "      <span class=\"attachment__name\">"
+    ],
+    [
+      "expr",
+      " blob.filename "
+    ],
+    [
+      "text",
+      "</span>\n      <span class=\"attachment__size\">"
+    ],
+    [
+      "expr",
+      " number_to_human_size blob.byte_size "
+    ],
+    [
+      "text",
+      "</span>\n"
+    ],
+    [
+      "code",
+      "     end \n"
+    ],
+    [
+      "text",
+      "  </figcaption>\n</figure>\n"
+    ]
+  ],
   "autocompletable/users/_prompt_item.html.erb": [
     [
       "text",
@@ -1778,14 +1844,6 @@
     ],
     [
       "expr",
-      " csrf_meta_tags "
-    ],
-    [
-      "text",
-      "\n    "
-    ],
-    [
-      "expr",
       " csp_meta_tag "
     ],
     [
@@ -1926,7 +1984,7 @@
     ],
     [
       "text",
-      "</span>\n"
+      "\n"
     ],
     [
       "code",
@@ -1942,7 +2000,7 @@
     ],
     [
       "text",
-      "</span>\n"
+      "\n"
     ],
     [
       "code",
@@ -2040,6 +2098,14 @@
     ],
     [
       "text",
+      "\n"
+    ],
+    [
+      "expr",
+      " cache_message_actions(message) do "
+    ],
+    [
+      "text",
       "\n<div class=\"message__actions\" data-controller=\"soft-keyboard\">\n  "
     ],
     [
@@ -2060,19 +2126,35 @@
     ],
     [
       "code",
+      "         boost_path = message_boosts_path(message) \n"
+    ],
+    [
+      "code",
+      "         boost_frame = dom_id(message, :boosting) \n"
+    ],
+    [
+      "code",
       "         EmojiHelper::REACTIONS.each do |character, title| \n"
     ],
     [
       "text",
-      "          "
+      "          <form data-turbo-frame=\""
     ],
     [
       "expr",
-      " form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting), action: \"popup#close\"} do |form| "
+      " boost_frame "
     ],
     [
       "text",
-      "\n            "
+      "\" data-action=\"popup#close\" action=\""
+    ],
+    [
+      "expr",
+      " boost_path "
+    ],
+    [
+      "text",
+      "\" accept-charset=\"UTF-8\" method=\"post\">\n            "
     ],
     [
       "expr",
@@ -2080,15 +2162,23 @@
     ],
     [
       "text",
-      "\n            "
+      "\n            <button name=\"button\" type=\"submit\" title=\""
     ],
     [
       "expr",
-      " form.button type: \"submit\", title: title, class: \"btn message__action-btn\", data: { emoji: character } do "
+      " title "
     ],
     [
       "text",
-      "\n              <figure class=\"margin-none boost-character\">"
+      "\" class=\"btn message__action-btn\" data-emoji=\""
+    ],
+    [
+      "expr",
+      " character "
+    ],
+    [
+      "text",
+      "\">\n              <figure class=\"margin-none boost-character\">"
     ],
     [
       "expr",
@@ -2104,15 +2194,7 @@
     ],
     [
       "text",
-      "</span>\n"
-    ],
-    [
-      "code",
-      "             end \n"
-    ],
-    [
-      "code",
-      "           end \n"
+      "</span>\n            </button>\n          </form>\n"
     ],
     [
       "code",
@@ -2148,7 +2230,7 @@
     ],
     [
       "code",
-      "         if message.content_type.attachment? \n"
+      "         if message.attachment? \n"
     ],
     [
       "text",
@@ -2289,6 +2371,10 @@
     [
       "text",
       "</div>\n"
+    ],
+    [
+      "code",
+      " end \n"
     ]
   ],
   "messages/_message.html.erb": [
@@ -2306,7 +2392,7 @@
     ],
     [
       "code",
-      " cache [ message, \"presentation-v3\" ] do \n"
+      " cache [ message_fragment_cache_key(message), \"presentation-v7\" ] do \n"
     ],
     [
       "text",
@@ -2434,7 +2520,7 @@
   "messages/_template.html.erb": [
     [
       "text",
-      "<script type=\"text/template\" data-messages-target=\"template\">\n  <div class=\"message message--me $messageClasses$\"\n      id=\"message_$clientMessageId$\"\n      data-format-message-target=\"message\"\n      data-user-id=\""
+      "<script type=\"text/template\" data-messages-target=\"template\">\n  <div class=\"message message--me $messageClasses$\"\n      id=\"message_$clientMessageId$\"\n      data-format-message-target=\"message\"\n      data-pending-message=\"true\"\n      data-client-message-id=\"$clientMessageId$\"\n      data-user-id=\""
     ],
     [
       "expr",
@@ -2477,12 +2563,8 @@
   ],
   "messages/boosts/_boost.html.erb": [
     [
-      "code",
-      " cache boost do \n"
-    ],
-    [
       "text",
-      "  <div id=\""
+      "<div id=\""
     ],
     [
       "expr",
@@ -2490,7 +2572,7 @@
     ],
     [
       "text",
-      "\"\n      class=\"boost boost-item flex-inline postion--relative max-width align-center fill-white gap\"\n      data-controller=\"boost-delete\" data-boost-delete-perform-class=\"boost--deleting\" data-boost-delete-reveal-class=\"expanded\" data-boost-delete-booster-id-value=\""
+      "\"\n    class=\"boost boost-item flex-inline postion--relative max-width align-center fill-white gap\"\n    data-controller=\"boost-delete\" data-boost-delete-perform-class=\"boost--deleting\" data-boost-delete-reveal-class=\"expanded\" data-boost-delete-booster-id-value=\""
     ],
     [
       "expr",
@@ -2498,7 +2580,7 @@
     ],
     [
       "text",
-      "\">\n    <figure class=\"avatar boost__avatar flex-item-no-shrink\">\n      "
+      "\">\n  <figure class=\"avatar boost__avatar flex-item-no-shrink\">\n    "
     ],
     [
       "expr",
@@ -2506,23 +2588,23 @@
     ],
     [
       "text",
-      "\n    </figure>\n\n    "
+      "\n  </figure>\n\n  "
     ],
     [
       "expr",
-      " tag.span boost.content, role: \"button\",\n          class: [ \"txt-small\", { \"txt-medium\": boost.content.all_emoji? } ],\n          data: { action: \"click->boost-delete#reveal keydown.enter->boost-delete#reveal:prevent\", boost_delete_target: \"content\" } "
+      " tag.span boost.content, role: \"button\",\n        class: [ \"txt-small\", { \"txt-medium\": boost.content.all_emoji? } ],\n        data: { action: \"click->boost-delete#reveal keydown.enter->boost-delete#reveal:prevent\", boost_delete_target: \"content\" } "
     ],
     [
       "text",
-      "\n\n    "
+      "\n\n  "
     ],
     [
       "expr",
-      " button_to message_boost_path(boost.message, boost), method: :delete, data: { action: \"boost-delete#perform\", boost_delete_target: \"button\" },\n          class: \"btn btn--negative flex-item-justify-end boost__delete\" do "
+      " button_to message_boost_path(boost.message, boost), method: :delete, data: { action: \"boost-delete#perform\", boost_delete_target: \"button\" },\n        class: \"btn btn--negative flex-item-justify-end boost__delete\" do "
     ],
     [
       "text",
-      "\n      "
+      "\n    "
     ],
     [
       "expr",
@@ -2530,19 +2612,15 @@
     ],
     [
       "text",
-      "\n      <span class=\"for-screen-reader\">Delete this boost</span>\n"
+      "\n    <span class=\"for-screen-reader\">Delete this boost</span>\n"
     ],
     [
       "code",
-      "     end \n"
+      "   end \n"
     ],
     [
       "text",
-      "  </div>\n  <span id=\"delete_boost_accessible_label\" class=\"for-screen-reader\">Press enter to delete this boost</span>\n"
-    ],
-    [
-      "code",
-      " end \n"
+      "</div>\n<span id=\"delete_boost_accessible_label\" class=\"for-screen-reader\">Press enter to delete this boost</span>\n"
     ]
   ],
   "messages/boosts/_boosts.html.erb": [
@@ -2564,7 +2642,7 @@
     ],
     [
       "expr",
-      " render partial: \"messages/boosts/boost\", collection: message.boosts.ordered, cached: true "
+      " render partial: \"messages/boosts/boost\", collection: message.boosts.loaded? ? message.boosts.sort_by(&:created_at) : message.boosts.ordered.includes(:booster) "
     ],
     [
       "text",
@@ -2580,7 +2658,7 @@
     ],
     [
       "expr",
-      " link_to new_message_boost_path(message), class: \"boost__action txt-small btn\", action: \"soft-keyboard#open\" do "
+      " link_to new_message_boost_path(message), class: \"boost__action txt-small btn\", data: { action: \"soft-keyboard#open\" } do "
     ],
     [
       "text",
@@ -2726,7 +2804,7 @@
   "messages/create.turbo_stream.erb": [
     [
       "expr",
-      " turbo_stream.append dom_id(@message.room, :messages), @message "
+      " turbo_stream.append dom_id(@message.room, :messages), @message_html "
     ],
     [
       "text",
@@ -2944,7 +3022,7 @@
   "messages/index.html.erb": [
     [
       "expr",
-      " render partial: \"messages/message\", collection: @messages, cached: true "
+      " render partial: \"messages/message\", collection: @messages, cached: ->(message) { message_fragment_cache_key(message) } "
     ],
     [
       "text",
@@ -3002,7 +3080,11 @@
     ],
     [
       "code",
-      "     case\n      when platform.firefox? && platform.android? \n"
+      "     case \n"
+    ],
+    [
+      "code",
+      "       when platform.firefox? && platform.android? \n"
     ],
     [
       "text",
@@ -3392,7 +3474,11 @@
     ],
     [
       "code",
-      "     case\n      when platform.edge? \n"
+      "     case \n"
+    ],
+    [
+      "code",
+      "       when platform.edge? \n"
     ],
     [
       "text",
@@ -3400,7 +3486,7 @@
     ],
     [
       "expr",
-      " image_tag \"install-edge.svg\", alt: \"the app available - install Campfire chat button\", size: 16 "
+      " image_tag \"external/install-edge.svg\", alt: \"the app available - install Campfire chat button\", size: 16 "
     ],
     [
       "text",
@@ -3538,7 +3624,11 @@
     ],
     [
       "code",
-      "   case\n    when platform.firefox? && platform.android? \n"
+      "   case \n"
+    ],
+    [
+      "code",
+      "     when platform.firefox? && platform.android? \n"
     ],
     [
       "text",
@@ -4728,7 +4818,7 @@
     ],
     [
       "expr",
-      " render partial: \"messages/message\", collection: @new_messages, cached: true "
+      " render partial: \"messages/message\", collection: @new_messages, cached: ->(message) { message_fragment_cache_key(message) } "
     ],
     [
       "text",
@@ -4854,7 +4944,7 @@
     ],
     [
       "expr",
-      " render partial: \"messages/message\", collection: @messages, cached: true "
+      " render partial: \"messages/message\", collection: @messages, cached: ->(message) { message_fragment_cache_key(message) } "
     ],
     [
       "text",
@@ -5426,7 +5516,7 @@
     ],
     [
       "expr",
-      " render partial: \"messages/message\", collection: @messages, cached: true "
+      " render partial: \"messages/message\", collection: @messages, cached: ->(message) { message_fragment_cache_key(message) } "
     ],
     [
       "text",
@@ -5756,11 +5846,15 @@
   "sessions/transfers/show.html.erb": [
     [
       "expr",
-      " auto_submit_form_with method: :put "
+      " auto_submit_form_with method: :put do "
     ],
     [
       "text",
       "\n"
+    ],
+    [
+      "code",
+      " end \n"
     ]
   ],
   "users/_ban_button.html.erb": [

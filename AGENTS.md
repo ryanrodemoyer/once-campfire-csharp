@@ -1,7 +1,7 @@
 # once-campfire-csharp
 
 Campfire in C#, ported from the Rails app in `reference/` (a submodule pinned to
-`basecamp/once-campfire@345e637`). It must behave the same as Rails on the same SQLite database,
+`basecamp/once-campfire@edbc779`). It must behave the same as Rails on the same SQLite database,
 storage directory, cookies, URLs and frontend, so it can be benchmarked fairly next to the other
 Campfire ports. `reference-rust/` (pinned to `basecamp/once-campfire-rust@ccece30`) supplies golden
 vectors, the parity seed, the parity harness and the benchmark harness. The Go port,

@@ -29,6 +29,14 @@ public sealed record AssetSources(string RailsRoot, string VendorDirectory, stri
         return paths;
     }
 
+    // Propshaft's railtie: config.assets.app_paths = app.paths["app/assets"].existent_directories,
+    // the directories directly under the Rails root's app/assets.
+    public IReadOnlyList<string> AppPaths()
+    {
+        var appAssets = Path.Combine(RailsRoot, "app", "assets");
+        return Directory.Exists(appAssets) ? Directory.GetDirectories(appAssets) : [];
+    }
+
     // config/initializers/assets.rb sets Rails.application.config.assets.version; Propshaft's
     // default is "1".
     public string AssetsVersion()

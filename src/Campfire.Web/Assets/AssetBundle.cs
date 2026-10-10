@@ -114,14 +114,22 @@ public sealed partial class AssetBundle
 
         // Propshaft::Processor#output_assets
         var manifest = new List<KeyValuePair<string, string>>();
+        var appAssets = new HashSet<string>(StringComparer.Ordinal);
+        var appPaths = sources.AppPaths();
         foreach (var asset in loadPath.Assets)
         {
             var digested = loadPath.DigestedPath(asset);
             manifest.Add(new(asset.LogicalPath, digested));
             files[$"{PropshaftLoadPath.UrlPrefix}/{digested}"] = loadPath.CompiledContent(asset) ?? asset.Content;
+
+            // Propshaft::Asset#app?: path.to_s.start_with?(*load_path.app_paths)
+            if (appPaths.Any(appPath => asset.SourcePath.StartsWith(appPath, StringComparison.Ordinal)))
+            {
+                appAssets.Add(asset.LogicalPath);
+            }
         }
 
-        files[manifestUrl] = Encoding.UTF8.GetBytes(ManifestJson(manifest));
+        files[manifestUrl] = Encoding.UTF8.GetBytes(ManifestJson(manifest, appAssets));
 
         var pins = Importmap.Expand(Path.Combine(sources.RailsRoot, "config", "importmap.rb"), sources.RailsRoot);
         var resolver = new AssetBundle(files, manifest, "", "", builtAt);
@@ -187,11 +195,12 @@ public sealed partial class AssetBundle
             new DateTimeOffset(File.GetLastWriteTimeUtc(manifestFile), TimeSpan.Zero));
     }
 
-    // Propshaft::Manifest#to_json (ActiveSupport's): {"logical":{"digested_path":"...","integrity":null}}.
-    // No integrity hash algorithm is configured.
-    static string ManifestJson(List<KeyValuePair<string, string>> manifest) =>
+    // Propshaft 1.3.2's Manifest#to_json (ActiveSupport's):
+    // {"logical":{"digested_path":"...","integrity":null,"app":true}}. No integrity hash algorithm is
+    // configured.
+    static string ManifestJson(List<KeyValuePair<string, string>> manifest, HashSet<string> appAssets) =>
         "{" + string.Join(",", manifest.Select(entry => string.Create(CultureInfo.InvariantCulture,
-            $"{RubyJson.ActiveSupportString(entry.Key)}:{{\"digested_path\":{RubyJson.ActiveSupportString(entry.Value)},\"integrity\":null}}"))) + "}";
+            $"{RubyJson.ActiveSupportString(entry.Key)}:{{\"digested_path\":{RubyJson.ActiveSupportString(entry.Value)},\"integrity\":null,\"app\":{(appAssets.Contains(entry.Key) ? "true" : "false")}}}"))) + "}";
 
     // ActionView::Helpers::AssetUrlHelper::URI_REGEXP
     [GeneratedRegex("^[-a-z]+://|^(?:cid|data):|^//", RegexOptions.IgnoreCase | RegexOptions.Multiline)]

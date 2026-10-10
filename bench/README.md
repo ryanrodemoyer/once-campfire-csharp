@@ -15,12 +15,15 @@ On a Linux host with Docker (cgroup v2), Rust and at least 16 hardware threads:
 ```sh
 git submodule update --init --recursive
 parity/bin/seed build default && parity/bin/seed verify      # the recorded seed
-reference-rust/parity/bin/reference build                       # campfire-reference:app
+parity/bin/reference build                                      # campfire-reference:app, from reference/
 docker build -t campfire-csharp:app .                           # campfire-csharp:app
 bench/bin/run --apps reference,csharp                           # everything, 3 reps
 bench/bin/run --apps reference,csharp --up-only --reps 1        # the smallest whole run
 bench/bin/report bench/results/<stamp>                          # re-print the tables
 ```
+
+The reference image must be built from this repo's `reference/` (our pin), not
+`reference-rust/reference/`, which the Rust port pins to an older Rails commit.
 
 Add `rust` to `--apps` (with `RUST_IMAGE`, from `reference-rust/parity/bin/candidate build`) for a
 third column measured on the same box.

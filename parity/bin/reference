@@ -35,6 +35,10 @@
 # Every instance runs in production mode with the fixed environment in parity/.env.reference:
 # CSRF protection, caching and show_exceptions are all on, as in a real install.
 #
+# Images: PARITY_APP_IMAGE (default campfire-reference:app) is the unmodified app image built from
+# reference/, and PARITY_IMAGE (default campfire-reference) the parity image built on top of it.
+# Tag them by reference SHA to keep two pins side by side.
+#
 # Runtimes: PARITY_RUNTIME=docker (the canonical one) or native (the reference checkout run with the
 # host's Ruby, Redis and libfaketime, built into parity/.seed/.native). Default: docker when the
 # Docker daemon is reachable, native otherwise. Native output is NOT canonical: libvips/ffmpeg
@@ -48,6 +52,7 @@ SEEDS=${PARITY_SEED_DIR:-$PARITY/.seed}
 INSTANCES=$SEEDS/.instances
 NATIVE=${PARITY_NATIVE_DIR:-$PARITY/.seed/.native}
 IMAGE=${PARITY_IMAGE:-campfire-reference}
+APP_IMAGE=${PARITY_APP_IMAGE:-campfire-reference:app}
 ENV_FILE=$PARITY/.env.reference
 DEFAULT_PORT=3100
 OWNER=${PARITY_OWNER:-${CLAUDE_CODE_SESSION_ID:-$(id -un)}}
@@ -138,12 +143,12 @@ wait_until_up() {
 docker_name() { echo "campfire-reference-$1"; }
 
 docker_build() {
-  log "building campfire-reference:app from reference/Dockerfile"
-  docker build -t campfire-reference:app -f "$ROOT/reference/Dockerfile" \
+  log "building $APP_IMAGE from reference/Dockerfile"
+  docker build -t "$APP_IMAGE" -f "$ROOT/reference/Dockerfile" \
     --build-arg APP_VERSION=parity --build-arg GIT_REVISION="$(git -C "$ROOT/reference" rev-parse HEAD)" \
     "$ROOT/reference"
   log "building $IMAGE from parity/docker/Dockerfile"
-  docker build -t "$IMAGE" -f "$PARITY/docker/Dockerfile" \
+  docker build -t "$IMAGE" -f "$PARITY/docker/Dockerfile" --build-arg BASE_IMAGE="$APP_IMAGE" \
     --build-context fixtures="$ROOT/reference/test/fixtures" \
     "$PARITY/docker"
 }

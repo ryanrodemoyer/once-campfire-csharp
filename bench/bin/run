@@ -35,7 +35,7 @@
 # every request.
 #
 # Images (unmodified production images, not the parity ones):
-#   REFERENCE_IMAGE  campfire-reference:app   (reference-rust/parity/bin/reference build)
+#   REFERENCE_IMAGE  campfire-reference:app   (parity/bin/reference build, from reference/)
 #   CSHARP_IMAGE     campfire-csharp:app      (docker build -t campfire-csharp:app ., from /Dockerfile)
 #   RUST_IMAGE       campfire-rust:app        (reference-rust/parity/bin/candidate build)
 #

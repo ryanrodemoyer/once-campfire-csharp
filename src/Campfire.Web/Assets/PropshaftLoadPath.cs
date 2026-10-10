@@ -7,7 +7,7 @@ namespace Campfire.Web.Assets;
 // One file on the load path: its logical path ("controllers/foo.js") and its bytes.
 sealed record PropshaftAsset(string LogicalPath, string SourcePath, byte[] Content);
 
-// A port of Propshaft 1.2.1's LoadPath, Asset digesting and compilers (lib/propshaft/*), so digested
+// A port of Propshaft 1.3.2's LoadPath, Asset digesting and compilers (lib/propshaft/*), so digested
 // paths and compiled bytes match `bin/rails assets:precompile`.
 //
 // Propshaft reads assets as ASCII-8BIT and its patterns match bytes. Here content is decoded as

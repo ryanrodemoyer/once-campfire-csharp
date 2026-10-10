@@ -111,7 +111,7 @@ public sealed class StaticFiles(AssetBundle bundle)
     // FileHandler#try_files and #try_precompressed_files: br, then gzip, then the file itself.
     (byte[], List<KeyValuePair<string, string>>)? TryFiles(string path, string contentType, string acceptEncoding)
     {
-        var headers = new List<KeyValuePair<string, string>> { new("content-type", contentType) };
+        var headers = new List<KeyValuePair<string, string>> { new("content-type", WithDefaultCharset(contentType)) };
         if (!Compressible(contentType))
         {
             return File(path) is { } plain ? (plain, headers) : null;
@@ -175,11 +175,13 @@ public sealed class StaticFiles(AssetBundle bundle)
                 break;
             case var ranges:
                 // Rack sets multipart/byteranges, which Static then overwrites with the file's type.
+                // Each part carries Rack's own type for the file, without Static's charset.
+                var partType = contentHeaders[0].Value.Split(';')[0];
                 var multipart = new MemoryStream();
                 foreach (var (start, end) in ranges)
                 {
                     multipart.Write(Encoding.ASCII.GetBytes(
-                        $"\r\n--{multipartBoundary}\r\ncontent-type: {contentHeaders[0].Value}\r\ncontent-range: bytes {start}-{end}/{size}\r\n\r\n"));
+                        $"\r\n--{multipartBoundary}\r\ncontent-type: {partType}\r\ncontent-range: bytes {start}-{end}/{size}\r\n\r\n"));
                     multipart.Write(file, start, end - start + 1);
                 }
 
@@ -287,6 +289,11 @@ public sealed class StaticFiles(AssetBundle bundle)
     }
 
     // FileHandler's compressible_content_types: /\A(?:text\/|application\/javascript|image\/svg\+xml)/
+    // FileHandler::DEFAULT_UTF8_CONTENT_TYPES: [Mime[:html], Mime[:css]], whose == also matches the
+    // html type's synonym, application/xhtml+xml.
+    static string WithDefaultCharset(string contentType) =>
+        contentType is "text/html" or "application/xhtml+xml" or "text/css" ? contentType + "; charset=utf-8" : contentType;
+
     static bool Compressible(string contentType) =>
         contentType.StartsWith("text/", StringComparison.Ordinal)
         || contentType.StartsWith("application/javascript", StringComparison.Ordinal)

@@ -3,7 +3,7 @@
 Status: in progress, run by a local multi-vendor swarm (`plans/bin/plan ready` and
 `plans/bin/swarm status` show where it stands)
 Target repo: `ryanrodemoyer/once-campfire-csharp`
-Oracle: Rails `basecamp/once-campfire@345e637` (submodule `reference/`)
+Oracle: Rails `basecamp/once-campfire@edbc779` (submodule `reference/`; moved from `345e637` by U01, see [`upstream-sync.md`](upstream-sync.md))
 Secondary reference and tooling: `basecamp/once-campfire-rust@ccece30` (submodule `reference-rust/`)
 
 Companion files:
