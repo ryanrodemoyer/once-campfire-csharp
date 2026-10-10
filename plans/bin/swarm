@@ -607,17 +607,22 @@ def write_dashboard(config, tasks, states, state, done, prs):
 </section>""")
 
     links = pr_links(tasks, prs, state)
+    issues = load_issues()
+    if not state.get("repo_url"):
+        state["repo_url"] = sh("gh", "repo", "view", "--json", "url", "-q", ".url", check=False).strip()
     every = {t: states.get(t) or ("merged" if t in done else "human" if "human" in str(tasks[t].get("labels", "")) or t in ("B05", "X02") else "waiting")
              for t in tasks}
-    rows = ['<tr><th>State</th><th>Task</th><th>Title</th><th>Size</th><th>Agent</th><th>PR</th><th>Attempts</th></tr>']
+    rows = ['<tr><th>State</th><th>Task</th><th>Title</th><th>Size</th><th>Agent</th><th>Issue</th><th>PR</th><th>Attempts</th></tr>']
     for t in sorted(every, key=lambda t: (list(STATE_COLORS).index(every[t]), t)):
         url = links.get(t)
         link = f'<a href="{url}">#{url.rsplit("/", 1)[1]}</a>' if url else ""
+        issue = (f'<a href="{state["repo_url"]}/issues/{issues[t]}">#{issues[t]}</a>'
+                 if t in issues and state.get("repo_url") else "")
         agent = owner.get(t) or state["tasks"].get(t, {}).get("agent") or ("owner" if every[t] == "human" else "")
         size = tasks[t]["size"]
         rows.append(f'<tr><td><span class="chip" style="background:{STATE_COLORS[every[t]]}">'
                     f'{every[t]}</span></td><td>{t}</td><td>{html.escape(tasks[t]["title"])}</td>'
-                    f'<td title="{SIZE_NAMES[size]}">{size}</td><td>{agent}</td><td>{link}</td>'
+                    f'<td title="{SIZE_NAMES[size]}">{size}</td><td>{agent}</td><td>{issue}</td><td>{link}</td>'
                     f'<td>{state["tasks"].get(t, {}).get("attempts", 0)}</td></tr>')
     events = html.escape("\n".join(EVENTS.read_text().splitlines()[-25:][::-1])) if EVENTS.exists() else ""
     legend = "".join(f'<span class="chip" style="background:{c}">{s}</span>'
