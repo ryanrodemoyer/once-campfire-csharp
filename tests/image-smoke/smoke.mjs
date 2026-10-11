@@ -75,11 +75,9 @@ async function follow(path) {
   }
 }
 
-function csrfToken(html) {
-  const match = html.match(/<meta name="csrf-token" content="([^"]+)"/);
-  assert.ok(match, "the page has no csrf-token meta tag");
-  return match[1];
-}
+// Forgery protection checks fetch metadata, not tokens (reference/app/controllers/concerns/
+// authentication.rb): a browser's same-origin form post says so.
+const sameOrigin = { "Sec-Fetch-Site": "same-origin" };
 
 async function waitForUp() {
   const deadline = Date.now() + 120_000;
@@ -112,18 +110,16 @@ step("first visit goes to first run", async () => {
 
 step("first run creates the account and signs in", async () => {
   const page = await (await send("/first_run")).text();
-  const token = page.match(/name="authenticity_token" value="([^"]+)"/);
-  assert.ok(token, "the first run page has no authenticity_token");
+  assert.doesNotMatch(page, /authenticity_token/, "the first run page should carry no token");
 
   const body = new URLSearchParams({
-    authenticity_token: token[1],
     "user[name]": account.name,
     "user[email_address]": account.email,
     "user[password]": account.password,
   });
   const response = await send("/first_run", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: { ...sameOrigin, "Content-Type": "application/x-www-form-urlencoded" },
     body,
   });
   assert.equal(response.status, 302, "first run should redirect");
@@ -155,7 +151,7 @@ step("a message posts and arrives over /cable", async () => {
     const response = await send(`${roomPath}/messages`, {
       method: "POST",
       accept: "text/vnd.turbo-stream.html",
-      headers: { "X-CSRF-Token": csrfToken(roomHtml), "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { ...sameOrigin, "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         "message[body]": text,
         "message[client_message_id]": randomBytes(8).toString("hex"),
@@ -179,7 +175,7 @@ step("an uploaded image gets its thumbnail", async () => {
   const response = await send(`${roomPath}/messages`, {
     method: "POST",
     accept: "text/vnd.turbo-stream.html",
-    headers: { "X-CSRF-Token": csrfToken(roomHtml) },
+    headers: sameOrigin,
     body: form,
   });
   assert.equal(response.status, 200, "uploading an image should answer 200");
