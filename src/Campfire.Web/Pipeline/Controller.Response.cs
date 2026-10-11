@@ -227,10 +227,28 @@ public abstract partial class Controller
             return;
         }
         Headers["X-Frame-Options"] = "SAMEORIGIN";
-        Headers["X-XSS-Protection"] = "0";
         Headers["X-Content-Type-Options"] = "nosniff";
         Headers["X-Permitted-Cross-Domain-Policies"] = "none";
         Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    }
+
+    /// <summary>
+    /// <c>append_sec_fetch_site_to_vary_header</c>: ensures <c>Sec-Fetch-Site</c> is present in the <c>Vary</c> header.
+    /// </summary>
+    public void AppendSecFetchSiteToVaryHeader()
+    {
+        var vary = Headers["Vary"];
+        if (string.IsNullOrWhiteSpace(vary))
+        {
+            Headers["Vary"] = "Sec-Fetch-Site";
+            return;
+        }
+
+        var parts = vary.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (!parts.Contains("Sec-Fetch-Site", StringComparer.Ordinal))
+        {
+            Headers["Vary"] = string.Join(", ", [.. parts, "Sec-Fetch-Site"]);
+        }
     }
 
     void EnsureNotPerformed()

@@ -12,7 +12,8 @@ public abstract partial class Controller
     /// </summary>
     public static ControllerCallbacks<Controller> BaseCallbacks { get; } = ControllerCallbacks.Empty<Controller>()
         .Before("verify_authenticity_token", controller => controller.VerifyAuthenticityToken())
-        .After("verify_same_origin_request", controller => controller.VerifySameOriginRequest());
+        .After("verify_same_origin_request", controller => controller.VerifySameOriginRequest())
+        .After("append_sec_fetch_site_to_vary_header", controller => controller.AppendSecFetchSiteToVaryHeader());
 
     string? csrfToken;
     bool markedForSameOriginVerification;
@@ -38,9 +39,9 @@ public abstract partial class Controller
     }
 
     /// <summary>
-    /// <c>verify_authenticity_token</c> with the <c>:exception</c> strategy: a write must carry a
-    /// token for this session (<c>authenticity_token</c> or <c>X-CSRF-Token</c>) and no foreign
-    /// <c>Origin</c>, else <see cref="ForgeryProtectionException"/> (422).
+    /// <c>verify_authenticity_token</c> with the <c>:header_only</c> strategy: a write must carry
+    /// valid browser fetch metadata (<c>Sec-Fetch-Site</c>) and no foreign <c>Origin</c>, else
+    /// <see cref="ForgeryProtectionException"/> (422).
     /// </summary>
     public void VerifyAuthenticityToken()
     {
@@ -55,9 +56,10 @@ public abstract partial class Controller
             Path = Request.OriginalPath,
             BaseUrl = RequestUrl.BaseUrl,
             Origin = Header("Origin"),
-            AuthenticityToken = Params["authenticity_token"] as string,
-            CsrfTokenHeader = Header(AuthenticityToken.HeaderName),
-            SessionToken = ForgeryOriginAccepted() ? RealCsrfToken : null,
+            SecFetchSite = Header("Sec-Fetch-Site"),
+            IsSsl = RequestUrl.IsSsl,
+            ForcedTls = false,
+            Strategy = ForgeryStrategy.HeaderOnly,
         });
         if (!result.Verified)
         {
@@ -80,8 +82,4 @@ public abstract partial class Controller
             throw new ForgeryProtectionException(error.Message, error);
         }
     }
-
-    // valid_request_origin? runs before the token is read, so a rejected origin never reads (or
-    // makes) the session's token.
-    bool ForgeryOriginAccepted() => ForgeryProtection.CheckOrigin(Header("Origin"), RequestUrl.BaseUrl) == OriginVerdict.Accepted;
 }

@@ -186,10 +186,10 @@ public sealed class AccountBotsReferenceTests : IDisposable
     }
 
     [Fact]
-    public async Task Requests_without_CSRF_token_are_refused()
+    public async Task Requests_with_cross_site_fetch_metadata_are_refused()
     {
         var headers = app.SignedIn(david);
-        headers.Remove("X-CSRF-Token");
+        headers["Sec-Fetch-Site"] = "cross-site";
 
         Assert.Equal(422, (await app.SendAsync("POST", "/account/bots", headers, "user%5Bname%5D=Forged")).Status);
         Assert.Equal(422, (await app.SendAsync("PUT", $"/account/bots/{benderId}", headers, "user%5Bname%5D=Forged")).Status);

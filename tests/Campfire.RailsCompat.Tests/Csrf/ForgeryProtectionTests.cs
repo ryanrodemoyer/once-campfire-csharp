@@ -38,6 +38,61 @@ public class ForgeryProtectionTests
         Assert.Null(result.GeneratedSessionToken);
     }
 
+    [Theory]
+    [InlineData("same-origin", true, null)]
+    [InlineData("same-site", true, null)]
+    [InlineData("cross-site", false, "Sec-Fetch-Site header (cross-site) indicates a cross-site request")]
+    [InlineData("none", false, "Sec-Fetch-Site header is missing or invalid (\"none\")")]
+    [InlineData("garbage", false, "Sec-Fetch-Site header is missing or invalid (\"garbage\")")]
+    [InlineData("", true, null)] // plain HTTP missing header passes
+    [InlineData(null, true, null)] // plain HTTP missing header passes
+    public void Header_only_plain_http_verdict_matches_rails(string? secFetchSite, bool expectedVerified, string? expectedMessage)
+    {
+        var result = ForgeryProtection.Verify(new ForgeryRequest
+        {
+            Method = "POST",
+            Path = "/session",
+            BaseUrl = "http://campfire.test",
+            SecFetchSite = secFetchSite,
+            IsSsl = false,
+            Strategy = ForgeryStrategy.HeaderOnly,
+        });
+
+        Assert.Equal(expectedVerified, result.Verified);
+        if (!expectedVerified)
+        {
+            Assert.Equal(422, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+    }
+
+    [Theory]
+    [InlineData("same-origin", true, null)]
+    [InlineData("same-site", true, null)]
+    [InlineData("cross-site", false, "Sec-Fetch-Site header (cross-site) indicates a cross-site request")]
+    [InlineData(null, false, "Sec-Fetch-Site header is missing or invalid (nil)")]
+    [InlineData("", false, "Sec-Fetch-Site header is missing or invalid (nil)")]
+    [InlineData("none", false, "Sec-Fetch-Site header is missing or invalid (\"none\")")]
+    public void Header_only_https_rejects_missing_metadata(string? secFetchSite, bool expectedVerified, string? expectedMessage)
+    {
+        var result = ForgeryProtection.Verify(new ForgeryRequest
+        {
+            Method = "POST",
+            Path = "/session",
+            BaseUrl = "https://campfire.test",
+            SecFetchSite = secFetchSite,
+            IsSsl = true,
+            Strategy = ForgeryStrategy.HeaderOnly,
+        });
+
+        Assert.Equal(expectedVerified, result.Verified);
+        if (!expectedVerified)
+        {
+            Assert.Equal(422, result.Status);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+    }
+
     [Fact]
     public void Either_the_parameter_or_the_header_is_enough()
     {
@@ -115,6 +170,7 @@ public class ForgeryProtectionTests
             Path = "/session",
             BaseUrl = baseUrl,
             AuthenticityToken = "bad",
+            Strategy = ForgeryStrategy.LegacyToken,
         });
 
         Assert.False(result.Verified);
@@ -163,5 +219,6 @@ public class ForgeryProtectionTests
             AuthenticityToken = authenticityToken,
             CsrfTokenHeader = csrfHeader,
             SessionToken = SessionToken,
+            Strategy = ForgeryStrategy.LegacyToken,
         });
 }

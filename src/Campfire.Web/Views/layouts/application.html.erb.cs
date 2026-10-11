@@ -9,7 +9,6 @@
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <%= CsrfMetaTags() %>
     <%= CspMetaTag() %>
     <%= CurrentUserMetaTags() %>
     <%= ScriptAwareActionCableMetaTag() %>
@@ -40,9 +39,9 @@
       <div class="flash" data-controller="element-removal" data-action="animationend->element-removal#remove">
         <div class="flash__inner shadow" style="<%= Flash.Alert is not null ? "--flash-background: var(--color-negative)" : null %>">
           <% if (Flash.Alert is not null) { %>
-            <%= ImageTag("alert.svg", new() { { "aria", new HtmlOptions { { "hidden", true } } }, { "size", 24 }, { "class", "colorize--white" } }) %></span>
+            <%= ImageTag("alert.svg", new() { { "aria", new HtmlOptions { { "hidden", true } } }, { "size", 24 }, { "class", "colorize--white" } }) %>
           <% } else { %>
-            <%= ImageTag("check.svg", new() { { "aria", new HtmlOptions { { "hidden", true } } }, { "size", 24 }, { "class", "colorize--white" } }) %></span>
+            <%= ImageTag("check.svg", new() { { "aria", new HtmlOptions { { "hidden", true } } }, { "size", 24 }, { "class", "colorize--white" } }) %>
           <% } %>
         </div>
         <span class="for-screen-reader" role="alert" aria-atomic="true"><%= notice %></span>

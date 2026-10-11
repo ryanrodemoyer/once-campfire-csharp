@@ -45,7 +45,7 @@ REPOSITORY = File.expand_path("../../../..", __dir__)
 RAILS_DIR = File.expand_path(ENV.fetch("RAILS_DIR"))
 TURBO_DIR = File.expand_path(ENV.fetch("TURBO_DIR"))
 PROPSHAFT_DIR = File.expand_path(ENV.fetch("PROPSHAFT_DIR"))
-ASSET_FIXTURES = File.join(REPOSITORY, "reference-rust/crates/assets/tests/reference")
+ASSET_FIXTURES = File.join(REPOSITORY, "tests/Campfire.Web.Tests/Assets/Reference")
 
 raise "Rails 8.2.0.alpha expected" unless ActionPack::VERSION::STRING == "8.2.0.alpha"
 
@@ -54,7 +54,11 @@ ActionView::Helpers::FormHelper.form_with_generates_ids = true
 ActionView::Helpers::FormHelper.form_with_generates_remote_forms = false
 ActionView::Helpers::FormTagHelper.default_enforce_utf8 = false
 ActionView::Helpers::FormTagHelper.embed_authenticity_token_in_remote_forms = false
-ActionView::Helpers::UrlHelper.button_to_generates_button_tag = true
+if defined?(ActionView::Helpers::NavigationHelper)
+  ActionView::Helpers::NavigationHelper.button_to_generates_button_tag = true
+elsif ActionView::Helpers::UrlHelper.respond_to?(:button_to_generates_button_tag=)
+  ActionView::Helpers::UrlHelper.button_to_generates_button_tag = true
+end
 ActionView::Helpers::AssetTagHelper.preload_links_header = true
 ActionView::Helpers::AssetTagHelper.apply_stylesheet_media_default = false
 ActionView::Base.remove_hidden_field_autocomplete = true
@@ -74,6 +78,7 @@ APPLICATION = Struct.new(:routes, :config, :assets).new(
 module ActiveStorage
   def self.routes_prefix = "/rails/active_storage"
   def self.draw_routes = true
+  def self.draw_direct_upload_route = true
 end
 
 require File.join(REPOSITORY, "reference/lib/rails_ext/string") # String#all_emoji?
@@ -120,7 +125,10 @@ end
 require File.join(PROPSHAFT_DIR, "lib/propshaft/helper")
 MANIFEST = JSON.parse(File.read(File.join(ASSET_FIXTURES, "manifest.json")))
 ASSETS = Struct.new(:resolver, :load_path).new(
-  Object.new.tap { |resolver| def resolver.resolve(path) = (entry = MANIFEST[path]) && "/assets/#{entry.fetch("digested_path")}" },
+  Object.new.tap { |resolver|
+    def resolver.asset_paths_by_type(type) = MANIFEST.keys.select { |path| File.extname(path) == ".#{type}" }.sort
+    def resolver.resolve(path) = (entry = MANIFEST[path]) && "/assets/#{entry.fetch("digested_path")}"
+  },
   Object.new.tap { |load_path| def load_path.asset_paths_by_type(type) = MANIFEST.keys.select { |path| File.extname(path) == ".#{type}" }.sort }
 )
 APPLICATION.assets = ASSETS

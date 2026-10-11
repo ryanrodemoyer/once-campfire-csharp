@@ -70,9 +70,7 @@ class Reply:
 
     def meta_token(self):
         match = re.search(r'name="csrf-token" content="([^"]+)"', self.text())
-        if not match:
-            raise KeyError(f"no csrf-token meta tag (status {self.status})")
-        return match.group(1)
+        return match.group(1) if match else None
 
     def forms(self):
         return [part.split("</form>")[0] for part in self.text().split("<form")[1:]]
@@ -88,9 +86,7 @@ def form_action_matches(form, action):
 
 def token_in(form, action):
     match = re.search(r'name="authenticity_token" value="([^"]+)"', form)
-    if not match:
-        raise KeyError(f"form for {action} has no authenticity token")
-    return match.group(1)
+    return match.group(1) if match else None
 
 
 def parse_cookie(cookie):
@@ -157,7 +153,7 @@ class Browser:
 
     def multipart(self, method, path, token, fields=(), files=()):
         boundary = "----replayboundary7MA4YWxkTrZu0gW"
-        parts = [("authenticity_token", token)] + ([("_method", method)] if method != "post" else []) + list(fields)
+        parts = ([("authenticity_token", token)] if token is not None else []) + ([("_method", method)] if method != "post" else []) + list(fields)
         body = b""
         for name, value in parts:
             body += f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode()
@@ -225,7 +221,7 @@ class Pair:
     def xhr(self, page, method, path, fields=(), headers=None):
         """A fetch from page's JavaScript: the meta tag's token in X-CSRF-Token."""
         tokens = self.tokens(page, lambda r: r.meta_token())
-        return [b.form(method, path, None, fields, dict({"X-CSRF-Token": t}, **(headers or {})))
+        return [b.form(method, path, None, fields, dict({"X-CSRF-Token": t} if t is not None else {}, **(headers or {})))
                 for b, t in zip(self.browsers, tokens)]
 
 

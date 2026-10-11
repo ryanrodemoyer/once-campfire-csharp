@@ -128,5 +128,6 @@ public class CsrfVectorTests
             AuthenticityToken = authenticityToken,
             CsrfTokenHeader = csrfHeader,
             SessionToken = sessionToken,
+            Strategy = ForgeryStrategy.LegacyToken,
         });
 }

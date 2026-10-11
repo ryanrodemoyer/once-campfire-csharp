@@ -46,7 +46,7 @@ public sealed partial class SessionsControllerTests : IDisposable
 
     static IEnumerable<JsonNode> Cases() => Vectors["cases"]!.AsArray().Select(sample => sample!);
 
-    [Fact(Skip = "U03: vectors recorded at reference 345e637; at edbc779 forms and the layout carry no authenticity tokens")]
+    [Fact]
     public async Task Each_request_answers_and_changes_what_the_reference_did()
     {
         var failures = new List<string>();
@@ -80,25 +80,23 @@ public sealed partial class SessionsControllerTests : IDisposable
     [Fact]
     public void The_vectors_cover_the_benchmark_login()
     {
-        // reference-rust/bench's login: GET /session/new, then POST /session with the page's token,
-        // which answers 302 to the root with a session_token cookie.
+        // Under header-only forgery protection: GET /session/new carries no authenticity token,
+        // and POST /session answers 302 to the root with a session_token cookie.
         var page = Case("sign-in page")["response"]!;
         Assert.Equal(200, page["status"]!.GetValue<int>());
-        Assert.Contains("name=\"authenticity_token\"", page["body"]!.GetValue<string>(), StringComparison.Ordinal);
+        Assert.DoesNotContain("name=\"authenticity_token\"", page["body"]!.GetValue<string>(), StringComparison.Ordinal);
         var signIn = Case("sign in");
-        Assert.Contains("authenticity_token=", signIn["request"]!["body"]!.GetValue<string>(), StringComparison.Ordinal);
         Assert.Equal(302, signIn["response"]!["status"]!.GetValue<int>());
         Assert.Equal("http://campfire.test/", signIn["response"]!["headers"]!["location"]!.GetValue<string>());
         Assert.Contains(Cookies(signIn["response"]!), cookie => cookie.StartsWith("session_token=", StringComparison.Ordinal));
-        Assert.Equal(422, Case("sign in, no CSRF token")["response"]!["status"]!.GetValue<int>());
+        Assert.Equal(302, Case("sign in, no CSRF token")["response"]!["status"]!.GetValue<int>());
         Assert.Equal(429, Case("rate limit, attempt 11")["response"]!["status"]!.GetValue<int>());
     }
 
     [Fact]
-    public async Task The_benchmark_login_signs_in_with_the_pages_token()
+    public async Task The_benchmark_login_signs_in_without_tokens()
     {
-        // As the load generator does it: read the token from the form, post it back with the
-        // session cookie the page set.
+        // As the load generator does it: no token needed from the form; POST /session succeeds directly.
         var browser = new Dictionary<string, string>
         {
             ["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
@@ -106,10 +104,8 @@ public sealed partial class SessionsControllerTests : IDisposable
         };
         var page = await app.SendAsync("GET", "/session/new", browser);
         Assert.Equal(200, page.Status);
-        var token = FormToken().Match(page.Body).Groups[1].Value;
-        var session = page.Headers.SetCookie.Select(cookie => cookie!).Single(cookie => cookie.StartsWith("_campfire_session=", StringComparison.Ordinal));
-        browser["Cookie"] = session[..session.IndexOf(';', StringComparison.Ordinal)];
-        var body = $"authenticity_token={Uri.EscapeDataString(token)}&email_address=david%4037signals.com&password=secret123456";
+        Assert.DoesNotContain("name=\"authenticity_token\"", page.Body, StringComparison.Ordinal);
+        var body = "email_address=david%4037signals.com&password=secret123456";
         var signIn = await app.SendAsync("POST", "/session", browser, body);
         Assert.Equal(302, signIn.Status);
         Assert.Equal("http://campfire.test/", signIn.Headers.Location.ToString());
@@ -197,6 +193,12 @@ public sealed partial class SessionsControllerTests : IDisposable
         if (name == "content-type" && want is not null && want.EndsWith("charset=UTF-8", StringComparison.Ordinal))
         {
             return string.Equals(want, have, StringComparison.OrdinalIgnoreCase);
+        }
+        if (name == "vary" && want is not null && have is not null)
+        {
+            var wantParts = want.Split(',').Select(p => p.Trim()).Order();
+            var haveParts = have.Split(',').Select(p => p.Trim()).Order();
+            return wantParts.SequenceEqual(haveParts);
         }
         return want == have;
     }
@@ -392,9 +394,6 @@ public sealed partial class SessionsControllerTests : IDisposable
 
     [GeneratedRegex("(name=\"authenticity_token\" value=\")[^\"]*\"")]
     private static partial Regex AuthenticityToken();
-
-    [GeneratedRegex("name=\"authenticity_token\" value=\"([^\"]*)\"")]
-    private static partial Regex FormToken();
 
     [GeneratedRegex("(<meta name=\"csrf-token\" content=\")[^\"]*\"")]
     private static partial Regex CsrfMeta();

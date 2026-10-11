@@ -154,9 +154,10 @@ class Client:
         if res_new.status != 200:
             raise AssertionError(f"GET /session/new returned {res_new.status} on {self.base.geturl()}")
         token = self.extract_form_token(res_new.text, "/session")
-        if not token:
-            raise AssertionError(f"Could not find authenticity token in /session/new form on {self.base.geturl()}")
-        res_post = self.post("/session", {"authenticity_token": token, "email_address": email, "password": password})
+        post_data = {"email_address": email, "password": password}
+        if token:
+            post_data["authenticity_token"] = token
+        res_post = self.post("/session", post_data)
         if res_post.status != 302:
             raise AssertionError(f"POST /session for {email} returned {res_post.status} on {self.base.geturl()}")
         return res_post

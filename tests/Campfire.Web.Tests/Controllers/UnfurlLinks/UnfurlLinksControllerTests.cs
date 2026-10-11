@@ -232,10 +232,10 @@ public sealed class UnfurlLinksControllerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Create_requires_csrf_token()
+    public async Task Create_with_cross_site_fetch_metadata_is_rejected()
     {
         var headers = app.SignedIn(david);
-        headers.Remove("X-CSRF-Token");
+        headers["Sec-Fetch-Site"] = "cross-site";
 
         var response = await app.SendAsync("POST", "/unfurl_link", headers,
             "url=https%3A%2F%2Fwww.example.com");

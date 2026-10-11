@@ -142,10 +142,10 @@ public sealed class AccountUsersReferenceTests : IDisposable
     }
 
     [Fact]
-    public async Task Requests_without_a_CSRF_token_are_refused()
+    public async Task Requests_with_cross_site_fetch_metadata_are_refused()
     {
         var headers = app.SignedIn(david);
-        headers.Remove("X-CSRF-Token");
+        headers["Sec-Fetch-Site"] = "cross-site";
 
         Assert.Equal(422, (await app.SendAsync("POST", $"/users/{kevinId}/ban", headers, "")).Status);
         Assert.Equal(422, (await app.SendAsync("PATCH", $"/account/users/{kevinId}", headers, "user%5Brole%5D=administrator")).Status);

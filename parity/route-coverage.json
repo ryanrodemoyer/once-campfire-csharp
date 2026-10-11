@@ -101,7 +101,7 @@
       "defaults": {},
       "classification": "implemented",
       "sample_path": "/first_run",
-      "status": 422,
+      "status": 302,
       "passed": true
     },
     {
@@ -124,7 +124,7 @@
       "defaults": {},
       "classification": "implemented",
       "sample_path": "/session/transfers/1",
-      "status": 422,
+      "status": 400,
       "passed": true
     },
     {
@@ -135,7 +135,7 @@
       "defaults": {},
       "classification": "implemented",
       "sample_path": "/session/transfers/1",
-      "status": 422,
+      "status": 400,
       "passed": true
     },
     {
@@ -215,7 +215,7 @@
       "defaults": {},
       "classification": "implemented",
       "sample_path": "/session",
-      "status": 422,
+      "status": 401,
       "passed": true
     },
     {
@@ -595,7 +595,7 @@
       "defaults": {},
       "classification": "implemented",
       "sample_path": "/join/joincode123",
-      "status": 422,
+      "status": 404,
       "passed": true
     },
     {
@@ -2108,7 +2108,7 @@
       "defaults": {},
       "classification": "implemented",
       "sample_path": "/rails/active_storage/direct_uploads",
-      "status": 422,
+      "status": 401,
       "passed": true
     }
   ]

@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 using Campfire.Cable.Channels;
 using Campfire.Data.Events;
 using Campfire.Data.Lifecycle;
@@ -348,13 +347,9 @@ public sealed class CompositionTests : IDisposable
         using var httpClient = new HttpClient(handler) { BaseAddress = baseUri };
         httpClient.DefaultRequestHeaders.Add("Cookie", cookieHeader);
 
-        // 1. Fetch room page to get CSRF token
+        // 1. Fetch room page to verify it loads
         using var roomResponse = await httpClient.GetAsync(new Uri($"/rooms/{room.Id}", UriKind.Relative), TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, roomResponse.StatusCode);
-        var roomHtml = await roomResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-        var match = Regex.Match(roomHtml, @"<meta name=""csrf-token"" content=""([^""]+)""");
-        Assert.True(match.Success);
-        var csrfToken = match.Groups[1].Value;
 
         // 2. Connect client via /cable
         var wsUri = new Uri(address.Replace("http://", "ws://", StringComparison.Ordinal) + "/cable");
@@ -366,9 +361,9 @@ public sealed class CompositionTests : IDisposable
 
         _ = await ReadWsMessageAsync(ws); // welcome frame
 
-        // 3. Sign out: DELETE /session with CSRF token and session cookie
+        // 3. Sign out: DELETE /session with Origin and session cookie
         using var signOutRequest = new HttpRequestMessage(HttpMethod.Delete, new Uri("/session", UriKind.Relative));
-        signOutRequest.Headers.Add("X-CSRF-Token", csrfToken);
+        signOutRequest.Headers.Add("Origin", address);
         using var signOutResponse = await httpClient.SendAsync(signOutRequest, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Redirect, signOutResponse.StatusCode);
 

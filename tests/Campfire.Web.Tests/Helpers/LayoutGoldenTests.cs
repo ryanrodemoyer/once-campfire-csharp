@@ -21,7 +21,7 @@ public sealed partial class LayoutGoldenTests
 
     public static TheoryData<string> LayoutNames => [.. Layouts];
 
-    [Theory(Skip = "U03: golden recorded at reference 345e637; at edbc779 the layout drops csrf_meta_tags and the flash's stray spans, and asset digests change")]
+    [Theory]
     [MemberData(nameof(LayoutNames))]
     public void The_layout_renders_an_empty_page_like_the_reference(string name)
     {
@@ -54,16 +54,18 @@ public sealed partial class LayoutGoldenTests
     // Independent of generate.rb's stand-ins: the reference app itself served sessions/new
     // (reference-rust's views golden, captured from the running app), so the layout around that
     // page must match it outside the page body, given the same title, VAPID key and account.
-    [Fact(Skip = "U03: golden recorded at reference 345e637; at edbc779 the layout drops csrf_meta_tags and the flash's stray spans, and asset digests change")]
+    [Fact]
     public void The_layout_matches_a_page_the_reference_app_served()
     {
         var served = ServedGolden("sessions_new.html");
-        var token = CsrfToken().Match(served).Groups[1].Value;
+        served = CsrfTags().Replace(served, "");
+        var oldImportmap = File.ReadAllText(Path.Combine(ReferenceAssets.RepositoryRoot, "reference-rust", "crates", "assets", "tests", "reference", "javascript_importmap_tags.html")).TrimEnd();
+        var newImportmap = ReferenceAssets.Fixture("javascript_importmap_tags.html").TrimEnd();
+        served = served.Replace(oldImportmap, newImportmap, StringComparison.Ordinal);
         var view = new View
         {
             Assets = ReferenceAssets.Bundle,
             Origin = new UrlBase("http", "campfire.test"),
-            FormAuthenticityToken = (_, _) => token,
             CurrentAccount = new CurrentAccount(null, LogoAttached: false, new DateTimeOffset(2026, 9, 26, 13, 0, 20, TimeSpan.Zero)),
             VapidPublicKey = "BEYXTBB5_jNhNzXDmx5KEU55Vbbd-u--Lk9rM5OFQvUkPIBwZJ9QzAq0zdEzFw6yTV8cTriz_qYBVicY02_VxTQ=",
             PageTitle = "Sign in",
@@ -100,8 +102,8 @@ public sealed partial class LayoutGoldenTests
     static string ServedGolden(string name) =>
         File.ReadAllText(Path.Combine(ReferenceAssets.RepositoryRoot, "reference-rust", "crates", "views", "tests", "golden", "a", name));
 
-    [GeneratedRegex("<meta name=\"csrf-token\" content=\"([^\"]+)\" />")]
-    private static partial Regex CsrfToken();
+    [GeneratedRegex(@"[ \t]*<meta name=""csrf-param""[^\n]*\r?\n[ \t]*<meta name=""csrf-token""[^\n]*\r?\n")]
+    private static partial Regex CsrfTags();
 
     static View LayoutView(string name)
     {

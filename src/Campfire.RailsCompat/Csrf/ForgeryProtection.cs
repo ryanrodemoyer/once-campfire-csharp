@@ -61,6 +61,27 @@ public static class ForgeryProtection
             return ForgeryResult.Rejected(UnverifiedStatus, OriginMismatch(request.Origin, request.BaseUrl), marked, generatedSessionToken: null);
         }
 
+        var secFetchSite = string.IsNullOrWhiteSpace(request.SecFetchSite)
+            ? null
+            : request.SecFetchSite.Trim().ToLowerInvariant();
+
+        if (request.Strategy == ForgeryStrategy.HeaderOnly)
+        {
+            return VerifyViaHeaderOnly(secFetchSite, request.IsSsl, request.ForcedTls, marked);
+        }
+
+        if (request.Strategy == ForgeryStrategy.HeaderOrLegacyToken)
+        {
+            if (secFetchSite is "same-origin" or "same-site")
+            {
+                return ForgeryResult.Accepted(marked, generatedSessionToken: null);
+            }
+            if (secFetchSite is "cross-site")
+            {
+                return ForgeryResult.Rejected(UnverifiedStatus, "Sec-Fetch-Site header (cross-site) indicates a cross-site request", marked, generatedSessionToken: null);
+            }
+        }
+
         var sessionToken = request.SessionToken;
         string? generated = null;
         if (sessionToken is null)
@@ -74,6 +95,25 @@ public static class ForgeryProtection
         return valid
             ? ForgeryResult.Accepted(marked, generated)
             : ForgeryResult.Rejected(UnverifiedStatus, TokenFailureMessage, marked, generated);
+    }
+
+    static ForgeryResult VerifyViaHeaderOnly(string? secFetchSite, bool isSsl, bool forcedTls, bool marked)
+    {
+        switch (secFetchSite)
+        {
+            case "same-origin" or "same-site":
+                return ForgeryResult.Accepted(marked, generatedSessionToken: null);
+            case "cross-site":
+                return ForgeryResult.Rejected(UnverifiedStatus, "Sec-Fetch-Site header (cross-site) indicates a cross-site request", marked, generatedSessionToken: null);
+            case null:
+                if (!isSsl && !forcedTls)
+                {
+                    return ForgeryResult.Accepted(marked, generatedSessionToken: null);
+                }
+                return ForgeryResult.Rejected(UnverifiedStatus, "Sec-Fetch-Site header is missing or invalid (nil)", marked, generatedSessionToken: null);
+            default:
+                return ForgeryResult.Rejected(UnverifiedStatus, $"Sec-Fetch-Site header is missing or invalid (\"{secFetchSite}\")", marked, generatedSessionToken: null);
+        }
     }
 
     /// <summary>
@@ -137,6 +177,14 @@ public enum OriginVerdict
     NullOrigin,
 }
 
+/// <summary>The forgery protection verification strategy.</summary>
+public enum ForgeryStrategy
+{
+    HeaderOnly,
+    LegacyToken,
+    HeaderOrLegacyToken,
+}
+
 /// <summary>One non-GET write, as the forgery before-action sees it.</summary>
 public sealed class ForgeryRequest
 {
@@ -151,6 +199,18 @@ public sealed class ForgeryRequest
 
     /// <summary>The <c>Origin</c> header, or null when the client sent none.</summary>
     public string? Origin { get; init; }
+
+    /// <summary>The <c>Sec-Fetch-Site</c> header, or null when the client sent none.</summary>
+    public string? SecFetchSite { get; init; }
+
+    /// <summary>True when the request arrived over SSL/TLS (<c>request.ssl?</c>).</summary>
+    public bool IsSsl { get; init; }
+
+    /// <summary>True when forced TLS is enabled (<c>ActionDispatch::Http::URL.secure_protocol</c>).</summary>
+    public bool ForcedTls { get; init; }
+
+    /// <summary>The forgery protection verification strategy.</summary>
+    public ForgeryStrategy Strategy { get; init; } = ForgeryStrategy.HeaderOnly;
 
     /// <summary>The <c>authenticity_token</c> parameter.</summary>
     public string? AuthenticityToken { get; init; }

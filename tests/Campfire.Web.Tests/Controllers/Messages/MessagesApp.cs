@@ -102,19 +102,20 @@ sealed class MessagesApp : IDisposable
     }
 
     /// <summary>A request through the whole app, as Kestrel would hand it over.</summary>
-    public Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, string? body = null, string? contentType = null) =>
-        SendAsync(method, target, headers, Encoding.UTF8.GetBytes(body ?? ""), contentType ?? (body is null ? null : "application/x-www-form-urlencoded"));
+    public Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, string? body = null, string? contentType = null, string scheme = "http") =>
+        SendAsync(method, target, headers, Encoding.UTF8.GetBytes(body ?? ""), contentType ?? (body is null ? null : "application/x-www-form-urlencoded"), scheme);
 
-    public async Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, byte[] body, string? contentType = null)
+    public async Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, byte[] body, string? contentType = null, string scheme = "http")
     {
         var context = new DefaultHttpContext();
+        context.Request.Scheme = scheme;
         var query = target.IndexOf('?', StringComparison.Ordinal);
         context.Request.Method = method;
         context.Request.Path = PathString.FromUriComponent(query < 0 ? target : target[..query]);
         context.Request.QueryString = query < 0 ? QueryString.Empty : new QueryString(target[query..]);
         context.Features.Get<IHttpRequestFeature>()!.RawTarget = target;
         context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse("198.51.100.7");
-        context.Request.Headers.Host = Host;
+        context.Request.Headers.Host = headers.TryGetValue("Host", out var customHost) ? customHost : Host;
         foreach (var (header, value) in headers)
         {
             context.Request.Headers[header] = value;

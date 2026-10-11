@@ -92,10 +92,10 @@ public sealed partial class AvatarsReferenceTests : IDisposable
     }
 
     [Fact]
-    public async Task Destroy_without_a_csrf_token_is_rejected()
+    public async Task Destroy_with_cross_site_fetch_metadata_is_rejected()
     {
         var headers = app.SignedIn(jason);
-        headers.Remove("X-CSRF-Token");
+        headers["Sec-Fetch-Site"] = "cross-site";
 
         Assert.Equal(422, (await app.SendAsync("DELETE", AvatarUrl(jasonId), headers)).Status);
         Assert.Equal(1L, app.Scalar($"SELECT COUNT(*) FROM active_storage_attachments WHERE record_type = 'User' AND record_id = {jasonId}"));

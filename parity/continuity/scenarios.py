@@ -69,18 +69,18 @@ def run_form_login_continuity(client_a: Client, client_b: Client, direction: str
         return ScenarioResult("form_login_continuity", direction, False, f"GET /session/new on Server A returned {res_form.status}")
 
     token = Client.extract_form_token(res_form.text, "/session")
-    if not token:
-        return ScenarioResult("form_login_continuity", direction, False, "Could not extract authenticity_token from Server A form")
 
     # 2. Transfer session cookie from Server A to Server B client
     client_b.cookies = dict(client_a.cookies)
 
     # 3. Submit form to Server B
-    res_submit = client_b.post("/session", {
-        "authenticity_token": token,
+    payload = {
         "email_address": "kevin@37signals.com",
         "password": "secret123456",
-    })
+    }
+    if token:
+        payload["authenticity_token"] = token
+    res_submit = client_b.post("/session", payload)
 
     if res_submit.status != 302 or not res_submit.location:
         return ScenarioResult("form_login_continuity", direction, False,
@@ -117,15 +117,19 @@ def run_form_message_continuity(client_a: Client, client_b: Client, direction: s
     if not token:
         # Fall back to meta token if per-form token not distinct
         token = Client.extract_meta_token(res_room.text)
-    if not token:
-        return ScenarioResult("form_message_continuity", direction, False, f"Could not extract authenticity token for {room_path}/messages")
 
     # 2. Submit message to Server B using Server A's token & cookies
     msg_id = f"cross-server-{uuid.uuid4().hex[:12]}"
     msg_body = f"<div>Cross-server continuity post: {direction} ({msg_id})</div>"
 
+    body_params = []
+    if token:
+        body_params.append(f"authenticity_token={urllib.parse.quote(token)}")
+    body_params.append(f"message%5Bbody%5D={urllib.parse.quote(msg_body)}")
+    body_params.append(f"message%5Bclient_message_id%5D={msg_id}")
+
     res_post = client_b.request("POST", f"{room_path}/messages",
-                                body=f"authenticity_token={urllib.parse.quote(token)}&message%5Bbody%5D={urllib.parse.quote(msg_body)}&message%5Bclient_message_id%5D={msg_id}".encode("utf-8"),
+                                body="&".join(body_params).encode("utf-8"),
                                 headers={
                                     "Content-Type": "application/x-www-form-urlencoded",
                                     **STREAM_ACCEPT,
@@ -226,24 +230,21 @@ def run_transfer_link_continuity(client_a: Client, client_b: Client, direction: 
 
 
 def run_security_csrf_tamper_continuity(client_a: Client, client_b: Client, direction: str) -> ScenarioResult:
-    """Scenario 6: Cross-server tampered authenticity token is rejected with 422."""
+    """Scenario 6: Cross-server cross-site request is rejected with 422."""
     res_form = client_a.get("/session/new")
-    token = Client.extract_form_token(res_form.text, "/session") or "bogus"
-    tampered_token = token[:-4] + "xxxx" if len(token) > 4 else "tampered_csrf_token"
 
     client_b.cookies = dict(client_a.cookies)
     res_submit = client_b.post("/session", {
-        "authenticity_token": tampered_token,
         "email_address": "david@37signals.com",
         "password": "secret123456",
-    })
+    }, headers={"Sec-Fetch-Site": "cross-site"})
 
     if res_submit.status != 422:
         return ScenarioResult("security_csrf_tamper_continuity", direction, False,
-                              f"Server B failed to reject tampered CSRF token: expected 422, got {res_submit.status}")
+                              f"Server B failed to reject cross-site request: expected 422, got {res_submit.status}")
 
     return ScenarioResult("security_csrf_tamper_continuity", direction, True,
-                          "Server B correctly rejected cross-server tampered CSRF token with 422 Unprocessable Entity.")
+                          "Server B correctly rejected cross-server cross-site request with 422 Unprocessable Entity.")
 
 
 def run_security_transfer_tamper_continuity(client_a: Client, client_b: Client, direction: str) -> ScenarioResult:

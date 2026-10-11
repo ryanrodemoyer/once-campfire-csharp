@@ -24,7 +24,8 @@ public partial class ApplicationController : Controller
         .Before("require_authentication", controller => controller.RequireAuthenticationAsync())
         .Before("deny_bots", controller => controller.DenyBots())
         .Before("verify_authenticity_token", controller => controller.VerifyAuthenticityToken(), unless: controller => controller.AuthenticatedBy == AuthenticatedBy.BotKey)
-        .Before(null, controller => controller.AllowBrowserAsync());
+        .Before(null, controller => controller.AllowBrowserAsync())
+        .After("append_sec_fetch_site_to_vary_header", controller => controller.AppendSecFetchSiteToVaryHeader(), unless: controller => controller.AuthenticatedBy == AuthenticatedBy.BotKey);
 }
 
 /// <summary>
@@ -59,12 +60,13 @@ public static class ApplicationControllerCallbacks
             .Before("restore_authentication", async controller => await controller.RestoreAuthenticationAsync().ConfigureAwait(false), only, except)
             .Before("redirect_signed_in_user_to_root", controller => controller.RedirectSignedInUserToRoot(), only, except);
 
-    /// <summary><c>skip_forgery_protection</c>: <c>skip_before_action :verify_authenticity_token</c>.</summary>
+    /// <summary><c>skip_forgery_protection</c>: skip forgery check and vary header callback.</summary>
     public static ControllerCallbacks<T> SkipForgeryProtection<T>(
         this ControllerCallbacks<T> callbacks,
         IReadOnlyCollection<string>? only = null,
         IReadOnlyCollection<string>? except = null) where T : Controller =>
-        callbacks.SkipBefore("verify_authenticity_token", only, except);
+        callbacks.SkipBefore("verify_authenticity_token", only, except)
+            .SkipAfter("append_sec_fetch_site_to_vary_header", only, except);
 
     /// <summary><c>before_action :ensure_can_administer</c> (Authorization).</summary>
     public static ControllerCallbacks<T> EnsureCanAdminister<T>(

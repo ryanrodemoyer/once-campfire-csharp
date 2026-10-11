@@ -136,10 +136,10 @@ public sealed class AccountsReferenceTests : IDisposable
     }
 
     [Fact]
-    public async Task Update_without_a_csrf_token_is_rejected()
+    public async Task Update_with_cross_site_fetch_metadata_is_rejected()
     {
         var headers = app.SignedIn(david);
-        headers.Remove("X-CSRF-Token");
+        headers["Sec-Fetch-Site"] = "cross-site";
         Assert.Equal(422, (await app.SendAsync("PUT", "/account", headers, "account%5Bname%5D=Different")).Status);
         Assert.Equal("37signals", app.Scalar("SELECT name FROM accounts"));
     }

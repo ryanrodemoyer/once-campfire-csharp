@@ -18,8 +18,11 @@
 require "json"
 require "action_controller/test_case"
 
+Rails.logger = ActiveSupport::Logger.new($stderr)
+
 HOST = "campfire.test"
 NOW = Time.now.utc
+OUTPUT = ARGV.fetch(0, File.join(ENV["PARITY_WORK"] || ".", "tests/Campfire.Web.Tests/Controllers/Sessions/Vectors/sessions.json"))
 
 FIXTURES = [
   # Kevin, a member, signed in and active just now (no activity refresh).
@@ -205,4 +208,4 @@ results = CASES.map do |name, method, path, headers, body, remote_addr|
   }
 end
 
-puts JSON.pretty_generate("now" => NOW.iso8601, "fixtures" => FIXTURES, "cases" => results)
+File.write(OUTPUT, JSON.pretty_generate("now" => NOW.iso8601, "fixtures" => FIXTURES, "cases" => results))

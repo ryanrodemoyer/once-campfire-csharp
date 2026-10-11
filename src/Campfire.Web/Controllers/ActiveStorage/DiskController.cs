@@ -18,6 +18,7 @@ public sealed class ActiveStorageDiskController : ActiveStorageController
         .For<ActiveStorageDiskController>()
         .SkipBefore("verify_authenticity_token")
         .SkipAfter("verify_same_origin_request")
+        .SkipAfter("append_sec_fetch_site_to_vary_header")
         .Before("require_active_storage_authentication", c => c.RequireAuthenticationAsync(), only: ["update"])
         .After("cache_control", c => c.Headers["Cache-Control"] = "max-age=3600, public", only: ["show"]);
 

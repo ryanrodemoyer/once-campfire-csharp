@@ -43,7 +43,7 @@ public sealed partial class PushSubscriptionsControllerTests : IDisposable
 
     static IEnumerable<JsonNode> Cases() => Vectors["cases"]!.AsArray().Select(sample => sample!);
 
-    [Fact(Skip = "U03: vectors recorded at reference 345e637; at edbc779 forms and the layout carry no authenticity tokens")]
+    [Fact]
     public async Task Each_request_answers_and_changes_what_the_reference_did()
     {
         var failures = new List<string>();
@@ -173,6 +173,12 @@ public sealed partial class PushSubscriptionsControllerTests : IDisposable
         if (name == "content-type" && want is not null && want.EndsWith("charset=UTF-8", StringComparison.Ordinal))
         {
             return string.Equals(want, have, StringComparison.OrdinalIgnoreCase);
+        }
+        if (name == "vary" && want is not null && have is not null)
+        {
+            var wantParts = want.Split(',').Select(p => p.Trim()).Order();
+            var haveParts = have.Split(',').Select(p => p.Trim()).Order();
+            return wantParts.SequenceEqual(haveParts);
         }
 
         return want == have;

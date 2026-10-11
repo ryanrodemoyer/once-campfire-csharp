@@ -26,19 +26,17 @@ public partial class View
     public static SafeString CspMetaTag() => SafeString.Empty;
 
     /// <summary>
-    /// <c>token_tag(token, form_options: { action:, method: })</c>: the hidden authenticity token
-    /// field. <paramref name="token"/> is the <c>authenticity_token</c> option: null or true for a
-    /// generated token, false for none, or a string to use as is.
+    /// <c>token_tag(token, form_options: { action:, method: })</c>: empty string under header-only
+    /// forgery protection (<c>reference/app/helpers/application_helper.rb</c>).
     /// </summary>
-    public SafeString TokenTag(object? token, string? action, string? method)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter")]
+    public SafeString TokenTag(object? token = null, string? action = null, string? method = null)
     {
-        if (token is false || FormAuthenticityToken is null)
-        {
-            return SafeString.Empty;
-        }
-
-        var value = token is null or true ? FormAuthenticityToken(action, method) : token;
-        return TagHelper.Tag("input", new() { { "type", "hidden" }, { "name", AuthenticityToken.ParamName }, { "value", value } });
+        _ = token;
+        _ = action;
+        _ = method;
+        return SafeString.Empty;
     }
 
     /// <summary><c>method_tag(method)</c>: the hidden <c>_method</c> field.</summary>
