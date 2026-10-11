@@ -62,14 +62,14 @@ public sealed partial class MessagesByBotsController : ApplicationController
     {
         var current = CurrentRoom;
         var (before, after) = (PagingParam("before"), PagingParam("after"));
-        var (messages, count, nextPage) = await ReadAsync(session =>
+        var (messages, nextPage) = await ReadAsync(session =>
         {
             var messages = FindPagedMessages(session, current.Id, before, after);
-            return (messages, Messages.CountInRoom(session, current.Id), NextPageParams(session, current.Id, messages, after is not null));
+            return (messages, NextPageParams(session, current.Id, messages, after is not null));
         }).ConfigureAwait(false);
 
         // `set_pagination_headers`
-        Headers["X-Total-Count"] = count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        Headers["X-Total-Count"] = current.MessagesCount.ToString(System.Globalization.CultureInfo.InvariantCulture);
         if (nextPage is { } page)
         {
             var url = Routes.RoomBotMessagesUrl(UrlBase, current.Id, Params["bot_key"], new RouteOptions { { page.Key, page.Id } });

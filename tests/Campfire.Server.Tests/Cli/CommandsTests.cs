@@ -26,7 +26,7 @@ public sealed class CommandsTests : IDisposable
         var database = System.IO.Path.Combine(root.Path, "storage", "db", "production.sqlite3");
         // Checked before any other connection opens the file and checkpoints it.
         Assert.False(File.Exists(database + "-wal"), "the WAL is checkpointed on exit");
-        Assert.Equal(15, Count(database, "SELECT COUNT(*) FROM schema_migrations"));
+        Assert.Equal(18, Count(database, "SELECT COUNT(*) FROM schema_migrations"));
         Assert.Equal(0, Count(database, "SELECT COUNT(*) FROM users"));
         Assert.Equal("", error.ToString());
     }

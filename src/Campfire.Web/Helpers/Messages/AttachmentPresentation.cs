@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Campfire.RailsCompat.Ruby;
 using Campfire.Storage.Blobs;
@@ -10,27 +9,33 @@ namespace Campfire.Web.Helpers;
 /// <c>Messages::AttachmentPresentation</c> (reference/app/helpers/messages/attachment_presentation.rb):
 /// a video player, a lightboxed thumbnail, or a file link with download and share buttons.
 /// </summary>
-sealed class AttachmentPresentation(View context, Blob attachment)
+sealed class AttachmentPresentation(View context, Blob attachment, bool isThumbProcessed = true, bool isPosterProcessed = true)
 {
     public SafeString Render() =>
         Representable.IsPreviewable(attachment) || attachment.IsVariable ? RenderPreview() : RenderLink();
 
-    SafeString RenderPreview() => attachment.IsVideo ? VideoPreviewTag() : LightboxedImagePreviewTag();
+    SafeString RenderPreview() =>
+        attachment.IsVideo
+            ? VideoPreviewTag()
+            : (isThumbProcessed ? LightboxedImagePreviewTag() : RenderLink());
 
     SafeString VideoPreviewTag()
     {
         var (width, height) = PreviewDimensions();
-        var poster = context.RepresentationUrlsForAttachments.RedirectPath(Representable.Preview(attachment, NamedVariants.VideoPoster));
-        return InlineMediaDimensionConstraints(width, height, Tag.Element("video", options: new()
+        var poster = isPosterProcessed
+            ? context.RepresentationUrlsForAttachments.RedirectPath(Representable.Preview(attachment, NamedVariants.VideoPoster))
+            : null;
+        var options = new HtmlOptions { { "src", BlobPath() } };
+        if (poster is not null)
         {
-            { "src", BlobPath() },
-            { "poster", poster },
-            { "controls", true },
-            { "preload", "none" },
-            { "width", "100%" },
-            { "height", "100%" },
-            { "class", "message__attachment" },
-        }));
+            options.Add("poster", poster);
+        }
+        options.Add("controls", true);
+        options.Add("preload", "none");
+        options.Add("width", "100%");
+        options.Add("height", "100%");
+        options.Add("class", "message__attachment");
+        return InlineMediaDimensionConstraints(width, height, Tag.Element("video", options: options));
     }
 
     SafeString LightboxedImagePreviewTag()
@@ -132,11 +137,23 @@ readonly record struct RubyNumber(object Value)
 {
     public static RubyNumber? From(JsonNode? node)
     {
-        if (node is not JsonValue value || value.GetValueKind() != JsonValueKind.Number)
+        if (node is not JsonValue value)
         {
             return null;
         }
-        return value.TryGetValue<long>(out var integer) ? new RubyNumber(integer) : new RubyNumber(value.GetValue<double>());
+        if (value.TryGetValue<long>(out var integer))
+        {
+            return new RubyNumber(integer);
+        }
+        if (value.TryGetValue<int>(out var int32))
+        {
+            return new RubyNumber((long)int32);
+        }
+        if (value.TryGetValue<double>(out var dbl))
+        {
+            return new RubyNumber(dbl);
+        }
+        return null;
     }
 
     public double ToDouble() => Value is long integer ? integer : (double)Value;

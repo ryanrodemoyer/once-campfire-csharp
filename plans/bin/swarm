@@ -192,13 +192,13 @@ def review_state(record, pr):
 def read_verdict(pr):
     """The reviewer's verdict on the PR's head: the last comment starting `REVIEW <sha12>: ...`."""
     out = sh("gh", "pr", "view", pr["url"], "--json", "comments", check=False)
-    tag = f"REVIEW {pr['headRefOid'][:12]}:"
+    # Reviewers sometimes shorten the sha, so accept any prefix of at least 7 characters.
+    tag = re.compile(r"REVIEW ([0-9a-f]{7,40}):\s*(APPROVE|CHANGES)\b", re.IGNORECASE)
     for comment in reversed(json.loads(out or "{}").get("comments", [])):
         body = comment.get("body", "").strip()
-        if body.startswith(tag):
-            verdict = body[len(tag):].split()[0].strip(".").upper() if body[len(tag):].split() else ""
-            if verdict in ("APPROVE", "CHANGES"):
-                return verdict, body
+        match = tag.match(body)
+        if match and pr["headRefOid"].startswith(match.group(1).lower()):
+            return match.group(2).upper(), body
     return None, None
 
 

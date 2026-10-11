@@ -32,6 +32,7 @@ ActiveRecord::Tasks::DatabaseTasks.root = REFERENCE
 ActiveRecord::Tasks::DatabaseTasks.env = "production"
 ActiveRecord::Migrator.migrations_paths = ActiveRecord::Tasks::DatabaseTasks.migrations_paths = [ File.join(REFERENCE, "db/migrate") ]
 ActiveRecord::Schema.verbose = false
+ActiveRecord.validate_migration_timestamps = false if ActiveRecord.respond_to?(:validate_migration_timestamps=)
 db_config = ActiveRecord::Base.configurations.configs_for(env_name: "production", name: "primary")
 
 FileUtils.rm_f(Dir["#{DATABASE}*"])
@@ -43,10 +44,12 @@ ActiveRecord::Tasks::DatabaseTasks.create(db_config)
 ActiveRecord::Tasks::DatabaseTasks.load_schema(db_config, :ruby, File.join(REFERENCE, "db/schema.rb"))
 ActiveRecord::Base.establish_connection(db_config)
 connection = ActiveRecord::Base.lease_connection
+Room::MessagesCount.ensure!(connection) if defined?(Room::MessagesCount)
 
 File.write File.join(HERE, "rails-schema.sql"),
   connection.select_values("SELECT sql FROM sqlite_master WHERE sql IS NOT NULL ORDER BY rowid").map { |sql| "#{sql};\n" }.join
 
+unless defined?(User)
 # Just the associations, enums and STI the fixture files lean on (reference/app/models).
 class User < ActiveRecord::Base
   enum :role, %i[ member administrator bot ]
@@ -97,10 +100,12 @@ module ActionText
     belongs_to :record, polymorphic: true
   end
 end
+end
 
 fixtures = File.join(REFERENCE, "test/fixtures")
 names = Dir[File.join(fixtures, "**/*.yml")].map { |path| path.delete_prefix("#{fixtures}/").delete_suffix(".yml") }.sort
 ActiveRecord::FixtureSet.create_fixtures(fixtures, names, "action_text/rich_texts" => ActionText::RichText, "push/subscriptions" => Push::Subscription)
+Room::MessagesCount.backfill!(connection) if defined?(Room::MessagesCount)
 
 connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
 ActiveRecord::Base.connection_handler.clear_all_connections!

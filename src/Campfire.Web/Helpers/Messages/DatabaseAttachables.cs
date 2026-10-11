@@ -32,6 +32,7 @@ public sealed class DatabaseAttachables(SqliteSession session, KeyGenerator keys
         ["Account"] = (s, id) => Accounts.Find(s, id) is not null,
         ["Session"] = (s, id) => Sessions.Find(s, id) is not null,
         ["Webhook"] = (s, id) => Webhooks.Find(s, id) is not null,
+        ["ActiveStorage::Blob"] = (s, id) => Blobs.Find(s, id) is not null,
     };
 
     /// <summary>
@@ -47,6 +48,17 @@ public sealed class DatabaseAttachables(SqliteSession session, KeyGenerator keys
         if (gid.ModelName == "User" && !gid.Composite && FindUser(gid.Id) is { } user)
         {
             return new SignedLookup.User(user);
+        }
+
+        if (gid.ModelName == "ActiveStorage::Blob" && !gid.Composite && RubyString.ToIChecked(gid.Id) is long blobId && blobId > 0
+            && Blobs.Find(session, blobId) is { } blob)
+        {
+            var ext = System.IO.Path.GetExtension(blob.Filename);
+            if (ext.StartsWith('.'))
+            {
+                ext = ext[1..];
+            }
+            return new SignedLookup.StoredBlob(new BlobAttachable(blob.Filename, blob.ByteSize, ext));
         }
 
         // An existing Message renders messages/_message. A verified SGID for a missing one still

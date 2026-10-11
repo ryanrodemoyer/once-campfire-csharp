@@ -30,6 +30,9 @@ public sealed class WebPushClient : IDisposable
     readonly VapidIdentification vapid;
     readonly TimeProvider clock;
 
+    /// <summary>Pooled push connections (<c>WebPush::Connections</c>).</summary>
+    public WebPushConnections Connections { get; } = new();
+
     /// <param name="handler">
     /// <see cref="RestrictedHttpHandlers.WebPush"/> in the app. Tests pass one that dials a local
     /// server.
@@ -58,12 +61,16 @@ public sealed class WebPushClient : IDisposable
     public async Task<HttpStatusCode> PayloadSendAsync(
         string message,
         string endpoint,
-        IPAddress endpointIp,
+        IPAddress? endpointIp,
         string? p256dh,
         string? auth,
         string urgency,
         CancellationToken cancellationToken)
     {
+        if (endpointIp is null)
+        {
+            throw new ArgumentException("Push deliveries must be pinned to a resolved endpoint IP");
+        }
         // WebPush::Request.new: `build_payload` encrypts unless the message is empty.
         var payload = string.IsNullOrEmpty(message) ? null : WebPushEncryption.Encrypt(message, p256dh, auth);
         var uri = RubyUri.Parse(endpoint);
@@ -140,5 +147,9 @@ public sealed class WebPushClient : IDisposable
         _ => new WebPushResponseException("WebPush::ResponseError", status, host),
     };
 
-    public void Dispose() => client.Dispose();
+    public void Dispose()
+    {
+        Connections.Dispose();
+        client.Dispose();
+    }
 }

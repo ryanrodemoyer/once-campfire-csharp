@@ -10,7 +10,7 @@ CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("ro
 CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
 CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
 CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
-CREATE TABLE "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "creator_id" bigint NOT NULL, "name" varchar, "type" varchar NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE TABLE "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "creator_id" bigint NOT NULL, "name" varchar, "type" varchar NOT NULL, "updated_at" datetime(6) NOT NULL, "messages_count" integer DEFAULT 0 NOT NULL);
 CREATE TABLE "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "bio" text, "bot_token" varchar, "created_at" datetime(6) NOT NULL, "email_address" varchar, "name" varchar NOT NULL, "password_digest" varchar, "role" integer DEFAULT 0 NOT NULL, "status" integer DEFAULT 0 NOT NULL, "updated_at" datetime(6) NOT NULL);
 CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
 CREATE UNIQUE INDEX "index_users_on_email_address" ON "users" ("email_address");
@@ -45,6 +45,8 @@ FOREIGN KEY ("creator_id")
   REFERENCES "users" ("id")
 );
 CREATE INDEX "index_messages_on_creator_id" ON "messages" ("creator_id");
+CREATE INDEX "index_messages_on_room_id_and_created_at" ON "messages" ("room_id", "created_at");
+CREATE INDEX "index_messages_on_room_id_and_updated_at" ON "messages" ("room_id", "updated_at");
 CREATE INDEX "index_messages_on_room_id" ON "messages" ("room_id");
 CREATE TABLE "push_subscriptions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "auth_key" varchar, "created_at" datetime(6) NOT NULL, "endpoint" varchar, "p256dh_key" varchar, "updated_at" datetime(6) NOT NULL, "user_agent" varchar, "user_id" integer NOT NULL, CONSTRAINT "fk_rails_43d43720fc"
 FOREIGN KEY ("user_id")
@@ -76,3 +78,17 @@ CREATE TABLE 'message_search_index_docsize'(id INTEGER PRIMARY KEY, sz BLOB);
 CREATE TABLE 'message_search_index_config'(k PRIMARY KEY, v) WITHOUT ROWID;
 CREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY);
 CREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE TRIGGER messages_ai_rooms_messages_count AFTER INSERT ON messages
+BEGIN
+  UPDATE rooms SET messages_count = messages_count + 1 WHERE id = NEW.room_id;
+END;
+CREATE TRIGGER messages_ad_rooms_messages_count AFTER DELETE ON messages
+BEGIN
+  UPDATE rooms SET messages_count = messages_count - 1 WHERE id = OLD.room_id;
+END;
+CREATE TRIGGER messages_au_rooms_messages_count AFTER UPDATE OF room_id ON messages
+WHEN OLD.room_id IS NOT NEW.room_id
+BEGIN
+  UPDATE rooms SET messages_count = messages_count - 1 WHERE id = OLD.room_id;
+  UPDATE rooms SET messages_count = messages_count + 1 WHERE id = NEW.room_id;
+END;

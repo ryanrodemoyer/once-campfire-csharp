@@ -243,7 +243,7 @@ Tests that fail only because Rails changed are skipped with the task that remove
 | `SchemaPreparerTests.Migration_versions_are_the_reference_migrations`, `.Schema_sha1_is_the_reference_schema_rb` | U02 |
 | `LayoutGoldenTests` (both) | U03 |
 | `SessionsControllerTests`, `AccountBotsReplayTests`, `PushSubscriptionsControllerTests`, `RoomSettingsReplayTests` replay tests | U03 |
-| `WriteControllerTests` replay test | U04 |
+| `WriteControllerTests`, `ByBotsReplayTests` replay tests | U04 |
 | `RoomsControllerTests`, `BoostsReplayTests`, `SidebarsReplayTests`, `SearchesControllerTests` (both), `AccountsControllerTests`, `ProfilesReplayTests`, `PwaControllerTests` replay tests | U05 |
 
 The controller vectors were recorded at 345e637. The task that removes a skip regenerates that

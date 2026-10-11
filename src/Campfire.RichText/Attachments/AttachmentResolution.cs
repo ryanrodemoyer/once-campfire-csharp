@@ -75,6 +75,10 @@ public static partial class AttachmentResolution
         {
             return new Mention(found.Value);
         }
+        if (signed is SignedLookup.StoredBlob blob)
+        {
+            return blob.Value;
+        }
 
         // locate_signed wins over a content attachment. A Message renders messages/_message;
         // its plain text is the caption, because the model defines none of its own.

@@ -29,7 +29,7 @@ public partial class View
     public partial void MessagesRoomNotFound(HtmlWriter w);
 
     /// <summary><c>message_attachment_presentation(message)</c>, without <c>message_presentation</c>'s rescue.</summary>
-    internal SafeString MessageAttachmentPresentation(MessageView message) => new AttachmentPresentation(this, message.Attachment!).Render();
+    internal SafeString MessageAttachmentPresentation(MessageView message) => new AttachmentPresentation(this, message.Attachment!, message.IsThumbProcessed, message.IsPosterProcessed).Render();
 
     /// <summary>
     /// <c>editable_body(@message)</c> as Lexxy's <c>lexxy_rich_textarea_tag</c> passes it on:

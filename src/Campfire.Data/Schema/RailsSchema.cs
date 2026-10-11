@@ -28,7 +28,7 @@ public static class RailsSchema
         """CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id")""",
         """CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id")""",
         """CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id")""",
-        """CREATE TABLE "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "creator_id" bigint NOT NULL, "name" varchar, "type" varchar NOT NULL, "updated_at" datetime(6) NOT NULL)""",
+        """CREATE TABLE "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime(6) NOT NULL, "creator_id" bigint NOT NULL, "name" varchar, "type" varchar NOT NULL, "updated_at" datetime(6) NOT NULL, "messages_count" integer DEFAULT 0 NOT NULL)""",
         """CREATE TABLE "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "bio" text, "bot_token" varchar, "created_at" datetime(6) NOT NULL, "email_address" varchar, "name" varchar NOT NULL, "password_digest" varchar, "role" integer DEFAULT 0 NOT NULL, "status" integer DEFAULT 0 NOT NULL, "updated_at" datetime(6) NOT NULL)""",
         """CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token")""",
         """CREATE UNIQUE INDEX "index_users_on_email_address" ON "users" ("email_address")""",
@@ -73,6 +73,8 @@ public static class RailsSchema
         )
         """,
         """CREATE INDEX "index_messages_on_creator_id" ON "messages" ("creator_id")""",
+        """CREATE INDEX "index_messages_on_room_id_and_created_at" ON "messages" ("room_id", "created_at")""",
+        """CREATE INDEX "index_messages_on_room_id_and_updated_at" ON "messages" ("room_id", "updated_at")""",
         """CREATE INDEX "index_messages_on_room_id" ON "messages" ("room_id")""",
         """
         CREATE TABLE "push_subscriptions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "auth_key" varchar, "created_at" datetime(6) NOT NULL, "endpoint" varchar, "p256dh_key" varchar, "updated_at" datetime(6) NOT NULL, "user_agent" varchar, "user_id" integer NOT NULL, CONSTRAINT "fk_rails_43d43720fc"
@@ -127,8 +129,11 @@ public static class RailsSchema
         "20251126115722",
         "20251126130131",
         "20251212154340",
+        "20261004225000",
+        "20261005022000",
+        "20261007190000",
     ];
 
     // SHA1 of reference/db/schema.rb, which a schema load records in ar_internal_metadata.
-    public const string SchemaSha1 = "f75da8dad38bfb179ffd757bd7a7c2b3f818bc29";
+    public const string SchemaSha1 = "aff2a42b1a9c498adc4eddf775976f2f09ecdedd";
 }

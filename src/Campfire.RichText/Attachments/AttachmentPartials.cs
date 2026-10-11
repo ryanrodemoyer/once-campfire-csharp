@@ -26,6 +26,7 @@ public static partial class AttachmentPartials
             ContentAttachment content => RenderContentAttachment(content, renderContent),
             RemoteImage image => RenderRemoteImage(image, attachment.Caption),
             RemoteVideo video => RenderRemoteVideo(video, attachment.Caption),
+            BlobAttachable blob => RenderBlob(blob, attachment.Caption),
             MissingAttachable missing => RenderMissingAttachable(missing, context),
             _ => throw new InvalidOperationException($"Unknown attachable {attachment.Attachable}"),
         };
@@ -82,6 +83,62 @@ public static partial class AttachmentPartials
 
     static string Figcaption(string? caption) =>
         caption is null ? "" : $"    <figcaption class=\"attachment__caption\">\n      {HtmlEscape(caption)}\n    </figcaption>\n";
+
+    /// <summary><c>reference/app/views/active_storage/blobs/_blob.html.erb</c></summary>
+    static string RenderBlob(BlobAttachable blob, string? caption)
+    {
+        var html = new StringBuilder();
+        html.Append($"<figure class=\"attachment attachment--file attachment--{HtmlEscape(blob.Extension)}\">\n");
+        html.Append("  <figcaption class=\"attachment__caption\">\n");
+        if (caption is not null)
+        {
+            html.Append($"      {HtmlEscape(caption)}\n");
+        }
+        else
+        {
+            html.Append($"      <span class=\"attachment__name\">{HtmlEscape(blob.Filename)}</span>\n");
+            html.Append($"      <span class=\"attachment__size\">{HtmlEscape(HumanSize(blob.ByteSize))}</span>\n");
+        }
+        html.Append("  </figcaption>\n</figure>\n");
+        return html.ToString();
+    }
+
+    /// <summary>Rails <c>number_to_human_size</c>.</summary>
+    public static string HumanSize(long bytes)
+    {
+        if (bytes < 1024)
+        {
+            return bytes == 1 ? "1 Byte" : $"{bytes} Bytes";
+        }
+
+        string[] units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"];
+        var exp = (int)(Math.Log(bytes) / Math.Log(1024));
+        if (exp >= units.Length)
+        {
+            exp = units.Length - 1;
+        }
+
+        var humanSize = bytes / Math.Pow(1024, exp);
+        double rounded;
+        string format;
+        if (humanSize >= 100)
+        {
+            rounded = Math.Round(humanSize, 0, MidpointRounding.AwayFromZero);
+            format = "0";
+        }
+        else if (humanSize >= 10)
+        {
+            rounded = Math.Round(humanSize, 1, MidpointRounding.AwayFromZero);
+            format = "0.#";
+        }
+        else
+        {
+            rounded = Math.Round(humanSize, 2, MidpointRounding.AwayFromZero);
+            format = "0.##";
+        }
+
+        return $"{rounded.ToString(format, System.Globalization.CultureInfo.InvariantCulture)} {units[exp]}";
+    }
 
     /// <summary>
     /// Action Text's <c>_missing_attachable.html.erb</c>, a ☒. When the SGID still verified, Rails
