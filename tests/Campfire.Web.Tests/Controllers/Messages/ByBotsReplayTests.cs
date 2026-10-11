@@ -28,28 +28,28 @@ public sealed partial class ByBotsReplayTests : IDisposable
 
     // Cases whose rendered message differs from the reference for a reason outside this task: the
     // body, its ETag and the broadcast payloads aren't compared; everything else is.
-    const string Markup = "U05: the message markup at edbc779 (the message's actions, data-client-message-id)";
+    const string markup = "U05: the message markup at edbc779 (the message's actions, data-client-message-id)";
 
     static readonly Dictionary<string, string> KnownDifferences = new()
     {
-        ["create"] = Markup,
-        ["create with UTF-8"] = Markup,
-        ["create as text/plain"] = Markup,
-        ["create as JSON"] = Markup,
-        ["create with HTML"] = Markup,
-        ["create with what parses as a form"] = Markup,
-        ["create in a direct room"] = Markup,
-        ["create mentioning a bot with a webhook"] = Markup,
-        ["create mentioning itself"] = Markup,
-        ["update"] = Markup,
-        ["update with UTF-8"] = Markup,
-        ["update to the same body"] = Markup,
-        ["boost"] = Markup,
-        ["boost with text"] = Markup,
-        ["index as HTML"] = Markup,
-        ["text"] = Markup,
-        ["HTML"] = Markup,
-        ["in a direct room"] = Markup,
+        ["create"] = markup,
+        ["create with UTF-8"] = markup,
+        ["create as text/plain"] = markup,
+        ["create as JSON"] = markup,
+        ["create with HTML"] = markup,
+        ["create with what parses as a form"] = markup,
+        ["create in a direct room"] = markup,
+        ["create mentioning a bot with a webhook"] = markup,
+        ["create mentioning itself"] = markup,
+        ["update"] = markup,
+        ["update with UTF-8"] = markup,
+        ["update to the same body"] = markup,
+        ["boost"] = markup,
+        ["boost with text"] = markup,
+        ["index as HTML"] = markup,
+        ["text"] = markup,
+        ["HTML"] = markup,
+        ["in a direct room"] = markup,
     };
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };

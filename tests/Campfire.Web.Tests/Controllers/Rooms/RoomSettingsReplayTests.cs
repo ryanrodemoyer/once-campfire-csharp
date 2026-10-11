@@ -6,8 +6,8 @@ using Campfire.Data.Events;
 using Campfire.RailsCompat.Cookies;
 using Campfire.RailsCompat.Formatting;
 using Campfire.Vectors;
-using Campfire.Web.Helpers.Rails;
 using Campfire.Web.Controllers;
+using Campfire.Web.Helpers.Rails;
 using Campfire.Web.Tests.Controllers.Messages;
 using Campfire.Web.Tests.Pipeline;
 

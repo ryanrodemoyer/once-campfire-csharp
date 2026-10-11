@@ -25,35 +25,35 @@ public sealed partial class WriteControllerTests : IDisposable
 
     // Cases whose rendered message differs from the reference for a reason outside this task: the
     // body, its ETag and the broadcast payloads aren't compared; everything else is.
-    const string Markup = "U05: the message markup at edbc779 (data-client-message-id, the message template)";
+    const string markup = "U05: the message markup at edbc779 (data-client-message-id, the message template)";
 
     static readonly Dictionary<string, string> KnownDifferences = new()
     {
-        ["member creates in an open room"] = Markup,
-        ["member creates in a direct room with a bot"] = Markup,
-        ["administrator mentions bots"] = Markup,
-        ["member plays a sound"] = Markup,
-        ["member sends emoji"] = Markup,
-        ["member sends a blank body"] = Markup,
-        ["member sends no body"] = Markup,
-        ["create without a client message id"] = Markup,
-        ["create, XHR without Accept"] = Markup,
-        ["create, HTML"] = Markup,
-        ["create, JSON"] = Markup,
-        ["create, multipart form"] = Markup,
-        ["create with unpermitted params"] = Markup,
-        ["create without a CSRF token"] = Markup,
-        ["show"] = Markup,
-        ["show in a frame"] = Markup,
-        ["show an attachment"] = Markup,
-        ["edit own message"] = Markup,
-        ["edit own message, full page"] = Markup,
-        ["edit a message with mentions"] = Markup,
-        ["edit a seed message with a mention"] = Markup,
-        ["edit a seed message with an embed"] = Markup,
-        ["edit an attachment"] = Markup,
-        ["edit a blank message"] = Markup,
-        ["administrator edits a member's message"] = Markup,
+        ["member creates in an open room"] = markup,
+        ["member creates in a direct room with a bot"] = markup,
+        ["administrator mentions bots"] = markup,
+        ["member plays a sound"] = markup,
+        ["member sends emoji"] = markup,
+        ["member sends a blank body"] = markup,
+        ["member sends no body"] = markup,
+        ["create without a client message id"] = markup,
+        ["create, XHR without Accept"] = markup,
+        ["create, HTML"] = markup,
+        ["create, JSON"] = markup,
+        ["create, multipart form"] = markup,
+        ["create with unpermitted params"] = markup,
+        ["create without a CSRF token"] = markup,
+        ["show"] = markup,
+        ["show in a frame"] = markup,
+        ["show an attachment"] = markup,
+        ["edit own message"] = markup,
+        ["edit own message, full page"] = markup,
+        ["edit a message with mentions"] = markup,
+        ["edit a seed message with a mention"] = markup,
+        ["edit a seed message with an embed"] = markup,
+        ["edit an attachment"] = markup,
+        ["edit a blank message"] = markup,
+        ["administrator edits a member's message"] = markup,
     };
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
