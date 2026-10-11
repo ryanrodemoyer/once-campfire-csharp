@@ -9,7 +9,7 @@
 #   mkdir -p tmp/m07/db tmp/m07/storage
 #   cp tests/Campfire.Data.Tests/Oracle/parity-seed.sqlite3 tmp/m07/db/production.sqlite3
 #   parity/bin/reference runner -e RAILS_LOG_LEVEL=fatal --storage tmp/m07 --time 2026-03-02T16:00:00Z --freeze \
-#     tests/Campfire.Web.Tests/Controllers/Rooms/Vectors/settings.rb > tests/Campfire.Web.Tests/Controllers/Rooms/Vectors/settings.json
+#     tests/Campfire.Web.Tests/Controllers/Rooms/Vectors/settings.rb
 #
 # Requests go straight to Rails.application (the stack Puma runs), in order, on one database.
 # The fixtures below are applied first, and the C# test applies the same SQL to its copy. A case
@@ -17,8 +17,11 @@
 require "json"
 require "action_controller/test_case"
 
+Rails.logger = ActiveSupport::Logger.new($stderr)
+
 HOST = "campfire.test"
 NOW = Time.now.utc
+OUTPUT = ARGV.fetch(0, File.join(ENV["PARITY_WORK"] || ".", "tests/Campfire.Web.Tests/Controllers/Rooms/Vectors/settings.json"))
 
 FIXTURES = [
   # Kevin, a member, signed in and active just now (no activity refresh).
@@ -269,9 +272,22 @@ ActiveSupport::Notifications.subscribe("broadcast.action_cable") do |*, payload|
   message = payload[:coder] ? payload[:coder].encode(payload[:message]) : payload[:message]
   events << { "broadcast" => payload[:broadcasting], "payload" => message }
 end
+enqueued = []
 ActiveSupport::Notifications.subscribe("enqueue.active_job") do |*, payload|
   job = payload[:job]
+  enqueued << job
   events << { "job" => job.class.name, "arguments" => job.arguments.map { |argument| argument.respond_to?(:to_global_id) ? argument.to_global_id.to_s : argument } }
+end
+
+# Room::DestroyJob, which rooms#destroy leaves the messages to, performed as a worker would, from
+# its serialized arguments: its broadcasts and jobs, and every row it changed.
+def perform_destroy_jobs(jobs, events)
+  jobs.grep(Room::DestroyJob).map do |job|
+    events.clear
+    before = snapshot
+    ActiveJob::Base.execute(job.serialize)
+    { "events" => events.dup, "changes" => changes(before, snapshot) }
+  end
 end
 
 RESPONSE_HEADERS = %w[ content-type location vary cache-control etag set-cookie x-frame-options ]
@@ -289,12 +305,15 @@ results = CASES.map do |name, method, path, headers, body, sql|
   headers.each { |key, value| env["HTTP_#{key.upcase.tr("-", "_")}"] = value }
 
   events.clear
+  enqueued.clear
   before = snapshot
   status, response_headers, response_body = Rails.application.call(env)
   text = +""
   response_body.each { |chunk| text << chunk }
   response_body.close if response_body.respond_to?(:close)
   after = snapshot
+  request_events = events.dup
+  destroy_jobs = perform_destroy_jobs(enqueued.dup, events)
 
   {
     "name" => name,
@@ -305,9 +324,10 @@ results = CASES.map do |name, method, path, headers, body, sql|
       "headers" => response_headers.to_h.transform_keys(&:downcase).slice(*RESPONSE_HEADERS),
       "body" => text.force_encoding("UTF-8")
     },
-    "events" => events.dup,
-    "changes" => changes(before, after)
+    "events" => request_events,
+    "changes" => changes(before, after),
+    "destroy_jobs" => destroy_jobs.presence
   }.compact
 end
 
-puts JSON.pretty_generate("now" => NOW.iso8601, "fixtures" => FIXTURES, "cases" => results)
+File.write(OUTPUT, JSON.pretty_generate("now" => NOW.iso8601, "fixtures" => FIXTURES, "cases" => results))

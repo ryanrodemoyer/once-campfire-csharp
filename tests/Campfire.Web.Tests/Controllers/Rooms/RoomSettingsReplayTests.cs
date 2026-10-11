@@ -7,7 +7,9 @@ using Campfire.RailsCompat.Cookies;
 using Campfire.RailsCompat.Formatting;
 using Campfire.Vectors;
 using Campfire.Web.Helpers.Rails;
+using Campfire.Web.Controllers;
 using Campfire.Web.Tests.Controllers.Messages;
+using Campfire.Web.Tests.Pipeline;
 
 namespace Campfire.Web.Tests.Controllers.Rooms;
 
@@ -17,7 +19,8 @@ namespace Campfire.Web.Tests.Controllers.Rooms;
 /// bell (see <c>Vectors/settings.rb</c>), through the router and the room settings controllers on
 /// the same database, in the same order, with CSRF protection on. Each request must answer as the
 /// reference did (status, headers, cookies, body), send the same broadcasts and connection resets
-/// in the same order, and change the same rows (memberships above all) to the same values.
+/// in the same order, and change the same rows (memberships above all) to the same values. A room
+/// destroyed is destroyed by Room::DestroyJob, which runs after its request, as it does in Rails.
 /// </summary>
 public sealed partial class RoomSettingsReplayTests : IDisposable
 {
@@ -38,7 +41,7 @@ public sealed partial class RoomSettingsReplayTests : IDisposable
 
     static IEnumerable<JsonNode> Cases() => Vectors["cases"]!.AsArray().Select(sample => sample!);
 
-    [Fact(Skip = "U04: vectors recorded at reference 345e637; at edbc779 a room's messages are deleted in Room::DestroyJob, and forms and the layout carry no tokens")]
+    [Fact]
     public async Task Each_request_answers_and_changes_what_the_reference_did()
     {
         var failures = new List<string>();
@@ -57,6 +60,23 @@ public sealed partial class RoomSettingsReplayTests : IDisposable
             failures.AddRange(CompareResponse(sample["response"]!, actual).Select(failure => $"{name}: {failure}"));
             failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events).Select(failure => $"{name}: {failure}"));
             failures.AddRange(CompareChanges(sample["changes"]!.AsObject(), Changes(before, after)).Select(failure => $"{name}: {failure}"));
+
+            // Then each Room::DestroyJob the request enqueued, as a worker performs it.
+            var jobs = messages.Seams.Jobs.OfType<RoomDestroyJob>().ToList();
+            var expectedJobs = sample["destroy_jobs"]?.AsArray() ?? [];
+            if (jobs.Count != expectedJobs.Count)
+            {
+                failures.Add($"{name}: {jobs.Count} Room::DestroyJob, expected {expectedJobs.Count}");
+                continue;
+            }
+            foreach (var (job, expectedJob) in jobs.Zip(expectedJobs))
+            {
+                messages.Seams.Clear();
+                var beforeJob = Snapshot();
+                await new RoomDestroyJobs(messages.Database, messages.Seams.Seams, new FixedClock(messages.Now)).PerformAsync(job, TestContext.Current.CancellationToken);
+                failures.AddRange(CompareEvents(expectedJob!["events"]!.AsArray(), messages.Seams.Events).Select(failure => $"{name}, Room::DestroyJob: {failure}"));
+                failures.AddRange(CompareChanges(expectedJob["changes"]!.AsObject(), Changes(beforeJob, Snapshot())).Select(failure => $"{name}, Room::DestroyJob: {failure}"));
+            }
         }
         Assert.True(failures.Count == 0, string.Join('\n', failures));
     }
@@ -215,10 +235,12 @@ public sealed partial class RoomSettingsReplayTests : IDisposable
     {
         var want = expected.Select(node => node!["broadcast"] is { } stream
             ? $"broadcast {stream.GetValue<string>()} {Normalize(node["payload"]!.GetValue<string>())}"
-            : $"job {node["job"]!.GetValue<string>()} {string.Join(',', node["arguments"]!.AsArray().Select(argument => GidId().Match(argument!.GetValue<string>()).Groups[1].Value))}").ToList();
+            : $"job {node["job"]!.GetValue<string>()} {string.Join(',', node["arguments"]!.AsArray().Select(Argument))}").ToList();
         var have = actual.Select(seamEvent => seamEvent switch
         {
             Broadcast broadcast => $"broadcast {broadcast.Stream} {Normalize(broadcast.Payload)}",
+            // Room::DestroyJob's second argument is a plain array of user ids.
+            Enqueued { Job: RoomDestroyJob destroy } => $"job {destroy.ClassName} {destroy.RoomId},[{string.Join(',', destroy.FormerMemberIds)}]",
             Enqueued enqueued => $"job {enqueued.Job.ClassName} {string.Join(',', enqueued.Job.ArgumentIds)}",
             // `remote_connections.where(current_user:).disconnect(reconnect:)`, as Action Cable broadcasts it.
             Disconnect disconnect => $"broadcast action_cable/{RecordIdentifier.GidParam("User", disconnect.UserId)} {{\"type\":\"disconnect\",\"reconnect\":{(disconnect.Reconnect ? "true" : "false")}}}",
@@ -237,6 +259,11 @@ public sealed partial class RoomSettingsReplayTests : IDisposable
             }
         }
     }
+
+    // A job argument: a record's GlobalID as its id, an array as its elements.
+    static string Argument(JsonNode? argument) => argument is JsonArray array
+        ? $"[{string.Join(',', array.Select(element => element!.ToJsonString()))}]"
+        : GidId().Match(argument!.GetValue<string>()).Groups[1].Value;
 
     // Memberships granted with `insert_all` are stamped by SQLite's own clock (to the
     // millisecond), which the reference's frozen clock stops and ours doesn't: those stamps read as

@@ -9,14 +9,17 @@
 #   mkdir -p tmp/i05/db tmp/i05/storage
 #   cp tests/Campfire.Data.Tests/Oracle/parity-seed.sqlite3 tmp/i05/db/production.sqlite3
 #   parity/bin/reference runner -e RAILS_LOG_LEVEL=fatal --storage tmp/i05 --time 2026-03-02T16:00:00Z --freeze \
-#     tests/Campfire.Web.Tests/Controllers/Messages/Vectors/by_bots.rb > tests/Campfire.Web.Tests/Controllers/Messages/Vectors/by_bots.json
+#     tests/Campfire.Web.Tests/Controllers/Messages/Vectors/by_bots.rb
 #
 # Requests go straight to Rails.application (the stack Puma runs), in order, on one database, as a
 # bot's client sends them: no cookies, curl's form Content-Type unless another is given.
 require "json"
 
+Rails.logger = ActiveSupport::Logger.new($stderr)
+
 HOST = "campfire.test"
 NOW = Time.now.utc
+OUTPUT = ARGV.fetch(0, File.join(ENV["PARITY_WORK"] || ".", "tests/Campfire.Web.Tests/Controllers/Messages/Vectors/by_bots.json"))
 
 BENDER = "394959859-BenderBot123"   # in All Talk (131 messages), Archive (none) and a direct room with Kevin; has a webhook
 DEPLOY = "773523956-DeployBot456"   # in Designers, Archive, All Pets and HQ; no webhook
@@ -236,4 +239,4 @@ replies = REPLIES.map do |name, room, text|
   { "name" => name, "room_id" => room, "text" => text, "events" => events.dup, "changes" => changes(before, snapshot) }
 end
 
-puts JSON.pretty_generate("now" => NOW.iso8601, "cases" => results, "webhook_payloads" => payloads, "webhook_replies" => replies)
+File.write(OUTPUT, JSON.pretty_generate("now" => NOW.iso8601, "cases" => results, "webhook_payloads" => payloads, "webhook_replies" => replies))
