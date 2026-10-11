@@ -7,6 +7,7 @@ using Campfire.RailsCompat.Crypto;
 using Campfire.RailsCompat.Csrf;
 using Campfire.Storage.Blobs;
 using Campfire.Vectors;
+using Campfire.Web.Controllers;
 using Campfire.Web.Pipeline;
 using Campfire.Web.Routing;
 using Campfire.Web.Tests.Assets;
@@ -127,6 +128,28 @@ sealed class MessagesApp : IDisposable
         context.Response.Body = responseBody;
         await App.HandleAsync(context);
         return new Response(context.Response.StatusCode, context.Response.Headers, Encoding.UTF8.GetString(responseBody.ToArray()));
+    }
+
+    /// <summary>
+    /// <c>perform_enqueued_jobs only: [Room::DestroyJob, Message::BroadcastUnreadRoomJob]</c>: runs
+    /// those jobs enqueued so far, in order, as a worker would. What they do lands in
+    /// <see cref="Seams"/> too.
+    /// </summary>
+    public async Task PerformEnqueuedJobsAsync()
+    {
+        var clock = new FixedClock(Now);
+        foreach (var job in Seams.Jobs)
+        {
+            switch (job)
+            {
+                case RoomDestroyJob destroy:
+                    await new RoomDestroyJobs(database, Seams.Seams, clock).PerformAsync(destroy, TestContext.Current.CancellationToken);
+                    break;
+                case BroadcastUnreadRoomJob unread:
+                    await new UnreadRoomJobs(database, Seams, clock).PerformAsync(unread, TestContext.Current.CancellationToken);
+                    break;
+            }
+        }
     }
 
     public SqliteConnection Open()

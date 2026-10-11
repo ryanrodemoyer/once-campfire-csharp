@@ -44,6 +44,7 @@ public sealed class ClosedIssueRequestsTests : IDisposable
         Assert.True(attachmentCount > 0, "Designers room should have attachments in the seed");
 
         var response = await app.SendAsync("DELETE", $"/rooms/{designers}", app.SignedIn(david), "");
+        await app.PerformEnqueuedJobsAsync();
 
         Assert.Equal(302, response.Status);
         Assert.Equal("http://campfire.test/", response.Headers.Location.ToString());

@@ -29,7 +29,7 @@ public sealed class WebhookVectorTests
             case WebhookDelivery delivery:
                 Assert.Null(expected.Error);
                 Assert.Equal(expected.Status, delivery.Status);
-                AssertReply(expected.Reply, delivery.Reply);
+                AssertReply(RepliedAtEdbc779(expected), delivery.Reply);
                 break;
             case Exception error:
                 Assert.Equal(expected.Error, RubyClass(error));
@@ -56,6 +56,12 @@ public sealed class WebhookVectorTests
         Assert.Equal(19, IntegrationVectors.WebhookExpectedFile.Count);
         Assert.Equal(IntegrationVectors.WebhookCasesFile.Select(c => c.Name), IntegrationVectors.WebhookExpectedFile.Select(c => c.Name));
     }
+
+    // The vectors come from the Rust port's older reference. At edbc779 an answer other than a 200
+    // is no reply at all, attachment or not (d2155e8, reference/app/models/webhook.rb): running
+    // reference-tools/oracle/webhook.rb in it changes only error-html (a 500) and created-text (a
+    // 201), to no reply. A timeout (no status) still replies with its text.
+    static WebhookReply? RepliedAtEdbc779(WebhookExpectedCase expected) => expected.Status is null or 200 ? expected.Reply : null;
 
     static void AssertReply(WebhookReply? expected, Jobs.Webhooks.WebhookReply? actual)
     {

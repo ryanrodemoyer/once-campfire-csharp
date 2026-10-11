@@ -57,10 +57,14 @@ public sealed partial class MessagesControllerTests : IDisposable
     [Fact]
     public async Task Creating_a_message_broadcasts_unread_room_to_each_member()
     {
+        // The poster is in the room.
+        messages.Scalar($"UPDATE memberships SET connected_at = '2026-03-02 16:00:00', connections = 1 WHERE room_id = {designersRoom} AND user_id = {david}");
+
         foreach (var member in RoomMembers(designersRoom))
         {
             messages.Seams.Clear();
             await Post(designersRoom, $"message[body]=New+one+{member}&message[client_message_id]={member}");
+            await messages.PerformEnqueuedJobsAsync();
 
             Assert.Single(messages.Seams.Broadcasts, broadcast => broadcast.Stream == $"user_{member}_unreads");
         }
@@ -74,6 +78,7 @@ public sealed partial class MessagesControllerTests : IDisposable
         Assert.NotEmpty(outsiders);
 
         await Post(designersRoom, "message[body]=New+one&message[client_message_id]=999");
+        await messages.PerformEnqueuedJobsAsync();
 
         foreach (var outsider in outsiders)
         {
@@ -187,7 +192,7 @@ public sealed partial class MessagesControllerTests : IDisposable
             "JOIN active_storage_attachments a ON a.blob_id = b.id " +
             $"WHERE a.record_type = 'Message' AND a.name = 'attachment' AND a.record_id = {id}"));
         Assert.Equal("a.txt", messages.Scalar($"SELECT body FROM message_search_index WHERE rowid = {id}"));
-        Assert.Equal(["Room::PushMessageJob", "ActiveStorage::AnalyzeJob"], messages.Seams.Jobs.Select(job => job.ClassName));
+        Assert.Equal(["Room::PushMessageJob", "ActiveStorage::AnalyzeJob", "Message::BroadcastUnreadRoomJob"], messages.Seams.Jobs.Select(job => job.ClassName));
 
         messages.Seams.Clear();
         var destroyed = await messages.SendAsync("DELETE", $"/rooms/{designersRoom}/messages/{id}.turbo_stream", messages.SignedIn(davidSession));

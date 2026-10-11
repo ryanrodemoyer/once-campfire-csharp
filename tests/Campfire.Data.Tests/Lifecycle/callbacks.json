@@ -21,11 +21,11 @@
         "begin",
         "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
         "insert action_text_rich_texts body,created_at,name,record_id,record_type,updated_at rows=1",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=5",
         "update messages updated_at rows=1",
         "update rooms updated_at rows=1",
         "commit",
-        "insert message_search_index body,rowid rows=1",
-        "update memberships unread_at,updated_at rows=5",
         "enqueue Room::PushMessageJob 699448327,933434638",
         "enqueue Bot::WebhookJob 394959859,933434638"
       ]
@@ -45,11 +45,11 @@
         "begin",
         "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
         "insert action_text_rich_texts body,created_at,name,record_id,record_type,updated_at rows=1",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=1",
         "update messages updated_at rows=1",
         "update rooms updated_at rows=1",
         "commit",
-        "insert message_search_index body,rowid rows=1",
-        "update memberships unread_at,updated_at rows=1",
         "enqueue Room::PushMessageJob 340026324,933434639",
         "enqueue Bot::WebhookJob 394959859,933434639"
       ]
@@ -71,11 +71,11 @@
         "begin",
         "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
         "insert action_text_rich_texts body,created_at,name,record_id,record_type,updated_at rows=1",
+        "insert message_search_index body,rowid rows=1",
+        "update memberships unread_at,updated_at rows=0",
         "update messages updated_at rows=1",
         "update rooms updated_at rows=1",
         "commit",
-        "insert message_search_index body,rowid rows=1",
-        "update memberships unread_at,updated_at rows=4",
         "enqueue Room::PushMessageJob 699448327,933434640"
       ]
     },
@@ -93,10 +93,10 @@
       "events": [
         "begin",
         "insert messages client_message_id,created_at,creator_id,room_id,updated_at rows=1",
-        "update rooms updated_at rows=1",
-        "commit",
         "insert message_search_index body,rowid rows=1",
         "update memberships unread_at,updated_at rows=5",
+        "update rooms updated_at rows=1",
+        "commit",
         "enqueue Room::PushMessageJob 201306877,933434641"
       ]
     },
@@ -130,8 +130,7 @@
         "insert boosts booster_id,content,created_at,message_id,updated_at rows=1",
         "update messages updated_at rows=1",
         "update rooms updated_at rows=1",
-        "commit",
-        "update message_search_index body rows=1"
+        "commit"
       ]
     },
     {
@@ -145,8 +144,7 @@
         "delete boosts rows=1",
         "update messages updated_at rows=1",
         "update rooms updated_at rows=1",
-        "commit",
-        "update message_search_index body rows=1"
+        "commit"
       ]
     },
     {
@@ -237,9 +235,9 @@
         "insert bans created_at,ip_address,updated_at,user_id rows=1",
         "disconnect 712064548 reconnect=false",
         "delete sessions rows=5",
-        "enqueue RemoveBannedContentJob 712064548",
         "update users status,updated_at rows=1",
-        "commit"
+        "commit",
+        "enqueue RemoveBannedContentJob 712064548"
       ]
     },
     {

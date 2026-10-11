@@ -6,7 +6,7 @@
 # Runs in the reference app on a copy of the parity seed's database:
 #
 #   mkdir -p $DIR/db $DIR/storage && cp tests/Campfire.Data.Tests/Oracle/parity-seed.sqlite3 $DIR/db/production.sqlite3
-#   parity/bin/reference runner --storage $DIR tests/Campfire.Data.Tests/Lifecycle/callbacks.rb \
+#   parity/bin/reference runner -e RAILS_LOG_LEVEL=fatal --storage $DIR tests/Campfire.Data.Tests/Lifecycle/callbacks.rb \
 #     > tests/Campfire.Data.Tests/Lifecycle/callbacks.json
 #
 # Each scenario's `setup` SQL runs first, unrecorded, so both sides start from the same rows.

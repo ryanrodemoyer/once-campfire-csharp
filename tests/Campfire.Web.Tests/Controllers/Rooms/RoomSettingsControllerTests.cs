@@ -251,6 +251,7 @@ public sealed class RoomSettingsControllerTests : IDisposable
         var before = RoomCount();
 
         var response = await SendAsync(kevin, "DELETE", $"/rooms/directs/{davidAndKevin}");
+        await app.PerformEnqueuedJobsAsync();
 
         AssertRedirectedTo("/", response);
         Assert.Equal(before - 1, RoomCount());
@@ -337,6 +338,7 @@ public sealed class RoomSettingsControllerTests : IDisposable
         var before = RoomCount();
 
         await SendAsync(david, "DELETE", $"/rooms/{allTalk}");
+        await app.PerformEnqueuedJobsAsync();
 
         Assert.Single(BroadcastsTo("rooms"));
         Assert.Equal(before - 1, RoomCount());
@@ -353,6 +355,7 @@ public sealed class RoomSettingsControllerTests : IDisposable
         Assert.True(attachmentCount > 0);
 
         var response = await SendAsync(david, "DELETE", $"/rooms/{designers}");
+        await app.PerformEnqueuedJobsAsync();
 
         AssertRedirectedTo("/", response);
         Assert.Single(BroadcastsTo("rooms"));
@@ -374,6 +377,7 @@ public sealed class RoomSettingsControllerTests : IDisposable
 
         app.Scalar($"UPDATE rooms SET creator_id = {jzId} WHERE id = {hq}");
         await SendAsync(jz, "DELETE", $"/rooms/{hq}");
+        await app.PerformEnqueuedJobsAsync();
         Assert.Equal(before - 1, RoomCount());
     }
 

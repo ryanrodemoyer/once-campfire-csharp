@@ -86,7 +86,9 @@ public class ChannelBehaviorTests
 
         var presence = RoomIdentifier("PresenceChannel", designers.Id);
         await client.SubscribeAsync(presence);
-        var read = RailsJson.Encode(new JsonObject { ["room_id"] = designers.Id });
+        // The other tabs are told when the room was read (`at: Time.current.to_f`), so a notice
+        // of an older message arriving afterwards doesn't mark it unread again.
+        var read = $$"""{"room_id":{{designers.Id}},"at":1772467200.0}""";
         Assert.Equal(Sorted(Confirm(presence), Deliver(reads, read)), await NextAsync(client, 2));
 
         var connected = await MembershipAsync(harness, david.Id, designers.Id);

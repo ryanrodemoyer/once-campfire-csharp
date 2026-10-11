@@ -62,9 +62,9 @@ public static class UserLifecycle
 
     // `ban`: a ban for each distinct public address the user has a session from, then
     // `apply_ban` (close their connections, end their sessions, enqueue the removal of their
-    // messages) and the banned status. Active Job enqueues at once here, inside the
-    // transaction: the reference doesn't defer jobs to the commit. A session from an address
-    // that isn't public fails the ban's validation and rolls the whole ban back.
+    // messages) and the banned status. The removal is enqueued once the ban commits
+    // (`enqueue_after_transaction_commit`). A session from an address that isn't public fails the
+    // ban's validation and rolls the whole ban back, removal and all.
     public static User Ban(WriteTransaction transaction, DomainSeams seams, User user, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(transaction);
@@ -81,7 +81,7 @@ public static class UserLifecycle
         }
         seams.Connections.Disconnect(user.Id, reconnect: false);
         Sessions.DeleteForUser(session, user.Id);
-        seams.Jobs.Enqueue(new RemoveBannedContentJob(user.Id));
+        transaction.AfterCommit(_ => seams.Jobs.Enqueue(new RemoveBannedContentJob(user.Id)));
         return Users.Update(session, user, now, status: UserStatus.Banned);
     }
 

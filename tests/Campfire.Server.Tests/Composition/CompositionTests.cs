@@ -98,6 +98,8 @@ public sealed class CompositionTests : IDisposable
     [InlineData(typeof(RemoveBannedContentJob))]
     [InlineData(typeof(AnalyzeBlobJob))]
     [InlineData(typeof(PurgeBlobJob))]
+    [InlineData(typeof(BroadcastUnreadRoomJob))]
+    [InlineData(typeof(RoomDestroyJob))]
     public void Composition_test_fails_if_any_job_type_enqueued_in_src_has_no_registered_handler(Type missingJobType)
     {
         var runner = new JobRunner((_, _, _) => { });
@@ -122,6 +124,14 @@ public sealed class CompositionTests : IDisposable
         if (missingJobType != typeof(PurgeBlobJob))
         {
             runner.Register<PurgeBlobJob>((_, _) => Task.CompletedTask, limits);
+        }
+        if (missingJobType != typeof(BroadcastUnreadRoomJob))
+        {
+            runner.Register<BroadcastUnreadRoomJob>((_, _) => Task.CompletedTask, limits);
+        }
+        if (missingJobType != typeof(RoomDestroyJob))
+        {
+            runner.Register<RoomDestroyJob>((_, _) => Task.CompletedTask, limits);
         }
 
         var error = Assert.Throws<InvalidOperationException>(() => ServerComposition.ValidateJobs(runner));
