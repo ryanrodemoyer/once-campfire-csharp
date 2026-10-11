@@ -1631,6 +1631,31 @@ tasks:
     accept:
       - Both tests pass 50 runs in a row with the machine under full build load
 
+  - id: Q15
+    title: Follow-ups from dspro's batch 2 reviews
+    lane: Q
+    milestone: M5
+    size: S
+    deps: [U03, U08]
+    owns: [plans/status/U02.md, plans/status/U03.md]
+    refs: [parity/normalize/, parity/replay/replay.py, plans/status/U08.md, README.md]
+    deliver: >
+      Act on the non-blocking findings in dspro's reviews of #226 (U02), #229 (U03) and #225 (U08).
+      (1) The test names listed in plans/status/U02.md and plans/status/U03.md don't match the test
+      methods; list the real names and drop claims no test backs (U03's forced-TLS case).
+      (2) parity/normalize still masks authenticity tokens though header-only forgery protection
+      removed them from forms. Delete the masking the edbc779 reference no longer needs, so a token
+      regression can't be normalized away, but keep any masking it still needs: check the Turbo
+      Frame layout, which the replay run showed still carrying a csrf-token meta tag.
+      (3) U08's WriterCheckpointFallback has no Rails counterpart. Keep it and list it under
+      "Known differences" in README.md (this task may edit README.md), with why: a passive
+      checkpoint never restarts the WAL under a steady stream of commits. Q01 owns parity/normalize/
+      and has merged; this task may edit it.
+    accept:
+      - The status files name only tests that exist, and every acceptance claim points at one
+      - parity/normalize masks no token the reference doesn't send, and its tests prove both cases
+      - README.md lists the writer checkpoint fallback as a known difference
+
   - id: R06
     title: Reject a null byte in HtmlElement.SetAttribute
     lane: R
