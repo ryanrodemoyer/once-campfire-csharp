@@ -7,7 +7,7 @@ collapsed whitespace, entities decoded. Values that legitimately differ between 
 same seed become *typed* placeholders rather than blanks, so a token for the wrong record still
 differs:
 
-    «csrf»                       a well-formed masked authenticity token (64 bytes, Rails' mask_token)
+    «csrf»                       a well-formed masked authenticity token in a csrf-token meta tag
     «sgid:Room#486777696»        a signed GlobalID, decoded
     «signed_id:transfer:7:exp»   ActiveRecord::SignedId and other MessageVerifier output, decoded
     «encrypted»                  MessageEncryptor output (the session cookie)
@@ -16,7 +16,11 @@ differs:
                                  exact value depends on when each server rendered it
     «uuid» «join_code» «bot_key» values that are random by design (SecureRandom, has_secure_token)
 
-Unlike normalize.ts, CSRF fields are kept (masked): the C# port renders them exactly as Rails does.
+Since edbc779 forgery protection is header-only: ApplicationHelper#token_tag returns "" and the
+application layout has no csrf_meta_tags, so forms carry no authenticity_token and a token there is
+left as is, to differ. The one token the reference still sends is the csrf-token meta tag of
+turbo-rails' frame layout (app/views/layouts/turbo_rails/frame.html.erb), used for Turbo Frame
+requests; that alone is masked.
 The Rust-only "Copy link" rewrite is not ported.
 """
 
@@ -202,8 +206,6 @@ def normalize_json_text(text):
 def mask_attr(node, name, value, options):
     if name == "nonce" or (node.tag == "meta" and attr(node, "name") == "csp-nonce" and name == "content"):
         return "«nonce»"
-    if node.tag == "input" and name == "value" and attr(node, "name") == "authenticity_token":
-        return describe_csrf(value)
     if node.tag == "meta" and name == "content" and attr(node, "name") == "csrf-token":
         return describe_csrf(value)
     return relative_epoch(name, value, options) or mask_text(value, options)

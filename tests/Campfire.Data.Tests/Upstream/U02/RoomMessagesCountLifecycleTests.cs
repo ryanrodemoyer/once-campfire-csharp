@@ -212,6 +212,68 @@ public sealed class RoomMessagesCountLifecycleTests
     }
 
     [Fact]
+    public async Task Install_never_exposes_a_partial_trigger_set_to_other_connections()
+    {
+        using var file = TestDatabase.FromRailsFixtures();
+        using var installer = new SqliteSession(SqliteConnections.Open(file.Path), 10);
+        RoomMessagesCount.Uninstall(installer);
+
+        var triggerList = string.Join(", ", RoomMessagesCount.Triggers.Select(name => $"'{name}'"));
+        var partialSnapshots = new System.Collections.Concurrent.ConcurrentBag<string>();
+        using var stop = new CancellationTokenSource();
+        using var watching = new ManualResetEventSlim();
+
+        var watcher = Task.Run(() =>
+        {
+            using var connection = SqliteConnections.Open(file.Path);
+            while (!stop.IsCancellationRequested)
+            {
+                watching.Set();
+                List<string> names;
+                try
+                {
+                    names = TriggerNames(connection, triggerList);
+                }
+                catch (Microsoft.Data.Sqlite.SqliteException e) when (e.SqliteErrorCode == 17)
+                {
+                    continue; // SQLITE_SCHEMA: the installer changed the schema mid-read
+                }
+                if (names.Count > 0 && names.Count != RoomMessagesCount.Triggers.Length)
+                {
+                    partialSnapshots.Add(string.Join(",", names.Order(StringComparer.Ordinal)));
+                }
+            }
+        }, Ct);
+        watching.Wait(Ct);
+
+        // The reference installs 25 times; a single in-process watcher samples less often than
+        // Rails' thread does, so more installs give it the same chance to see a partial set.
+        for (var i = 0; i < 500; i++)
+        {
+            RoomMessagesCount.Install(installer);
+        }
+        await stop.CancelAsync();
+        await watcher;
+
+        Assert.Empty(partialSnapshots);
+        using var verifySession = new SqliteSession(SqliteConnections.Open(file.Path), 10);
+        Assert.True(RoomMessagesCount.TriggersInstalled(verifySession));
+    }
+
+    static List<string> TriggerNames(Microsoft.Data.Sqlite.SqliteConnection connection, string triggerList)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = $"SELECT name FROM sqlite_master WHERE type = 'trigger' AND name IN ({triggerList})";
+        using var reader = command.ExecuteReader();
+        var names = new List<string>();
+        while (reader.Read())
+        {
+            names.Add(reader.GetString(0));
+        }
+        return names;
+    }
+
+    [Fact]
     public void Foreign_sqlite_connections_keep_the_counter_in_step()
     {
         using var file = TestDatabase.FromRailsFixtures();

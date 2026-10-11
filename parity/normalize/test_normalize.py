@@ -46,14 +46,23 @@ class TreeTests(unittest.TestCase):
 
 
 class MaskTests(unittest.TestCase):
-    def test_csrf_tokens_are_typed(self):
+    def test_frame_layout_csrf_meta_is_typed(self):
+        # turbo-rails' frame layout still renders csrf_meta_tags at edbc779.
         good = base64.urlsafe_b64encode(bytes(range(64))).decode().rstrip("=")
         other = base64.urlsafe_b64encode(bytes(64)).decode()
-        a = normalize_html(f'<meta name="csrf-token" content="{good}"><input type="hidden" name="authenticity_token" value="{good}">')
-        b = normalize_html(f'<meta name="csrf-token" content="{other}"><input type="hidden" name="authenticity_token" value="{other}">')
-        self.assertEqual(a, b)
-        self.assertIn("«csrf»", a)
-        self.assertIn("«csrf:malformed:short»", normalize_html('<input name="authenticity_token" value="short">'))
+        frame = '<html><head><meta name="csrf-token" content="{}"></head><body></body></html>'
+        self.assertEqual(normalize_html(frame.format(good)), normalize_html(frame.format(other)))
+        self.assertIn("«csrf»", normalize_html(frame.format(good)))
+        self.assertIn("«csrf:malformed:short»", normalize_html(frame.format("short")))
+
+    def test_form_authenticity_tokens_are_not_masked(self):
+        # Header-only forgery protection: token_tag returns "", so a token in a form is a regression.
+        good = base64.urlsafe_b64encode(bytes(range(64))).decode().rstrip("=")
+        other = base64.urlsafe_b64encode(bytes(64)).decode()
+        form = '<form action="/x" method="post"><input type="hidden" name="authenticity_token" value="{}"></form>'
+        self.assertNotEqual(normalize_html(form.format(good)), normalize_html(form.format(other)))
+        self.assertNotIn("«csrf", normalize_html(form.format(good)))
+        self.assertNotEqual(normalize_html(form.format(good)), normalize_html('<form action="/x" method="post"></form>'))
 
     def test_signed_ids_decode_to_their_record(self):
         transfer = {"_rails": {"data": 7, "pur": "transfer", "exp": "2026-03-02T20:00:00.000Z"}}
