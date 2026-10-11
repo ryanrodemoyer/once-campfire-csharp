@@ -29,7 +29,8 @@ edit_anywhere: [B03, Q10, Q14, U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12,
 review:
   reviewer: dspro
   max_rounds: 3
-  tasks: [U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12, Q14, R06, P07, P08, B08, B09]
+  # Low on OpenRouter credit: only the security-critical forgery protection and the page cache.
+  tasks: [U03, U07]
 
 agents:
   claude:
@@ -51,7 +52,9 @@ agents:
     # Q10 finishes fixes that agents requested on issues after those issues closed.
     # Batch 2: the upstream ports and gates, the verification harness and AOT; and, from claude,
     # forgery protection (U03), the page cache (U07) and perf round 2 (B08).
-    queue: [U02, U03, U04, U05, U07, Q11, Q12, B07, B09, B08, X01]
+    # Paused: Gemini's weekly quota is nearly gone. Next, one at a time: U04, U05, U07, Q11, B07;
+    # then Q12, B09, B08 and X01.
+    queue: []
 
   grok:
     model: Grok 4.7 (high)
@@ -110,4 +113,5 @@ agents:
     # Paid from a small Vertex credit: one slot, one medium task taken off gemini's queue.
     # Check spend with `opencode stats --standalone --days 0 --models`.
     slots: 1
-    queue: [U06]
+    # U06 cost $15.75 of Vertex credit: too dear for more work.
+    queue: []
