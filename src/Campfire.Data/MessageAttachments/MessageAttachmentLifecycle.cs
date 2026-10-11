@@ -25,9 +25,9 @@ public static class MessageAttachmentLifecycle
 {
     /// <summary>
     /// <c>room.messages.create_with_attachment!(…)</c> (message/attachment.rb) with an uploaded
-    /// file: the message (<see cref="MessageLifecycle.Create"/>), then the blob and attachment rows
+    /// file: the message (<see cref="MessageLifecycle.Create"/>), with the blob and attachment rows
     /// in the message's transaction (<c>Attached::Changes::CreateOne#save</c>, autosaved inside the
-    /// save). The attachment's <c>belongs_to :record, touch: true</c> touches the message (then its
+    /// save, before the search entry). The attachment's <c>belongs_to :record, touch: true</c> touches the message (then its
     /// room), and after the commit <c>analyze_blob_later</c> enqueues <see cref="AnalyzeBlobJob"/>
     /// for the new, unanalyzed blob. The staged file is the caller's to keep once the transaction
     /// commits, as <c>CreateOne#upload</c> keeps it after commit.
@@ -46,12 +46,14 @@ public static class MessageAttachmentLifecycle
         ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(seams);
         ArgumentNullException.ThrowIfNull(upload);
-        var session = transaction.Session;
-        var message = MessageLifecycle.Create(transaction, seams, roomId, creatorId, clientMessageId, bodyHtml, plainTextBody, now);
-        var blob = Blobs.Create(session, upload.Key, upload.Filename, upload.ContentType, RailsJson.Encode(upload.Metadata), upload.ServiceName, upload.ByteSize, upload.Checksum, now);
-        Attach(session, message.Id, blob.Id, now);
-        MessageLifecycle.Touch(transaction, message, plainTextBody, now);
-        transaction.AfterCommit(_ => seams.Jobs.Enqueue(new AnalyzeBlobJob(blob.Id)));
+        ActiveStorageBlob? blob = null;
+        var message = MessageLifecycle.Create(transaction, seams, roomId, creatorId, clientMessageId, bodyHtml, plainTextBody, now, (session, message) =>
+        {
+            blob = Blobs.Create(session, upload.Key, upload.Filename, upload.ContentType, RailsJson.Encode(upload.Metadata), upload.ServiceName, upload.ByteSize, upload.Checksum, now);
+            Attach(session, message.Id, blob.Id, now);
+        });
+        var blobId = blob!.Id;
+        transaction.AfterCommit(_ => seams.Jobs.Enqueue(new AnalyzeBlobJob(blobId)));
         return message;
     }
 
@@ -74,10 +76,8 @@ public static class MessageAttachmentLifecycle
     {
         ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(seams);
-        var session = transaction.Session;
-        var message = MessageLifecycle.Create(transaction, seams, roomId, creatorId, clientMessageId, bodyHtml, plainTextBody, now);
-        Attach(session, message.Id, blobId, now);
-        MessageLifecycle.Touch(transaction, message, plainTextBody, now);
+        var message = MessageLifecycle.Create(transaction, seams, roomId, creatorId, clientMessageId, bodyHtml, plainTextBody, now,
+            (session, message) => Attach(session, message.Id, blobId, now));
         if (!blobAnalyzed)
         {
             transaction.AfterCommit(_ => seams.Jobs.Enqueue(new AnalyzeBlobJob(blobId)));
@@ -116,10 +116,10 @@ public static class MessageAttachmentLifecycle
     /// <summary>
     /// <c>attachment.touch</c> where the attachment's record has an <c>updated_at</c>, as
     /// <c>blob.analyze</c>'s <c>after_update :touch_attachments</c> touches it: the message, then
-    /// its room, re-indexed after the commit.
+    /// its room. The search entry stays as it is: the attachment wasn't replaced.
     /// </summary>
-    public static void Touch(WriteTransaction transaction, Message message, string plainTextBody, DateTimeOffset now) =>
-        MessageLifecycle.Touch(transaction, message, plainTextBody, now);
+    public static void Touch(WriteTransaction transaction, Message message, DateTimeOffset now) =>
+        MessageLifecycle.Touch(transaction, message, now);
 
     static void Attach(SqliteSession session, long messageId, long blobId, DateTimeOffset now) =>
         Attachments.Create(session, Message.ModelName, messageId, AttachmentNames.Attachment, blobId, now);

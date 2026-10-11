@@ -13,8 +13,8 @@ namespace Campfire.Jobs.WebPush;
 /// <summary>
 /// <c>Room::PushMessageJob</c> (reference/app/jobs/room/push_message_job.rb), which runs
 /// <c>Room::MessagePusher#push</c> (reference/app/models/room/message_pusher.rb): the message goes
-/// to the push subscriptions of the room's visible, disconnected members other than its creator,
-/// first those involved in everything, then the mentioned ones involved in mentions.
+/// to the push subscriptions of the room's active, visible, disconnected members other than its
+/// creator, those involved in everything and the mentioned ones involved in mentions together.
 /// </summary>
 /// <param name="database">The app's database.</param>
 /// <param name="pool">The pool the notifications are queued on.</param>
@@ -46,18 +46,23 @@ public sealed class MessagePusher(SqliteDatabase database, WebPushPool pool, Fun
         }, cancellationToken);
     }
 
-    /// <summary><c>push</c>: queues the notifications and returns the payload.</summary>
-    public PushPayload Push(SqliteSession session, Room room, Message message)
+    /// <summary>
+    /// <c>push</c>: queues the notifications and returns the payload, or null when nobody is to
+    /// be notified: then no payload is built.
+    /// </summary>
+    public PushPayload? Push(SqliteSession session, Room room, Message message)
     {
         ArgumentNullException.ThrowIfNull(room);
         ArgumentNullException.ThrowIfNull(message);
         var context = new RenderContext(attachables(session), RequestHost: null);
         var body = RichTexts.For(session, Message.ModelName, message.Id, "body")?.Body;
+        var subscriptions = PushSubscriptions.ForRoomPush(session, room.Id, message.CreatorId, clock.GetUtcNow(), MentionedUserIds(body, context));
+        if (subscriptions.Count == 0)
+        {
+            return null;
+        }
         var payload = BuildPayload(room, Creator(session, message), PlainTextBody(session, message, body, context));
-        var now = clock.GetUtcNow();
-
-        pool.Queue(session, payload, ById(PushSubscriptions.ForRoomPush(session, room.Id, message.CreatorId, Involvement.Everything, now)));
-        pool.Queue(session, payload, ById(PushSubscriptions.ForRoomPush(session, room.Id, message.CreatorId, Involvement.Mentions, now, MentionedUserIds(body, context))));
+        pool.Queue(session, payload, subscriptions);
         return payload;
     }
 
@@ -105,9 +110,6 @@ public sealed class MessagePusher(SqliteDatabase database, WebPushPool pool, Fun
     // `message.creator`: `belongs_to`, so a missing user raises NoMethodError on `.name`.
     static User Creator(SqliteSession session, Message message) =>
         Users.Find(session, message.CreatorId) ?? throw new InvalidOperationException($"undefined method 'name' for nil (Message {message.Id} has no creator)");
-
-    // `find_each` walks the relation in primary key order.
-    static IEnumerable<PushSubscription> ById(List<PushSubscription> subscriptions) => subscriptions.OrderBy(subscription => subscription.Id);
 
     static InvalidOperationException Missing(string model, long id) =>
         new($"ActiveJob::DeserializationError: Couldn't find {model} with 'id'={id}");

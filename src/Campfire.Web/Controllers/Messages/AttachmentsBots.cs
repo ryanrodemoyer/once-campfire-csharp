@@ -58,7 +58,7 @@ public sealed partial class MessagesByBotsController
                 now);
         }).ConfigureAwait(false);
         await MessageAttachmentProcessing.ProcessAsync(
-            App.Database, App.Keys, storage, seams, App.Clock, RequestUrl.Host, now, message, RequestAborted).ConfigureAwait(false);
+            App.Database, storage, seams, App.Clock, now, message, RequestAborted).ConfigureAwait(false);
         return message;
     }
 
@@ -75,7 +75,7 @@ public sealed partial class MessagesByBotsController
             RichTextPlainText.PlainTextBody(null, blob.Filename.ToString(), RichTextContext(transaction.Session)),
             blob.Id, blob.IsAnalyzed, now)).ConfigureAwait(false);
         await MessageAttachmentProcessing.ProcessAsync(
-            App.Database, App.Keys, storage, seams, App.Clock, RequestUrl.Host, now, message, RequestAborted).ConfigureAwait(false);
+            App.Database, storage, seams, App.Clock, now, message, RequestAborted).ConfigureAwait(false);
         return message;
     }
 }
@@ -109,7 +109,7 @@ public sealed partial class ByBotsWebhookReplies
             RichTextPlainText.PlainTextBody(null, blob.Filename.ToString(), RichTextContext(transaction.Session, now)),
             blob.Id, blob.IsAnalyzed, now), cancellationToken).ConfigureAwait(false);
         await MessageAttachmentProcessing.ProcessAsync(
-            app.Database, app.Keys, storage, seams, app.Clock, null, now, message, cancellationToken).ConfigureAwait(false);
+            app.Database, storage, seams, app.Clock, now, message, cancellationToken).ConfigureAwait(false);
         return message;
     }
 }

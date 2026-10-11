@@ -24,15 +24,21 @@ public sealed record WebPushNotification(string? Title, string Body, string Path
     public const string Urgency = "high";
 
     /// <summary>
-    /// <c>subscription.notification(**params)</c> (push/subscription.rb): the badge is
+    /// <c>subscription.notification(**params)</c> (push/subscription.rb): the badge defaults to
     /// <c>user.memberships.unread.count</c>.
     /// </summary>
     public static WebPushNotification For(SqliteSession session, PushSubscription subscription, PushPayload payload)
     {
         ArgumentNullException.ThrowIfNull(subscription);
+        return For(subscription, payload, Memberships.CountUnreadForUser(session, subscription.UserId));
+    }
+
+    /// <summary><c>subscription.notification(**params, badge:)</c>, with the badge counted already.</summary>
+    public static WebPushNotification For(PushSubscription subscription, PushPayload payload, long badge)
+    {
+        ArgumentNullException.ThrowIfNull(subscription);
         ArgumentNullException.ThrowIfNull(payload);
-        return new(payload.Title, payload.Body, payload.Path, Memberships.CountUnreadForUser(session, subscription.UserId),
-            subscription.Endpoint, subscription.P256dhKey, subscription.AuthKey);
+        return new(payload.Title, payload.Body, payload.Path, badge, subscription.Endpoint, subscription.P256dhKey, subscription.AuthKey);
     }
 
     /// <summary>

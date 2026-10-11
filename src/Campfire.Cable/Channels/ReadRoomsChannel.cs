@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using Campfire.Cable.Server;
 using Campfire.Data.Records;
+using Campfire.RailsCompat.Formatting;
 
 namespace Campfire.Cable.Channels;
 
@@ -14,12 +15,14 @@ public sealed class ReadRoomsChannel : Channel<User>
     public static string StreamNameFor(long userId) => $"user_{userId}_reads";
 
     /// <summary>
-    /// <c>PresenceChannel#broadcast_read_room</c>: <c>{ room_id: }</c> on that user's reads stream.
+    /// <c>PresenceChannel#broadcast_read_room</c>: <c>{ room_id:, at: Time.current.to_f }</c> on that
+    /// user's reads stream. Other tabs compare <c>at</c> with an unread notice's, which can arrive
+    /// after the room was read: notices fan out one member at a time.
     /// </summary>
-    public static int BroadcastRead(CableServer<User> server, long userId, long roomId)
+    public static int BroadcastRead(CableServer<User> server, long userId, long roomId, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(server);
-        return server.Broadcast(StreamNameFor(userId), new JsonObject { ["room_id"] = roomId });
+        return server.Broadcast(StreamNameFor(userId), new JsonObject { ["room_id"] = roomId, ["at"] = TimeFormats.ToF(now) });
     }
 
     /// <summary><c>subscribed</c>.</summary>

@@ -1,7 +1,6 @@
 using Campfire.Data.MessageAttachments;
 using Campfire.Data.Sqlite;
 using Campfire.Jobs.Runner;
-using Campfire.RailsCompat.Crypto;
 using Campfire.Storage.Blobs;
 using Campfire.Storage.Variants;
 
@@ -22,9 +21,7 @@ namespace Campfire.Web.Controllers;
 public sealed class MessageAttachmentJobs(
     SqliteDatabase database,
     BlobStorage storage,
-    KeyGenerator keys,
-    TimeProvider clock,
-    string? host = null)
+    TimeProvider clock)
 {
     JobRunner? runner;
 
@@ -44,7 +41,7 @@ public sealed class MessageAttachmentJobs(
         var blob = await database.ReadAsync(session => BlobRecords.FindBlob(session, job.BlobId), cancellationToken).ConfigureAwait(false);
         if (blob is not null)
         {
-            await MessagesWriteController.AnalyzeAsync(database, keys, storage, host, blob, clock.GetUtcNow()).ConfigureAwait(false);
+            await MessagesWriteController.AnalyzeAsync(database, storage, blob, clock.GetUtcNow()).ConfigureAwait(false);
         }
     }
 

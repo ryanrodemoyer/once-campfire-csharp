@@ -139,13 +139,15 @@ public class RevocationTests
         var unreads = Identifier("UnreadRoomsChannel");
         await again.SubscribeAsync(unreads);
         Assert.Equal(Confirm(unreads), await again.NextAsync());
-        await harness.Database.ReadAsync(session =>
+        await harness.Database.WriteAsync(tx =>
         {
-            UnreadRoomsChannel.BroadcastUnread(harness.Server, session, designers.Id);
-            UnreadRoomsChannel.BroadcastUnread(harness.Server, session, lounge.Id);
+            var now = Campfire.Cable.Tests.Channels.ChannelHarness.Start;
+            tx.Session.Execute("""UPDATE "memberships" SET "unread_at" = @now""", ("@now", "2026-03-02 16:00:00"));
+            UnreadRoomsChannel.BroadcastUnread(harness.Server, tx.Session, Messages.Create(tx.Session, designers.Id, kevin.Id, "designers", now), now);
+            UnreadRoomsChannel.BroadcastUnread(harness.Server, tx.Session, Messages.Create(tx.Session, lounge.Id, kevin.Id, "lounge", now), now);
             return true;
         }, TestContext.Current.CancellationToken);
-        Assert.Equal(CableProtocol.Message(CableProtocol.EncodeString(unreads), RailsJson.Encode(new JsonObject { ["roomId"] = lounge.Id })), await again.NextAsync());
+        Assert.Equal(CableProtocol.Message(CableProtocol.EncodeString(unreads), $$"""{"roomId":{{lounge.Id}},"at":1772467200.0}"""), await again.NextAsync());
         await again.AssertSilentAsync();
     }
 

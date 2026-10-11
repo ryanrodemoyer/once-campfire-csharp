@@ -88,11 +88,12 @@ public sealed partial class MessagesWriteController : ApplicationController
             }).ConfigureAwait(false);
         }
 
-        // `@message.broadcast_create`, then `deliver_webhooks_to_bots`
+        // `@message.broadcast_create(html: @message_html)`, then `deliver_webhooks_to_bots`. The
+        // message is rendered once, for both the broadcast and the response.
         var html = await ReadAsync(session => RenderBroadcast(session, (view, w, messageView) => view.MessagesCreate(w, messageView, RoomRecord(room)))).ConfigureAwait(false);
         seams.Broadcaster.Broadcast(MessagesStream(room), TurboStreamPayload(html));
-        await BroadcastUnreadRoomAsync(seams.Broadcaster).ConfigureAwait(false);
         var created = CurrentMessage;
+        seams.Jobs.Enqueue(new BroadcastUnreadRoomJob(created.Id));
         await ReadAsync(session =>
         {
             MessageLifecycle.DeliverWebhooksToBots(session, seams.Jobs, room, created, MentionedUserIds(session, body));
@@ -121,13 +122,11 @@ public sealed partial class MessagesWriteController : ApplicationController
             var session = transaction.Session;
             if (clientMessageId is not null && clientMessageId != current.ClientMessageId)
             {
-                // The message's own save, its room's touch, and message/searchable.rb's
-                // update_in_index after the commit.
+                // The message's own save and its room's touch. The search entry is rewritten only
+                // if the body changes too (message/searchable.rb `indexed_text_changed?`).
                 session.Execute("""UPDATE "messages" SET "client_message_id" = @client_message_id, "updated_at" = @now WHERE "messages"."id" = @id""",
                     ("@client_message_id", clientMessageId), ("@now", ActiveRecordTime.ToDb(now)), ("@id", current.Id));
                 Rooms.Touch(session, current.RoomId, now);
-                var plainTextBody = PlainTextBody(session, current.Id);
-                transaction.AfterCommit(after => after.Execute("update message_search_index set body = @body where rowid = @rowid", ("@body", plainTextBody), ("@rowid", current.Id)));
             }
             if (body is not null)
             {
@@ -313,26 +312,8 @@ public sealed partial class MessagesWriteController : ApplicationController
             .Distinct()];
     }
 
-    // `plain_text_body` of a stored message.
-    string PlainTextBody(SqliteSession session, long messageId) =>
-        RichTextPlainText.PlainTextBody(RichTexts.For(session, Message.ModelName, messageId, "body")?.Body, AttachmentFilename(session, messageId), RichTextContext(session));
-
     static string? AttachmentFilename(SqliteSession session, long messageId) =>
         BlobRecords.FindAttachedBlob(session, Message.ModelName, messageId, "attachment")?.Filename.ToString();
-
-    // message/broadcasts.rb `broadcast_unread_room`: `{"roomId":…}` to each member, unencoded.
-    async ValueTask BroadcastUnreadRoomAsync(IBroadcaster broadcaster)
-    {
-        var roomId = CurrentRoom.Id;
-        var userIds = await ReadAsync(session => session.Query(
-            """SELECT "memberships"."user_id" FROM "memberships" WHERE "memberships"."room_id" = @room_id""",
-            reader => reader.GetInt64(0), ("@room_id", roomId))).ConfigureAwait(false);
-        var payload = RailsJson.Encode(new JsonObject { ["roomId"] = roomId });
-        foreach (var userId in userIds)
-        {
-            broadcaster.Broadcast($"user_{userId}_unreads", payload);
-        }
-    }
 
     static RecordKey RoomRecord(Room room) => new(room.Type.ClassName(), room.Id);
 

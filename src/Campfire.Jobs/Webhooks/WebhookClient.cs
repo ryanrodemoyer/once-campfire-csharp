@@ -35,8 +35,8 @@ public sealed record WebhookAttachmentReply(byte[] Data, string Filename, string
 /// <summary>
 /// <c>Webhook#deliver</c>'s HTTP half (reference/app/models/webhook.rb): POSTs the payload as JSON
 /// with <c>Net::HTTP</c>'s headers, then reads the answer: a 200 <c>text/html</c> or
-/// <c>text/plain</c> is a text reply, any other content type an attachment, and no content type
-/// no reply. Connecting and each read time out after <see cref="EndpointTimeout"/>, which is
+/// <c>text/plain</c> is a text reply, a 200 with any other content type an attachment, and
+/// anything else no reply. Connecting and each read time out after <see cref="EndpointTimeout"/>, which is
 /// itself answered with a text reply.
 /// <para>
 /// Unrestricted by design (<see cref="RestrictedHttpHandlers.Webhook"/>): only an administrator
@@ -91,11 +91,12 @@ public sealed class WebhookClient : IDisposable
     public static WebhookReply? Reply(int status, string? contentType, byte[] body)
     {
         ArgumentNullException.ThrowIfNull(body);
-        if (contentType is null)
+        // Both need a 200: an error page is no reply at all.
+        if (status != 200 || contentType is null)
         {
             return null;
         }
-        if (status == 200 && contentType is "text/html" or "text/plain")
+        if (contentType is "text/html" or "text/plain")
         {
             return new WebhookTextReply(body);
         }

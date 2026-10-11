@@ -115,7 +115,7 @@ public partial class LifecycleOracleTests
         ["boost_create"] = async (db, seams, input) =>
         {
             var message = await Read(db, s => Messages.Find(s, Long(input["message_id"]))!);
-            await db.WriteAsync(t => BoostLifecycle.Create(t, message, Long(input["booster_id"]), Text(input["content"])!, "", Now));
+            await db.WriteAsync(t => BoostLifecycle.Create(t, message, Long(input["booster_id"]), Text(input["content"])!, Now));
         },
         ["boost_destroy"] = async (db, seams, input) =>
         {
@@ -124,7 +124,7 @@ public partial class LifecycleOracleTests
                 var boost = Boosts.Find(s, Long(input["boost_id"]))!;
                 return (boost, Messages.Find(s, boost.MessageId)!);
             });
-            await db.WriteAsync(t => BoostLifecycle.Destroy(t, boost, message, "", Now));
+            await db.WriteAsync(t => BoostLifecycle.Destroy(t, boost, message, Now));
         },
         ["message_destroy"] = async (db, seams, input) =>
         {

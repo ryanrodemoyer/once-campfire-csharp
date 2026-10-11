@@ -6,19 +6,22 @@ using Campfire.Data.Sqlite;
 namespace Campfire.Data.Lifecycle;
 
 // Messages with their callbacks (reference/app/models/message.rb, message/searchable.rb), in the
-// order Rails runs them. Inside the transaction: the rows, then the touches `touch: true`
-// defers to just before COMMIT (the rich text touches the message, which touches its room).
-// After the commit, in the order the callbacks are declared: the search index, then
-// `room.receive` (unread memberships, then the push job).
+// order Rails runs them. Creating a message is atomic: the message, its rich text and attachment
+// (autosaved), its search entry and its room's unread memberships (`after_save
+// :record_creation`), then the touches `touch: true` defers to just before COMMIT (the rich text
+// touches the message, which touches its room), all in one transaction. Only the push job waits
+// for the commit (`after_create_commit -> { room.push_later(self) }`).
 //
-// Every text change and touch of a message re-indexes it after the commit (`after_update_commit
-// :update_in_index` fires on a touch too), so each operation that touches a message takes its
-// `plainTextBody`.
+// After that, the search entry is rewritten only when the body is saved or the attachment
+// replaced (`after_update_commit :update_in_index, if: :indexed_text_changed?`): a boost's or an
+// analysis's touch leaves it alone.
 public static class MessageLifecycle
 {
     // `room.messages.create_with_attachment!(body:, client_message_id:)` without an attachment,
     // with Current.user as the creator. `bodyHtml` is the rich text to store; any assigned body,
-    // even "", gets a row (`store_if_blank`), and null (no body param) none.
+    // even "", gets a row (`store_if_blank`), and null (no body param) none. `attach` saves the
+    // message's attachment rows, as Active Storage's autosave does, before the search entry
+    // takes the plain text (which is the attachment's filename when there is no text).
     public static Message Create(
         WriteTransaction transaction,
         DomainSeams seams,
@@ -27,24 +30,26 @@ public static class MessageLifecycle
         string? clientMessageId,
         string? bodyHtml,
         string plainTextBody,
-        DateTimeOffset now)
+        DateTimeOffset now,
+        Action<SqliteSession, Message>? attach = null)
     {
         ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(seams);
         var session = transaction.Session;
         var message = Messages.Create(session, roomId, creatorId, clientMessageId, now);
+        attach?.Invoke(session, message);
         if (bodyHtml is not null)
         {
             RichTexts.Create(session, Message.ModelName, message.Id, "body", bodyHtml, now);
+        }
+        RecordCreation(session, roomId, message, plainTextBody, now);
+        if (bodyHtml is not null || attach is not null)
+        {
             Messages.Touch(session, message.Id, now);
         }
         Rooms.Touch(session, roomId, now);
 
-        transaction.AfterCommit(after =>
-        {
-            MessageSearchIndex.Create(after, message.Id, plainTextBody);
-            Receive(after, seams.Jobs, roomId, message, now);
-        });
+        transaction.AfterCommit(_ => PushLater(seams.Jobs, roomId, message));
         return message;
     }
 
@@ -89,7 +94,8 @@ public static class MessageLifecycle
         {
             RichTexts.Create(session, Message.ModelName, message.Id, "body", bodyHtml, now);
         }
-        Touch(transaction, message, plainTextBody, now);
+        Touch(transaction, message, now);
+        UpdateInIndexAfterCommit(transaction, message, plainTextBody);
     }
 
     // `message.destroy` of a message without an attachment: each boost (`dependent: :destroy`),
@@ -114,21 +120,43 @@ public static class MessageLifecycle
         transaction.AfterCommit(after => MessageSearchIndex.Remove(after, message.Id));
     }
 
-    // A message's `touch` from something that belongs to it (`touch: true` on boosts and rich
-    // text): the message, then its room (`belongs_to :room, touch: true`), and the re-index
-    // after the commit.
-    internal static void Touch(WriteTransaction transaction, Message message, string plainTextBody, DateTimeOffset now)
+    // A message's `touch` from something that belongs to it (`touch: true` on boosts, rich text
+    // and attachments): the message, then its room (`belongs_to :room, touch: true`). The search
+    // entry stays as it is (`indexed_text_changed?`).
+    internal static void Touch(WriteTransaction transaction, Message message, DateTimeOffset now)
     {
         Messages.Touch(transaction.Session, message.Id, now);
         Rooms.Touch(transaction.Session, message.RoomId, now);
+    }
+
+    // `update_in_index` after the commit of a save that changed the body or replaced the
+    // attachment.
+    public static void UpdateInIndexAfterCommit(WriteTransaction transaction, Message message, string plainTextBody)
+    {
+        ArgumentNullException.ThrowIfNull(transaction);
+        ArgumentNullException.ThrowIfNull(message);
         transaction.AfterCommit(after => MessageSearchIndex.Update(after, message.Id, plainTextBody));
     }
 
-    // `room.receive(message)` (room.rb): marks the room unread for its visible, disconnected
-    // members other than the creator, then enqueues the push.
-    static void Receive(SqliteSession session, IJobQueue jobs, long roomId, Message message, DateTimeOffset now)
+    // `room.receive(message)` (room.rb), which nothing in the app calls any more but stays
+    // public: the unread memberships, then the push job.
+    public static void Receive(SqliteSession session, IJobQueue jobs, Room room, Message message, DateTimeOffset now)
     {
-        Memberships.MarkUnread(session, roomId, message.CreatorId, message.CreatedAt, now);
-        jobs.Enqueue(new PushMessageJob(roomId, message.Id));
+        ArgumentNullException.ThrowIfNull(room);
+        ArgumentNullException.ThrowIfNull(message);
+        Memberships.MarkUnread(session, room.Id, room.IsDirect, message.CreatorId, message.CreatedAt, now);
+        PushLater(jobs, room.Id, message);
     }
+
+    // `record_creation`: the search entry, then `room.unread_memberships(self)`.
+    static void RecordCreation(SqliteSession session, long roomId, Message message, string plainTextBody, DateTimeOffset now)
+    {
+        MessageSearchIndex.Create(session, message.Id, plainTextBody);
+        var room = Rooms.Find(session, roomId) ?? throw new InvalidOperationException($"Message {message.Id} has no room");
+        Memberships.MarkUnread(session, roomId, room.IsDirect, message.CreatorId, message.CreatedAt, now);
+    }
+
+    // `room.push_later(message)`
+    static void PushLater(IJobQueue jobs, long roomId, Message message) =>
+        jobs.Enqueue(new PushMessageJob(roomId, message.Id));
 }

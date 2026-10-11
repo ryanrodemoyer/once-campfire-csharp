@@ -26,7 +26,7 @@ public sealed class UserTests : IDisposable
         {
             var before = Memberships.Count(session);
             var user = CreateNewUser(session);
-            Memberships.GrantRoomsTo(session, user.Id, Rooms.IdsOfType(session, RoomType.Open));
+            Memberships.GrantOpenRoomsTo(session, user.Id, Now);
             return (before, Rooms.CountOfType(session, RoomType.Open), Memberships.Count(session));
         });
         Assert.Equal(before + opens, after);

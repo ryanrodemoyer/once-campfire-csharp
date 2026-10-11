@@ -19,7 +19,7 @@ namespace Campfire.Cable.Tests.Channels;
 /// Replays reference-rust <c>channels/tests/golden/reference.json</c>: the frames the reference
 /// recorded for every Campfire channel, compared per socket as a sorted list. Pings are dropped.
 /// </summary>
-public class ChannelsGoldenReplayTests
+public partial class ChannelsGoldenReplayTests
 {
     [Fact]
     public async Task Cable_replay_for_every_channel_equals_the_reference()
@@ -195,7 +195,7 @@ public class ChannelsGoldenReplayTests
             {
                 if (!string.Equals(frame, "end", StringComparison.Ordinal))
                 {
-                    frames.Add(frame);
+                    frames.Add(WithoutAt(frame));
                 }
             }
 
@@ -208,6 +208,14 @@ public class ChannelsGoldenReplayTests
         frames.Sort(StringComparer.Ordinal);
         return frames;
     }
+
+    // The recording predates reference edbc779, whose read and unread notices also carry the
+    // time of the read or of the message (`at`, 72648a8 and 27065ef). The C# tests of those
+    // payloads are UnreadRoomsTests in Campfire.Web.Tests/Upstream/U04.
+    static string WithoutAt(string frame) => AtMember().Replace(frame, "");
+
+    [System.Text.RegularExpressions.GeneratedRegex(@",""at"":-?[0-9][0-9.e+-]*(?=\})")]
+    private static partial System.Text.RegularExpressions.Regex AtMember();
 
     static void AssertSame(string step, Dictionary<string, List<string>> expected, Dictionary<string, List<string>> actual)
     {
@@ -352,8 +360,7 @@ public class ChannelsGoldenReplayTests
                     await database.ReadAsync(session =>
                     {
                         var message = Messages.Find(session, args[0]) ?? throw new InvalidDataException("message");
-                        var room = Rooms.Find(session, message.RoomId) ?? throw new InvalidDataException("room");
-                        UnreadRoomsChannel.BroadcastUnread(app.Server, session, room.Id);
+                        UnreadRoomsChannel.BroadcastUnread(app.Server, session, message, TimeProvider.System.GetUtcNow());
                         return true;
                     }, TestContext.Current.CancellationToken);
                     break;

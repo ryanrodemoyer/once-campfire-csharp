@@ -78,7 +78,7 @@ public sealed class PresenceChannel : Channel<User>
         await WithMembershipAsync(Memberships.Present).ConfigureAwait(false);
         // `membership.room_id` finds the membership again.
         var current = await MembershipAsync().ConfigureAwait(false);
-        ReadRoomsChannel.BroadcastRead(Server, CurrentUser.Id, current.RoomId);
+        ReadRoomsChannel.BroadcastRead(Server, CurrentUser.Id, current.RoomId, Server.Clock.GetUtcNow());
     }
 
     /// <summary><c>absent</c>: <c>membership.disconnected</c>.</summary>

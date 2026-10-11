@@ -150,7 +150,7 @@ public class ChannelBehaviorTests
     }
 
     [Fact]
-    public async Task Unread_rooms_deliver_roomId_only_to_members_and_twice_after_subscribed_is_performed()
+    public async Task Unread_rooms_deliver_roomId_and_at_only_to_members_and_twice_after_subscribed_is_performed()
     {
         await using var harness = await ChannelHarness.OpenAsync();
         var (kevin, kevinCookie) = await harness.SignInAsync("Kevin", "kevin@example.com");
@@ -169,13 +169,16 @@ public class ChannelBehaviorTests
         await member.PerformAsync(unreads, new JsonObject { ["action"] = "subscribed" });
         await member.AssertSilentAsync();
 
-        await harness.Database.ReadAsync(session =>
+        // The notice goes to members who have the room unread or are in it now.
+        await harness.Database.WriteAsync(tx =>
         {
-            UnreadRoomsChannel.BroadcastUnread(harness.App.Server, session, direct.Id);
+            var message = Campfire.Data.Queries.Messages.Create(tx.Session, direct.Id, kevin.Id, "unread", harness.Clock.UtcNow);
+            tx.Session.Execute("""UPDATE "memberships" SET "unread_at" = @now WHERE "room_id" = @room_id""", ("@now", "2026-03-02 16:00:00"), ("@room_id", direct.Id));
+            UnreadRoomsChannel.BroadcastUnread(harness.App.Server, tx.Session, message, harness.Clock.UtcNow);
             return true;
         }, TestContext.Current.CancellationToken);
 
-        var payload = RailsJson.Encode(new JsonObject { ["roomId"] = direct.Id });
+        var payload = $$"""{"roomId":{{direct.Id}},"at":1772467200.0}""";
         var frame = Deliver(unreads, payload);
         Assert.Equal(Sorted(frame, frame), await NextAsync(member, 2));
         await member.AssertSilentAsync();
@@ -194,9 +197,9 @@ public class ChannelBehaviorTests
         await client.SubscribeAsync(reads);
         Assert.Equal(Confirm(reads), await client.NextAsync());
 
-        ReadRoomsChannel.BroadcastRead(harness.App.Server, jason.Id, 7);
-        ReadRoomsChannel.BroadcastRead(harness.App.Server, david.Id, 8);
-        Assert.Equal(Deliver(reads, RailsJson.Encode(new JsonObject { ["room_id"] = 7 })), await client.NextAsync());
+        ReadRoomsChannel.BroadcastRead(harness.App.Server, jason.Id, 7, harness.Clock.UtcNow.AddTicks(1_234_567));
+        ReadRoomsChannel.BroadcastRead(harness.App.Server, david.Id, 8, harness.Clock.UtcNow);
+        Assert.Equal(Deliver(reads, """{"room_id":7,"at":1772467200.1234567}"""), await client.NextAsync());
         await client.AssertSilentAsync();
     }
 

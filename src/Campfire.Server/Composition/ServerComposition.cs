@@ -54,6 +54,8 @@ public sealed partial class ServerComposition : IAsyncDisposable
     public required BotWebhooks BotWebhooks { get; init; }
     public required RemoveBannedContent RemoveBannedContent { get; init; }
     public required MessagePusher MessagePusher { get; init; }
+    public required UnreadRoomJobs UnreadRoomJobs { get; init; }
+    public required RoomDestroyJobs RoomDestroyJobs { get; init; }
     public required MessageAttachmentJobs AttachmentJobs { get; init; }
     public required TimeProvider Clock { get; init; }
     public required RequestDelegate Pipeline { get; init; }
@@ -182,8 +184,14 @@ public sealed partial class ServerComposition : IAsyncDisposable
             clock);
         messagePusher.RegisterWith(runner, limits);
 
-        var attachmentJobs = new MessageAttachmentJobs(database, storage, keys, clock);
+        var attachmentJobs = new MessageAttachmentJobs(database, storage, clock);
         attachmentJobs.RegisterWith(runner, limits);
+
+        var unreadRoomJobs = new UnreadRoomJobs(database, cableServer, clock);
+        unreadRoomJobs.RegisterWith(runner, limits);
+
+        var roomDestroyJobs = new RoomDestroyJobs(database, seams, clock);
+        roomDestroyJobs.RegisterWith(runner, limits);
         ValidateJobs(runner);
 
         return new ServerComposition(ownsPushClient, ownsPushPool, ownsWebhookClient)
@@ -207,6 +215,8 @@ public sealed partial class ServerComposition : IAsyncDisposable
             RemoveBannedContent = removeBannedContent,
             MessagePusher = messagePusher,
             AttachmentJobs = attachmentJobs,
+            UnreadRoomJobs = unreadRoomJobs,
+            RoomDestroyJobs = roomDestroyJobs,
             Clock = clock,
             Pipeline = CreatePipeline(settings, assets, cableServer, webApp),
         };

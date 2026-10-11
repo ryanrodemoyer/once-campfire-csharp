@@ -11254,12 +11254,11 @@
     "args": [
       486777696,
       773523953,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -11268,112 +11267,15 @@
     "args": [
       486777696,
       773523953,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
       ]
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      773523953,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -11381,50 +11283,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      773523953,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "everything",
-      null
+      127326141,
+      []
     ],
     "result": [
       782661003
@@ -11433,9 +11293,62 @@
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
       654632876,
-      773523953,
-      "mentions",
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
       [
         127326141,
         149087659,
@@ -11447,20 +11360,8 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
+      257765087,
+      283769004,
       782661004
     ]
   },
@@ -11468,27 +11369,12 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       773523953,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -11497,110 +11383,102 @@
     "args": [
       486777696,
       773523953,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      773523953,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
       56887440,
       782661004
     ]
@@ -11610,88 +11488,52 @@
     "args": [
       486777696,
       773523953,
-      "mentions",
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      773523953,
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
     "result": [
-      257765087
+      56887440,
+      782661003,
+      782661004
     ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
-      654632876,
-      149087659,
-      "mentions",
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
       [
         127326141,
         149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
+        394959859
       ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "everything",
-      null
     ],
     "result": [
       782661003
@@ -11701,30 +11543,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       654632876,
-      773523953,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "everything",
-      null
+      127326141,
+      []
     ],
     "result": [
       257765087,
@@ -11735,8 +11555,7 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       654632876,
-      712064548,
-      "mentions",
+      127326141,
       [
         127326141,
         149087659,
@@ -11744,6 +11563,35 @@
         773523953,
         773523955,
         773523956
+      ]
+    ],
+    "result": [
+      257765087,
+      283769004,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
       ]
     ],
     "result": [
@@ -11754,426 +11602,30 @@
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
-      654632876,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
+      486777696,
       773523953,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
+      []
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
+      782661003,
       782661004
     ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
-      654632876,
+      486777696,
       773523953,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "mentions",
       [
         127326141,
         149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
+        394959859
       ]
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087,
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      712064548,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
+      782661003,
       782661004
     ]
   },
@@ -12182,8 +11634,7 @@
     "args": [
       654632876,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087
@@ -12194,7 +11645,6 @@
     "args": [
       654632876,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12206,8 +11656,41 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
+      257765087,
+      283769004,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      283769004,
+      782661004
     ]
   },
   {
@@ -12215,8 +11698,7 @@
     "args": [
       654632876,
       773523953,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -12227,7 +11709,6 @@
     "args": [
       654632876,
       773523953,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12239,41 +11720,9 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      257765087
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        712064548,
-        773523953,
-        773523955,
-        773523956
-      ]
-    ],
-    "result": [
-      56887440,
-      782661004,
-      283769004
+      283769004,
+      782661003,
+      782661004
     ]
   },
   {
@@ -12281,8 +11730,7 @@
     "args": [
       654632876,
       712064548,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087,
@@ -12294,7 +11742,6 @@
     "args": [
       654632876,
       712064548,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12306,6 +11753,556 @@
     ],
     "result": [
       56887440,
+      257765087,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      127326141,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      127326141,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      257765087,
+      283769004,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      283769004,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      127326141,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      127326141,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      257765087,
+      283769004,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      283769004,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      127326141,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      127326141,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      257765087,
+      283769004,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      283769004,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      283769004,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      []
+    ],
+    "result": [
+      257765087
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      149087659,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      283769004,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      []
+    ],
+    "result": [
+      257765087,
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      712064548,
+      [
+        127326141,
+        149087659,
+        712064548,
+        773523953,
+        773523955,
+        773523956
+      ]
+    ],
+    "result": [
+      56887440,
+      257765087,
+      782661003,
       782661004
     ]
   },
@@ -12314,8 +12311,7 @@
     "args": [
       654632876,
       773523956,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087,
@@ -12327,7 +12323,6 @@
     "args": [
       654632876,
       773523956,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12339,8 +12334,10 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
+      257765087,
+      283769004,
+      782661003,
+      782661004
     ]
   },
   {
@@ -12348,8 +12345,7 @@
     "args": [
       654632876,
       773523954,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087,
@@ -12361,7 +12357,6 @@
     "args": [
       654632876,
       773523954,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12373,8 +12368,10 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
+      257765087,
+      283769004,
+      782661003,
+      782661004
     ]
   },
   {
@@ -12382,8 +12379,7 @@
     "args": [
       654632876,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087,
@@ -12395,7 +12391,6 @@
     "args": [
       654632876,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12406,18 +12401,8 @@
       ]
     ],
     "result": [
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      654632876,
-      773523953,
-      "everything",
-      null
-    ],
-    "result": [
+      257765087,
+      283769004,
       782661003
     ]
   },
@@ -12426,7 +12411,17 @@
     "args": [
       654632876,
       773523953,
-      "mentions",
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      654632876,
+      773523953,
       [
         127326141,
         149087659,
@@ -12438,8 +12433,9 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
+      283769004,
+      782661003,
+      782661004
     ]
   },
   {
@@ -12447,8 +12443,7 @@
     "args": [
       654632876,
       712064548,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087,
@@ -12460,7 +12455,6 @@
     "args": [
       654632876,
       712064548,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12472,6 +12466,8 @@
     ],
     "result": [
       56887440,
+      257765087,
+      782661003,
       782661004
     ]
   },
@@ -12480,8 +12476,7 @@
     "args": [
       654632876,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       257765087
@@ -12492,7 +12487,6 @@
     "args": [
       654632876,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12504,8 +12498,9 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
+      257765087,
+      283769004,
+      782661004
     ]
   },
   {
@@ -12513,8 +12508,7 @@
     "args": [
       654632876,
       773523953,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -12525,7 +12519,6 @@
     "args": [
       654632876,
       773523953,
-      "mentions",
       [
         127326141,
         149087659,
@@ -12537,100 +12530,19 @@
     ],
     "result": [
       56887440,
-      782661004,
-      283769004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
+      283769004,
       782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
       56887440,
       782661004
     ]
@@ -12639,23 +12551,24 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
+      149087659,
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -12666,49 +12579,11 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
     ],
     "result": [
       782661003
@@ -12718,23 +12593,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -12746,26 +12606,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -12774,132 +12635,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -12907,23 +12651,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -12934,22 +12663,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -12961,22 +12690,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -12987,22 +12717,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13014,26 +12744,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13042,132 +12773,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13175,23 +12789,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -13202,22 +12801,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13229,22 +12828,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -13255,22 +12855,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13282,26 +12882,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13310,132 +12911,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13443,23 +12927,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -13470,22 +12939,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13497,22 +12966,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -13523,22 +12993,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13550,26 +13020,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13578,132 +13049,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13711,23 +13065,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -13738,22 +13077,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13765,22 +13104,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -13791,22 +13131,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -13818,26 +13158,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13846,132 +13187,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -13979,23 +13203,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14006,22 +13215,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14033,22 +13242,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14059,22 +13269,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14086,26 +13296,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14114,132 +13325,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14247,23 +13341,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14274,22 +13353,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14301,22 +13380,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14327,22 +13407,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14354,26 +13434,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14382,132 +13463,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14515,23 +13479,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14542,22 +13491,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14569,22 +13518,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14595,22 +13545,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14622,26 +13572,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14650,132 +13601,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14783,23 +13617,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14810,22 +13629,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14837,22 +13656,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -14863,22 +13683,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -14890,26 +13710,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -14918,132 +13739,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -15051,23 +13755,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15078,22 +13767,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15105,22 +13794,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15131,22 +13821,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15158,26 +13848,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -15186,132 +13877,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -15319,23 +13893,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15346,22 +13905,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15373,22 +13932,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15399,22 +13959,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15426,26 +13986,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -15454,132 +14015,15 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
     ],
     "result": [
       56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "everything",
-      null
-    ],
-    "result": [
-      782661003
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      127326141,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "everything",
-      null
-    ],
-    "result": [
-      56887440,
-      782661004
-    ]
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      149087659,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
-      394959859,
-      "everything",
-      null
-    ],
-    "result": [
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -15587,23 +14031,8 @@
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "mentions",
-      [
-        127326141,
-        149087659,
-        394959859
-      ]
-    ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15614,22 +14043,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15641,22 +14070,23 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15667,22 +14097,22 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15694,26 +14124,27 @@
     "args": [
       486777696,
       149087659,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
+      56887440,
       782661003,
-      56887440,
       782661004
     ]
   },
@@ -15722,22 +14153,24 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15748,25 +14181,94 @@
     "args": [
       486777696,
       127326141,
-      "mentions",
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       486777696,
-      394959859,
-      "everything",
-      null
+      149087659,
+      []
     ],
     "result": [
-      782661003,
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
       56887440,
       782661004
     ]
@@ -15776,22 +14278,1611 @@
     "args": [
       486777696,
       394959859,
-      "mentions",
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
       [
         127326141,
         149087659,
         394959859
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      []
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      149087659,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      []
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      127326141,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      782661003
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      []
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      486777696,
+      394959859,
+      [
+        127326141,
+        149087659,
+        394959859
+      ]
+    ],
+    "result": [
+      56887440,
+      782661003,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       186869642,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15803,21 +15894,22 @@
     "args": [
       186869642,
       149087659,
-      "mentions",
       [
         127326141,
         149087659
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       186869642,
       127326141,
-      "everything",
-      null
+      []
     ],
     "result": [
       782661003
@@ -15828,21 +15920,21 @@
     "args": [
       186869642,
       127326141,
-      "mentions",
       [
         127326141,
         149087659
       ]
     ],
-    "result": []
+    "result": [
+      782661003
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       186869642,
       149087659,
-      "everything",
-      null
+      []
     ],
     "result": [
       56887440,
@@ -15854,21 +15946,22 @@
     "args": [
       186869642,
       149087659,
-      "mentions",
       [
         127326141,
         149087659
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       340026324,
       394959859,
-      "everything",
-      null
+      []
     ],
     "result": [
       283769004
@@ -15879,26 +15972,12 @@
     "args": [
       340026324,
       394959859,
-      "mentions",
       [
         394959859,
         712064548
       ]
     ],
-    "result": []
-  },
-  {
-    "query": "PushSubscriptions.ForRoomPush",
-    "args": [
-      699448329,
-      773523953,
-      "everything",
-      null
-    ],
     "result": [
-      56887440,
-      782661004,
-      782661003,
       283769004
     ]
   },
@@ -15907,7 +15986,20 @@
     "args": [
       699448329,
       773523953,
-      "mentions",
+      []
+    ],
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
+  },
+  {
+    "query": "PushSubscriptions.ForRoomPush",
+    "args": [
+      699448329,
+      773523953,
       [
         127326141,
         149087659,
@@ -15915,15 +16007,19 @@
         773523953
       ]
     ],
-    "result": []
+    "result": [
+      56887440,
+      283769004,
+      782661003,
+      782661004
+    ]
   },
   {
     "query": "PushSubscriptions.ForRoomPush",
     "args": [
       699448325,
       712064548,
-      "everything",
-      null
+      []
     ],
     "result": []
   },
@@ -15932,7 +16028,6 @@
     "args": [
       699448325,
       712064548,
-      "mentions",
       [
         127326141,
         712064548
@@ -15945,8 +16040,7 @@
     "args": [
       699448328,
       999999,
-      "everything",
-      null
+      []
     ],
     "result": []
   },
@@ -15955,7 +16049,6 @@
     "args": [
       699448328,
       999999,
-      "mentions",
       [
         127326141
       ]

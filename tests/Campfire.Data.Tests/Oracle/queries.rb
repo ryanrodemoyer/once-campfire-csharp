@@ -136,11 +136,13 @@ end
 pusher = ->(room, message) { Room::MessagePusher.new(room: room, message: message) }
 messages.each do |message|
   room = message.room
-  everything = pusher[room, message].send(:push_subscriptions_for_users_involved_in_everything)
-  record["PushSubscriptions.ForRoomPush", [ room.id, message.creator_id, "everything", nil ], ids[everything]]
-  mentionees = User.where(id: room.user_ids)
-  mentions = pusher[room, message].send(:push_subscriptions_for_mentionable_users, mentionees)
-  record["PushSubscriptions.ForRoomPush", [ room.id, message.creator_id, "mentions", mentionees.ids ], ids[mentions]]
+  # `push`: those involved in everything or, among the mentionees, in mentions; with no mentions
+  # and with every member mentioned. Walked in id order (`find_in_batches`).
+  [ User.none, User.where(id: room.user_ids) ].each do |mentionees|
+    everything = pusher[room, message].send(:push_subscriptions_for_users_involved_in_everything)
+    subscriptions = everything.or(pusher[room, message].send(:push_subscriptions_for_mentionable_users, mentionees))
+    record["PushSubscriptions.ForRoomPush", [ room.id, message.creator_id, mentionees.ids ], ids[subscriptions.order(:id)]]
+  end
 end
 users.each { |user| record["PushSubscriptions.ForUser", [ user.id ], ids[user.push_subscriptions]] }
 

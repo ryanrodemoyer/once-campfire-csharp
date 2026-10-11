@@ -170,7 +170,7 @@ public sealed class MembershipTests : IDisposable
         var david = Fixtures.Id("david");
         Connected(fixtures.Write(session => Memberships.FindFor(session, Fixtures.Id("jason"), watercooler)!), Now);
 
-        var marked = fixtures.Write(session => Memberships.MarkUnread(session, watercooler, david, Now - TimeSpan.FromMinutes(1), Now));
+        var marked = fixtures.Write(session => Memberships.MarkUnread(session, watercooler, direct: false, david, Now - TimeSpan.FromMinutes(1), Now));
 
         // Bender is the only one left: David wrote it and Jason is connected.
         Assert.Equal(1, marked);

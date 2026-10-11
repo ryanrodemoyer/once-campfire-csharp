@@ -54,7 +54,7 @@ public sealed class MessagesBoostsByBotsController : ApplicationController
         var content = RawRequestBody();
         var (current, user, now) = (CurrentMessage, User, Now);
         boost = await WriteAsync(transaction =>
-            BoostLifecycle.Create(transaction, current, user.Id, content, PlainTextBody(transaction.Session, current.Id), now)).ConfigureAwait(false);
+            BoostLifecycle.Create(transaction, current, user.Id, content, now)).ConfigureAwait(false);
 
         // `broadcast_create`: `@boost.broadcast_append_to @boost.message.room, :messages,
         //   target: "boosts_message_#{@boost.message.client_message_id}", partial: "messages/boosts/boost",
@@ -85,7 +85,7 @@ public sealed class MessagesBoostsByBotsController : ApplicationController
     {
         var (destroyed, current, now) = (CurrentBoost, CurrentMessage, Now);
         // `@boost.destroy!`
-        await WriteAsync(transaction => BoostLifecycle.Destroy(transaction, destroyed, current, PlainTextBody(transaction.Session, current.Id), now)).ConfigureAwait(false);
+        await WriteAsync(transaction => BoostLifecycle.Destroy(transaction, destroyed, current, now)).ConfigureAwait(false);
 
         // `@boost.broadcast_remove_to @boost.message.room, :messages`
         var remove = TurboStreamTags.Remove(RecordIdentifier.DomId(new RecordKey("Boost", destroyed.Id)));
@@ -175,11 +175,6 @@ public sealed class MessagesBoostsByBotsController : ApplicationController
     }
 
     RenderContext RichTextContext(SqliteSession session) => new(new DatabaseAttachables(session, App.Keys, Now), RequestUrl.Host);
-
-    // `plain_text_body`, which the message's re-index after its touch stores.
-    string PlainTextBody(SqliteSession session, long messageId) =>
-        RichTextPlainText.PlainTextBody(RichTexts.For(session, Message.ModelName, messageId, "body")?.Body,
-            BlobRecords.FindAttachedBlob(session, Message.ModelName, messageId, "attachment")?.Filename.ToString(), RichTextContext(session));
 
     // `[room, :messages]` as Turbo::StreamsChannel names it.
     static string MessagesStream(Room room) => $"{RecordIdentifier.GidParam(room.Type.ClassName(), room.Id)}:messages";

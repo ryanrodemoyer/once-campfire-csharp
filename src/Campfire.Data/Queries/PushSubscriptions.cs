@@ -33,34 +33,25 @@ public static class PushSubscriptions
     public static long CountForUser(SqliteSession session, long userId) =>
         Sql.Count(session, "SELECT COUNT(*) FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = @user_id", ("@user_id", userId));
 
-    // Who `Room::MessagePusher` pushes a message to (room/message_pusher.rb): subscriptions of the
-    // room's visible, disconnected members other than the creator, with the given involvement,
-    // and among `userIds` when given (the mentionees).
-    public static List<PushSubscription> ForRoomPush(
-        SqliteSession session,
-        long roomId,
-        long creatorId,
-        Involvement involvement,
-        DateTimeOffset now,
-        IReadOnlyList<long>? userIds = null)
+    // Who `Room::MessagePusher#push` pushes a message to (room/message_pusher.rb): subscriptions of
+    // the room's active, visible, disconnected members other than the creator, either involved in
+    // everything or involved in mentions and among the mentionees. Banned users keep their
+    // subscriptions, but get nothing. In id order, as `find_in_batches` walks them.
+    public static List<PushSubscription> ForRoomPush(SqliteSession session, long roomId, long creatorId, DateTimeOffset now, IReadOnlyList<long> mentioneeIds)
     {
+        ArgumentNullException.ThrowIfNull(mentioneeIds);
+        var relevant = """
+            "users"."status" = 0 AND "memberships"."involvement" != 'invisible' AND ("memberships"."connected_at" IS NULL OR "memberships"."connected_at" < @cutoff) AND "memberships"."room_id" = @room_id AND "memberships"."user_id" != @creator_id
+            """;
+        // `where(user_id: [])` is `1=0`: `IN (NULL)` matches nothing either.
+        var (placeholders, idParameters) = mentioneeIds.Count == 0 ? ("NULL", Array.Empty<(string, object?)>()) : Sql.List("user_id", mentioneeIds);
         var sql = $"""
-            {select} INNER JOIN "users" ON "users"."id" = "push_subscriptions"."user_id" INNER JOIN "memberships" ON "memberships"."user_id" = "users"."id" WHERE "memberships"."involvement" != 'invisible' AND ("memberships"."connected_at" IS NULL OR "memberships"."connected_at" < @cutoff) AND "memberships"."room_id" = @room_id AND "memberships"."user_id" != @creator_id AND "memberships"."involvement" = @involvement
+            {select} INNER JOIN "users" ON "users"."id" = "push_subscriptions"."user_id" INNER JOIN "memberships" ON "memberships"."user_id" = "users"."id" WHERE ({relevant} AND "memberships"."involvement" = 'everything' OR {relevant} AND "memberships"."involvement" = 'mentions' AND "push_subscriptions"."user_id" IN ({placeholders})) ORDER BY "push_subscriptions"."id" ASC
             """;
         (string Name, object? Value)[] parameters =
         [
-            ("@cutoff", Db.Time(Membership.ConnectionCutoff(now))), ("@room_id", roomId), ("@creator_id", creatorId), ("@involvement", involvement.Name()),
+            ("@cutoff", Db.Time(Membership.ConnectionCutoff(now))), ("@room_id", roomId), ("@creator_id", creatorId), .. idParameters,
         ];
-        if (userIds is not null)
-        {
-            if (userIds.Count == 0)
-            {
-                return [];
-            }
-            var (placeholders, idParameters) = Sql.List("user_id", userIds);
-            sql += $" AND \"push_subscriptions\".\"user_id\" IN ({placeholders})";
-            parameters = [.. parameters, .. idParameters];
-        }
         return session.Query(sql, PushSubscription.Read, parameters);
     }
 

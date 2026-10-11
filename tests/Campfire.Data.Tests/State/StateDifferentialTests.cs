@@ -70,7 +70,6 @@ public class StateDifferentialTests
                 message,
                 jasonId,
                 "🦀",
-                "Written by C# hovercraft",
                 now);
 
             // 3. User CSharpUser

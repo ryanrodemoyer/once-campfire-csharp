@@ -1,9 +1,11 @@
 using System.Text.Json.Nodes;
 using Campfire.Cable.Server;
 using Campfire.Data.Events;
+using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
 using Campfire.RailsCompat.Crypto;
+using Campfire.RailsCompat.Formatting;
 
 namespace Campfire.Cable.Channels;
 
@@ -17,20 +19,20 @@ public sealed class UnreadRoomsChannel : Channel<User>
     public static string StreamNameFor(long userId) => $"user_{userId}_unreads";
 
     /// <summary>
-    /// <c>Message::Broadcasts#broadcast_unread_room</c> (reference/app/models/message/broadcasts.rb):
-    /// <c>{"roomId": id}</c> encoded once, then <c>coder: nil</c> to each
-    /// <c>room.memberships.pluck(:user_id)</c> in the order the query returns them.
+    /// <c>Message::Broadcasts#broadcast_unread_room</c> (reference/app/models/message/broadcasts.rb),
+    /// which <c>Message::BroadcastUnreadRoomJob</c> runs: <c>{"roomId": id, "at": created_at.to_f}</c>
+    /// encoded once, then <c>coder: nil</c> to each member who still has the room unread or is in
+    /// it now (<c>room.memberships.unread.or(room.memberships.connected).pluck(:user_id)</c>), in
+    /// the order the query returns them. By the time the job runs, someone may have opened the room
+    /// and moved on, and would see it marked unread again.
     /// </summary>
-    public static void BroadcastUnread(IBroadcaster broadcaster, SqliteSession session, long roomId)
+    public static void BroadcastUnread(IBroadcaster broadcaster, SqliteSession session, Message message, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(broadcaster);
         ArgumentNullException.ThrowIfNull(session);
-        var payload = RailsJson.Encode(new JsonObject { ["roomId"] = roomId });
-        var userIds = session.Query(
-            """SELECT "memberships"."user_id" FROM "memberships" WHERE "memberships"."room_id" = @room_id""",
-            reader => reader.GetInt64(0),
-            ("@room_id", roomId));
-        foreach (var userId in userIds)
+        ArgumentNullException.ThrowIfNull(message);
+        var payload = RailsJson.Encode(new JsonObject { ["roomId"] = message.RoomId, ["at"] = TimeFormats.ToF(message.CreatedAt) });
+        foreach (var userId in Memberships.UnreadOrConnectedUserIds(session, message.RoomId, now))
         {
             broadcaster.Broadcast(StreamNameFor(userId), payload);
         }

@@ -70,16 +70,24 @@ public sealed class WebPushPool : IAsyncDisposable
     /// <summary>The invalidation pool's <c>completed_task_count</c>.</summary>
     public long CompletedInvalidations => Interlocked.Read(ref completedInvalidations);
 
+    /// <summary>How many subscriptions <c>find_in_batches</c> loads at a time.</summary>
+    public const int BatchSize = 1000;
+
     /// <summary>
     /// <c>queue(payload, subscriptions)</c>: each subscription's notification is built here, on the
-    /// caller's database session (the badge is counted now), then handed to the pool.
+    /// caller's database session, then handed to the pool. The badges, each subscriber's unread
+    /// rooms, are counted once per batch of subscriptions rather than once per subscription.
     /// </summary>
     public void Queue(SqliteSession session, PushPayload payload, IEnumerable<PushSubscription> subscriptions)
     {
         ArgumentNullException.ThrowIfNull(subscriptions);
-        foreach (var subscription in subscriptions)
+        foreach (var batch in subscriptions.Chunk(BatchSize))
         {
-            DeliverLater(WebPushNotification.For(session, subscription, payload), subscription.Id);
+            var unreadCounts = Memberships.CountUnreadByUser(session, [.. batch.Select(subscription => subscription.UserId).Distinct()]);
+            foreach (var subscription in batch)
+            {
+                DeliverLater(WebPushNotification.For(subscription, payload, unreadCounts.GetValueOrDefault(subscription.UserId)), subscription.Id);
+            }
         }
     }
 

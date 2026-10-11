@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Text;
 using System.Text.Json.Nodes;
-using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -87,36 +86,17 @@ public abstract class RoomSettingsController : ApplicationController
     // show (Rooms::OpensController and ClosedsController): `redirect_to room_url(@room)`.
     internal void RedirectToRoom() => RedirectTo(Routes.RoomUrl(UrlBase, CurrentRoom.Id));
 
-    // destroy: `@room.destroy`, `broadcast_remove_room`, then back to the root. Without
+    // destroy: `@room.destroy_later`, `broadcast_remove_room`, then back to the root. Without
     // `set_room` (Rooms::OpensController and ClosedsController don't run it for destroy) there is
     // no room, and Rails fails on nil.
     internal async ValueTask DestroyAsync()
     {
-        var destroyed = room ?? throw new InvalidOperationException("undefined method 'destroy' for nil");
-        await DestroyRoomAsync(destroyed).ConfigureAwait(false);
+        var destroyed = room ?? throw new InvalidOperationException("undefined method 'destroy_later' for nil");
+        await RoomDestroyJobs.DestroyLaterAsync(App.Database, App.RequireSeams().Jobs, destroyed, Now).ConfigureAwait(false);
 
         // broadcast_remove_room: `broadcast_remove_to :rooms, target: [ @room, :list ]`
         TurboBroadcasts.Remove(App.RequireSeams().Broadcaster, ["rooms"], ListDomId(destroyed));
         RedirectTo(Routes.RootUrl(UrlBase));
-    }
-
-    // `room.destroy`: its memberships deleted without callbacks (`dependent: :delete_all`), each
-    // message destroyed with its callbacks (`dependent: :destroy`), then the room, in one
-    // transaction.
-    async ValueTask DestroyRoomAsync(Room destroyed)
-    {
-        var now = Now;
-        var seams = App.RequireSeams();
-        await WriteAsync(transaction =>
-        {
-            var session = transaction.Session;
-            Memberships.DeleteForRoom(session, destroyed.Id);
-            foreach (var message in Messages.InRoom(session, destroyed.Id))
-            {
-                MessageAttachmentLifecycle.DestroyWithAttachment(transaction, seams, message, now);
-            }
-            Rooms.Delete(session, destroyed.Id);
-        }).ConfigureAwait(false);
     }
 
     // `Current.user.can_administer?(room)`: administrators, the room's creator, and anyone with a

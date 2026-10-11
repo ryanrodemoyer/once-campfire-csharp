@@ -59,7 +59,7 @@ public sealed class MessagesBoostsController : ApplicationController
             {
                 throw new InvalidOperationException("NOT NULL constraint failed: boosts.content");
             }
-            return BoostLifecycle.Create(transaction, current, user.Id, content, PlainTextBody(transaction.Session, current.Id), now);
+            return BoostLifecycle.Create(transaction, current, user.Id, content, now);
         }).ConfigureAwait(false);
 
         BroadcastCreate(await ReadAsync(RenderBoostBroadcast).ConfigureAwait(false));
@@ -70,7 +70,7 @@ public sealed class MessagesBoostsController : ApplicationController
     {
         var (destroyed, current, now) = (CurrentBoost, CurrentMessage, Now);
         // `@boost.destroy!`
-        await WriteAsync(transaction => BoostLifecycle.Destroy(transaction, destroyed, current, PlainTextBody(transaction.Session, current.Id), now)).ConfigureAwait(false);
+        await WriteAsync(transaction => BoostLifecycle.Destroy(transaction, destroyed, current, now)).ConfigureAwait(false);
 
         // `@boost.broadcast_remove_to @boost.message.room, :messages`
         var remove = TurboStreamTags.Remove(RecordIdentifier.DomId(new RecordKey("Boost", destroyed.Id)));
@@ -202,11 +202,6 @@ public sealed class MessagesBoostsController : ApplicationController
     }
 
     RenderContext RichTextContext(SqliteSession session) => new(new DatabaseAttachables(session, App.Keys, Now), RequestUrl.Host);
-
-    // `plain_text_body`, which the message's re-index after its touch stores.
-    string PlainTextBody(SqliteSession session, long messageId) =>
-        RichTextPlainText.PlainTextBody(RichTexts.For(session, Message.ModelName, messageId, "body")?.Body,
-            BlobRecords.FindAttachedBlob(session, Message.ModelName, messageId, "attachment")?.Filename.ToString(), RichTextContext(session));
 
     // `[room, :messages]` as Turbo::StreamsChannel names it.
     static string MessagesStream(Room room) => $"{RecordIdentifier.GidParam(room.Type.ClassName(), room.Id)}:messages";

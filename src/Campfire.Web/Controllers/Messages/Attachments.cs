@@ -3,12 +3,10 @@ using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
 using Campfire.RailsCompat.Crypto;
 using Campfire.RailsCompat.Params;
-using Campfire.RichText.Attachments;
 using Campfire.RichText.PlainText;
 using Campfire.Storage.Blobs;
 using Campfire.Storage.Media;
 using Campfire.Storage.Variants;
-using Campfire.Web.Helpers;
 using Campfire.Web.Pipeline;
 using DataQueries = Campfire.Data.Queries;
 
@@ -101,15 +99,14 @@ public sealed partial class MessagesWriteController
     // The bot API and a webhook's attachment reply run the same processing.
     async ValueTask ProcessAttachmentAsync(Message message) =>
         await MessageAttachmentProcessing.ProcessAsync(
-            App.Database, App.Keys, App.RequireStorage(), App.RequireSeams(), App.Clock, RequestUrl.Host, Now, message, App.ThumbnailMaxPixels ?? NamedVariants.ThumbnailMaxPixels, RequestAborted).ConfigureAwait(false);
+            App.Database, App.RequireStorage(), App.RequireSeams(), App.Clock, Now, message, App.ThumbnailMaxPixels ?? NamedVariants.ThumbnailMaxPixels, RequestAborted).ConfigureAwait(false);
 
     // `blob.analyze` — `ensure_attachment_analyzed`'s half of process_attachment, and
     // ActiveStorage::AnalyzeJob#perform's: the analyzer's metadata read outside the writer, then
     // `update!(metadata:)` in one write. `update!` writes nothing when the metadata is unchanged, as
     // it is for a blob analyzed once (so a repeat analyze touches nothing), and its `after_update
-    // :touch_attachments` touches each message attachment's message — then its room, re-indexed
-    // after the commit.
-    internal static async Task AnalyzeAsync(SqliteDatabase database, KeyGenerator keys, BlobStorage storage, string? host, Blob blob, DateTimeOffset now)
+    // :touch_attachments` touches each message attachment's message, then its room.
+    internal static async Task AnalyzeAsync(SqliteDatabase database, BlobStorage storage, Blob blob, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(storage);
@@ -123,12 +120,9 @@ public sealed partial class MessagesWriteController
         {
             var session = transaction.Session;
             BlobRecords.UpdateMetadata(session, blob.Id, metadata);
-            var context = new RenderContext(new DatabaseAttachables(session, keys, now), host);
             foreach (var message in MessagesAttachedTo(session, blob))
             {
-                MessageAttachmentLifecycle.Touch(transaction, message,
-                    RichTextPlainText.PlainTextBody(DataQueries.RichTexts.For(session, Message.ModelName, message.Id, AttachmentNames.Body)?.Body, blob.Filename.ToString(), context),
-                    now);
+                MessageAttachmentLifecycle.Touch(transaction, message, now);
             }
             return true;
         }).ConfigureAwait(false);

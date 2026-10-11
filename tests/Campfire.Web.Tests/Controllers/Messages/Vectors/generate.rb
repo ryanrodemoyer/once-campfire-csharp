@@ -9,15 +9,18 @@
 #   mkdir -p tmp/m05/db tmp/m05/storage
 #   cp tests/Campfire.Data.Tests/Oracle/parity-seed.sqlite3 tmp/m05/db/production.sqlite3
 #   parity/bin/reference runner --storage tmp/m05 --time 2026-03-02T16:00:00Z --freeze \
-#     tests/Campfire.Web.Tests/Controllers/Messages/Vectors/generate.rb > tests/Campfire.Web.Tests/Controllers/Messages/Vectors/writes.json
+#     tests/Campfire.Web.Tests/Controllers/Messages/Vectors/generate.rb
 #
 # Requests go straight to Rails.application (the stack Puma runs), in order, on one database.
 # The fixtures below are applied first, and the C# test applies the same SQL to its copy.
 require "json"
 require "action_controller/test_case"
 
+Rails.logger = ActiveSupport::Logger.new($stderr)
+
 HOST = "campfire.test"
 NOW = Time.now.utc
+OUTPUT = ARGV.fetch(0, File.join(ENV["PARITY_WORK"] || ".", "tests/Campfire.Web.Tests/Controllers/Messages/Vectors/writes.json"))
 
 FIXTURES = [
   # Kevin, a member, signed in and active just now (no activity refresh).
@@ -259,4 +262,4 @@ results = CASES.map do |name, method, path, headers, body|
   }
 end
 
-puts JSON.pretty_generate("now" => NOW.iso8601, "fixtures" => FIXTURES, "cases" => results)
+File.write(OUTPUT, JSON.pretty_generate("now" => NOW.iso8601, "fixtures" => FIXTURES, "cases" => results))

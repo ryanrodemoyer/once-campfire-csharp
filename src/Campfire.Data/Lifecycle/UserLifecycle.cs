@@ -22,7 +22,7 @@ public static class UserLifecycle
     {
         ArgumentNullException.ThrowIfNull(transaction);
         var user = Users.Create(transaction.Session, name, emailAddress, passwordDigest, now, role, bio, botToken);
-        transaction.AfterCommit(after => Memberships.GrantRoomsTo(after, user.Id, Rooms.IdsOfType(after, RoomType.Open)));
+        transaction.AfterCommit(after => Memberships.GrantOpenRoomsTo(after, user.Id, now));
         return user;
     }
 

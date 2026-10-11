@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Text;
 using System.Text.Json.Nodes;
+using Campfire.Data.Events;
 using Campfire.Data.Lifecycle;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
@@ -72,29 +73,22 @@ public sealed partial class ByBotsWebhookReplies(WebApp app) : IWebhookReplies
 
     /// <summary>
     /// <c>message.broadcast_create</c> (message/broadcasts.rb): the message partial appended to the
-    /// room's messages, then <c>broadcast_unread_room</c> to each member.
+    /// room's messages, then <c>broadcast_unread_room_later</c>.
     /// </summary>
     async Task BroadcastCreateAsync(Room room, Message message, DateTimeOffset now, CancellationToken cancellationToken)
     {
-        var broadcaster = app.RequireSeams().Broadcaster;
-        var (html, memberIds) = await app.Database.ReadAsync(session =>
+        var seams = app.RequireSeams();
+        var html = await app.Database.ReadAsync(session =>
         {
             var view = NewView(session, now);
             var messageView = new MessageViews(app.Keys, body => RichTextPlainText.ToPlainText(body, RichTextContext(session, now))).Load(session, [message])[0];
             var buffer = new ArrayBufferWriter<byte>();
             view.MessagesCreate(new HtmlWriter(buffer), messageView, new RecordKey(room.Type.ClassName(), room.Id));
-            var memberIds = session.Query(
-                """SELECT "memberships"."user_id" FROM "memberships" WHERE "memberships"."room_id" = @room_id""",
-                reader => reader.GetInt64(0), ("@room_id", room.Id));
-            return (Encoding.UTF8.GetString(buffer.WrittenSpan), memberIds);
+            return Encoding.UTF8.GetString(buffer.WrittenSpan);
         }, cancellationToken).ConfigureAwait(false);
 
-        broadcaster.Broadcast($"{RecordIdentifier.GidParam(room.Type.ClassName(), room.Id)}:messages", RailsJson.Encode(JsonValue.Create(html.TrimEnd('\n'))));
-        var payload = RailsJson.Encode(new JsonObject { ["roomId"] = room.Id });
-        foreach (var userId in memberIds)
-        {
-            broadcaster.Broadcast($"user_{userId}_unreads", payload);
-        }
+        seams.Broadcaster.Broadcast($"{RecordIdentifier.GidParam(room.Type.ClassName(), room.Id)}:messages", RailsJson.Encode(JsonValue.Create(html.TrimEnd('\n'))));
+        seams.Jobs.Enqueue(new BroadcastUnreadRoomJob(message.Id));
     }
 
     View NewView(SqliteSession session, DateTimeOffset now)

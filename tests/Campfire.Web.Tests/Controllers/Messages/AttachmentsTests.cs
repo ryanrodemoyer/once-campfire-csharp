@@ -120,7 +120,7 @@ public sealed partial class AttachmentsTests : IDisposable
             DateTimeOffset.Parse(Vectors["now"]!.GetValue<string>(), System.Globalization.CultureInfo.InvariantCulture),
             Vectors["fixtures"]!.AsArray().Select(fixture => fixture!.GetValue<string>()),
             new DomainSeams(recording, runner, recording));
-        new MessageAttachmentJobs(app.Database, app.App.Storage!, app.Keys, new FixedClock(app.Now)).RegisterWith(runner);
+        new MessageAttachmentJobs(app.Database, app.App.Storage!, new FixedClock(app.Now)).RegisterWith(runner);
 
         // An image upload: the message's blob and the thumbnail's, both analyzed by their jobs.
         var moonUpload = UploadBody(new Upload("moon.jpg", "image/jpeg", "m10-jobs-moon"));

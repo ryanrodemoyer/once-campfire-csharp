@@ -40,6 +40,22 @@ public static class Memberships
     public static long CountUnreadForUser(SqliteSession session, long userId) =>
         Sql.Count(session, "SELECT COUNT(*) FROM \"memberships\" WHERE \"memberships\".\"user_id\" = @user_id AND \"memberships\".\"unread_at\" IS NOT NULL", ("@user_id", userId));
 
+    // `Membership.unread.where(user_id: user_ids).group(:user_id).count` (lib/web_push/pool.rb):
+    // users with no unread rooms are missing.
+    public static Dictionary<long, long> CountUnreadByUser(SqliteSession session, IReadOnlyList<long> userIds)
+    {
+        ArgumentNullException.ThrowIfNull(userIds);
+        if (userIds.Count == 0)
+        {
+            return [];
+        }
+        var (placeholders, parameters) = Sql.List("user_id", userIds);
+        return session.Query(
+            $"SELECT COUNT(*) AS \"count_all\", \"memberships\".\"user_id\" AS \"memberships_user_id\" FROM \"memberships\" WHERE \"memberships\".\"unread_at\" IS NOT NULL AND \"memberships\".\"user_id\" IN ({placeholders}) GROUP BY \"memberships\".\"user_id\"",
+            reader => (UserId: reader.GetInt64(1), Count: reader.GetInt64(0)), parameters)
+            .ToDictionary(row => row.UserId, row => row.Count);
+    }
+
     // `user.memberships.without_direct_rooms.count`
     public static long CountForUserWithoutDirectRooms(SqliteSession session, long userId) =>
         Sql.Count(session, "SELECT COUNT(*) FROM \"memberships\" INNER JOIN \"rooms\" \"room\" ON \"room\".\"id\" = \"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = @user_id AND \"room\".\"type\" != @type",
@@ -79,13 +95,25 @@ public static class Memberships
     public static List<Membership> Disconnected(SqliteSession session, DateTimeOffset now) =>
         session.Query($"{select} WHERE {disconnected}", Membership.Read, ("@cutoff", Db.Time(Membership.ConnectionCutoff(now))));
 
-    // `room.memberships.visible.disconnected.where.not(user: creator).update_all(unread_at:,
-    // updated_at:)`, from `Room#receive` (room.rb): marks the room unread for members who aren't
-    // watching it.
-    public static int MarkUnread(SqliteSession session, long roomId, long creatorId, DateTimeOffset unreadAt, DateTimeOffset now) =>
+    // `room.memberships.pluck(:user_id)`, in the order the query returns them.
+    public static List<long> UserIdsInRoom(SqliteSession session, long roomId) =>
+        session.Query("SELECT \"memberships\".\"user_id\" FROM \"memberships\" WHERE \"memberships\".\"room_id\" = @room_id",
+            reader => reader.GetInt64(0), ("@room_id", roomId));
+
+    // `room.unread_memberships(message)` (room.rb): marks the room unread for members who aren't
+    // watching it, `memberships.visible.disconnected.where.not(user: creator)`. Outside directs,
+    // members who are unread already are left as they are (`where(unread_at: nil)`).
+    public static int MarkUnread(SqliteSession session, long roomId, bool direct, long creatorId, DateTimeOffset unreadAt, DateTimeOffset now) =>
         session.Execute(
-            $"UPDATE \"memberships\" SET \"unread_at\" = @unread_at, \"updated_at\" = @now WHERE \"memberships\".\"room_id\" = @room_id AND {visible} AND {disconnected} AND \"memberships\".\"user_id\" != @creator_id",
+            $"UPDATE \"memberships\" SET \"unread_at\" = @unread_at, \"updated_at\" = @now WHERE \"memberships\".\"room_id\" = @room_id AND {visible} AND {disconnected} AND \"memberships\".\"user_id\" != @creator_id{(direct ? "" : " AND \"memberships\".\"unread_at\" IS NULL")}",
             ("@unread_at", Db.Time(unreadAt)), ("@now", Db.Time(now)), ("@room_id", roomId), ("@cutoff", Db.Time(Membership.ConnectionCutoff(now))), ("@creator_id", creatorId));
+
+    // `room.memberships.unread.or(room.memberships.connected).pluck(:user_id)`
+    // (message/broadcasts.rb `broadcast_unread_room`), in the order the query returns them.
+    public static List<long> UnreadOrConnectedUserIds(SqliteSession session, long roomId, DateTimeOffset now) =>
+        session.Query(
+            "SELECT \"memberships\".\"user_id\" FROM \"memberships\" WHERE \"memberships\".\"room_id\" = @room_id AND (\"memberships\".\"unread_at\" IS NOT NULL OR \"memberships\".\"connected_at\" >= @cutoff)",
+            reader => reader.GetInt64(0), ("@room_id", roomId), ("@cutoff", Db.Time(Membership.ConnectionCutoff(now))));
 
     // `memberships.grant_to(users)`: `Membership.insert_all` with the room's default involvement,
     // skipping users who are already members. SQLite stamps the timestamps.
@@ -104,20 +132,15 @@ public static class Memberships
         }
     }
 
-    // `Membership.insert_all(room_ids.collect { { room_id:, user_id: } })`, from
-    // `grant_membership_to_open_rooms` (user.rb): the involvement is the column's default.
-    public static void GrantRoomsTo(SqliteSession session, long userId, IReadOnlyList<long> roomIds)
-    {
-        ArgumentNullException.ThrowIfNull(roomIds);
-        foreach (var batch in roomIds.Chunk(insertBatchSize))
-        {
-            var rows = batch.Select((_, i) => $"(@room_id{i}, @user_id, {Db.SqliteNow}, {Db.SqliteNow})");
-            var parameters = batch.Select((roomId, i) => ($"@room_id{i}", (object?)roomId))
-                .Append(("@user_id", userId))
-                .ToArray();
-            InsertAll(session, $"INSERT INTO \"memberships\" (\"room_id\",\"user_id\",\"created_at\",\"updated_at\") VALUES {string.Join(", ", rows)} ON CONFLICT  DO NOTHING RETURNING \"id\"", parameters);
-        }
-    }
+    // `grant_membership_to_open_rooms` (user.rb): one statement, which SQLite runs under the write
+    // lock, so no room is closed between reading the open ones and inserting. The involvement is
+    // the column's default, and the timestamps are `Time.current`, bound as Rails quotes it.
+    public static void GrantOpenRoomsTo(SqliteSession session, long userId, DateTimeOffset now) =>
+        session.Execute("""
+            insert into memberships (room_id, user_id, created_at, updated_at)
+            select id, @user_id, @now, @now from rooms where type = 'Rooms::Open'
+            on conflict do nothing
+            """, ("@user_id", userId), ("@now", Db.Time(now)));
 
     // The memberships `memberships.revoke_from(users)` destroys (`destroy_by user: users`), in
     // the order it loads them. Each one's `after_destroy_commit` resets the user's connections.

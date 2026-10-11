@@ -25,7 +25,36 @@ public sealed partial class WriteControllerTests : IDisposable
 
     // Cases whose rendered message differs from the reference for a reason outside this task: the
     // body, its ETag and the broadcast payloads aren't compared; everything else is.
-    static readonly Dictionary<string, string> KnownDifferences = [];
+    const string Markup = "U05: the message markup at edbc779 (data-client-message-id, the message template)";
+
+    static readonly Dictionary<string, string> KnownDifferences = new()
+    {
+        ["member creates in an open room"] = Markup,
+        ["member creates in a direct room with a bot"] = Markup,
+        ["administrator mentions bots"] = Markup,
+        ["member plays a sound"] = Markup,
+        ["member sends emoji"] = Markup,
+        ["member sends a blank body"] = Markup,
+        ["member sends no body"] = Markup,
+        ["create without a client message id"] = Markup,
+        ["create, XHR without Accept"] = Markup,
+        ["create, HTML"] = Markup,
+        ["create, JSON"] = Markup,
+        ["create, multipart form"] = Markup,
+        ["create with unpermitted params"] = Markup,
+        ["create without a CSRF token"] = Markup,
+        ["show"] = Markup,
+        ["show in a frame"] = Markup,
+        ["show an attachment"] = Markup,
+        ["edit own message"] = Markup,
+        ["edit own message, full page"] = Markup,
+        ["edit a message with mentions"] = Markup,
+        ["edit a seed message with a mention"] = Markup,
+        ["edit a seed message with an embed"] = Markup,
+        ["edit an attachment"] = Markup,
+        ["edit a blank message"] = Markup,
+        ["administrator edits a member's message"] = Markup,
+    };
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -35,7 +64,7 @@ public sealed partial class WriteControllerTests : IDisposable
 
     static IEnumerable<JsonNode> Cases() => Vectors["cases"]!.AsArray().Select(sample => sample!);
 
-    [Fact(Skip = "U04: vectors recorded at reference 345e637; at edbc779 posting renders deliveries once, messages use message-id DOM ids, and the layout changes")]
+    [Fact]
     public async Task Each_write_answers_and_changes_what_the_reference_did()
     {
         var failures = new List<string>();
@@ -136,8 +165,11 @@ public sealed partial class WriteControllerTests : IDisposable
     // when the request rendered the message itself: Rails serves the `cache [message, ...]`
     // fragment a broadcast rendered (without a session, so without tokens) when there is one, and
     // fragment caching isn't modeled (M02's known gap), so those tokens are left out on both sides.
+    //
+    // At edbc779 a message's DOM ids are keyed by its id (Message#to_key removed, 7df98ac), which
+    // U05 ports with the rest of the message markup; until then both spellings read the same.
     static string Normalize(string text) =>
-        Uuid().Replace(CsrfMeta().Replace(AuthenticityToken().Replace(BoostFormToken().Replace(text, "$1"), "$1<token>\""), "$1<token>\""), placeholder);
+        MessageDomId().Replace(Uuid().Replace(CsrfMeta().Replace(AuthenticityToken().Replace(BoostFormToken().Replace(text, "$1"), "$1<token>\""), "$1<token>\""), placeholder), "$1<message>");
 
     static bool SameHeader(string name, string? want, string? have)
     {
@@ -146,6 +178,10 @@ public sealed partial class WriteControllerTests : IDisposable
         if (name == "content-type" && want is not null && want.EndsWith("charset=UTF-8", StringComparison.Ordinal))
         {
             return string.Equals(want, have, StringComparison.OrdinalIgnoreCase);
+        }
+        if (name == "vary" && want is not null && have is not null)
+        {
+            return want.Split(',').Select(part => part.Trim()).SequenceEqual(have.Split(',').Select(part => part.Trim()));
         }
         return want == have;
     }
@@ -313,6 +349,9 @@ public sealed partial class WriteControllerTests : IDisposable
 
     [GeneratedRegex("[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")]
     private static partial Regex Uuid();
+
+    [GeneratedRegex("((?:presentation_|edit_|boosts_|boosting_)?message_)(?:[0-9]+|<uuid>|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|m05-[a-z0-9-]+)")]
+    private static partial Regex MessageDomId();
 
     [GeneratedRegex("/([0-9]+)$")]
     private static partial Regex GidId();

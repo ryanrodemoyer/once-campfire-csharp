@@ -2,7 +2,6 @@ using Campfire.Data.Events;
 using Campfire.Data.MessageAttachments;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
-using Campfire.RailsCompat.Crypto;
 using Campfire.Storage.Blobs;
 using Campfire.Storage.Media;
 using Campfire.Storage.Variants;
@@ -28,23 +27,19 @@ static class MessageAttachmentProcessing
 {
     public static async Task ProcessAsync(
         SqliteDatabase database,
-        KeyGenerator keys,
         BlobStorage storage,
         DomainSeams seams,
         TimeProvider clock,
-        string? host,
         DateTimeOffset now,
         Message message,
         CancellationToken cancellationToken) =>
-        await ProcessAsync(database, keys, storage, seams, clock, host, now, message, NamedVariants.ThumbnailMaxPixels, cancellationToken).ConfigureAwait(false);
+        await ProcessAsync(database, storage, seams, clock, now, message, NamedVariants.ThumbnailMaxPixels, cancellationToken).ConfigureAwait(false);
 
     public static async Task ProcessAsync(
         SqliteDatabase database,
-        KeyGenerator keys,
         BlobStorage storage,
         DomainSeams seams,
         TimeProvider clock,
-        string? host,
         DateTimeOffset now,
         Message message,
         long maxPixels,
@@ -59,7 +54,7 @@ static class MessageAttachmentProcessing
             session => BlobRecords.FindAttachedBlob(session, Message.ModelName, message.Id, AttachmentNames.Attachment), cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"Message {message.Id}'s attachment is gone");
         // `ensure_attachment_analyzed`: `attachment&.analyze`.
-        await MessagesWriteController.AnalyzeAsync(database, keys, storage, host, blob, now).ConfigureAwait(false);
+        await MessagesWriteController.AnalyzeAsync(database, storage, blob, now).ConfigureAwait(false);
 
         blob = await database.ReadAsync(session => BlobRecords.FindBlob(session, blob.Id), cancellationToken).ConfigureAwait(false) ?? blob;
 

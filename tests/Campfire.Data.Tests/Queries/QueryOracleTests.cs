@@ -104,8 +104,7 @@ public class QueryOracleTests
         ["Attachments.ForBlob"] = (s, a, _) => Ids(Attachments.ForBlob(s, Long(a[0]))),
         ["VariantRecords.ForBlobs"] = (s, a, _) => Ids(VariantRecords.ForBlobs(s, LongList(a[0]))),
 
-        ["PushSubscriptions.ForRoomPush"] = (s, a, now) => Ids(PushSubscriptions.ForRoomPush(
-            s, Long(a[0]), Long(a[1]), Involvements.FromName(Text(a[2]))!.Value, now, a[3] is null ? null : LongList(a[3]))),
+        ["PushSubscriptions.ForRoomPush"] = (s, a, now) => Ids(PushSubscriptions.ForRoomPush(s, Long(a[0]), Long(a[1]), now, LongList(a[2]))),
         ["PushSubscriptions.ForUser"] = (s, a, _) => Ids(PushSubscriptions.ForUser(s, Long(a[0]))),
 
         ["Sessions.FindByToken"] = (s, a, _) => Id(Sessions.FindByToken(s, Text(a[0])!)),

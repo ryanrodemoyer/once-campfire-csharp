@@ -127,7 +127,7 @@ public sealed partial class MessagesByBotsController : ApplicationController
         var created = CurrentMessage;
         var html = await ReadAsync(session => RenderBroadcast(session, (view, w, messageView) => view.MessagesCreate(w, messageView, RoomRecord(current)))).ConfigureAwait(false);
         seams.Broadcaster.Broadcast(MessagesStream(current), TurboStreamPayload(html));
-        await BroadcastUnreadRoomAsync(seams.Broadcaster).ConfigureAwait(false);
+        seams.Jobs.Enqueue(new BroadcastUnreadRoomJob(created.Id));
         await ReadAsync(session =>
         {
             var body = RichTexts.For(session, Message.ModelName, created.Id, "body")?.Body;
@@ -349,20 +349,6 @@ public sealed partial class MessagesByBotsController : ApplicationController
 
     static string? AttachmentFilename(SqliteSession session, long messageId) =>
         BlobRecords.FindAttachedBlob(session, Message.ModelName, messageId, "attachment")?.Filename.ToString();
-
-    // message/broadcasts.rb `broadcast_unread_room`: `{"roomId":…}` to each member, unencoded.
-    async ValueTask BroadcastUnreadRoomAsync(IBroadcaster broadcaster)
-    {
-        var roomId = CurrentRoom.Id;
-        var userIds = await ReadAsync(session => session.Query(
-            """SELECT "memberships"."user_id" FROM "memberships" WHERE "memberships"."room_id" = @room_id""",
-            reader => reader.GetInt64(0), ("@room_id", roomId))).ConfigureAwait(false);
-        var payload = RailsJson.Encode(new JsonObject { ["roomId"] = roomId });
-        foreach (var userId in userIds)
-        {
-            broadcaster.Broadcast($"user_{userId}_unreads", payload);
-        }
-    }
 
     static RecordKey RoomRecord(Room room) => new(room.Type.ClassName(), room.Id);
 
