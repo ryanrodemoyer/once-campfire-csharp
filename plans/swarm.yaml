@@ -40,7 +40,8 @@ agents:
     effort: medium
     slots: 2
     # Near its quota: finishes U01 only. U03, U07 and B08 moved to gemini.
-    queue: [U01]
+    # U03: finished by hand after Gemini's quota ran out; queued here so the swarm runs its review.
+    queue: [U01, U03]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
