@@ -41,7 +41,8 @@ agents:
     slots: 2
     # Near its quota: finishes U01 only. U03, U07 and B08 moved to gemini.
     # U03: finished by hand after Gemini's quota ran out; queued here so the swarm runs its review.
-    queue: [U01, U03]
+    # U04 moved here from gemini (out of quota).
+    queue: [U01, U03, U04]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
@@ -53,7 +54,7 @@ agents:
     # Q10 finishes fixes that agents requested on issues after those issues closed.
     # Batch 2: the upstream ports and gates, the verification harness and AOT; and, from claude,
     # forgery protection (U03), the page cache (U07) and perf round 2 (B08).
-    # Paused: Gemini's weekly quota is nearly gone. Next, one at a time: U04, U05, U07, Q11, B07;
+    # Paused: Gemini's weekly quota is nearly gone. Next, one at a time: U05, U07, Q11, B07;
     # then Q12, B09, B08 and X01.
     queue: []
 
