@@ -201,6 +201,106 @@ public sealed class MessagePusherTests : IAsyncDisposable
         Assert.True((long)message["options"]!["data"]!["badge"]! >= 1);
     }
 
+    // Banning keeps the user's subscriptions, but a banned user is sent nothing (d9c3207).
+    [Fact]
+    public async Task Does_not_notify_banned_users()
+    {
+        Ban(kevin);
+
+        await CreateMessage(designers, $"Hey {mentions.Attachment}", 2);
+        await pool.ShutdownAsync();
+
+        Assert.DoesNotContain("/fcm/send/789", Endpoints());
+    }
+
+    [Fact]
+    public async Task Notifies_users_again_once_theyre_unbanned()
+    {
+        Ban(kevin);
+        fixtures.Execute("UPDATE users SET status = 0 WHERE id = @id", ("@id", kevin));
+
+        await CreateMessage(designers, $"Hey {mentions.Attachment}", 3);
+
+        Assert.Contains("/fcm/send/789", Endpoints());
+    }
+
+    [Fact]
+    public async Task Does_not_notify_banned_users_of_direct_messages()
+    {
+        Ban(kevin);
+
+        await CreateMessage(DirectOfDavidAndKevin(), "Just between us", 0);
+        await pool.ShutdownAsync();
+
+        Assert.Empty(service.Requests);
+    }
+
+    [Fact]
+    public async Task Notifies_active_users_mentioned()
+    {
+        await CreateMessage(designers, $"Hey {mentions.Attachment}", 3);
+
+        Assert.Contains("/fcm/send/789", Endpoints());
+    }
+
+    // `push` builds no payload when nobody is to be notified (bbee420).
+    [Fact]
+    public void Pushes_nothing_and_builds_no_payload_without_subscriptions()
+    {
+        fixtures.Execute("DELETE FROM push_subscriptions");
+        var room = fixtures.Read(session => Rooms.Find(session, designers))!;
+        var message = fixtures.Write(tx => Messages.Create(tx.Session, designers, david, "unheard", DateTimeOffset.UtcNow));
+
+        Assert.Null(fixtures.Read(session => pusher.Push(session, room, message)));
+    }
+
+    // reference/test/lib/web_push/pool_test.rb: the badges are counted once per batch of
+    // subscriptions (819b389), each its subscriber's unread rooms.
+    [Fact]
+    public async Task Every_notification_carries_its_subscribers_unread_room_count_as_the_badge()
+    {
+        var (jason, pets, hq) = (fixtures.Id("users", "Jason"), fixtures.Id("rooms", "All Pets"), fixtures.Id("rooms", "HQ"));
+        MarkUnread(jason, pets);
+        MarkUnread(kevin, hq);
+        MarkUnread(kevin, DirectOfDavidAndKevin());
+        var subscriptions = fixtures.Read(session => new[] { david, jason, kevin }.SelectMany(user => PushSubscriptions.ForUser(session, user)).OrderBy(subscription => subscription.Id).ToList());
+        var expected = fixtures.Read(session => subscriptions.ToDictionary(subscription => new Uri(subscription.Endpoint!).AbsolutePath, subscription => Memberships.CountUnreadForUser(session, subscription.UserId)));
+        Assert.Equal([0L, 1L, 2L], expected.Values.Distinct().Order());
+
+        fixtures.Read(session =>
+        {
+            pool.Queue(session, new PushPayload("Designers", "Hello", $"/rooms/{designers}"), subscriptions);
+            return true;
+        });
+        await WaitFor(() => pool.CompletedDeliveries >= subscriptions.Count, logged);
+
+        var badges = service.Requests.ToDictionary(request => request.Uri.AbsolutePath, request => (long)Decrypt(request)["options"]!["data"]!["badge"]!);
+        Assert.Equal(expected.OrderBy(pair => pair.Key), badges.OrderBy(pair => pair.Key));
+    }
+
+    // reference/test/models/push/subscription_test.rb
+    [Fact]
+    public void The_badge_defaults_to_the_subscribers_unread_room_count()
+    {
+        MarkUnread(david, fixtures.Id("rooms", "All Pets"));
+        MarkUnread(david, fixtures.Id("rooms", "HQ"));
+        var subscription = fixtures.Read(session => PushSubscriptions.ForUser(session, david)[0]);
+
+        var notification = fixtures.Read(session => WebPushNotification.For(session, subscription, new PushPayload("t", "b", "/")));
+
+        Assert.Equal(fixtures.Read(session => Memberships.CountUnreadForUser(session, david)), notification.Badge);
+        Assert.True(notification.Badge >= 2);
+    }
+
+    void Ban(long user) => fixtures.Execute("UPDATE users SET status = 2 WHERE id = @id", ("@id", user));
+
+    void MarkUnread(long user, long room) =>
+        fixtures.Execute("UPDATE memberships SET unread_at = @now WHERE user_id = @user AND room_id = @room", ("@now", "2026-03-02 16:00:00"), ("@user", user), ("@room", room));
+
+    long DirectOfDavidAndKevin() => fixtures.Read(session => session.Query(
+        "SELECT room_id FROM memberships WHERE user_id = @kevin AND room_id IN (SELECT room_id FROM memberships WHERE user_id = @david) AND room_id IN (SELECT id FROM rooms WHERE type = 'Rooms::Direct')",
+        reader => reader.GetInt64(0), ("@kevin", kevin), ("@david", david)).Single());
+
     [Fact]
     public void Builds_the_payload_as_build_payload_does()
     {
