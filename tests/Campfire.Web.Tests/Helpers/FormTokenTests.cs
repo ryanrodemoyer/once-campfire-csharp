@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Campfire.RailsCompat.Csrf;
 using Campfire.Web.Helpers;
 using Campfire.Web.Routing;
@@ -6,33 +5,29 @@ using Campfire.Web.Tests.Assets;
 
 namespace Campfire.Web.Tests.Helpers;
 
-// Forms carry tokens C03's verifier accepts for exactly the action and method they submit.
-public sealed partial class FormTokenTests
+// Header-only forgery protection needs no secret in forms: the reference overrides token_tag to
+// return "" (reference/app/helpers/application_helper.rb), so forms carry no token even when a
+// session token is available.
+public sealed class FormTokenTests
 {
     static readonly string SessionToken = AuthenticityToken.GenerateSessionToken();
 
     [Fact]
-    public void A_button_to_token_is_valid_only_for_its_action_and_method()
+    public void A_button_to_carries_no_token()
     {
-        var view = NewView();
-        var token = Token(view.ButtonTo("Delete", "/rooms/1", new() { { "method", "delete" } }).Value);
+        var html = NewView().ButtonTo("Delete", "/rooms/1", new() { { "method", "delete" } }).Value;
 
-        Assert.True(AuthenticityToken.IsValid(SessionToken, token, "/rooms/1", "DELETE"));
-        Assert.False(AuthenticityToken.IsValid(SessionToken, token, "/rooms/2", "DELETE"));
-        Assert.False(AuthenticityToken.IsValid(SessionToken, token, "/rooms/1", "POST"));
+        Assert.DoesNotContain("authenticity_token", html, StringComparison.Ordinal);
+        Assert.Contains("name=\"_method\" value=\"delete\"", html, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void A_form_with_token_is_valid_for_its_action_and_the_meta_token_everywhere()
+    public void A_form_with_carries_no_token()
     {
         var view = NewView();
         var form = HelperGoldenTests.Render(w => w.Append(view.FormWith(null, "/rooms/7/messages", null, _ => { })));
-        var formToken = Token(form);
-        var metaToken = MetaToken().Match(view.CsrfMetaTags().Value).Groups[1].Value;
 
-        Assert.True(AuthenticityToken.IsValid(SessionToken, formToken, "/rooms/7/messages", "POST"));
-        Assert.False(AuthenticityToken.IsValid(SessionToken, formToken, "/session", "POST"));
-        Assert.True(AuthenticityToken.IsValid(SessionToken, metaToken, "/session", "DELETE"));
+        Assert.DoesNotContain("authenticity_token", form, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -51,12 +46,4 @@ public sealed partial class FormTokenTests
         RequestPath = "/rooms/7",
         FormAuthenticityToken = CsrfTokens.For(SessionToken, "/rooms/7"),
     };
-
-    static string Token(string html) => FieldToken().Match(html).Groups[1].Value;
-
-    [GeneratedRegex("name=\"authenticity_token\" value=\"([^\"]+)\"")]
-    private static partial Regex FieldToken();
-
-    [GeneratedRegex("name=\"csrf-token\" content=\"([^\"]+)\"")]
-    private static partial Regex MetaToken();
 }

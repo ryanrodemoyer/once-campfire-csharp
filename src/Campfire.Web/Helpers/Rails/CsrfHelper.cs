@@ -29,15 +29,11 @@ public partial class View
     /// <c>token_tag(token, form_options: { action:, method: })</c>: empty string under header-only
     /// forgery protection (<c>reference/app/helpers/application_helper.rb</c>).
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter")]
-    public SafeString TokenTag(object? token = null, string? action = null, string? method = null)
-    {
-        _ = token;
-        _ = action;
-        _ = method;
-        return SafeString.Empty;
-    }
+    // Keeps the instance signature its callers use; the arguments no longer matter.
+#pragma warning disable CA1822, IDE0060
+    public SafeString TokenTag(object? token = null, string? action = null, string? method = null) =>
+        SafeString.Empty;
+#pragma warning restore CA1822, IDE0060
 
     /// <summary><c>method_tag(method)</c>: the hidden <c>_method</c> field.</summary>
     public static SafeString MethodTag(string method) =>

@@ -26,7 +26,10 @@ public sealed class UsersAvatarsController : ApplicationController
     /// </summary>
     public const string ShowTemplateDigest = "d500db55e2a67222018ef0156839c3c9";
 
-    static readonly ControllerCallbacks<UsersAvatarsController> Chain = Callbacks.For<UsersAvatarsController>();
+    // `rescue_from(ActiveSupport::MessageVerifier::InvalidSignature) { head :not_found }`: rescued,
+    // so the after callbacks (the Sec-Fetch-Site Vary) don't run.
+    static readonly ControllerCallbacks<UsersAvatarsController> Chain = Callbacks.For<UsersAvatarsController>()
+        .RescueFrom<InvalidSignatureException>((c, _) => c.Head(404));
 
     public static readonly RequestDelegate Show = Action(Chain, c => c.ShowAsync());
 
@@ -45,12 +48,7 @@ public sealed class UsersAvatarsController : ApplicationController
     // stock bot icon, or the initials.
     async ValueTask ShowAsync()
     {
-        if (await FromAvatarTokenAsync().ConfigureAwait(false) is not { } user)
-        {
-            // `rescue_from(ActiveSupport::MessageVerifier::InvalidSignature) { head :not_found }`
-            Head(404);
-            return;
-        }
+        var user = await FromAvatarTokenAsync().ConfigureAwait(false) ?? throw new InvalidSignatureException();
         if (!IsStale(new Freshness { Etag = CacheKeys.Record("users", user.Id, user.UpdatedAt), Template = TemplateForEtag() }))
         {
             return;
@@ -155,3 +153,6 @@ public sealed class UsersAvatarsController : ApplicationController
         }
     }
 }
+
+/// <summary><c>ActiveSupport::MessageVerifier::InvalidSignature</c> from <c>find_signed!</c>.</summary>
+sealed class InvalidSignatureException : Exception;
