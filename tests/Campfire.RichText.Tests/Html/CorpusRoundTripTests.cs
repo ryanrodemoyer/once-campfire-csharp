@@ -4,17 +4,17 @@ using Campfire.Vectors;
 namespace Campfire.RichText.Tests.Html;
 
 // The rich text corpus (vectors/richtext/expected.json) records, for every stored body, the value
-// the Lexxy editor receives. That value is two Nokogiri round trips of the body:
+// the Lexxy editor receives. On Rails main that value is Nokogiri round trips of the body:
 //
 //   RichTextHelper#editable_body: Fragment.wrap(body) (parse strip(body)), set content-type and
-//     content on each <action-text-attachment>, to_html
-//   Lexxy's render_custom_attachments_in: parse strip(that), set content on attachments without
-//     a url, to_html
+//     content on each <action-text-attachment>, to_html, loaded as a stored body (canonicalized,
+//     so every attachment is emptied)
+//   Content#to_editor_html: each attachment replaced by a node rebuilt from its full attributes,
+//     to_html
 //
-// Rendering an attachment's content is R03's job, so the two attributes are copied from the
-// reference's own output onto the matching attachment (in document order). Everything else, the
-// parse of the body, the tree, attribute order and every byte of the serialization, has to come
-// out as Nokogiri's.
+// Rendering an attachment and building its attributes is R03's job, so each attachment takes the
+// attributes of the reference's own (in document order) and is emptied. Everything else, the parse
+// of the body, the tree and every byte of the serialization, has to come out as Nokogiri's.
 public sealed class CorpusRoundTripTests
 {
     const string attachmentTag = "action-text-attachment";
@@ -70,17 +70,23 @@ public sealed class CorpusRoundTripTests
 
     static void CopyAttachmentAttributes(HtmlFragment reference, HtmlFragment fragment)
     {
+        // Canonicalizing empties every attachment first, which takes nested ones with it
+        foreach (var attachment in Attachments(fragment))
+        {
+            attachment.RemoveAllChildren();
+        }
         var expected = Attachments(reference);
         var actual = Attachments(fragment);
         Assert.True(expected.Count == actual.Count, $"{actual.Count} attachments, the reference has {expected.Count}");
         for (var i = 0; i < actual.Count; i++)
         {
-            foreach (var name in (string[])["content-type", "content"])
+            foreach (var name in actual[i].Attributes.Select(attribute => attribute.Name).ToList())
             {
-                if (expected[i].GetAttribute(name) is { } value)
-                {
-                    actual[i].SetAttribute(name, value);
-                }
+                actual[i].RemoveAttribute(name);
+            }
+            foreach (var attribute in expected[i].Attributes)
+            {
+                actual[i].SetAttribute(attribute.Name, attribute.Value);
             }
         }
     }

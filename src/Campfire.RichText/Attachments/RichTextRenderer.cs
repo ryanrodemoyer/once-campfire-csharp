@@ -69,6 +69,33 @@ public static class RichTextRenderer
         return source;
     }
 
+    /// <summary>
+    /// <c>Content#to_editor_html</c> for an editor whose <c>as_editable</c> keeps the fragment, as
+    /// Lexxy's adapter does: <c>render_attachments(&amp;:to_editor_attachment)</c>, so each
+    /// attachment's content attribute is sanitized and its node rebuilt with its full attributes,
+    /// and an attachable with an editor partial gets its content rendered from it again
+    /// (<c>Attachments::Conversion#to_editor_attachment!</c>). Only a mention has one
+    /// (<c>User::Mentionable#to_editor_content_attachment_partial_path</c>, the same partial):
+    /// Active Storage blobs answer nil, and the other attachables aren't <c>ActionText::Attachable</c>.
+    /// </summary>
+    public static string ToEditorHtml(HtmlFragment content, RenderContext context)
+    {
+        var source = (HtmlFragment)content.Clone();
+        foreach (var node in AttachmentResolution.AttachmentNodes(source))
+        {
+            SanitizeContentAttribute(node);
+            var attachment = AttachmentResolution.AttachmentFromNode(node, context);
+            var full = NodeWithFullAttributes(node, attachment.Attachable);
+            if (attachment.Attachable is Mention)
+            {
+                // ActionText::Content.render(partial:, object:, as:), which doesn't chomp
+                full.SetAttribute("content", RenderAttachment(attachment, context) + "\n");
+            }
+            ReplaceWithHtml(node, full.ToHtml());
+        }
+        return source.ToHtml();
+    }
+
     /// <summary><c>Content#render_attachment_galleries</c> with the gallery layout.</summary>
     static HtmlFragment RenderAttachmentGalleries(HtmlFragment content, RenderContext context)
     {

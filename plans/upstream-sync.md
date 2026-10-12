@@ -114,7 +114,24 @@ change responses without any app code changing. **None of U02–U08 covers these
 |---|---|
 | `X-XSS-Protection: 0` is gone from the default headers (the C# app still sends it) | U03 (it owns the security-header and forgery defaults) |
 | Action Text's editor tag no longer renders `input="message_body_trix_input_message"` on the composer's `lexxy-editor` | U05 (room page markup) |
+| Lexxy 0.9.24 registers Rails main's editor adapter instead of patching Action Text, so the edit form's `lexxy-editor` has no `input` and takes `id`, `value`, `name` in that order, and its value is `editable_body`'s `to_editor_html`: attachment content sanitized, each node rebuilt with its full attributes, a mention rendered again from `to_editor_content_attachment_partial_path`, all as markup rather than JSON; a blank body gives `value=""` | done in U05 |
+| `ActionText::PlainTextConversion` makes `h2`–`h6` blocks, as `h1` and `p` were (`plain_text_conversion.rb`) | Q11 |
+| `MissingAttachable#attachable_plain_text_representation` is `☒`, where it was the caption (`attachables/missing_attachable.rb`) | Q11 |
+| `RemoteImage.from_node` wants a URL matching `URI_REGEXP`, so a rooted path or a `javascript:` URL is a missing attachable, presented and indexed as `☒` (`attachables/remote_image.rb`) | Q11 |
+| Canonicalizing a body converts `figure[data-trix-attachment]` only under the Trix editor's `as_canonical`; Lexxy's adapter keeps the figure, so posting, pushing, presenting and editing one differ. It also unwraps raw Markdown tags (`MarkdownConversion.fragment_by_unwrapping_raw_markdown_tags`) | Q11 |
 | Propshaft 1.3.2's manifest `app` flag; ActionDispatch::Static's `charset=utf-8` on HTML and CSS | done in U01 (the frontend rebuild needed them) |
+
+The Action Text rows come from U05 regenerating the rich text corpus at edbc779
+(`OUT=tmp/vectors reference-tools/regenerate richtext`, with the generator reading the editor value
+as `rich_textarea_tag` does). Of its 658 bodies, at edbc779: `editable` differs in 558 (the adapter,
+done in U05); `plain_text` in 123 (42 headings, 73 missing attachables, 2 remote images, 6 Trix
+figures); `presentation` in 8 (6 Trix figures, 2 remote images); `filtered`, `mentioned` and
+`presentation_raised` only in Trix figures. `vectors/richtext/expected.json` comes byte for byte from
+reference-rust, at the Rust port's older pin, so it can't take the new outputs: U05 keeps the editor
+values at edbc779 in `tests/Campfire.RichText.Tests/Editing/Vectors/editable.json` (`generate.sh`
+beside it), which `RichTextVectors` reads, and Q11 needs the same for the other outputs. The six
+Trix-figure bodies' editor values are skipped citing Q11 (`RichTextVectors.KnownDifference`), and the
+recorded fuzz corpus's editor values (345e637) citing Q12, which re-records it.
 
 Checked against the old image (`campfire-reference:latest`, 345e637) and **not** caused by the
 bump, so not mapped here: the `Link: …; rel=preload` stylesheet header, Thruster's `X-Cache`
@@ -166,6 +183,15 @@ seed. Two harness problems block every gate before any comparison, and are noted
 | `GET /qr_code/!!`: Rails 400, candidate 500 | 2 | U05 |
 | `GET /rooms/{broken}`: Rails 500 (`undefined method 'attributes' for nil` in `ResponseCache#synchronize_render`), candidate 200 | 1 | U07 (port the response cache, including this Rails behavior, or record it as a known difference) |
 | `GET /account/logo` and the avatar after an upload: Rails 200, candidate 500 | 2 | not the bump: this run's candidate image predates P07 (media libraries, merged since) |
+
+U05's run (2026-10-12, same setup): 129 matched, 153 differed. The U05 rows above are gone (no body
+differs but the Turbo Frame layout), and so are the U03 rows (fixed in U03). Two differences the
+table doesn't name, both on file responses outside U05's pages:
+
+| Difference | Responses | Task |
+|---|---|---|
+| `GET /account/logo` and avatars: Rails sends `Vary: Accept-Encoding` only, the candidate adds `Sec-Fetch-Site`. `ActiveStorage::Streaming` includes `ActionController::Live`, so `send_file` commits the response before the `append_sec_fetch_site_to_vary_header` after-action runs | 5 | Q11 |
+| `GET /users/{bad token}/avatar` (404): `X-Rev` and `X-Version` missing on the candidate (`VersionHeaders` is a before-action, so Rails sets them before the `rescue_from`) | 2 | Q11 |
 
 ### Route coverage
 

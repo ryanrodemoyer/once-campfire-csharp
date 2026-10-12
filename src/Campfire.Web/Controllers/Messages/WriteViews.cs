@@ -32,34 +32,33 @@ public partial class View
     internal SafeString MessageAttachmentPresentation(MessageView message) => new AttachmentPresentation(this, message.Attachment!, message.IsThumbProcessed, message.IsPosterProcessed).Render();
 
     /// <summary>
-    /// <c>editable_body(@message)</c> as Lexxy's <c>lexxy_rich_textarea_tag</c> passes it on:
-    /// <c>render_custom_attachments_in</c> of it, or null when the body is blank.
+    /// <c>editable_body(@message)</c> as <c>rich_textarea_tag</c> passes it on: its
+    /// <c>to_editor_html</c>, empty when the body is blank.
     /// </summary>
-    internal string? EditorValue(MessageView message) =>
+    internal string EditorValue(MessageView message) =>
         EditableContent.EditorValue(message.Body, RichTextContext ?? throw new InvalidOperationException("View.RichTextContext isn't set"));
 
     /// <summary>
-    /// <c>form.rich_text_area method, options do ... end</c> as Lexxy 0.9 replaces it on Rails
-    /// without editor adapters (lexxy/action_text_tag.rb, lexxy/rich_text_area_tag.rb): a
-    /// <c>lexxy-editor</c> named and identified like any field, whose <c>input</c> is
-    /// <c>dom_id(object, "&lt;id&gt;_trix_input")</c>, with Active Storage's upload URLs.
+    /// <c>form.rich_text_area method, options do ... end</c> through Rails main's editor adapter,
+    /// which Lexxy 0.9.24 registers (lib/lexxy/engine.rb): <c>Tags::ActionText#render</c> names and
+    /// identifies the field, <c>rich_textarea_tag</c> (actiontext/app/helpers/action_text/tag_helper.rb)
+    /// then sets the <c>value</c>, the <c>name</c> and Active Storage's upload URLs, and
+    /// <c>Editor::Tag#render_in</c> (actiontext/lib/action_text/editor.rb) the default class. No
+    /// <c>input</c>: that was Lexxy's fallback for Rails without adapters.
     /// <paramref name="options"/> carries the <c>value</c>.
     /// </summary>
-    internal IHtml LexxyRichTextArea(FormBuilder form, string method, MessageView message, HtmlOptions options, Action body)
+    internal IHtml LexxyRichTextArea(FormBuilder form, string method, HtmlOptions options, Action body)
     {
         var attributes = options.Clone();
         var value = attributes.Delete("value");
-        var name = form.FieldName(method);
-        var id = form.FieldId(method);
-        attributes["id"] = id;
-        attributes["input"] = RecordIdentifier.DomId(message.Record, $"{id}_trix_input");
-        attributes["class"] ??= "lexxy-content";
+        attributes["id"] = form.FieldId(method);
+        attributes["value"] = value;
+        attributes["name"] = form.FieldName(method);
         var data = attributes["data"] as HtmlOptions ?? [];
         data["direct_upload_url"] ??= Routes.RailsDirectUploadsUrl(Origin);
         data["blob_url_template"] ??= Routes.RailsServiceBlobUrl(Origin, ":signed_id", ":filename");
         attributes["data"] = data;
-        attributes["name"] = name;
-        attributes["value"] = value;
+        attributes["class"] ??= "lexxy-content";
         return TagHelper.ContentTag("lexxy-editor", attributes, body);
     }
 }

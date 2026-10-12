@@ -128,7 +128,7 @@ def outputs(message, host)
       "presentation_raised" => raw["error"],
       "presentation_raised_message" => raw["message"],
       "plain_text" => outcome { message.body.to_plain_text },
-      "editable" => outcome { value = v.send(:render_custom_attachments_in, v.editable_body(message)); value&.to_s },
+      "editable" => outcome { value = v.editable_body(message); (value.try(:to_editor_html) || value)&.to_s },
       "mentioned" => outcome { message.send(:mentioned_users).map(&:id) },
       "filtered" => outcome { ContentFilters::TextMessagePresentationFilters.apply(message.body.body).to_html }
     }

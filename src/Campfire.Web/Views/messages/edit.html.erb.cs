@@ -16,7 +16,7 @@
           <%= FormWith(new FormModel(message.Record, isPersisted: true), Routes.RoomMessagePath(message.Room.Id, message.Id), new() { { "id", RecordIdentifier.DomId(message.Record, "form") }, { "data", new HtmlOptions {
                 { "controller", "form" }, { "action", "lexxy:file-accept->form#preventAttachment keydown.esc->form#cancel keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent" } } } }, form => { %>
             <div class="full-width input input--actor min-width fill-white">
-              <%= LexxyRichTextArea(form, "body", message, new() {
+              <%= LexxyRichTextArea(form, "body", new() {
                     { "value", EditorValue(message) },
                     { "rows", 1 },
                     { "class", "input lexxy-content" },

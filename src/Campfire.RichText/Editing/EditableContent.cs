@@ -1,5 +1,3 @@
-using System.Text.Json.Nodes;
-using Campfire.RailsCompat.Crypto;
 using Campfire.RichText.Attachments;
 using Campfire.RichText.Html;
 using Campfire.RichText.PlainText;
@@ -14,39 +12,19 @@ public static class EditableContent
 {
     /// <summary>
     /// The editor's <c>value</c>: <c>RichTextHelper#editable_body</c> (<c>reference/app/helpers/rich_text_helper.rb</c>)
-    /// through Lexxy's <c>render_custom_attachments_in</c> (lexxy 0.9.24, <c>lib/lexxy/rich_text_area_tag.rb</c>).
-    /// Null when the body is blank, so the editor gets no value. The caller escapes it into the attribute.
+    /// as <c>rich_textarea_tag</c> reads it, <c>to_editor_html</c> through the editor adapter
+    /// Lexxy 0.9.24 registers on Rails main (<see cref="RichTextRenderer.ToEditorHtml"/>). Empty
+    /// for a blank body, which the editor still gets as its value. The caller escapes it into
+    /// the attribute.
     /// </summary>
     /// <exception cref="RichTextRaisedException">
     /// Rails raises building it, as it does for any attachment that isn't a mention or an
     /// opengraph embed (<c>attachable_content_type</c> is undefined).
     /// </exception>
     /// <exception cref="HtmlParseException">The body exceeds Gumbo's limits.</exception>
-    public static string? EditorValue(string? storedBody, RenderContext context)
-    {
-        var editable = EditableBody(storedBody, context);
-        if (RubyText.IsBlank(editable))
-        {
-            return null;
-        }
-
-        // Every attachment without a URL gets its partial again, as a JSON string the editor decodes
-        var fragment = RichTextRenderer.Wrap(editable);
-        foreach (var node in RichTextPlainText.AttachmentNodes(fragment))
-        {
-            if (!RubyText.IsBlank(node.GetAttribute("url")))
-            {
-                continue;
-            }
-            var attachment = AttachmentResolution.AttachmentFromNode(node, context);
-            node.SetAttribute("content", RailsJson.Encode(JsonValue.Create(RichTextRenderer.RenderAttachment(attachment, context))));
-            if (node.GetAttribute("content-type") is null)
-            {
-                node.SetAttribute("content-type", ContentType(attachment.Attachable));
-            }
-        }
-        return fragment.ToHtml();
-    }
+    public static string EditorValue(string? storedBody, RenderContext context) =>
+        // `ActionText::RichText.new(body:)` loads the editable body as a stored one is loaded
+        RichTextRenderer.ToEditorHtml(RichTextRenderer.Load(EditableBody(storedBody, context)), context);
 
     /// <summary>
     /// <c>editable_body(message).body_before_type_cast</c>: the stored markup as is, with every
@@ -74,14 +52,4 @@ public static class EditableContent
     /// </summary>
     /// <exception cref="HtmlParseException">The body exceeds Gumbo's limits.</exception>
     public static string StoredBody(string postedBody) => RichTextRenderer.Load(postedBody).ToHtml();
-
-    /// <summary>
-    /// <c>attachment.content_type</c>, delegated to the attachable, for an attachment that reached
-    /// Lexxy without one. Only attachables that define <c>content_type</c> answer.
-    /// </summary>
-    static string ContentType(Attachable attachable) => attachable switch
-    {
-        RemoteVideo video => video.ContentType,
-        _ => throw new RichTextRaisedException($"NoMethodError: undefined method 'content_type' for {attachable.GetType().Name}"),
-    };
 }

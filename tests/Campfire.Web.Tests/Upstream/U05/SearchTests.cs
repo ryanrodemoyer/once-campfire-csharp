@@ -52,7 +52,7 @@ public sealed class SearchTests : IDisposable
     public void Match_terms_quote_each_word(string query, string terms) => Assert.Equal(terms, MessageSearch.MatchTerms(query));
 
     [Fact]
-    public async Task The_last_page_of_matches_holds_the_newest_ones()
+    public async Task The_last_page_of_matches_holds_the_newest_ones_read_off_the_index_without_sorting_every_match()
     {
         var messages = new List<long>();
         foreach (var body in new[] { "first cat", "second cat", "third cat" })
@@ -60,9 +60,16 @@ public sealed class SearchTests : IDisposable
             messages.Add(await PostAsync(app, Designers, body, body));
         }
 
-        var page = await app.Database.ReadAsync(session => MessageSearch.LastPageOfMatches(session, David, "cat", 2), Cancellation);
+        var (page, plan) = await app.Database.ReadAsync(session =>
+        {
+            var (page, statements) = Recording(session, () => MessageSearch.LastPageOfMatches(session, David, "cat", 2));
+            var search = Assert.Single(statements, sql => sql.Contains("message_search_index", StringComparison.Ordinal));
+            var plan = session.Query($"EXPLAIN QUERY PLAN {search}", reader => reader.GetString(3), ("@user_id", David), ("@query", MessageSearch.MatchTerms("cat")), ("@size", 2));
+            return (page, string.Join(" | ", plan));
+        }, Cancellation);
 
         Assert.Equal(messages[^2..], page.Select(m => m.Id));
+        Assert.DoesNotContain("TEMP B-TREE", plan, StringComparison.Ordinal);
     }
 
     [Fact]

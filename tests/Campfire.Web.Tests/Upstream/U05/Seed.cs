@@ -1,4 +1,6 @@
+using Campfire.Data.Sqlite;
 using Campfire.Web.Tests.Controllers.Messages;
+using SQLitePCL;
 
 namespace Campfire.Web.Tests.Upstream.U05;
 
@@ -35,5 +37,30 @@ static class Seed
         using var command = connection.CreateCommand();
         command.CommandText = sql;
         command.ExecuteNonQuery();
+    }
+
+    // `ActiveSupport::Notifications.subscribed(counter, "sql.active_record", &block)`: the
+    // statements SQLite finished on the session's connection while `work` ran. SQLite also reports
+    // the ones FTS5 runs on its shadow tables (`'main'.'message_search_index_idx'`,
+    // `PRAGMA 'main'.data_version`), which Active Record never sees, so those are left out.
+    public static (T Result, List<string> Statements) Recording<T>(SqliteSession session, Func<T> work)
+    {
+        var connection = session.Connection.Handle!;
+        var statements = new List<string>();
+        raw.sqlite3_profile(connection, (_, sql, _) =>
+        {
+            if (!sql.Contains("'main'.", StringComparison.Ordinal))
+            {
+                statements.Add(sql);
+            }
+        }, null);
+        try
+        {
+            return (work(), statements);
+        }
+        finally
+        {
+            raw.sqlite3_profile(connection, (strdelegate_profile)null!, null);
+        }
     }
 }

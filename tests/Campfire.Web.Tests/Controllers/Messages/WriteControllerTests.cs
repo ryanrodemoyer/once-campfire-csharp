@@ -25,36 +25,7 @@ public sealed partial class WriteControllerTests : IDisposable
 
     // Cases whose rendered message differs from the reference for a reason outside this task: the
     // body, its ETag and the broadcast payloads aren't compared; everything else is.
-    const string markup = "U05: the message markup at edbc779 (data-client-message-id, the message template)";
-
-    static readonly Dictionary<string, string> KnownDifferences = new()
-    {
-        ["member creates in an open room"] = markup,
-        ["member creates in a direct room with a bot"] = markup,
-        ["administrator mentions bots"] = markup,
-        ["member plays a sound"] = markup,
-        ["member sends emoji"] = markup,
-        ["member sends a blank body"] = markup,
-        ["member sends no body"] = markup,
-        ["create without a client message id"] = markup,
-        ["create, XHR without Accept"] = markup,
-        ["create, HTML"] = markup,
-        ["create, JSON"] = markup,
-        ["create, multipart form"] = markup,
-        ["create with unpermitted params"] = markup,
-        ["create without a CSRF token"] = markup,
-        ["show"] = markup,
-        ["show in a frame"] = markup,
-        ["show an attachment"] = markup,
-        ["edit own message"] = markup,
-        ["edit own message, full page"] = markup,
-        ["edit a message with mentions"] = markup,
-        ["edit a seed message with a mention"] = markup,
-        ["edit a seed message with an embed"] = markup,
-        ["edit an attachment"] = markup,
-        ["edit a blank message"] = markup,
-        ["administrator edits a member's message"] = markup,
-    };
+    static readonly Dictionary<string, string> KnownDifferences = [];
 
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
@@ -165,11 +136,8 @@ public sealed partial class WriteControllerTests : IDisposable
     // when the request rendered the message itself: Rails serves the `cache [message, ...]`
     // fragment a broadcast rendered (without a session, so without tokens) when there is one, and
     // fragment caching isn't modeled (M02's known gap), so those tokens are left out on both sides.
-    //
-    // At edbc779 a message's DOM ids are keyed by its id (Message#to_key removed, 7df98ac), which
-    // U05 ports with the rest of the message markup; until then both spellings read the same.
     static string Normalize(string text) =>
-        MessageDomId().Replace(Uuid().Replace(CsrfMeta().Replace(AuthenticityToken().Replace(BoostFormToken().Replace(text, "$1"), "$1<token>\""), "$1<token>\""), placeholder), "$1<message>");
+        Uuid().Replace(CsrfMeta().Replace(AuthenticityToken().Replace(BoostFormToken().Replace(text, "$1"), "$1<token>\""), "$1<token>\""), placeholder);
 
     static bool SameHeader(string name, string? want, string? have)
     {
@@ -349,9 +317,6 @@ public sealed partial class WriteControllerTests : IDisposable
 
     [GeneratedRegex("[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")]
     private static partial Regex Uuid();
-
-    [GeneratedRegex("((?:presentation_|edit_|boosts_|boosting_)?message_)(?:[0-9]+|<uuid>|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|m05-[a-z0-9-]+)")]
-    private static partial Regex MessageDomId();
 
     [GeneratedRegex("/([0-9]+)$")]
     private static partial Regex GidId();

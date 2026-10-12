@@ -46,11 +46,10 @@ public partial class View
     }
 
     /// <summary>
-    /// <c>form.rich_text_area :body, options do ... end</c> for <c>Message.new</c>, as Lexxy 0.9
-    /// renders it without editor adapters (lexxy/action_text_tag.rb, lexxy/rich_text_area_tag.rb):
-    /// a <c>lexxy-editor</c> named and identified like any field, whose <c>input</c> is
-    /// <c>dom_id(object, "&lt;id&gt;_trix_input")</c>, with Active Storage's upload URLs and no
-    /// value for an empty body.
+    /// <c>form.rich_text_area :body, options do ... end</c> for <c>Message.new</c>, through Rails
+    /// main's editor adapter, which Lexxy 0.9.24 registers (see <c>LexxyRichTextArea</c>): a
+    /// <c>lexxy-editor</c> named and identified like any field, with Active Storage's upload URLs,
+    /// no <c>input</c> and no value for an empty body.
     /// </summary>
     internal IHtml ComposerRichTextArea(FormBuilder form, string method, HtmlOptions options, Action body)
     {

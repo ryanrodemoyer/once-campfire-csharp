@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Campfire.Web.Helpers;
 using static Campfire.Web.Tests.Upstream.U05.Seed;
 
 namespace Campfire.Web.Tests.Upstream.U05;
@@ -34,11 +35,18 @@ public sealed partial class MessageMarkupTests : IDisposable
         Assert.Matches(SoftKeyboardBoostLink(), response.Body);
     }
 
+    // `count_queries { get message_boosts_url(@message) }`. The page's queries are the message's
+    // load for messages/_message, so that load is what's counted.
     [Fact]
-    public async Task Index_lists_every_boost()
+    public async Task Index_looks_up_the_boosters_of_all_boosts_at_once()
     {
+        Boost(boosted, Jason, "🎉", "2026-03-02 15:58:00");
+        var withTwoBoosts = await LoadStatementCountAsync();
+
         var boost = Boost(boosted, Kevin, "👀", "2026-03-02 15:59:00");
 
+        Assert.True(withTwoBoosts > 0);
+        Assert.Equal(withTwoBoosts, await LoadStatementCountAsync());
         Assert.Contains($"id=\"boost_{boost}\"", (await GetAsync($"/messages/{boosted}/boosts")).Body, StringComparison.Ordinal);
     }
 
@@ -119,6 +127,13 @@ public sealed partial class MessageMarkupTests : IDisposable
         var headers = app.SignedIn(DavidSession);
         headers["Host"] = host;
         headers["Origin"] = origin;
+        // The reference test runs without forgery protection. With it on, an HTTPS post needs the
+        // fetch metadata browsers send to secure origins (verified_via_header_only? in
+        // actionpack's request_forgery_protection.rb); over plain HTTP they send none.
+        if (scheme == "https")
+        {
+            headers["Sec-Fetch-Site"] = "same-origin";
+        }
         var form = "message%5Bbody%5D=Request+origin&message%5Bclient_message_id%5D=request-origin";
 
         var posted = await app.SendAsync("POST", $"/rooms/{Designers}/messages.turbo_stream", headers, form, scheme: scheme);
@@ -141,6 +156,13 @@ public sealed partial class MessageMarkupTests : IDisposable
     }
 
     long Count(string table) => (long)app.Scalar($"SELECT COUNT(*) FROM {table}")!;
+
+    Task<int> LoadStatementCountAsync() =>
+        app.Database.ReadAsync(session =>
+        {
+            var message = Campfire.Data.Queries.Messages.Find(session, boosted)!;
+            return Recording(session, () => new MessageViews(app.Keys, body => body).Load(session, [message])).Statements.Count;
+        }, Cancellation);
 
     // `css_select("##{dom_id(message, :boosts)} .boost").map { it["id"] }`
     static List<long> BoostIds(string body)

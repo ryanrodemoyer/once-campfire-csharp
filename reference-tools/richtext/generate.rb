@@ -4,7 +4,8 @@
 # For every stored body in inputs.yml it records what Rails produces for:
 #   presentation  MessagesHelper#message_presentation (rescued) and whether it raised
 #   plain_text    message.body.to_plain_text
-#   editable      the <lexxy-editor> value: editable_body + Lexxy's render_custom_attachments_in
+#   editable      the <lexxy-editor> value: what rich_textarea_tag reads off editable_body (to_editor_html
+#                 through the editor adapter Lexxy registers on Rails main)
 #   mentioned     Message::Mentionee#mentioned_users (ids)
 #   filtered      TextMessagePresentationFilters.apply(...).to_html, for debugging
 
@@ -205,7 +206,7 @@ cases = (handwritten + fuzz_cases + mutation_cases).each_with_index.map do |c, i
       "presentation_raised" => raw["error"],
       "presentation_raised_message" => raw["message"],
       "plain_text" => outcome { message.body.to_plain_text },
-      "editable" => outcome { value = v.send(:render_custom_attachments_in, v.editable_body(message)); value&.to_s },
+      "editable" => outcome { value = v.editable_body(message); (value.try(:to_editor_html) || value)&.to_s },
       "mentioned" => outcome { message.send(:mentioned_users).map(&:id) },
       "filtered" => outcome { ContentFilters::TextMessagePresentationFilters.apply(message.body.body).to_html }
     }

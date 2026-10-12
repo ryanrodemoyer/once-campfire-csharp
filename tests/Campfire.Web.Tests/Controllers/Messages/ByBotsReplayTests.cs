@@ -26,32 +26,6 @@ public sealed partial class ByBotsReplayTests : IDisposable
 
     static readonly string[] ComparedHeaders = ["content-type", "location", "vary", "cache-control", "x-frame-options", "etag", "x-total-count", "link"];
 
-    // Cases whose rendered message differs from the reference for a reason outside this task: the
-    // body, its ETag and the broadcast payloads aren't compared; everything else is.
-    const string markup = "U05: the message markup at edbc779 (the message's actions, data-client-message-id)";
-
-    static readonly Dictionary<string, string> KnownDifferences = new()
-    {
-        ["create"] = markup,
-        ["create with UTF-8"] = markup,
-        ["create as text/plain"] = markup,
-        ["create as JSON"] = markup,
-        ["create with HTML"] = markup,
-        ["create with what parses as a form"] = markup,
-        ["create in a direct room"] = markup,
-        ["create mentioning a bot with a webhook"] = markup,
-        ["create mentioning itself"] = markup,
-        ["update"] = markup,
-        ["update with UTF-8"] = markup,
-        ["update to the same body"] = markup,
-        ["boost"] = markup,
-        ["boost with text"] = markup,
-        ["index as HTML"] = markup,
-        ["text"] = markup,
-        ["HTML"] = markup,
-        ["in a direct room"] = markup,
-    };
-
     static readonly JsonSerializerOptions Unescaped = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
     readonly MessagesApp messages = new(DateTimeOffset.Parse(Vectors["now"]!.GetValue<string>(), System.Globalization.CultureInfo.InvariantCulture));
@@ -78,8 +52,8 @@ public sealed partial class ByBotsReplayTests : IDisposable
             NameNewMessages(sample["changes"]!.AsObject(), wantMessageIds);
             NameNewMessages(changes, haveMessageIds);
 
-            failures.AddRange(CompareResponse(sample["response"]!, actual, compareBody: !KnownDifferences.ContainsKey(name)).Select(failure => $"{name}: {failure}"));
-            failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events, comparePayloads: !KnownDifferences.ContainsKey(name)).Select(failure => $"{name}: {failure}"));
+            failures.AddRange(CompareResponse(sample["response"]!, actual).Select(failure => $"{name}: {failure}"));
+            failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events).Select(failure => $"{name}: {failure}"));
             failures.AddRange(CompareChanges(sample["changes"]!.AsObject(), changes).Select(failure => $"{name}: {failure}"));
         }
 
@@ -113,7 +87,7 @@ public sealed partial class ByBotsReplayTests : IDisposable
             NameNewMessages(sample["changes"]!.AsObject(), wantMessageIds);
             NameNewMessages(changes, haveMessageIds);
 
-            failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events, comparePayloads: !KnownDifferences.ContainsKey(name)).Select(failure => $"{name} reply: {failure}"));
+            failures.AddRange(CompareEvents(sample["events"]!.AsArray(), messages.Seams.Events).Select(failure => $"{name} reply: {failure}"));
             failures.AddRange(CompareChanges(sample["changes"]!.AsObject(), changes).Select(failure => $"{name} reply: {failure}"));
         }
         Assert.True(failures.Count == 0, string.Join('\n', failures));
@@ -145,7 +119,7 @@ public sealed partial class ByBotsReplayTests : IDisposable
         request["body"]?.GetValue<string>(),
         request["content_type"]?.GetValue<string>());
 
-    IEnumerable<string> CompareResponse(JsonNode expected, Response actual, bool compareBody)
+    IEnumerable<string> CompareResponse(JsonNode expected, Response actual)
     {
         var status = expected["status"]!.GetValue<int>();
         if (status != actual.Status)
@@ -158,7 +132,7 @@ public sealed partial class ByBotsReplayTests : IDisposable
         foreach (var name in ComparedHeaders)
         {
             // A page with CSRF tokens (random masks) has a different Rack::ETag digest each time.
-            if (name == "etag" && (wantBody != body || !compareBody))
+            if (name == "etag" && wantBody != body)
             {
                 continue;
             }
@@ -183,7 +157,7 @@ public sealed partial class ByBotsReplayTests : IDisposable
         {
             yield return $"cookies [{string.Join(", ", haveCookies)}], expected [{string.Join(", ", wantCookies)}]";
         }
-        if (compareBody && wantBody != haveBody)
+        if (wantBody != haveBody)
         {
             yield return $"body differs: {FirstDifference(wantBody, haveBody)}";
         }
@@ -193,10 +167,6 @@ public sealed partial class ByBotsReplayTests : IDisposable
 
     // CSRF tokens are masked with random bytes, so they read as placeholders, and so do the
     // client_message_ids of the messages the bots made.
-    //
-    // At edbc779 a message's DOM ids are keyed by its id (Message#to_key removed, 7df98ac) and the
-    // message carries data-client-message-id, which U05 ports with the rest of the message markup;
-    // until then both spellings read the same.
     static string Normalize(string text, Dictionary<string, string> messageIds)
     {
         text = AuthenticityToken().Replace(text, "$1<token>\"");
@@ -204,7 +174,7 @@ public sealed partial class ByBotsReplayTests : IDisposable
         {
             text = text.Replace(uuid, name, StringComparison.Ordinal);
         }
-        return MessageDomId().Replace(ClientMessageIdAttribute().Replace(text, ""), "$1<message>");
+        return text;
     }
 
     static void NameNewMessages(JsonObject changes, Dictionary<string, string> messageIds)
@@ -234,14 +204,14 @@ public sealed partial class ByBotsReplayTests : IDisposable
     }
 
     // Broadcasts and jobs, in order: `broadcast <stream> <payload>` and `job <class> <record ids>`.
-    IEnumerable<string> CompareEvents(JsonArray expected, IReadOnlyList<SeamEvent> actual, bool comparePayloads)
+    IEnumerable<string> CompareEvents(JsonArray expected, IReadOnlyList<SeamEvent> actual)
     {
         var want = expected.Select(node => node!["broadcast"] is { } stream
-            ? $"broadcast {stream.GetValue<string>()} {(comparePayloads ? Normalize(node["payload"]!.GetValue<string>(), wantMessageIds) : "")}"
+            ? $"broadcast {stream.GetValue<string>()} {Normalize(node["payload"]!.GetValue<string>(), wantMessageIds)}"
             : $"job {node["job"]!.GetValue<string>()} {string.Join(',', node["arguments"]!.AsArray().Select(argument => GidId().Match(argument!.GetValue<string>()).Groups[1].Value))}").ToList();
         var have = actual.Select(seamEvent => seamEvent switch
         {
-            Broadcast broadcast => $"broadcast {broadcast.Stream} {(comparePayloads ? Normalize(broadcast.Payload, haveMessageIds) : "")}",
+            Broadcast broadcast => $"broadcast {broadcast.Stream} {Normalize(broadcast.Payload, haveMessageIds)}",
             Enqueued enqueued => $"job {enqueued.Job.ClassName} {string.Join(',', enqueued.Job.ArgumentIds)}",
             _ => seamEvent.ToString(),
         }).ToList();
@@ -350,12 +320,6 @@ public sealed partial class ByBotsReplayTests : IDisposable
 
     [GeneratedRegex("^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")]
     private static partial Regex Uuid();
-
-    [GeneratedRegex("((?:presentation_|edit_|boosts_|boosting_)?message_)(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|<client_message_id of [0-9]+>|[0-9]+)")]
-    private static partial Regex MessageDomId();
-
-    [GeneratedRegex(@" data-client-message-id=\\?""[^""\\]*\\?""")]
-    private static partial Regex ClientMessageIdAttribute();
 
     [GeneratedRegex("/([0-9]+)$")]
     private static partial Regex GidId();

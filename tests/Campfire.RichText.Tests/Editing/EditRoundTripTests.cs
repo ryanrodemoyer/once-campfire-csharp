@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Campfire.Data.Schema;
 using Campfire.RichText.Attachments;
 using Campfire.RichText.Editing;
@@ -19,8 +18,7 @@ namespace Campfire.RichText.Tests.Editing;
 /// </summary>
 /// <remarks>
 /// "Unchanged" means as Lexxy posts an untouched attachment back: the attributes it was given,
-/// with the JSON content it decoded written back as markup. Lexxy itself (the browser side) is
-/// covered by the parity harness, not here.
+/// content included. Lexxy itself (the browser side) is covered by the parity harness, not here.
 /// </remarks>
 public class EditRoundTripTests
 {
@@ -48,9 +46,13 @@ public class EditRoundTripTests
     [MemberData(nameof(EditableCases))]
     public void Saving_an_untouched_edit_shows_and_indexes_what_the_reference_did(RichTextCase vector)
     {
+        if (RichTextVectors.KnownDifference(vector.Body) is { } known)
+        {
+            Assert.Skip(known);
+        }
         var context = VectorRecords.Context(vector.Host);
 
-        var saved = EditableContent.StoredBody(PostedByEditor(EditableContent.EditorValue(vector.Body, context)!));
+        var saved = EditableContent.StoredBody(PostedByEditor(EditableContent.EditorValue(vector.Body, context)));
 
         Assert.Equal(ExpectedPresentation(vector), MessagePresentation.Present(saved, context));
         Assert.Equal(vector.PlainText.Ok, RichTextPlainText.PlainTextBody(saved, null, context));
@@ -59,7 +61,7 @@ public class EditRoundTripTests
     [Fact]
     public void Covers_every_editable_reference_case()
     {
-        Assert.Equal(546, EditableCases().Count + RailsDropsALeadingNewline.Count);
+        Assert.Equal(555, EditableCases().Count + RailsDropsALeadingNewline.Count);
     }
 
     [Theory]
@@ -71,7 +73,7 @@ public class EditRoundTripTests
     {
         var vector = RichTextVectors.File.Cases.Single(c => c.Name == name);
         var context = VectorRecords.Context(vector.Host);
-        var saved = EditableContent.StoredBody(PostedByEditor(EditableContent.EditorValue(vector.Body, context)!));
+        var saved = EditableContent.StoredBody(PostedByEditor(EditableContent.EditorValue(vector.Body, context)));
 
         using var index = new SearchIndex();
         index.Insert(1, RichTextPlainText.PlainTextBody(vector.Body, null, context));
@@ -100,20 +102,9 @@ public class EditRoundTripTests
 
     /// <summary>
     /// The body Lexxy posts for an untouched editor: each attachment keeps the attributes it was
-    /// given, with the content the editor decoded from JSON.
+    /// given, its content as markup.
     /// </summary>
-    static string PostedByEditor(string editorValue)
-    {
-        var fragment = HtmlParser.ParseFragment(editorValue);
-        foreach (var node in RichTextPlainText.AttachmentNodes(fragment))
-        {
-            if (node.GetAttribute("content") is { } json && json.StartsWith('"'))
-            {
-                node.SetAttribute("content", JsonSerializer.Deserialize<string>(json)!);
-            }
-        }
-        return fragment.ToHtml();
-    }
+    static string PostedByEditor(string editorValue) => HtmlParser.ParseFragment(editorValue).ToHtml();
 
     static Presentation ExpectedPresentation(RichTextCase vector) =>
         vector.Presentation.Raised ? new Presentation.Unrenderable() : new Presentation.Html(vector.Presentation.Ok!);

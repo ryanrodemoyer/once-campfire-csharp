@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Campfire.RailsCompat.Formatting;
 using static Campfire.Web.Tests.Upstream.U05.Seed;
 
 namespace Campfire.Web.Tests.Upstream.U05;
@@ -19,6 +20,35 @@ public sealed partial class PageTests : IDisposable
     public void Dispose() => app.Dispose();
 
     Task<Controllers.Messages.Response> GetAsync(string path, string accept = "text/html") => app.SendAsync("GET", path, app.SignedIn(DavidSession, accept));
+
+    // The reference turns on the partial cache, keyed by the membership, to catch a cached direct
+    // whose sort key went stale. The port renders the partial every time, so this keeps the key a
+    // cache would have to keep fresh.
+    [Fact]
+    public async Task A_direct_that_is_already_unread_still_sorts_by_its_latest_message()
+    {
+        const string jasonSession = "U05JasonSessionToken0001";
+        Execute(app, $"INSERT INTO sessions (created_at, last_active_at, token, updated_at, user_id) VALUES ('2026-03-02 16:00:00', '2026-03-02 16:00:00', '{jasonSession}', '2026-03-02 16:00:00', {Jason})");
+
+        await PostAsync(app, DavidAndJason, "First", "998", app.SignedIn(jasonSession));
+        // `travel_to 1.hour.ago`: the first message, and what posting it touched, an hour back.
+        Execute(app, $"""
+            UPDATE messages SET created_at = '2026-03-02 15:00:00', updated_at = '2026-03-02 15:00:00' WHERE room_id = {DavidAndJason} AND client_message_id = '998';
+            UPDATE rooms SET updated_at = '2026-03-02 15:00:00' WHERE id = {DavidAndJason};
+            UPDATE memberships SET unread_at = '2026-03-02 15:00:00', updated_at = '2026-03-02 15:00:00' WHERE room_id = {DavidAndJason} AND user_id = {David};
+            """);
+        await GetAsync("/users/me/sidebar");
+        Assert.NotNull(app.Scalar($"SELECT unread_at FROM memberships WHERE room_id = {DavidAndJason} AND user_id = {David}"));
+
+        await PostAsync(app, DavidAndJason, "Second", "999", app.SignedIn(jasonSession));
+        var body = (await GetAsync("/users/me/sidebar")).Body;
+
+        var updatedAt = DateTimeOffset.Parse((string)app.Scalar($"SELECT updated_at FROM rooms WHERE id = {DavidAndJason}")!, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal);
+        var link = Regex.Match(body, $"""<a [^>]*id="list_rooms_direct_{DavidAndJason}"[^>]*>""");
+        Assert.True(link.Success);
+        Assert.Contains($"data-sorted-list-number=\"{TimeFormats.ToFsEpoch(updatedAt)}\"", link.Value, StringComparison.Ordinal);
+        Assert.Equal(app.Now, updatedAt);
+    }
 
     [Fact]
     public async Task Directs_are_ordered_by_room_recency_not_name()
