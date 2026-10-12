@@ -276,6 +276,7 @@ public sealed partial class MessagesWriteController : ApplicationController
             AppVersion = App.AppVersion,
             RichTextContext = RichTextContext(session),
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

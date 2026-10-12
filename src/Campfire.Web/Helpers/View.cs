@@ -1,6 +1,7 @@
 using Campfire.RailsCompat.Crypto;
 using Campfire.RailsCompat.Session;
 using Campfire.Web.Assets;
+using Campfire.Web.ResponseCache;
 using Campfire.Web.Routing;
 
 namespace Campfire.Web.Helpers;
@@ -78,6 +79,13 @@ public partial class View
     /// whose content hasn't changed reuses its last rendered bytes.
     /// </summary>
     public MessageFragmentCache FragmentCacheStore { get; init; } = new();
+
+    /// <summary>
+    /// The request's fragment namespace (reference/app/controllers/concerns/cached_responses.rb).
+    /// Null when <c>perform_caching</c> is false, which is a detached render and a request whose
+    /// captured version has already moved.
+    /// </summary>
+    public FragmentRendering? Fragments { get; init; }
 
     /// <summary>The writer the currently executing template writes to. Set before each template call.</summary>
     internal HtmlWriter? CurrentWriter { get; set; }

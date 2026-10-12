@@ -1,7 +1,10 @@
+using System.Text;
 using Campfire.RailsCompat.Formatting;
 using Campfire.RichText.Attachments;
 using Campfire.Storage.Blobs;
 using Campfire.Storage.Variants;
+using Campfire.Web.ResponseCache;
+using ResponseCacheStore = Campfire.Web.ResponseCache.ResponseCache;
 
 namespace Campfire.Web.Helpers;
 
@@ -80,32 +83,140 @@ public partial class View
     }
 
     /// <summary>
-    /// <c>cache_message_actions(message) do ... end</c> (reference/app/helpers/messages_helper.rb):
-    /// the block's output. Rails may serve it from its fragment store, whose bytes are the same.
+    /// <c>cache_message_actions(message) do ... end</c> (reference/app/helpers/messages_helper.rb).
+    /// Attachment messages render every time. Otherwise the controls are stored without the epoch,
+    /// so a creator edit reuses them.
     /// </summary>
-    public static IHtml CacheMessageActions(Action body) => Render(_ => body());
-
-    // The template version: bump this when the message presentation filters change so every
-    // cached fragment is invalidated. Must match the comment in _message.html.erb.cs.
-    const int messageFragmentVersion = 5;
+    public IHtml CacheMessageActions(MessageView message, Action body)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        ArgumentNullException.ThrowIfNull(body);
+        if (Fragments is not { } fragments || message.Attachment is not null)
+        {
+            return Render(_ => body());
+        }
+        var key = fragments.ActionsKey(message);
+        return Render(w =>
+        {
+            if (ReadFragment(fragments, key) is { } cached)
+            {
+                w.WriteLiteral(cached);
+                return;
+            }
+            fragments.NoteActionRender();
+            WriteFragment(w, fragments, key, body);
+        });
+    }
 
     /// <summary>
-    /// <c>cache [message, "presentation-v5"] do ... end</c>: emits the cached bytes on a hit,
-    /// or renders the block and stores the result on a miss. The cache is shared across requests
-    /// so a message whose content hasn't changed since its last render reuses the same bytes.
+    /// <c>cache [message_fragment_cache_key, "presentation-v7"]</c> inside <c>messages/_message</c>.
+    /// A content-keyed message whose creator or booster is gone raises here, outside
+    /// <c>message_tag</c>'s rescue (reference/app/helpers/messages_helper.rb).
     /// </summary>
-    public void FragmentCache(HtmlWriter w, long messageId, DateTimeOffset updatedAt, Action body)
+    public void CacheMessageFragment(HtmlWriter w, MessageView message, Action body)
     {
-        var cached = FragmentCacheStore.Get(messageId, updatedAt, messageFragmentVersion);
-        if (cached is not null)
+        ArgumentNullException.ThrowIfNull(w);
+        ArgumentNullException.ThrowIfNull(message);
+        ArgumentNullException.ThrowIfNull(body);
+        if (Fragments is not { } fragments)
+        {
+            body();
+            return;
+        }
+        Serve(w, fragments, fragments.InnerKey(message), body);
+    }
+
+    /// <summary>
+    /// <c>render partial: "messages/message", collection:, cached:</c>. A hit skips the partial.
+    /// </summary>
+    public IHtml RenderCachedMessages(IReadOnlyList<MessageView> messages)
+    {
+        ArgumentNullException.ThrowIfNull(messages);
+        if (Fragments is not { } fragments)
+        {
+            return Render(w =>
+            {
+                foreach (var message in messages)
+                {
+                    MessagesMessage(w, message);
+                }
+            });
+        }
+        return Render(w =>
+        {
+            var hits = 0;
+            foreach (var message in messages)
+            {
+                if (ServeCounted(w, fragments, fragments.CollectionKey(message), () => MessagesMessage(w, message)))
+                {
+                    hits++;
+                }
+            }
+            fragments.NoteCollection("messages/_message.html.erb", messages.Count, hits);
+        });
+    }
+
+    /// <summary>
+    /// <c>render partial: "users/sidebars/rooms/direct", collection:, cached: true</c>. The key
+    /// carries the epoch, so any commit rebuilds the row.
+    /// </summary>
+    public IHtml RenderCachedDirects(IReadOnlyList<SidebarDirectRoom> directs)
+    {
+        ArgumentNullException.ThrowIfNull(directs);
+        if (Fragments is not { } fragments)
+        {
+            return Render(w =>
+            {
+                foreach (var direct in directs)
+                {
+                    UsersSidebarsRoomsDirect(w, direct);
+                }
+            });
+        }
+        return Render(w =>
+        {
+            foreach (var direct in directs)
+            {
+                Serve(w, fragments, fragments.DirectKey(direct.RoomId), () => UsersSidebarsRoomsDirect(w, direct));
+            }
+        });
+    }
+
+    static void Serve(HtmlWriter w, FragmentRendering fragments, string key, Action render)
+    {
+        if (ReadFragment(fragments, key) is { } cached)
         {
             w.WriteLiteral(cached);
             return;
         }
+        WriteFragment(w, fragments, key, render);
+    }
 
-        // Capture the block's output, cache it, and emit it.
-        var captured = w.CaptureBytes(body);
-        FragmentCacheStore.Set(messageId, updatedAt, messageFragmentVersion, captured);
+    static bool ServeCounted(HtmlWriter w, FragmentRendering fragments, string key, Action render)
+    {
+        if (ReadFragment(fragments, key) is { } cached)
+        {
+            w.WriteLiteral(cached);
+            return true;
+        }
+        WriteFragment(w, fragments, key, render);
+        return false;
+    }
+
+    static byte[]? ReadFragment(FragmentRendering fragments, string key)
+    {
+        var cached = fragments.Store.Read(key);
+        if (cached is not null)
+        {
+            fragments.NoteHit(key);
+        }
+        return cached;
+    }
+
+    static void WriteFragment(HtmlWriter w, FragmentRendering fragments, string key, Action render)
+    {
+        var captured = w.CaptureBytes(render);
+        fragments.Store.Write(key, captured);
         w.WriteLiteral(captured);
     }
 
@@ -123,8 +234,31 @@ public partial class View
                     return new Presentation.Html("");
                 }
                 var context = RichTextContext ?? throw new InvalidOperationException("View.RichTextContext isn't set");
-                return Campfire.RichText.Attachments.MessagePresentation.Present(message.Body, context);
+                return CachedTextPresentation(message.Body, context);
         }
+    }
+
+    // text_message_presentation: plain HTML is cached by its own digest, with no epoch. Embedded
+    // attachments and bodies over a mebibyte render every time (reference/app/helpers/messages_helper.rb).
+    Presentation CachedTextPresentation(string body, RenderContext context)
+    {
+        if (Fragments is not { } fragments
+            || body.Contains("<action-text-attachment", StringComparison.Ordinal)
+            || Encoding.UTF8.GetByteCount(body) > ResponseCacheStore.MaxEntryBytes)
+        {
+            return Campfire.RichText.Attachments.MessagePresentation.Present(body, context);
+        }
+        var key = FragmentRendering.TextKey(body);
+        if (ReadFragment(fragments, key) is { } cached)
+        {
+            return new Presentation.Html(Encoding.UTF8.GetString(cached));
+        }
+        var rendered = Campfire.RichText.Attachments.MessagePresentation.Present(body, context);
+        if (rendered is Presentation.Html html)
+        {
+            fragments.Store.Write(key, Encoding.UTF8.GetBytes(html.Value));
+        }
+        return rendered;
     }
 
     // `rescue Exception => e` around the attachment and sound branches: Rails logs it and shows "".

@@ -1,6 +1,6 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
 
-<%= CacheMessageActions(() => { %>
+<%= CacheMessageActions(message, () => { %>
 <div class="message__actions" data-controller="soft-keyboard">
   <%= Tag.Details(new() { { "class", "position-relative" },
       { "data", new HtmlOptions { { "controller", "popup" }, { "action", "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside" }, { "popup_orientation_top_class", "popup-orientation-top" } } } }, () => { %>

@@ -320,6 +320,7 @@ public sealed partial class MessagesByBotsController : ApplicationController
             AppVersion = App.AppVersion,
             RichTextContext = RichTextContext(session),
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

@@ -103,11 +103,22 @@ sealed class MessagesApp : IDisposable
     }
 
     /// <summary>A request through the whole app, as Kestrel would hand it over.</summary>
-    public Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, string? body = null, string? contentType = null, string scheme = "http") =>
-        SendAsync(method, target, headers, Encoding.UTF8.GetBytes(body ?? ""), contentType ?? (body is null ? null : "application/x-www-form-urlencoded"), scheme);
+    public async Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, string? body = null, string? contentType = null, string scheme = "http")
+    {
+        var raw = await SendRawAsync(method, target, headers, Encoding.UTF8.GetBytes(body ?? ""), contentType ?? (body is null ? null : "application/x-www-form-urlencoded"), scheme);
+        return new Response(raw.Status, raw.Headers, Encoding.UTF8.GetString(raw.Body));
+    }
 
     public async Task<Response> SendAsync(string method, string target, IReadOnlyDictionary<string, string> headers, byte[] body, string? contentType = null, string scheme = "http")
     {
+        var raw = await SendRawAsync(method, target, headers, body, contentType, scheme);
+        return new Response(raw.Status, raw.Headers, Encoding.UTF8.GetString(raw.Body));
+    }
+
+    /// <summary>The same request as <see cref="SendAsync(string, string, IReadOnlyDictionary{string, string}, string?, string?, string)"/>, with the body bytes left intact (a gzip page).</summary>
+    public async Task<RawResponse> SendRawAsync(string method, string target, IReadOnlyDictionary<string, string> headers, byte[]? body = null, string? contentType = null, string scheme = "http")
+    {
+        body ??= [];
         var context = new DefaultHttpContext();
         context.Request.Scheme = scheme;
         var query = target.IndexOf('?', StringComparison.Ordinal);
@@ -127,7 +138,7 @@ sealed class MessagesApp : IDisposable
         var responseBody = new MemoryStream();
         context.Response.Body = responseBody;
         await App.HandleAsync(context);
-        return new Response(context.Response.StatusCode, context.Response.Headers, Encoding.UTF8.GetString(responseBody.ToArray()));
+        return new RawResponse(context.Response.StatusCode, context.Response.Headers, responseBody.ToArray());
     }
 
     /// <summary>
@@ -189,3 +200,5 @@ sealed class MessagesApp : IDisposable
 }
 
 sealed record Response(int Status, IHeaderDictionary Headers, string Body);
+
+sealed record RawResponse(int Status, IHeaderDictionary Headers, byte[] Body);

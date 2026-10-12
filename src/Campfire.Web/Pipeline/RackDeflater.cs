@@ -68,7 +68,7 @@ public static class RackDeflater
         switch (Prepare(context, rackContentLength))
         {
             case Decision.Gzip:
-                var compressed = Gzip(body);
+                var compressed = GzipBody(body);
                 if (!head)
                 {
                     await output.WriteAsync(compressed, context.RequestAborted).ConfigureAwait(false);
@@ -189,7 +189,8 @@ public static class RackDeflater
     /// <summary>A stream that gzips what's written to <paramref name="output"/> (for streamed bodies).</summary>
     public static Stream GzipStream(Stream output) => new GZipStream(output, CompressionLevel.Optimal, leaveOpen: true);
 
-    static byte[] Gzip(ReadOnlyMemory<byte> body)
+    /// <summary><c>Zlib.gzip</c> of <paramref name="body"/>, the bytes the page cache stores for a gzip negotiation.</summary>
+    public static byte[] GzipBody(ReadOnlyMemory<byte> body)
     {
         // A rented buffer avoids the MemoryStream's internal array resizes. The room page is
         // 464 KB raw and ~44 KB compressed, so 65536 covers most responses.

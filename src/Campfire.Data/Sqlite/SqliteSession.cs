@@ -20,10 +20,17 @@ public class SqliteSession : IDisposable
 
     internal int CachedStatementCount => statements.Count;
 
+    /// <summary>
+    /// Statements this async flow prepares. The messages-caching port records presentation SQL
+    /// here; it does not cross tests, because it is an <see cref="AsyncLocal{T}"/>.
+    /// </summary>
+    public static readonly AsyncLocal<Action<string>?> QueryListener = new();
+
     // The cached, prepared command for `sql` with `parameters` bound. Owned by the session: don't
     // dispose it, and finish with its reader before using the same SQL again.
     public SqliteCommand Command(string sql, params ReadOnlySpan<(string Name, object? Value)> parameters)
     {
+        QueryListener.Value?.Invoke(sql);
         var command = statements.Get(sql);
         foreach (var (name, value) in parameters)
         {

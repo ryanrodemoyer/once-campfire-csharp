@@ -23,7 +23,7 @@ public sealed class UsersSidebarsController : ApplicationController
 
     User User => Current.User ?? throw new InvalidOperationException("undefined method 'rooms' for nil");
 
-    public static readonly RequestDelegate Show = Action(Chain, c => c.ShowAsync());
+    public static readonly RequestDelegate Show = Action(Chain, c => c.CacheReadResponseAsync(c.ShowAsync));
 
     async ValueTask ShowAsync()
     {
@@ -114,6 +114,7 @@ public sealed class UsersSidebarsController : ApplicationController
             VapidPublicKey = App.VapidPublicKey,
             AppVersion = App.AppVersion,
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

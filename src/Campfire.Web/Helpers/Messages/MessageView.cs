@@ -68,7 +68,9 @@ public sealed record MessageView(
 /// <summary>A message's room.</summary>
 /// <param name="Id">The room's id.</param>
 /// <param name="DisplayName"><c>room_display_name(room, for_user: nil)</c>: see <see cref="View.RoomDisplayName"/>.</param>
-public sealed record MessageRoom(long Id, string? DisplayName);
+/// <param name="IsDirect"><c>room.direct?</c>. Direct rooms stay on the epoch key: the display name is the members.</param>
+/// <param name="TypeName">The STI class name (<c>room.type</c>), which the content digest fingerprints.</param>
+public sealed record MessageRoom(long Id, string? DisplayName, bool IsDirect = false, string? TypeName = null);
 
 /// <summary>A message's creator or a boost's booster, as the partials and <c>users/_user.json</c> read them.</summary>
 /// <param name="Id">The user's id.</param>

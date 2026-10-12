@@ -84,6 +84,7 @@ public sealed class RoomsRefreshesController : ApplicationController
             AppVersion = App.AppVersion,
             RichTextContext = new RenderContext(new DatabaseAttachables(session, App.Keys, Now), RequestUrl.Host),
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

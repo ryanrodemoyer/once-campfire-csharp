@@ -155,7 +155,10 @@ public partial class ApplicationController
     // authenticated_as(session): Current.session (and so Current.user), and a fresh cookie.
     async ValueTask AuthenticatedAsAsync(Session session)
     {
-        var user = await ReadAsync(reader => Users.Find(reader, session.UserId)).ConfigureAwait(false);
+        // The session snapshot already holds this user. A different id (a new sign-in) still queries.
+        var user = RecordCachedUser is { } cached && cached.Id == session.UserId
+            ? cached
+            : await ReadAsync(reader => Users.Find(reader, session.UserId)).ConfigureAwait(false);
         Current.SetSession(session, user);
         AuthenticatedBy = AuthenticatedBy.Session;
         Cookies.SetAuthenticationCookie(session.Token);

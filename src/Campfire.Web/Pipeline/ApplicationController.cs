@@ -25,7 +25,8 @@ public partial class ApplicationController : Controller
         .Before("deny_bots", controller => controller.DenyBots())
         .Before("verify_authenticity_token", controller => controller.VerifyAuthenticityToken(), unless: controller => controller.AuthenticatedBy == AuthenticatedBy.BotKey)
         .Before(null, controller => controller.AllowBrowserAsync())
-        .After("append_sec_fetch_site_to_vary_header", controller => controller.AppendSecFetchSiteToVaryHeader(), unless: controller => controller.AuthenticatedBy == AuthenticatedBy.BotKey);
+        .After("append_sec_fetch_site_to_vary_header", controller => controller.AppendSecFetchSiteToVaryHeader(), unless: controller => controller.AuthenticatedBy == AuthenticatedBy.BotKey)
+        .PrependBefore("capture_response_cache_version", controller => controller.CaptureResponseCacheVersion());
 }
 
 /// <summary>

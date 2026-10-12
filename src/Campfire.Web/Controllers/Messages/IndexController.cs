@@ -29,7 +29,7 @@ public sealed class MessagesIndexController : ApplicationController
 
     Room? room;
 
-    public static readonly RequestDelegate Index = Action(Chain, c => c.IndexAsync());
+    public static readonly RequestDelegate Index = Action(Chain, c => c.CacheReadResponseAsync(c.IndexAsync));
 
     Room CurrentRoom => room ?? throw new InvalidOperationException("set_room hasn't run");
 
@@ -117,6 +117,7 @@ public sealed class MessagesIndexController : ApplicationController
             AppVersion = App.AppVersion,
             RichTextContext = RichTextContext(session),
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

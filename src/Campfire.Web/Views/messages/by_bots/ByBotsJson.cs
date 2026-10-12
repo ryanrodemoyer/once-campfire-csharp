@@ -4,7 +4,8 @@ using Campfire.RailsCompat.Crypto;
 namespace Campfire.Web.Helpers;
 
 // reference/app/views/messages/by_bots/{index,show}.json.jbuilder: the bot API's messages, each
-// the messages/_message.json partial. The partials' `json.cache!` isn't modeled (M02's gap).
+// the messages/_message.json partial. `json.cache!` goes through MessageJsonObject when the
+// view has a fragment namespace.
 public partial class View
 {
     /// <summary><c>messages/by_bots/index.json</c>: <c>json.array! @messages, partial: "messages/message"</c>.</summary>

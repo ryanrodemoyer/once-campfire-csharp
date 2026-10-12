@@ -24,7 +24,7 @@ public sealed class SearchesController : ApplicationController
     User User => Current.User ?? throw new InvalidOperationException("undefined method 'searches' for nil");
 
     /// <summary><c>GET /searches</c>: search results and recent searches.</summary>
-    public static readonly RequestDelegate Index = Action(Chain, c => c.IndexAsync());
+    public static readonly RequestDelegate Index = Action(Chain, c => c.CacheReadResponseAsync(c.IndexAsync));
 
     /// <summary><c>POST /searches</c>: record query in recent searches and redirect to results.</summary>
     public static readonly RequestDelegate Create = Action(Chain, async c =>
@@ -96,6 +96,7 @@ public sealed class SearchesController : ApplicationController
             AppVersion = App.AppVersion,
             RichTextContext = RichTextContext(session),
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

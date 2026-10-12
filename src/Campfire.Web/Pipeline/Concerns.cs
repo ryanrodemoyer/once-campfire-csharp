@@ -2,6 +2,7 @@ using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.RailsCompat.Ruby;
 using Campfire.RailsCompat.UserAgent;
+using Campfire.Web.ResponseCache;
 using Campfire.Web.Routing;
 
 namespace Campfire.Web.Pipeline;
@@ -16,6 +17,7 @@ public partial class ApplicationController
     /// <summary><c>set_version_headers</c>: <c>X-Version</c> and <c>X-Rev</c> (left out when <c>GIT_REVISION</c> isn't set).</summary>
     public void SetVersionHeaders()
     {
+        App.OnSetVersionHeaders?.Invoke(this);
         Headers["X-Version"] = App.AppVersion;
         Headers["X-Rev"] = App.GitRevision;
     }
@@ -118,17 +120,12 @@ public static class RoomScoped
         ArgumentNullException.ThrowIfNull(controller);
         var user = controller.Current.User ?? throw new InvalidOperationException("undefined method 'memberships' for nil");
         var roomId = controller.Params["room_id"] is string param ? ActiveModelInteger.Cast(param) : null;
-        var found = await controller.ReadAsync(session =>
-        {
-            var membership = roomId is { } id ? Memberships.FindFor(session, user.Id, id) : null;
-            return membership is null ? default : (membership, Rooms.Find(session, membership.RoomId));
-        }).ConfigureAwait(false);
-        if (found.membership is null)
+        if (roomId is not { } id)
         {
             throw new RecordNotFoundException("Couldn't find Membership");
         }
-        // Memberships have no foreign key to rooms: a membership of a deleted room has no room,
-        // and the action then fails on it (a 500).
-        return (found.membership, found.Item2 ?? throw new InvalidOperationException("The membership's room is gone"));
+        // RecordCache.fetch of the membership and its room. A missing row raises inside the load
+        // and is not snapshotted (reference/app/controllers/concerns/room_scoped.rb).
+        return await RecordSnapshots.MembershipAsync(controller, user.Id, id).ConfigureAwait(false);
     }
 }

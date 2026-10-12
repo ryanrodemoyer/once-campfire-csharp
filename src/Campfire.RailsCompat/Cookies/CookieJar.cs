@@ -80,6 +80,9 @@ public sealed class CookieJar
 
     public string? Get(string name) => cookies.TryGetValue(name, out var val) ? val : null;
 
+    /// <summary><c>cookies.to_h</c>: every cookie the jar holds, request and response alike.</summary>
+    public IEnumerable<KeyValuePair<string, string>> Entries => cookies;
+
     public bool Contains(string name) => cookies.ContainsKey(name);
 
     public void Set(string name, string value, CookieOptions? options = null)

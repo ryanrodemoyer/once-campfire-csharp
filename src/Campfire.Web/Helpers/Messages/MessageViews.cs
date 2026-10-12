@@ -135,6 +135,6 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
             return null;
         }
         var members = room.IsDirect ? Users.InRoom(session, room.Id).Select(user => (user.Id, user.Name)) : [];
-        return new MessageRoom(room.Id, View.RoomDisplayName(room.Name, room.IsDirect, members));
+        return new MessageRoom(room.Id, View.RoomDisplayName(room.Name, room.IsDirect, members), room.IsDirect, room.Type.ClassName());
     }
 }

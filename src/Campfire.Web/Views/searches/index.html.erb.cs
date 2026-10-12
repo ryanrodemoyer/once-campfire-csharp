@@ -54,7 +54,7 @@
   </div>
 
   <%= SearchResultsTag(w, () => { %>
-    <%= Render(o => { foreach (var message in page.Messages) { MessagesMessage(o, message); } }) %>
+    <%= RenderCachedMessages(page.Messages) %>
   <% }) %>
 </div>
 

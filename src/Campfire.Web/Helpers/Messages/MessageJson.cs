@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Nodes;
 using Campfire.Data.Records;
 using Campfire.RailsCompat.Crypto;
@@ -21,7 +22,26 @@ public partial class View
     /// <c>messages/_message.json</c>: the id, time, body as plain text and HTML (<c>body.to_s</c>),
     /// creator, room and URL.
     /// </summary>
-    public JsonObject MessageJsonObject(MessageView message) => new()
+    public JsonObject MessageJsonObject(MessageView message)
+    {
+        // json.cache! message: the epoch is in the key, so a foreign commit rebuilds the creator
+        // and the body together. Nested user and boost fragments ride along inside this one.
+        if (Fragments is { } fragments)
+        {
+            var key = fragments.JsonKey(message);
+            if (fragments.Store.Read(key) is { } cached)
+            {
+                fragments.NoteHit(key);
+                return (JsonObject)JsonNode.Parse(cached)!;
+            }
+            var built = BuildMessageJson(message);
+            fragments.Store.Write(key, Encoding.UTF8.GetBytes(built.ToJsonString()));
+            return built;
+        }
+        return BuildMessageJson(message);
+    }
+
+    JsonObject BuildMessageJson(MessageView message) => new()
     {
         ["id"] = message.Id,
         ["created_at"] = TimeFormats.AsJson(message.CreatedAt),

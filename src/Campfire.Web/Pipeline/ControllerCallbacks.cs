@@ -65,6 +65,16 @@ public sealed class ControllerCallbacks<TController> where TController : Control
         Func<TController, bool>? unless = null) =>
         Before(name, Synchronous(callback), only, except, @if, unless);
 
+    /// <summary><c>prepend_before_action</c>: the callback runs ahead of the ones already declared.</summary>
+    public ControllerCallbacks<TController> PrependBefore(
+        string? name,
+        Action<TController> callback,
+        IReadOnlyCollection<string>? only = null,
+        IReadOnlyCollection<string>? except = null,
+        Func<TController, bool>? @if = null,
+        Func<TController, bool>? unless = null) =>
+        Prepend(name, CallbackKind.Before, Synchronous(callback), only, except, @if, unless);
+
     /// <summary><c>after_action name, only:, except:, if:, unless:</c></summary>
     public ControllerCallbacks<TController> After(
         string? name,
@@ -198,6 +208,21 @@ public sealed class ControllerCallbacks<TController> where TController : Control
         var (ifs, unlesses) = Conditions(only, except, @if, unless);
         var kept = name is null ? callbacks : callbacks.RemoveAll(callback => callback.Name == name && callback.Kind == kind);
         return new(kept.Add(new Callback(name, kind, run, ifs, unlesses)), rescues);
+    }
+
+    ControllerCallbacks<TController> Prepend(
+        string? name,
+        CallbackKind kind,
+        Func<TController, ValueTask> run,
+        IReadOnlyCollection<string>? only,
+        IReadOnlyCollection<string>? except,
+        Func<TController, bool>? @if,
+        Func<TController, bool>? unless)
+    {
+        ArgumentNullException.ThrowIfNull(run);
+        var (ifs, unlesses) = Conditions(only, except, @if, unless);
+        var kept = name is null ? callbacks : callbacks.RemoveAll(callback => callback.Name == name && callback.Kind == kind);
+        return new(kept.Insert(0, new Callback(name, kind, run, ifs, unlesses)), rescues);
     }
 
     ControllerCallbacks<TController> Skip(

@@ -38,6 +38,9 @@ public abstract partial class Controller
     /// <summary>The response body rendered so far (empty for a <c>head</c> or redirect).</summary>
     public ReadOnlyMemory<byte> Body => body ?? ReadOnlyMemory<byte>.Empty;
 
+    /// <summary>Replace the body with a cached page's bytes. The response is then <see cref="Performed"/>.</summary>
+    internal void AdoptBody(byte[] payload) => body = payload;
+
     /// <summary>
     /// The controller's <c>formats</c>: <c>request.formats</c> once the action runs, and nothing
     /// while the before callbacks do (Rails sets them in <c>Rendering#process_action</c>, inside

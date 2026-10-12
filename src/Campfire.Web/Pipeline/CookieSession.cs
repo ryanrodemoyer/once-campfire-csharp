@@ -111,6 +111,28 @@ public sealed class CookieSession
     }
 
     /// <summary>
+    /// <c>session.to_hash</c> encoded as JSON. Keys are sorted so two reads of the same session
+    /// spell the same cache key. <paramref name="exceptCsrf"/> drops <c>_csrf_token</c>, which
+    /// <c>response_cache_key</c> leaves out while admission compares the full hash
+    /// (reference/app/controllers/concerns/cached_responses.rb). This is a read: a request with
+    /// no session cookie stays unloaded, so <see cref="Commit"/> does not invent one.
+    /// </summary>
+    public string CanonicalHash(bool exceptCsrf)
+    {
+        LoadForRead();
+        var canonical = new JsonObject();
+        foreach (var key in data.Select(pair => pair.Key).OrderBy(static name => name, StringComparer.Ordinal))
+        {
+            if (exceptCsrf && key == "_csrf_token")
+            {
+                continue;
+            }
+            canonical[key] = data[key]?.DeepClone();
+        }
+        return canonical.ToJsonString();
+    }
+
+    /// <summary>
     /// The session store's commit (<c>commit_session</c>): when the session was loaded, or holds
     /// anything, write all of it, nils dropped, with the id, into the encrypted cookie with
     /// <c>expire_after</c>'s expiry.

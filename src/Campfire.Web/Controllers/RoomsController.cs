@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Campfire.Data.Pagination;
 using Campfire.Data.Queries;
@@ -9,6 +10,7 @@ using Campfire.RichText.PlainText;
 using Campfire.Storage.Blobs;
 using Campfire.Web.Helpers;
 using Campfire.Web.Pipeline;
+using Campfire.Web.ResponseCache;
 using Campfire.Web.Routing;
 using Microsoft.AspNetCore.Http;
 
@@ -44,7 +46,7 @@ public sealed class RoomsController : ApplicationController
     });
 
     /// <summary><c>@messages = find_messages</c>, then <c>rooms/show</c> in the application layout.</summary>
-    public static readonly RequestDelegate Show = Action(Chain, c => c.ShowAsync());
+    public static readonly RequestDelegate Show = Action(Chain, c => c.CacheReadResponseAsync(c.ShowAsync));
 
     async ValueTask ShowAsync()
     {
@@ -70,8 +72,19 @@ public sealed class RoomsController : ApplicationController
     async ValueTask SetRoomAsync()
     {
         var userId = User.Id;
-        var id = (Params["room_id"] ?? Params["id"]) is string param ? ActiveModelInteger.Cast(param) : null;
-        room = id is { } roomId ? await ReadAsync(session => Rooms.FindForUser(session, userId, roomId)).ConfigureAwait(false) : null;
+        var param = (Params["room_id"] ?? Params["id"]) as string;
+        var id = param is null ? null : ActiveModelInteger.Cast(param);
+        if (id is not { } roomId)
+        {
+            room = null;
+        }
+        else
+        {
+            // RecordCache.fetch ["room", controller, user, id]. A missing room is not snapshotted
+            // (reference/app/controllers/rooms_controller.rb).
+            var key = string.Create(CultureInfo.InvariantCulture, $"room/RoomsController/{userId}/{param}");
+            room = await RecordSnapshots.RoomAsync(this, key, session => Rooms.FindForUser(session, userId, roomId)).ConfigureAwait(false);
+        }
         if (room is null)
         {
             RedirectTo(Routes.RootUrl(UrlBase), alert: "Room not found or inaccessible");
@@ -137,6 +150,7 @@ public sealed class RoomsController : ApplicationController
             AppVersion = App.AppVersion,
             RichTextContext = RichTextContext(session),
             Storage = App.RequireStorage(),
+            Fragments = FragmentContext(),
         };
     }
 

@@ -1,5 +1,5 @@
-using Campfire.Data.Queries;
 using Campfire.Data.Records;
+using Campfire.Web.ResponseCache;
 
 namespace Campfire.Web.Pipeline;
 
@@ -7,17 +7,24 @@ namespace Campfire.Web.Pipeline;
 // every controller has (Active Storage's included).
 public abstract partial class Controller
 {
+    /// <summary>The user <see cref="RecordSnapshots.SessionAsync"/> rebuilt with the session, if it did.</summary>
+    protected User? RecordCachedUser { get; private set; }
+
     /// <summary>
     /// <c>Authentication::SessionLookup#find_session_by_cookie</c>: the session whose token the
-    /// signed <c>session_token</c> cookie holds.
+    /// signed <c>session_token</c> cookie holds. A hit rebuilds the user too, so authentication
+    /// does not query it again (reference/app/controllers/concerns/authentication/session_lookup.rb).
     /// </summary>
     public async ValueTask<Session?> FindSessionByCookieAsync()
     {
         if (Cookies.Signed["session_token"] is not { } token)
         {
+            RecordCachedUser = null;
             return null;
         }
-        return await ReadAsync(session => Sessions.FindByToken(session, token)).ConfigureAwait(false);
+        var found = await RecordSnapshots.SessionAsync(this, token).ConfigureAwait(false);
+        RecordCachedUser = found.Session is null ? null : found.User;
+        return found.Session;
     }
 
     /// <summary>

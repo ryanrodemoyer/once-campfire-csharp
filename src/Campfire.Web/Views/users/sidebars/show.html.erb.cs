@@ -20,7 +20,7 @@
         <% }) %>
 
         <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#updateItem">
-          <%= Render(o => { foreach (var direct in page.DirectMemberships) { UsersSidebarsRoomsDirect(o, direct); } }) %>
+          <%= RenderCachedDirects(page.DirectMemberships) %>
         </div>
 
         <div contents>
