@@ -27,10 +27,10 @@ edit_anywhere: [B03, Q10, Q14, U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12,
 # Each listed task's green PR is reviewed by `reviewer` before it merges (plans/bin/swarm): APPROVE
 # merges it, CHANGES sends it back to its author. After max_rounds reviews it goes to a human.
 review:
-  reviewer: dspro
+  reviewer: claude
   max_rounds: 3
-  # Low on OpenRouter credit: only the security-critical forgery protection and the page cache.
-  tasks: [U03, U07]
+  # Low on OpenRouter credit: Claude reviews the page cache (written by Grok) instead of dspro.
+  tasks: [U07]
 
 agents:
   claude:
@@ -43,7 +43,8 @@ agents:
     # U03: finished by hand after Gemini's quota ran out; queued here so the swarm runs its review.
     # U04 moved here from gemini (out of quota). Q15: dspro's review follow-ups.
     # U05 moves here when Gemini hits its quota mid-task; Claude continues from its worktree.
-    queue: [U01, U03, U04, Q15, U05]
+    # Reviews U07, then the fuzz run and the second security review (Q12, Q13, from dspro).
+    queue: [U01, U03, U04, Q15, U05, Q12, Q13]
 
   gemini:
     model: Gemini 3.8 Flash (high) via Antigravity
@@ -55,8 +56,8 @@ agents:
     # Q10 finishes fixes that agents requested on issues after those issues closed.
     # Batch 2: the upstream ports and gates, the verification harness and AOT; and, from claude,
     # forgery protection (U03), the page cache (U07) and perf round 2 (B08).
-    # Near its quota: U05 moved to claude. Next here when the quota resets: Q11.
-    queue: []
+    # Near its quota: U05 moved to claude. Q11 once U07 merges.
+    queue: [Q11]
 
   grok:
     model: Grok 4.7 (high)
@@ -67,7 +68,8 @@ agents:
     # R04 and M10 moved here when Fireworks (glm, deepseek) ran out of credits, so Q08's review
     # of R04 went to dspro: a reviewer can't review its own work.
     # Out of usage balance (402): R04 moved to gemini, the benchmark chain to dspro.
-    queue: []
+    # Balance back: the page cache (U07), reviewed by claude.
+    queue: [U07]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
@@ -96,8 +98,8 @@ agents:
     # Cheap ($0.21/M in, $0.02/M cache read); takes P02 (continuing glm's attempt) and Q04.
     slots: 2
     # The benchmark chain moved here from grok when Grok's usage balance ran out.
-    # Batch 2: reviews every PR in `review` (counted against these slots) and does Q13.
-    queue: [Q13]
+    # Batch 2: reviewed U02-U03. Low on OpenRouter credit: Q13 moved to claude.
+    queue: []
 
   haiku:
     model: Claude Haiku 5.5 via OpenRouter (OpenCode)
