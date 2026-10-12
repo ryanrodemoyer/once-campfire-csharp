@@ -1,7 +1,9 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Nodes;
 using Campfire.RailsCompat.Cookies;
+using Campfire.RailsCompat.Crypto;
 using Campfire.Web.ResponseCache;
 using Campfire.Web.Routing;
 using ResponseCacheStore = Campfire.Web.ResponseCache.ResponseCache;
@@ -251,45 +253,14 @@ public partial class ApplicationController
         return media.Length == 0 ? null : media;
     }
 
-    static string Json(string? value)
-    {
-        if (value is null)
-        {
-            return "null";
-        }
-        var builder = new StringBuilder(value.Length + 2);
-        builder.Append('"');
-        foreach (var character in value)
-        {
-            switch (character)
-            {
-                case '\\':
-                    builder.Append("\\\\");
-                    break;
-                case '"':
-                    builder.Append("\\\"");
-                    break;
-                case '\n':
-                    builder.Append("\\n");
-                    break;
-                case '\r':
-                    builder.Append("\\r");
-                    break;
-                default:
-                    if (character < ' ')
-                    {
-                        builder.Append("\\u").Append(((int)character).ToString("x4", CultureInfo.InvariantCulture));
-                    }
-                    else
-                    {
-                        builder.Append(character);
-                    }
-                    break;
-            }
-        }
-        builder.Append('"');
-        return builder.ToString();
-    }
+    /// <summary>
+    /// One string as <c>ActiveSupport::JSON.encode</c> writes it for this app. <c>&lt;</c>,
+    /// <c>&gt;</c> and <c>&amp;</c> become <c>\u003c</c>, <c>\u003e</c> and <c>\u0026</c>, so a long
+    /// URL or user agent crosses <c>MAX_KEY_BYTES</c> on the same side as Rails. U+2028 and U+2029
+    /// stay raw: <c>config.load_defaults 8.2</c> sets <c>escape_js_separators_in_json</c> false
+    /// (railties <c>configuration.rb</c>, copied onto <c>ActiveSupport</c> by its railtie).
+    /// </summary>
+    internal static string Json(string? value) => value is null ? "null" : RailsJson.Encode(JsonValue.Create(value));
 
     static bool Present(string? value) => !string.IsNullOrEmpty(value);
 }

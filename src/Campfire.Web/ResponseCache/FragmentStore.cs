@@ -14,6 +14,8 @@ public sealed class FragmentStore
     readonly Queue<string> order = new();
     readonly long maxBytes;
     long usedBytes;
+    int reads;
+    int writes;
 
     static readonly AsyncLocal<bool> TransactionOpenLocal = new();
 
@@ -36,9 +38,9 @@ public sealed class FragmentStore
         set => TransactionOpenLocal.Value = value;
     }
 
-    public int Reads { get; private set; }
+    public int Reads => Volatile.Read(ref reads);
 
-    public int Writes { get; private set; }
+    public int Writes => Volatile.Read(ref writes);
 
     /// <summary>When set, hits and collection renders are recorded for tests.</summary>
     public bool Track { get; set; }
@@ -55,7 +57,7 @@ public sealed class FragmentStore
     public byte[]? Read(string key)
     {
         ArgumentNullException.ThrowIfNull(key);
-        Reads++;
+        Interlocked.Increment(ref reads);
         byte[]? bytes;
         lock (gate)
         {
@@ -72,7 +74,7 @@ public sealed class FragmentStore
     {
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(value);
-        Writes++;
+        Interlocked.Increment(ref writes);
         var size = Encoding.UTF8.GetByteCount(key) + value.Length;
         lock (gate)
         {

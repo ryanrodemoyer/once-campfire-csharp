@@ -102,14 +102,6 @@ CASES = [
 
 RESPONSE_HEADERS = %w[ content-type location vary cache-control etag set-cookie x-frame-options ]
 
-
-module MessagesHelper
-  alias_method :orig_message_fragment_cache_key, :message_fragment_cache_key
-  def message_fragment_cache_key(message)
-    return message if message.creator.nil?
-    orig_message_fragment_cache_key(message)
-  end
-end
 results = CASES.map do |name, path, headers|
   env = Rack::MockRequest.env_for("http://#{HOST}#{path}", method: "GET")
   env["REMOTE_ADDR"] = "198.51.100.7"

@@ -75,12 +75,6 @@ public partial class View
     public string? BodyClass { get; set; }
 
     /// <summary>
-    /// Fragment cache for message partials. Shared across requests (process-wide) so a message
-    /// whose content hasn't changed reuses its last rendered bytes.
-    /// </summary>
-    public MessageFragmentCache FragmentCacheStore { get; init; } = new();
-
-    /// <summary>
     /// The request's fragment namespace (reference/app/controllers/concerns/cached_responses.rb).
     /// Null when <c>perform_caching</c> is false, which is a detached render and a request whose
     /// captured version has already moved.

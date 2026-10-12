@@ -32,6 +32,8 @@ public sealed class ResponseCache
     string? ns;
     long? dataVersion;
     long usedBytes;
+    int reads;
+    int writes;
 
     public ResponseCache(Func<string> databasePath)
     {
@@ -43,10 +45,10 @@ public sealed class ResponseCache
     public long? BudgetOverride { get; set; }
 
     /// <summary>How many times <see cref="Write"/> was entered, including a write that stored nothing.</summary>
-    public int Writes { get; private set; }
+    public int Writes => Volatile.Read(ref writes);
 
     /// <summary>How many times <see cref="Read"/> was entered.</summary>
-    public int Reads { get; private set; }
+    public int Reads => Volatile.Read(ref reads);
 
     /// <summary>
     /// <c>budget</c>: <c>CAMPFIRE_RESPONSE_CACHE_MB</c> (default 64, <c>to_i</c> then at least 0)
@@ -88,7 +90,7 @@ public sealed class ResponseCache
     public CachedPage? Read(string key, CacheVersion? version)
     {
         ArgumentNullException.ThrowIfNull(key);
-        Reads++;
+        Interlocked.Increment(ref reads);
         try
         {
             lock (mutex)
@@ -152,7 +154,7 @@ public sealed class ResponseCache
     {
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(page);
-        Writes++;
+        Interlocked.Increment(ref writes);
         var size = Encoding.UTF8.GetByteCount(key) + page.Body.Length + HeaderBytes(page.Headers) + entryOverhead;
         if (Encoding.UTF8.GetByteCount(key) > MaxKeyBytes || size > Math.Min(Budget, MaxEntryBytes))
         {

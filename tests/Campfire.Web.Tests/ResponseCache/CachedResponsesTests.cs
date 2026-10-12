@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Text;
+using Campfire.Web.Pipeline;
 using Campfire.Web.Tests.Controllers.Messages;
 
 namespace Campfire.Web.Tests.ResponseCache;
@@ -218,29 +219,68 @@ public sealed class CachedResponsesTests : IDisposable
     [Fact]
     public async Task A_page_is_not_reused_across_users_or_sessions()
     {
-        await CacheHarness.WarmAsync(app);
-        var david = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}");
-        Assert.Contains("name=\"current-user-name\" content=\"David\"", david.Body, StringComparison.Ordinal);
+        // Both sessions exist before the page is warmed. An insert afterwards commits, moves
+        // data_version and empties the cache, so the next miss would happen even if the key
+        // ignored the user and the token.
         CacheHarness.Execute(app, """
             INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at)
             VALUES (900002, 149087659, 'JasonSessionToken00000001', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')
             """);
+        CacheHarness.Execute(app, """
+            INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at)
+            VALUES (900003, 127326141, 'DavidSecondSessionToken01', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')
+            """);
+        await CacheHarness.WarmAsync(app);
+        var david = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}");
+        Assert.Contains("name=\"current-user-name\" content=\"David\"", david.Body, StringComparison.Ordinal);
         var writes = app.App.Responses.Writes;
+        var davidAgain = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}");
+        Assert.Equal(200, davidAgain.Status);
+        Assert.Equal(writes, app.App.Responses.Writes);
+
         var jasonName = (string)app.Scalar($"SELECT name FROM users WHERE id = {CacheHarness.Jason}")!;
         var jason = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}", app.SignedIn("JasonSessionToken00000001", "text/html, application/xhtml+xml"));
         Assert.Equal(200, jason.Status);
         Assert.Contains($"name=\"current-user-name\" content=\"{jasonName}\"", jason.Body, StringComparison.Ordinal);
         Assert.DoesNotContain("name=\"current-user-name\" content=\"David\"", jason.Body, StringComparison.Ordinal);
         Assert.Equal(writes + 1, app.App.Responses.Writes);
+        var jasonAgain = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}", app.SignedIn("JasonSessionToken00000001", "text/html, application/xhtml+xml"));
+        Assert.Equal(writes + 1, app.App.Responses.Writes);
+        Assert.Equal(jason.Body, jasonAgain.Body);
 
-        CacheHarness.Execute(app, """
-            INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at)
-            VALUES (900003, 127326141, 'DavidSecondSessionToken01', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')
-            """);
         writes = app.App.Responses.Writes;
         var otherSession = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}", app.SignedIn("DavidSecondSessionToken01", "text/html, application/xhtml+xml"));
         Assert.Equal(200, otherSession.Status);
         Assert.Equal(writes + 1, app.App.Responses.Writes);
+    }
+
+    [Fact]
+    public void Key_strings_escape_html_the_way_this_app_encodes_json()
+    {
+        // load_defaults 8.2 leaves U+2028 and U+2029 raw. <, > and & still expand, which is what
+        // moves a long URL or user agent across MAX_KEY_BYTES.
+        Assert.Equal("\"a\\u003cb\\u003ec\\u0026d\"", ApplicationController.Json("a<b>c&d"));
+        Assert.Equal("\"\u2028\u2029\"", ApplicationController.Json("\u2028\u2029"));
+        Assert.Equal("\"\\t\"", ApplicationController.Json("\t"));
+        Assert.Equal("null", ApplicationController.Json(null));
+        var ampersands = new string('&', 400);
+        var encoded = ApplicationController.Json(ampersands);
+        Assert.True(Encoding.UTF8.GetByteCount(ampersands) < Campfire.Web.ResponseCache.ResponseCache.MaxKeyBytes);
+        Assert.True(Encoding.UTF8.GetByteCount(encoded) > Campfire.Web.ResponseCache.ResponseCache.MaxKeyBytes);
+    }
+
+    [Fact]
+    public async Task A_user_agent_that_exceeds_the_key_cap_once_encoded_is_not_cached()
+    {
+        await CacheHarness.WarmAsync(app);
+        var headers = CacheHarness.DavidHeaders(app);
+        headers["User-Agent"] = new string('&', 400);
+        var writes = app.App.Responses.Writes;
+        var first = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}", headers);
+        var second = await CacheHarness.GetAsync(app, $"/rooms/{CacheHarness.AllTalk}", headers);
+        Assert.Equal(200, first.Status);
+        Assert.Equal(200, second.Status);
+        Assert.Equal(writes, app.App.Responses.Writes);
     }
 
     public void Dispose() => app.Dispose();
