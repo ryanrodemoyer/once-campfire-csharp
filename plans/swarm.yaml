@@ -68,8 +68,9 @@ agents:
     # R04 and M10 moved here when Fireworks (glm, deepseek) ran out of credits, so Q08's review
     # of R04 went to dspro: a reviewer can't review its own work.
     # Out of usage balance (402): R04 moved to gemini, the benchmark chain to dspro.
-    # Balance back: the page cache (U07), reviewed by claude.
-    queue: [U07]
+    # Balance back: the page cache (U07), reviewed by claude, then the benchmarks on the shared
+    # verification harness (B07) once Q11 merges.
+    queue: [U07, B07]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
