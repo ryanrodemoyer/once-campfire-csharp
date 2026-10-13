@@ -147,10 +147,10 @@ Dependencies only point one way: RailsCompat ← Data ← RichText/Storage ← C
 | **M2 Benchmark five** (B02) | Room, messages, sidebar, search and post replay-equal to the reference; first **internal** numbers next to Rails on the same box |
 | **M3 Feature complete** (Q02) | Every route implemented; no 501 stubs |
 | **M4 Parity green** | Screens, cable replay, continuity, workflows, rich-text fuzzing and security review all pass |
-| **M5 Published** | Perf round done, final run on reference-class hardware, README written, upstream PR and announcement |
+| **M5 Published** | Perf round done, final run on the shared verification harness (B07), README written, upstream PR and announcement |
 
 M2 is the first point at which numbers mean anything. Don't share numbers before B02, and don't
-share them publicly before B05.
+share them publicly before B07.
 
 ## The DAG
 
@@ -269,8 +269,7 @@ One task is one PR, and PRs merge themselves:
   merges itself, which closes the issue and unblocks its dependents.
 - A red PR stays with its agent until it is green; a conflicted PR merges `main` in. Nobody waits
   on a person.
-- Only issues labelled `human` need a person: B05 (the final benchmark needs real hardware) and
-  X02 (anything public under the owner's name). The orchestrator never assigns those.
+- Only issues labelled `human` need a person: X02 (anything public under the owner's name). The orchestrator never assigns those.
 - F01–F03 come before CI exists, so they're reviewed and merged by the owner once; everything after
   them is gated by CI instead.
 
@@ -293,7 +292,7 @@ One task is one PR, and PRs merge themselves:
 6. **Done means**: `bin/check` is green, every acceptance criterion has evidence in
    `plans/status/<ID>.md`, and the PR is merged. Once Q01 exists, feature PRs also attach the
    replay result for their route family.
-7. **Never benchmark** anything before B02, and never publish numbers before B05.
+7. **Never benchmark** anything before B02, and never publish numbers before B07.
 8. **Stage files by path.** Never `git add -A` or `git add .`; worktrees hold local secrets and
    scratch files (`tmp/` is ignored, but don't rely on it).
 9. **Security work is reviewed across vendors.** Whoever writes R04 or RT04 doesn't do Q08, and
@@ -346,7 +345,7 @@ benchmark tasks, which run one at a time anyway.
 start. `plans/bin/swarm status` prints the same state as the dashboard without dispatching.
 Worker logs are in `.swarm/logs/<ID>-<attempt>.log`.
 
-The swarm never touches issues labelled `human` (B05, X02). X01 waits on the owner's B05 run.
+The swarm never touches issues labelled `human` (X02).
 
 To steer the swarm by hand: `touch .swarm/PAUSE` (or label any issue `pause-swarm`) to pause it;
 edit a queue in `swarm.yaml` to move work between workers; add `needs-human` to take a task off
@@ -370,8 +369,8 @@ free of ownership conflicts.
 - **Hardware**: at least 16 hardware threads, with 4 for the app, 4 for the load generator, and
   the rest idle. The local swarm machine (16 threads, Docker) is good enough for the internal
   B02 and B04 numbers, with Rails measured in the same run. The swarm runs those tasks
-  exclusively, so build load doesn't leak into measurements. B05 is run by a human on
-  reference-class hardware.
+  exclusively, so build load doesn't leak into measurements. B07, the published run, is on
+  this machine too, run twice with nothing else running; the headline is the ratio to Rails.
 - **Rails in the same run.** We report C# against Rails measured on our box, not against the
   README's numbers. The headline claim is the ratio. If Basecamp re-runs it on their machine, even
   better.

@@ -24,7 +24,7 @@ The plan is [`plans/csharp-port.md`](plans/csharp-port.md). The work is the task
 - **Any difference from Rails is a bug** until it's listed under "Known differences" in `README.md`
   with the failing gate linked.
 - **Never benchmark an incomplete response.** Every measured response must first be shown to be
-  replay-equal to the reference. Never publish numbers before task B05.
+  replay-equal to the reference. Never publish numbers before task B07.
 - **Tests live beside the code.** Port the relevant `reference/test` cases. Run controller tests
   with CSRF protection on, since Rails' test environment turns it off.
 - Write code that reads like the surrounding code: small, clearly named functions, and comments
@@ -48,7 +48,7 @@ The plan is [`plans/csharp-port.md`](plans/csharp-port.md). The work is the task
 7. If a task turns out bigger than its size, split it in `plans/tasks.yaml` (new ids, same lane),
    then run `plans/bin/plan dag` and `plans/bin/plan validate`.
 
-Issues labelled `human` (B05 and X02) are for the repository owner. Don't start them.
+Issues labelled `human` (X02) are for the repository owner. Don't start them.
 
 ## Setup
 

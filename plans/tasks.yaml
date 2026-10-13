@@ -1366,21 +1366,6 @@ tasks:
     accept:
       - A documented choice of runtime configuration for the final run, with data
 
-  - id: B05
-    title: Final benchmark on reference-class hardware
-    lane: B
-    milestone: M5
-    size: M
-    deps: [B03, B04, B06, Q04, Q05, Q07, Q08, P02, P03, P04, B07, B08, Q11, Q13, P07, P08]
-    owns: [bench/results/final-*]
-    refs: [README.md benchmark table]
-    deliver: >
-      Human-run on a 16+ thread machine - 4 hardware threads per app, 16 concurrent clients,
-      at least 3 alternating repetitions, Rails measured on the same box. Raw samples, hashes,
-      toolchains and limitations recorded.
-    accept:
-      - Results include the Rails column measured on the same hardware; reproduction instructions verified by a second run
-
   # ---------------------------------------------------------------- Upstream sync
   # Rails moved on after our pin (345e637, Oct 5): 417 commits to edbc779 (Oct 9) that make every
   # port cache complete pages, drop CSRF tokens from forms (Fetch Metadata), keep a message counter
@@ -1707,24 +1692,33 @@ tasks:
       - The workflow runs on PRs touching src/, Dockerfile or assets/ and is green on main
 
   - id: B07
-    title: Measure on the shared verification harness
+    title: Final benchmark on the shared verification harness
     lane: B
     milestone: M5
     size: M
     bench: true
     deps: [U07, U08, Q11]
-    owns: [bench/verification/, bench/results/verify-*]
-    refs: [https://github.com/basecamp/once-campfire-verification, bench/README.md]
+    owns: [bench/verification/, bench/results/verify-*, bench/RESULTS.md]
+    refs: [https://github.com/basecamp/once-campfire-verification, bench/README.md, plans/csharp-port.md]
     deliver: >
-      Every Campfire port is now published from basecamp/once-campfire-verification. Add it as a
-      pinned checkout (this task may edit .gitmodules) and a `csharp` app the way its Go, Rust and
-      C apps are defined, as a wrapper or patch under bench/verification/ that never edits the
-      checkout. Run its normal profile (16 clients, three alternating rounds) and its mixed-write
-      profile with Rails at edbc779 and C# on this machine, response-validated. Internal only:
-      never publish numbers before B05. Long commands: keep polling in the foreground until they
-      finish; a background command dies when your session ends.
+      The benchmark we publish (it replaces B05). Every Campfire port is published from
+      basecamp/once-campfire-verification. Add it as a pinned checkout (this task may edit
+      .gitmodules) and a `csharp` app the way its Go, Rust and C apps are defined, as a wrapper or
+      patch under bench/verification/ that never edits the checkout. On this machine, with nothing
+      else running, run its normal profile (16 clients, three alternating rounds) and its
+      mixed-write profile with Rails at edbc779 and C# in the same session, every response
+      validated. Then run both again from scratch to show the numbers reproduce. Record raw
+      samples, toolchain versions, source, binary and seed hashes, CPU load and the hardware under
+      bench/results/verify-*. Write bench/RESULTS.md: a results table for each profile (requests/sec
+      and p99 for C# and Rails per workload, and the C#/Rails ratio), the hardware and pins, how to
+      reproduce it, and the limitations, linking README.md's known differences. The headline is the
+      ratio against Rails measured in the same run, never against other machines' numbers. Long
+      commands: keep polling in the foreground until they finish; a background command dies when
+      your session ends.
     accept:
-      - Raw results under bench/results/verify-*, every response validated, Rails and C# measured in the same session
+      - Raw results of both sessions under bench/results/verify-*, every response validated, Rails and C# measured in the same session
+      - The two sessions' ratios agree within the harness's run-to-run spread, stated in bench/RESULTS.md
+      - bench/RESULTS.md has the results tables, hardware, pins, reproduction steps and limitations
 
   - id: B08
     title: Performance round 2 after the page cache
@@ -1746,8 +1740,8 @@ tasks:
       - Each kept change has before/after numbers on B07's harness and a green replay gate
       - plans/perf-log-2.md is a lab notebook written as the work happens, ending with a ranked summary and what is left
 
-  # Shelved 2026-10-12: deprioritized and no longer a dependency of B05, which publishes JIT
-  # numbers. Native AOT mostly changes startup and memory; take this up after B05 if wanted.
+  # Shelved 2026-10-12: deprioritized. B07 publishes JIT numbers; Native AOT mostly changes
+  # startup and memory, so take this up after B07 if wanted.
   - id: B09
     title: Native AOT build and runtime choice
     lane: B
@@ -1771,7 +1765,7 @@ tasks:
     lane: X
     milestone: M5
     size: S
-    deps: [B05]
+    deps: [B07]
     owns: [README.md, plans/csharp-conversion.md]
     refs: [once-campfire-go/README.md]
     deliver: README with run/validate/benchmark instructions, results table, known differences; implementation record.

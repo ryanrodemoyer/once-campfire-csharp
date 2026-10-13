@@ -290,7 +290,8 @@ your turn, and anything you started in the background dies with it. Run long com
 benchmarks, bin/check) in the foreground with a long timeout; if your shell backgrounds one, poll it
 until it finishes. Never stop to wait for a build, container, test run or CI; keep polling until it
 is done and carry on. {finish}
-Never benchmark before B02 and never publish numbers. Never work on issues labelled `human`.
+Never benchmark before B02, and never publish numbers outside B07's bench/RESULTS.md. Never work on
+issues labelled `human`.
 """
 
 
@@ -820,7 +821,7 @@ def write_dashboard(config, tasks, states, state, done, prs):
     issues = load_issues()
     if not state.get("repo_url"):
         state["repo_url"] = sh("gh", "repo", "view", "--json", "url", "-q", ".url", check=False).strip()
-    every = {t: states.get(t) or ("merged" if t in done else "human" if "human" in str(tasks[t].get("labels", "")) or t in ("B05", "X02") else "waiting")
+    every = {t: states.get(t) or ("merged" if t in done else "human" if "human" in str(tasks[t].get("labels", "")) or t == "X02" else "waiting")
              for t in tasks}
     rows = ['<tr><th>State</th><th>Task</th><th>Title</th><th>Size</th><th>Agent</th><th>Issue</th><th>PR</th><th>Sessions</th><th>Attempts</th></tr>']
     for t in sorted(every, key=lambda t: (list(STATE_COLORS).index(every[t]), t)):
@@ -901,7 +902,7 @@ def cmd_run(config):
             time.sleep(config["poll_seconds"])
             continue
         if all(s == "merged" or (s == "waiting" and t == "X01") for t, s in states.items()):
-            event("every queued task has merged; X01 waits on the owner's B05 run")
+            event("every queued task has merged")
             return
         time.sleep(config["poll_seconds"])
 

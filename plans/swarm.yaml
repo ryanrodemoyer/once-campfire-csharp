@@ -29,8 +29,9 @@ edit_anywhere: [B03, Q10, Q14, U01, U02, U03, U04, U05, U06, U07, U08, Q11, Q12,
 review:
   reviewer: claude
   max_rounds: 3
-  # Low on OpenRouter credit: Claude reviews the page cache (written by Grok) instead of dspro.
-  tasks: [U07]
+  # Low on OpenRouter credit: Claude reviews the page cache (written by Grok) instead of dspro,
+  # and the published benchmark (B07): its APPROVE merges the results table.
+  tasks: [U07, B07]
 
 agents:
   claude:

@@ -6,7 +6,7 @@ Rails, Go and Rust columns: the same seed (`parity/.seed/default`), the same loa
 `bench/bin/run` is `reference-rust/bench/run` with a `csharp` app added and with every measured
 response first validated against Rails.
 
-**No numbers are published before B05** (AGENTS.md). Runs before then are internal.
+**No numbers are published before B07** (AGENTS.md). Runs before then are internal.
 
 ## Running
 
@@ -77,7 +77,7 @@ is the full proof. B02 runs only once Q01 has passed for exactly the measured re
   Rails.
 
 Directories are named by task: `harness-*` (B06), `first-*` (B02), `runtime-*` (B04) and
-`final-*` (B05).
+`verify-*` (B07, the published run; its tables are in `RESULTS.md`).
 
 ## Tests
 

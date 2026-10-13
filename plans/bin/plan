@@ -313,7 +313,7 @@ def issues(start = nil)
     body << "Done = PR merged with `plans/status/#{id}.md` containing evidence for every acceptance item."
     labels = [ "port", "lane:#{task['lane']}", "milestone:#{task['milestone']}", "size:#{task['size']}" ]
     labels << "bench" if task["bench"]
-    labels << "human" if %w[B05 X02].include?(id)
+    labels << "human" if %w[X02].include?(id)
     { id: id, number: numbers[id], title: "[#{id}] #{task['title']}", body: body.join("\n"), labels: labels }
   end
 end
