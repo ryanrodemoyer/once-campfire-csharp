@@ -45,7 +45,7 @@
       "name": "security_csrf_tamper_continuity",
       "direction": "rails-to-csharp",
       "passed": true,
-      "message": "Server B correctly rejected cross-server tampered CSRF token with 422 Unprocessable Entity.",
+      "message": "Server B correctly rejected cross-server cross-site request with 422 Unprocessable Entity.",
       "details": {}
     },
     {
@@ -94,7 +94,7 @@
       "name": "security_csrf_tamper_continuity",
       "direction": "csharp-to-rails",
       "passed": true,
-      "message": "Server B correctly rejected cross-server tampered CSRF token with 422 Unprocessable Entity.",
+      "message": "Server B correctly rejected cross-server cross-site request with 422 Unprocessable Entity.",
       "details": {}
     },
     {

@@ -32,12 +32,12 @@ static class MatrixControllers
         throw new InvalidOperationException($"{controller.ControllerPath}#{controller.ActionName} isn't part of the matrix");
 }
 
-/// <summary>Stands in for A01's <c>sessions/incompatible_browser</c>: a page whose layout asks for a CSRF token.</summary>
+/// <summary>Stands in for A01's <c>sessions/incompatible_browser</c>.</summary>
 class MatrixController : ApplicationController
 {
     protected override ValueTask RenderIncompatibleBrowserAsync()
     {
-        Render($"<meta name=\"csrf-token\" content=\"{FormAuthenticityToken()}\">", "text/html");
+        Render("<html><body>Upgrade to a supported web browser</body></html>", "text/html");
         return ValueTask.CompletedTask;
     }
 }

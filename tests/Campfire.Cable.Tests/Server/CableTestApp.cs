@@ -16,6 +16,11 @@ namespace Campfire.Cable.Tests.Server;
 
 public static class CableTestApp
 {
+    static CableTestApp()
+    {
+        Environment.SetEnvironmentVariable("DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "false");
+    }
+
     public static async Task<CableTestApp<TUser>> StartAsync<TUser>(CableServer<TUser> server)
         where TUser : class
     {

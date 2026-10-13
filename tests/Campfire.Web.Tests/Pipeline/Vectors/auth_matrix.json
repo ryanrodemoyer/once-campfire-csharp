@@ -1,7 +1,7 @@
 {
-  "now": "2026-03-02T16:00:00Z",
+  "now": "2026-10-09T16:00:00Z",
   "fixtures": [
-    "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900001, 712064548, 'KevinSessionToken0000001', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')"
+    "INSERT OR REPLACE INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) VALUES (900001, 712064548, 'KevinSessionToken0000001', '198.51.100.7', 'curl/8.0', '2026-10-09 16:00:00', '2026-10-08 16:00:00', '2026-10-09 16:00:00')"
   ],
   "csrf_token": "w02MatrixCsrfToken0w02MatrixCsrfToken0w02MA",
   "cases": [
@@ -29,13 +29,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=wW%2FVOKilf37K77POR86ObfmG%2FwKVFxoP%2BexCwJGdRy74iiO2WLUEL38vGUq9ddGTEPfyw5qbLKviq039SZzI1hvGr9BDShgabaMpZfBpkmjYJI%2FGAZ49PUbYjHEudgevenKBE%2FzbShjFm%2BWWhv7TCHXFmJLPuSznNQkCOgPB8W2phXC33bgYuL7c1gxKZKbZeJ0ur4xFekbQqiCyoJ5gIPhZvjMGevRiCYgK9AsMqLbW3X8Acvzu%2Bd0vCcXdzwTvH4vexNBUEvzRfTolWytNu3AfLt%2F%2B8cdR8m4ZWxcM7EZC6Ox3bGlKDKLzxA%3D%3D--5T%2Bp5OhfC539IsM3--6cJUbjwGOFU6Qi023O%2BBxA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=WHKIk42g1DDAb4aPmxEDjgIbkH%2Fmm0lmRJTgI7npT%2FnzGmSNf3GrdfERZOtHIRAAedyzMrmvuZ%2BW2LcaNV6ID%2F1qG34TQsIFGE6hFjn7XxhvQEYgcWTw4aovLSrEH%2BjjjJ%2BX1gqI%2BvSNJX97%2Fke5o98MrlBz9NlBj9btJa9c373cZthbPjV0utiILlbDwqf31%2F%2FUSsG%2FW4SQ2YdF3Axii54SuBB5gT%2BOsKhI%2B94tfaPAZOTtpy443GYuNdUGPxItROePvDS3Ee7CNt58UKBpNWIq%2F1VMhrEBLUJaMnK2%2Fk5C8u88xCRcyEAZig%3D%3D--9lkJvaVp4Bv8lBx0--xbeJAHifTChpHc5X0FAa0A%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -65,13 +64,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=r%2BqVAvbjI68rlSS5mI1O0U6i221dauJp5D6sV0REFgEUeIlZ3n4%2BjzTXk2uTei1dVhtJiXWPTckz6ElqZRZt1WLmbGrfIxz8wBIPJLb33MhUZcKOorcY8DK1lR1PdPCqAftTK4MFQDRyCJYX04M9MMGLhNqRxdfK8L96MqD2K6OG%2B%2B%2BVnB7j1p%2BVZ1k1cBIf8Eyvua3UbRqaHsSvfOE3RTq%2Fqgjpdt%2FIskFpE7itMzbKM580Fp5V9e9fiWt%2FPF4rnZwa9yVRImecpUyN7XYMVV7rjCusnIjEwdSh2TQVP3tVMfa6t4U7Qmc7mA%3D%3D--cFp%2BWOOIMpNUQOZJ--nJD1wwkW9WCuTyVkv0kdOw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=3vI7btE%2BAS50JISOzliEN7a7OxuQDS7r7wxrRKP%2Fpf3YCPwqrS9wvZMmbhxpkUhD2NrnY%2Bs%2B4CJ7%2B1cWQRTgE1DMMwtSZz0X20PcfPlRw%2BH8zcb0SGke8TaDGpna%2FxoVrR0eHDLS2V%2BkFTv2mkRK%2FkEfiDY9Jp1Uyq%2BjC49e3m1lIs75kWtnrncGbHdtqcVbtmvoTNDydROfbuIIxBW%2BfaVZGKWUSOPoQmM61iZyj0hC0BHoZvfpd1pHRUEAeQE13TPrK0Qge6wMk9ykR5rFXVan9NPcLAwOt9ln3dZLjeooDn2DICunVdnE%2Bg%3D%3D--dRMIU6QlrnIvwR%2Fk--YWiMpW8HRMegOxvin9guIA%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -101,13 +99,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=pTRlgT7fFsH9unNNH8wOTXNIgjchbYovgZ3NUjItd1L%2BmEnqoKLD3tbsVJxiuk5UDtbzNuOdkUq9a6188ST19H37BMenA0cEf5%2FrEgXqoyJjSELu9yEULTpMHKbGtd72pH1EPaMLQvLIJ4zP4SjGDDjRFLBc3s0oJtLgkQK1%2BmHLBvOkI5Sif%2FZsxGmraf1ecDcMP0wAjUDJDV%2B4l3DkyOilmqrxsI5EdJaEcw%2B0B%2FivLdYOWIP3QUmRne6JtlnZAvNDTriEIGZwD8r7FNvXpdnGGgolWTGghftH5YkMs%2BXtkJ5giH%2FlrFNRqw%3D%3D--iQaf25aMeIVLsvrd--lOOV2KET8RdVFh0kNnL%2FPw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=UCKvbkc3%2FKX9daLrbGbnx7q2EhlYYaw9tUM9ub6nBg00m34way9iY0XnqhX2QHWW7xX69JyhUrXt4nooUp7PUFzPdiSLL6OKa5X61ek9Aw77jVsRiknzQHEyZqcn9JlzUVV1%2Bvjhs1Hlzj72G1hOd%2BJFVLP88mFwtwlcoCGTuabEkUTCELxcT7MmVKR6KCbvEUUfT41tUZLWuqvMNnsnc4m0ReKSm2UMUvXo9%2FebyCdMKaLOhfWoh0QUYe8b6z1LFXUcy9CQdwk32G%2BDawxweBqc1AYBtbtx3snhL2eR3xG7fmgSjgvdK61M7A%3D%3D--yijG7XTAQww9Um4Z--upGcQJ9NG%2FaIzWTBe%2BfESQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -137,13 +134,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=tsr6A%2FUpMnfJbXn4InMb4WPXotHWPxqVaBkRz3esHELuK2sf1NRgEhWzUWz%2FWYv5cANRagncHBw3IJyWgWadAsYtE7RrCntZAnXgyAQ6gJvj3z8UQvu63ykF4KJllyQz2DTQsG4JY5Ld%2BNA7sIHWuyMrTdktCt1kR4BRBB24sMuqYRtHfnywL%2F3Hzs016Nvx44MqWzUOCzt9K9HxnVVNhudTsetGzPCv%2B0BMLIRaAoMueJXxkTMl6oLCGJ5zgRw%2FULSqemrBVkZqO5jAdpiFuhq9%2FKaNCCnfq1DbNcJtmBkhMtGMXi%2FQ0qRkriXL%2BsNzaweZ9fTCmEwcUX86yIRYzzXDvqzVw9M1ah3fgssfFkcSRPbgNT87kI6mLfaCLCs%3D--vH7Tf1m7Iu5zYPdD--pGM2TPgwr%2BcukBFxokAgaA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=6FObwA2fn7VGeYZd9wK5%2FIliOiHGDqtefTNxT6%2BNCAArrQhpokdwnCG11fvHU9veAAUUMlDfKjX2hcoIWuDg71f1nGK4hlzdWdCV9ZePHylqPup7gJMoj%2Fmq02%2FsQZmxDaOYiubBfwj%2FwT58uzTDOMlz7Pga0yZT9bsp3zMdyZ%2Bvwg0%2FPw1j%2BMpSaWu6FoIPrQLS1orZxZCA4nHEkp0mGHhFhbU9byFMTpt1UtfGDysAib6y%2F5yrYhEn8eti3vfVtlywJ3bsxwz1HYjyyxdIQ264IsEzp2tAz4h6JBtwOUbMPJBsIBYau%2Fl3vnB8a3CKP9BPCubhyzGX2vEm%2F0gELs%2FqgizbvnbTlCh2Ygw%2BZJ%2FotLi7A482WuXwJBG0EIw%3D--Jd8GfmCyXBpO8FAi--Ot%2FPItXRkZLH4O8WS0fOvA%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -175,13 +171,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=gaCojjC2qtbyjvmr5r%2FIQJc1yiK6w5mwA41tstLYIY5tBIU%2Bs0jwWk8RqrFh5VpOO3jCZO6hvU8NtDneXeptQ1MS6BIxeX0YGOrFidLOObW6EsuD89TPY3DG%2FUAWSnks2PFMCHjk8xVx3MAchRV8iAD%2BMnMcw%2BV%2FYPIzMIL3890kADdHBaXXh7XeX5IAfUgplJh6XZQzG9%2BSUB%2FmZUXIvmBJqHrXQXSGuOsbR4ih0zTvSWTT%2FolKf0BCWezFvV5YDZWjv1ZiT%2BYJs57c%2F494dEawHjJhnl6VHmBQcfbYmGAF9sy6w6Hjh2NjKu79msU%3D--3UPLfemi1TsktFCu--QgQxYcTKvMCfjNNnL48oqw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=SkZxGqi8tRdvBpDghtN4Hw%2Bi9aNpoqwS0TwlBxdJOmUsvIXXG%2BYysLCavRSt4uBkpTtVrVbZoIVZ3quxMfo3Q1lJErJKIQ5K7oH%2FhLNpGfYAmoD%2BTKvSFuC5l9GCKRISHpjNBm%2F9NEuROzRkZWsF68XlLHczEqumYJTs3hCISv7LaNGfhxcyB4fr8GQcnMYqZ%2By%2B4zEvM3dFk5Pq1NAAtJntaSwMf9zSm09ppP9SvanVGFjxBcVVrQimrvitRv6RuSrRKLEjExkGKdS9f77ISI717X2PK%2BnXcBRRxUZI4iO%2B4b9QKD3%2FMNdpMarws0M%3D--%2FSMQuFyhcKYV1Ggn--uuR692Zu9FI%2FwCw8ThT2iw%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -211,13 +206,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=w%2FNJoo3yS5ELM32txZ7E%2BzI1SoSG9TpAWG4MZr0OY2FcMya4x5dLtHT0MAC9PUItJLT%2FAslWWUIp2MoP6wHyZ2f9krYmpfyF2C3NkpKhtrj7FLUVUywA%2BfqP0COJc0vhsA40N%2BwkEj3394JCLk2oS5kaXxgyCl6EbKDpAKYHWhtB5ZRBiWiGIwwmy6H5DKzC2%2BRrqqOn0oObokQFB2oZJH9Yx41RQHDrjW955K4Kfa4lJ3s3W5ZTqJmNEEOm2c0Ji0XHljELoar5YbcX4x0iV%2B8kelZenAsS3zc7DzgKXqIgT%2FRyYhGmAywoLtyApL8%3D--koF0GznE4prSh84r--VgMluDfJQQvnSm01vGmlfA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=LPMuN9s2WsWBfqug9TAhFPPN6vNRTa81w7GUROGTp4AZ8UYgZskxfQAzd64my0UgaAWUNfarj52IGPHsyFXkFSoe08%2BTyyKoPxeFIMjWqvIzVuDeCCVri2qg5frpVaZM%2F%2BhlkSIg9ly8hI0BqR27Il2dpFvoE1UuUk5SfbQu4UMnjQH9qRDVIKKgvlVHqj95fZ7JfMTj4mHK0OHO%2BYWhwa7kfO%2FlDWp9Ba4v7uQwLdX%2FbVpjmuj8HDoxhUhGYR2E7ZxCrMX2lPag2bAZY1fev276RwBHTE6zQSVo%2Fel6IQM8dYL3zRWgnJWzQ9f7S34%3D--5kwtceLhRXg6OW8P--Sr7DrVZ2wJH1XPFNz8tqgw%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -233,7 +227,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwMjYtMDMtMDJUMTU6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--cf1229c12dc0f62620a6e35048ccd7e0868d5b47"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwMjYtMTAtMDlUMTU6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--e8069dfc28dd8c0d1e67a70a66bc165c0d0dd454"
         },
         "body": null
       },
@@ -248,13 +242,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=qqs9L02mykGPiZzr4W8jD2owqZES3ClSW%2FUTVIfnZNeIHUpwmJ8Szxffa%2BESKUfhsCcRzkp37NrkKkXSwHEt4KTO2i2G9YK%2FFixBB%2BiCmTrMadIH9JV8Xj7BCL5nvcLBH6vXA5B%2Fuudf0TBROAMB7WaH5nGUi4GgAT4fQ93us8E0MzYLEzqlLRHVz3gvo4cytlZvCyPkinAScBGpgWYQtopLht5gUhqXaSUnQ0fhT8TnmyIM488RryD37%2FcNeDIRphAdY1%2F1X0Rm14TfOZFXgiDrBYC%2BenGQp1zChyA7fTZVl8bUiJnAWCmkng%3D%3D--%2BfYaJ1pwd6CAFA4t--pVoFpf8c2op2J3WWN5cQLQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=46Mq62mwdwAGWHLhyepb0YHjXb3ZYHNnejO9vWC0nRyaOdUWHcv%2F%2BSTJTSshB81paM4wdgye9v4CqZ3Rvk8ghAeCoh1TVIfrO1o8O5xeCkT35XphQpyT8plP6aLQm3kcYYtLgDtPEY%2FyodilluW5m9jsaPA2Fb9SqBxmQGL%2FmY2zbKpOntda2CFsIpN0BnX0TDbx48rwUo6hymLamu5Zy42hshI%2Bay0WdVzJwELSOeqiCEUJmgyWdzj5%2Bq%2FmIYjFrJ7dSfmObkoWPL0W3ORoKH9cyfH5CUkIaoFKDYIRh4vSKfyHsodKWjJDmA%3D%3D--3IbM7UyZE9N1waK8--%2BFgupC9GMQCrEpxZF8MBIA%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -270,7 +263,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrNXZVM1ZqYUZObGMzTnBiMjVVYjJ0bGJqQXdNREF3TUNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--1f296dcfaa0c230aedb9c7460d04e91f67b5896e"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrNXZVM1ZqYUZObGMzTnBiMjVVYjJ0bGJqQXdNREF3TUNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg3WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--20edb6b3ee0be509e255a4616b4a9eac0c2375ab"
         },
         "body": null
       },
@@ -285,13 +278,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=OD%2B5amFa6EjKHjVA%2FNIrcti3Mm4qjbrOW8ZMbuEd9sTIRnWYMfiUi6Fw%2BUp3cJe1Yx3dUroQy%2BpE1jYnB6nxFOEnWVPxfecgSrPhIoV%2BvNjriqLSyJzPtDPPROOcN9Fo57T%2B3PSg7BzFN6hITMMidr%2BOWWttC7R2PejxKYD6aRtzpgfDw9RIhZDFqGwi54cfuw2ntOSEplUmctoeAr6%2BUJCpldlpdGgZjEetCC6GAPpS6hTu%2Ft0SqtaGxYAonTObagnsMd3VkyKJKnO7tkblz4vL1oQtBw2ehWlLv0%2Ber120bqIdGhXLY%2FGNIw%3D%3D--xv6HNLkN8tUf%2BClL--bTBCXfn7ianLPdz9gOxRDQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=Y63pwkdqA5I8S5Q1Ua6jxuHv3F4Hz54PE%2FnGsFlJBjWEAv02bYa7XMe%2BWc1rBVkoaDFqtwbgchwju0SOOVrgNnW3VR2ZicHChSVzN4idB6EaDcgd1Dh4cPj%2B7Lwda%2FYThsbdrdlcWq5uA8RDDrJ7s5Xeg9Feu%2BqG4IUvOrext6BM0715T20Ddz3oTfRMVAhbDh4NAUnTRHIdFejaLZ9jUNnw1Jsyrz13iF%2B6q1HzSrf%2FQmLdEuTl%2B9EnXXpO9g2xpL2KO8bBDxqsRVOxPVYYO%2BCTAGtjGK3Ka79bP86L9Q8oPRiBwyDX1zMPzQ%3D%3D--0Tm%2Bpp%2BZOXjamlxg--YANdrUXNZgIwPTXE0m11jw%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -307,7 +299,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c22A"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f9A"
         },
         "body": null
       },
@@ -322,13 +314,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=GIvUdUHkCxprX8Uqv8rcSetzVivllJaeb4JPYbNjiGD1D2FW0PahmGeljsD%2BOL3luExAamp32Rdct1tFtiAP%2FdNUu%2Fl6RgPpWH%2FcAk78cvM288aCym%2Fu8EdPP%2Fe2iyRlKDr7fjfyNHmlikDoxnsCxwLJth4XfHzTkHmSmOZ3FrfspLkYfeFGePe6DXG7DrWMcw09A5q7fnuEDrFttlNL3J%2FYt5h77TgVWyOZxHJAjFsYQ5uezbrhEiGJzYIW1P8dAjFWGIDz166YsCbue3wnRFQogF437bV30pyf5q%2BQ8nKD8NFjbmKkGtKVVA%3D%3D--A2VH6TsmXE4EXjsN--%2FAkDlhqqu5Nr1OWLQsK18w%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=ETu0Jd7Ahh7aF5H5iWuP%2BLL8TBNgb2nUobOL6SeAIqVThDD15zs4rqq7Ubz44QSS1n2oQ%2FW3HQwDRZvYkqitMiafvW%2FLm5UvNPMoGzui98DP3xf%2BAhS0f%2BaPLFBhm%2FyxaMtKeM9TN3UP236x%2Br0DcjARieirthBskedUndHenIJTR8jRgp1QCqo0VCpbzFwjIl4yTlf1MlZSuD2tr3zmLph2Fk77JHTZPSWbH%2FFWlyifDlkLy8mSQHVxGJT9FtV%2BPO6tgYO6eKDCTh%2FMXQrNA96jRmRtppdnJyXo9DDGRdojE6GVJHO3E7TRnQ%3D%3D--xWIvPFKpH7yw0JAv--S7YLz9ZIDQpkrCjLVKXimw%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -359,13 +350,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=7EGjYlx8rAg81G0XPsi9w5eCOg59oK9TlvYkyppQ7FfO%2BkipTh%2FHx79OZTkAJf%2FbHoAN6X8W7gyHxxYHS%2Bn%2FgGo4jDYf7Qni6Ew%2FYzHZBpUaNk%2FrK7X1krOZeecWpTKD%2FUluWJ3SwYzRe47rUsIZI2mVHn%2BY0RZBPqq1J8Jdl5eEh1KRGYbQ7uYbZVvG12LXswtl%2FelvXfk5j%2BQ2DDCWrh9DBytHt3mNKdhL9Pjjo8dtW1V9Q7uo2xdzrhPLoKO4pQZBfjfe48b9dg%2FETDiNM43%2FWpdB%2FXUALZO89AbrZdhzoiW0sUNiuoIrQA%3D%3D--WQ9hVWVY6J59uvhB--AtSA%2Bp2u6himckOwmI3Kfg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=iG3y9%2FDo7IvZey9bQ2hiqZUfyPnE1d1wXnMGM0nkR7sdWtCREzzglopvb190q6c345be6ppSrIduCGynfaZgUgjSGOLIO05xMd0Q8EXzeJ5LYXjolYaaHeiB2bDwY80%2FpsKppmBgEm0uSRzGiwOgHabLmGxL1P6Zh2X6gFHOk0lXXjRWJlaOcNPu%2BqHQqsbPcueNcjg4tGjzuNSs3Zq1FZlGUSpXiuQNrdfAe9HvsrzDLGteb%2BfTTVeFBkChcWXUi%2FsWdGM7t0Vve4XjHihlJXgE2H8YBwReO8gqVYgiKTafk4nV8GQLE1NqGw%3D%3D--DGi%2Flb8pu6T67gly--O%2Fj2CvTw8Bcwmv7KDVbxuQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -381,7 +371,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96"
         },
         "body": null
       },
@@ -392,17 +382,16 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -418,7 +407,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; last_room=486777696"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; last_room=486777696"
         },
         "body": null
       },
@@ -429,17 +418,16 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -455,7 +443,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; last_room=999"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; last_room=999"
         },
         "body": null
       },
@@ -466,17 +454,16 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -492,7 +479,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; last_room=486777696abc"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; last_room=486777696abc"
         },
         "body": null
       },
@@ -503,17 +490,16 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -529,7 +515,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc"
         },
         "body": null
       },
@@ -540,17 +526,16 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--54d13656fb676179a6c63b1291dfa07c361a3423; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -566,7 +551,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D"
         },
         "body": null
       },
@@ -577,18 +562,17 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
-          "_campfire_session=cASpryzpLlUbEOau8%2F5AveGOGQ27a68BxYcRvPd8h13hPVx1JfSQIPasMu1WqzOl2RoHRjOLNkt%2FGDof2xwzaIXUSWelF1pr08%2FHyThb1Tafdk3dQY3cv206tVvF%2BMMWfTYnlolBeN4QwDpG5DWWdrKhyPlEZIerWJapCNrwHpO9nD5AaH7kxm5v5IhPNDMADrAYqSYKLuR4SxKZEad615XRkAlWofBnOmBDZZeZFxitjDP36hA94fHsJ9MZAf57Xhj5wti2vcY%2BNmlrrpx3JC8w%2B1TM6iPzp54WwG2riPVLPR5kLwsX92Jfr43GUwg%3D--VXB8gLJKEQJxw8sT--DoYabb7uCtXdilJUHaCJ1w%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--54d13656fb676179a6c63b1291dfa07c361a3423; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=164lgmCU9MvHBP02TX45jXpfZ%2FeFN%2F7de2kG5CzPY2Xim%2BK1danMFYWxE1rFSUxU6gvEQjaJiHg07fly4LxhTvM%2Bg2JzlIFNeFlBtR1h%2BEXzZ2A9f%2F7vgIzCokVT6G6Nvq%2BM80GMFzLk1%2Bc%2BirA4qayS1qOF%2F8oJ61%2FjAjgqge153BthxG0wHLT3gcCRPt0J33bomL1nilcY2ug5ba7QwzjNZpUyNDxVM7jZi1s6XTgrD4kNC4CFnEurlu2du3XA0RG80v%2BGrMYMz90HaXlO%2Bdc%2F2jjPDaNpyR1Xnz4H5yXXCRgbDPtofX4gS4QijOg%3D--WxNsQ7yp3YuvT7kJ--wpL7Nd6wqtjZ159ZMSnVjg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -617,7 +601,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -650,7 +633,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -684,13 +666,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=EfsDzp8kq3jWH0hJmeb%2Bxu2D5vTKLAbOGu69BLs%2B3aR9CPeHnYzBQB%2BQX7w7fW0zLww%2FBkrszhcPJSNFpsj%2FGN%2FcjNORenhzopsDzuUOlhBThSaKiVKvFh%2FSULRepAFcOrlbKP988SjdSuO8varGkWnoV68SBYdWl0USKWXwbSEZ1KFJit6RKZwSr0V91aCz9FCWpZxif5DdzJA7%2FweO3Skuvoc2cHWqe85Kp9z65xV%2Bxp%2BZu3Qpda7Wa9e4eeJocvWPyZFq0CrQbgwJkc4bwDhqMpBZBuhIK7Sk11L1k%2BDVu0NtD3Sqn7931A7detkhDfoGxqZE9FP0MUubnJiyu7sP%2BclrXce1Xw6GNzRpTsoAKTx7MgnKdH3T7mmdGmQ%3D--hajaaEoejjSOGOAS--CD9Ib3wezKegdZrdp%2F68hA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=S0ZsNRGB8VRVPE7IxgITCiPd3iSG2OqCATLlpNep7xB7iDrrE4pj3aH06sMLxPts%2F4VRwv73OvhxREBPiCPUhnMoZIupVSqBUdiz2cNz3OqCLfdX5gfSFu5kw1XUoCCpVxKUePUzsOEDL4Fm4uXaD28W9r8%2B%2FW7G%2F93hbBVa%2BzPrKnDnUsm874FZSnxccFIWGiw9E%2FwQwwA9BBh3dW0WV2lKSRIM3i8%2BpWWDh58jEH78xsIO40QvhL8SLJknJ%2F2862HvwHXSg5KwgBRgaSPcJLEz8Q74hJsFWOLKzRGrPiv9sSMjdCFp9HhNPXxGDPEaptMOko%2Fsr%2FMG4QOfLBAZMrNJgLG17%2FWfeYkOwnA9vCWQRmuccA7qM1H3SicIzqk%3D--NelI1hDqeoUodrYx--2xgnjJeOm1mVaGx%2FVOFXwg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -720,13 +701,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=%2Bu4eN%2B6%2Bcdkqk5ae2Ep2Mkjo9k8QwJhdLyDKpUcI8BhBm5LYMwolRqBv2FVivqY3IuQou8g3WgRVWjlSZHXuaFrf6FF8nu%2BX5BlMxoyGiYQZGjzC6berFGdQb3W6e7E%2BSXSAV1TSkdqaDYNnQZmmL3qbyxcHRB0fFpPhbLgFB93959Ao5Oc4WiE3pcGM9JAraV0N9k%2BZaB8lw79%2FEat8ldxtTxBcqzV05QPO%2BrcdLuENwUVwx6SxM%2FcLHcoA8xpqhSM9vHK5pMlqqFkwlUPa7fOiAOHAOa9YxOaqee49IhMn7o6Ub199c2vWggRgwhhEs2fmUI%2FCyW3oBAZzxgY3F5AzUAP6P2fgDQ9qxUpV%2FA%3D%3D--8oIHeqxVV3ZL0m6X--3YVn7OmSMtoR3jG7eD8gNA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=8fUSLR0%2Fiw7jupW%2FmZ5ODcbYM3rjwxKfGMYk%2FCUpMlW6W8MbJZQYnyfVdxHT%2BCZCudKZq8XiHOMu98p%2Bc3tR5xfyCSXHPyh1fBgiIbrkLwwP6ZRCul57jkms3a%2Fds%2B0UdVzmIpBUUc2G94IM4M5PGjxy%2F6IY7cXDJfHNR5piJq94k%2BE2n%2BbprgFhWCF4E5xLbxNCL1Tb%2B0Y3ewELoXSOs751eg%2BhDIJosDzBUWGgws5clyKAl6oXH7Di2w%2FoYPO6zyg4soSg1z5ZKDcarpX3DaPEX0SWJ4pHeVsh9GkYZ3MItBmwdjBiirPPFjoHs7BE%2FcFxOUAsTyUJhLCLbNc0MN5cqT4jgLM%2B2TstveQ9iA%3D%3D--qctvEdpQ70ccR%2F2L--Gp3iU3JpOc3AIcwSvSfsxQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -756,13 +736,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=f6HJj0PMR5Fe3UvWcUYWYLt%2FO8HwWgevTO2e6CjMeSc3CqQSz8wkPbhS85X6GVMpWaQq5%2BVxh9dMuJ%2B06%2FqZKJcJPen5YXE1kWgC4SAqEC%2FRLvcSglVrn4icqfy%2F6R1ebKhx3wOJOU0wUUefSn9%2FamEdhAnyf3xAhzP2Z5nz%2BSgfhtIDUUWNNzLISajzLKHG4DhTvVH403OlcYPZN6FtbFa2AWvDexZs7Lqln%2FDngi3uiZr%2B%2FLpbQ9W8LzpnVvlEXZd6flpFAJ57RqBJUuDJJ2yDZS7BNRlRQn751AQuA20czGv9ASJALeY6Y6t42B7hWYIj9iR2XKQZZfYLm2nqWYnQsIDmtuVWiaQx7dXLDivyRb6BccClSC8qIBOSwHWC8Ktbip3IPg%3D%3D--d3biEANI0dzQaguJ--GvF%2BuuZCNbJblAUFKtZ3JQ%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=QQmoRZbTNwi4G1TnbCOdAL32804hjzIeSZeRWBm%2FMoE35mkOqOXoumgaHBAQjLFer12UeI7Qh730m3bppNKmiLw%2FX581Pc8H7KcOUDoCR9Ocs%2BeQx8Gpy75gGAhdQPzmQp5NM3AHz%2BRbPTxsuM4%2FV%2BQVlFauOXqJet1UX1VP48NgsucxPTahXawrAnMjlHY020hEjaLx4lZsayEzoaqN7k2y%2F5XfjbtdwKV3oHyLwMkL8sEFeW%2FbrSmh3rabbM8nlJzwKQ39DiLDPzZZJonAjh3R%2Brde%2F9GBxTlpAOXGLigqyOMuniMiQP4BEMN%2B83bS5fF%2Fq%2BFjJWxJVJZet46OO9NdcZIZ4FXegrXDt2pyCG9GgfV9kbiE06jnW9dy3KH4ilowlgZvfw%3D%3D--0A9ApGAh9hUThKvm--NHeuDzw9jfnzfhwQ9p1dvQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -792,7 +771,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -826,7 +804,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -860,7 +837,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -895,13 +871,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=qw9r1yIPRw6ui5Fvu6bVllanmQ9ykzvNOlpoH%2BKwvmZeJ2aYIQvApbkRiDcjoblsaNIBtr8aPImi0m7CdgZj5L3WERjrFtD3UbWEk6uvw%2FfBoLV6ymTLV1F0xJ%2FIOjba1N4mrPkwTBXkFMImVUFxIDeLKewmKpEyx1jnaFzHPbgd0NPX16aVFRXY%2B7T%2Br2GN%2BhkajOg3kTPvZOhkkExLKdzJD3ir3YtPifi3yky53vFMZsr5CH7gilLalgzT1MGnGgo4p77KVqGzoHu17k%2B4kL4HTuqzu4w1c0sWwU%2BzTjXiKOVyvAAg0gwRoxlYqwdTmG9Pl1fUZm0nV4S58m0ZNHW22iBfhRZpuEpxEK6uK3p%2F1pIW%2BmLB1T2EK%2FllxE0%3D--7AW4beh0Woj%2BfhDI--3%2BvYq98Ks2aenNb2bpBvbg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=RStLQboVVaWjukPpJtXz8uEJ4TsVoRty2ssg9k7gjPjUVqxRTlECKr3hlOY34Ntl86LeKL1id4SvYgwKdIfzC1%2BgEQsaNhInTJdrHjMUh6N9gcUwBhE9mx8O87bd7Ycq%2F%2BoJ2tei5T4c54MCj1EdjrRh3%2FpnNkXZPj43kqMpiyFF3X%2Fg8TQLw3ji6Unmjgz%2FGnTUaQrXE%2FWyTb%2BY7T71VeAb%2FfFkJw9QUdjh5epcTngvrWZ8XuDP0jhRo9isumYZpAhbLF29Hb5l9F1adGwF%2F4HdoRUSoPSSROcHhIkm9ALrvc4yaAaPzcXc4L3IHq5AFczVEOfAPpBVNQxuWLMtq8u2WeP7fkYrlmz8gQz4ey5Ht1CAOlhxZw%2BGPNjUnl8%3D--SGHZPmZ2nAP4jPIO--kIBO9zjEu9U7qnk5IuCZew%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -932,13 +907,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=233Fqp1DILICaeogkmN8EgCc9%2BQKz9EsDzYTOnHZ8uzN%2Fmu0Qlndk4sW6ANITUQxQbVJH7NfQW3rtsjI1%2Bj5AomPt%2FYUKuU7mBSpKRLbn1K65FmIiRsgNp8X0vqB%2FnTO3xQW8Nrt6znMwq2xZoar47YUNWxlQYcLxTx67z4GbrDe%2Fe2c0hOX48UsW6WxCHzhPF9Ys6ObmxRMZfoVS0QLBibmf435jQzWRRr1cFGs9jaW9S8kUPO04T01pLHPcOm0O5497ygBnN1hHdIp3gTS9a4TPQ%2FgA4UnUWITxGqVRDLf7mZyLwhL%2FBVkCP7bIGvnDiYmSr8orO23juo6%2FEA4%2FWL3gGEwA2OnjNwpl5W0pKfNQ6MoRqAM%2BAtuUDwrl9FvxTsBn6nRCA%3D%3D--GkNPIauf3EEQe2kK--OrR3%2BobbO4QsVXuWBSvZrw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=Q6nKiECsz1G4ZJQDfJft3lJ0USa5jWZwTwIUxVCjm%2Bjlp3N55B9%2FrLDdSZ0HGNjd2nmYxDHoUou0U9tuj6%2Bljxy2yYkpIQ6FWp%2FTVhFbA6Rv9k3by0Bl%2Fi%2BF0eEX1VVhKpy8z%2FSG7B5mEXZTUmr9u9YM8GAK4%2FpltGDJcweDnzPRnlSB47qBpIw5Ne1YAJhzZUtd4N%2FKxRAksluVdbq387b9wgswg7PzXkOGqn1WWMRXUkmHCjY2a%2B1ro%2FaGHrX4PVD3UcwpofJ0K%2FYckCvIsYY2iBuCB%2B%2Fd7oFxAnVrbjTOH8jRf0e14wC3WPtUcRk6X3GMznOzenJbLC0oDdBKQgsfY2e%2FcJtU52lUUTs8Mqf1PioEvT7U19jkEzePI1Nqt8Dnsno76g%3D%3D--Lub8%2FMKoCTDuBy3P--ocmCQjEPLOqe96h0ISaM4g%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -954,7 +928,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": ""
@@ -962,13 +936,22 @@
       "response": {
         "status": 422,
         "headers": {
-          "content-type": "application/json; charset=UTF-8",
+          "content-type": "text/html",
           "content-encoding": "gzip",
-          "vary": "Accept-Encoding"
+          "cache-control": "no-cache",
+          "vary": "Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
         },
-        "set_cookies": [],
-        "body_sha256": "29d14c28d41db9267a3577c0f8b834e86d4a99d2ed4d6a64db173e4cfc7f7950",
-        "body_length": 46
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
       }
     },
     {
@@ -996,13 +979,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=IwW4jswjFnjTPfW2N84Y%2FWfZlboqPt427LLr2vimzgcSH54Ogpp8lt5tQtVo5czxAd5csRRtKQGUzJ%2Fs8bZP4XUEjHbr2Y44%2F4KioeoquT9z95SHMJaYQaPpCoksEKJmNDPI4lbdg0y193yFi6cAaLq%2BDYcA6Hm4JYYclYBr8DPtDBpmxDnMg46aynhrjkLmqiyst%2FZ6cEyGa1tm1ucEAZU4G6S%2F6yLHEDcmtvgmU6L4yZCE%2BZCDUxDEQr7Zr61Hs%2FcPEjtNPdaILaitsI3l%2B3VSVUMN7ojByK3c30Cu8KJmNsz3sF7Juh5OTpdUff2ftBDlnnJiy7MX%2FUrz8mii--v97PnBINlqBuaj%2F5--CVumXwOZrs5j6nlYiqChVw%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=q1PtmgoH%2FdWCI2PysPyV5fC67K2R4Z7%2B3J52gGKjxcwXYp4%2BU09roJBbLSlc%2BxnsgfeR8xIe9bZbX9LTdkvPq%2FRcWPOLtl3mb5UZQQTOhYXdCtBXhpHjLQugC%2B0CvHLd1S%2BAmHfj8s3kzXLxZCHE0s%2BMg0FA%2Fcs3%2Bm9WG4q%2BtGEs5rnQmm9Nsl1h9tfPUNLFAFQiFiQClDXV7iBrbMCFF1zv8WsYigEMsVQrmnXf9oQu7KpOq78HvzeERnzJvebSPccGIeThJ9UacdHB%2FftwemDqdPnC0AjYhmGy4y7SfuR4rXmGwOP0luwMJKakPye8eBpZMGXYQPOhYsj0%2BYTo--zZkrdiYXtyExj61S--vFjP%2FTzZarr7QygcIf9hGA%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1018,21 +1000,32 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": ""
       },
       "response": {
-        "status": 422,
+        "status": 302,
         "headers": {
-          "content-type": "text/html; charset=UTF-8",
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
-          "vary": "Accept-Encoding"
+          "cache-control": "no-cache",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
         },
-        "set_cookies": [],
-        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
-        "body_length": 5408
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=%2Bch1lTmo2OAuQAyHQa4eFzaielPmDrJQbT8S1rUASr9g%2BzcFhcPk55IjckDgA51Ary204DQYQ8p7IxM86OXrmQ1dZFPvGM%2FxzVZjGGLjz8SWbVGYG7yEh9Id6Ttk7sb%2Fd6JH9ynRenDzjX1HT35R5nkJ%2BXmW%2FqqOTGyyyb%2BhDEdem3hn7YgS6VbvRnc02cwpjvPFQlMeg2fMzCtVgGL1CrOQTPPib1YcgHkrdbvNxmKMqH5SN7h5OzC%2FCzGayLC8GoQ49f%2BGDcQ985Os6pvQ%2BI%2FDTE4DqflzyhbQ7rjn8B1JIlqKi7Gc6Vv25GCiPKQ%3D--Zz9X1c%2FoTdYQ9LlT--thjTq44jXZ4ZHhlU2DcpMA%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
       }
     },
     {
@@ -1045,21 +1038,31 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": ""
       },
       "response": {
-        "status": 422,
+        "status": 302,
         "headers": {
-          "content-type": "text/html; charset=UTF-8",
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
-          "vary": "Accept-Encoding"
+          "cache-control": "no-cache",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
         },
-        "set_cookies": [],
-        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
-        "body_length": 5408
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
       }
     },
     {
@@ -1072,21 +1075,32 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": "authenticity_token=bad"
       },
       "response": {
-        "status": 422,
+        "status": 302,
         "headers": {
-          "content-type": "text/html; charset=UTF-8",
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
-          "vary": "Accept-Encoding"
+          "cache-control": "no-cache",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
         },
-        "set_cookies": [],
-        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
-        "body_length": 5408
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=Q3jyH23w1h6deJ4tzEbVSvshiM9IMINYDOJgxi4jKeiByoGQjOUO6ZwCfYRhnSlvmgXLxAo8VIvRcm0B5QmkQbtwNNC7fqrDYVsfI1f7Nrv6cV39EkBYXdktdLrV2ZT%2BWF50COtH03pYg3irB51IDWHSvDb5sJRWxDNbLUCOVKphQ8ZOJOpYXqmnc%2B1X4T89EaQ9da9vyFJXC1QjvcAmi1Q9HUrQNV%2F8cg8T961MJPAdZrmiJmopkmZnvdwNl32fvFmMKuXihrwpz8TYTz%2BGMnb3pZjKPyK%2BuewT9bVMlbzC%2F9vM3irIrjE3I%2B8lxoI%3D--1UYxv7sM3asHBlYv--W2L5q3BIYZ0k6dNvk21ZmA%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
       }
     },
     {
@@ -1099,21 +1113,32 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "authenticity_token=ScV-V_8qSaSCyGeoufrKRkDsFRVyRKEo8p7wESRKMlC1jdIkXqatk6CoSpZOd7ytdFycBdhn2d-Pg3fLlU_WxQ"
+        "body": "authenticity_token=giQbjFh_5RfvAD1Mp7DRBAl3uCP9nXx5IlCC9VMcqO1-bLf_-fMBIM1gEHJQPafvPccxM1e-BI5fTQUv4hlMeA"
       },
       "response": {
-        "status": 422,
+        "status": 302,
         "headers": {
-          "content-type": "text/html; charset=UTF-8",
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
-          "vary": "Accept-Encoding"
+          "cache-control": "no-cache",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
         },
-        "set_cookies": [],
-        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
-        "body_length": 5408
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=3XYeqslf0%2F08R6DeLWcgCV21P%2FEQ%2B6B9HzpW%2BmQ%2B1t7PZjuF19cAUQ8l0hlJYnaitrDS3uurSf%2Bw3W0RukoTIcye7Z1RmvoZL0f6GVNZZge6BiqXzS8Huivq4PQ3uvt5VlNoIcNyck9tJbDqxsdgA2dJe2vvoFT6eptVZJtMk8qg2xQZQwjbdOSIEVWkQr0HjOIvmKtkmJMDpFfSMmY4n425yBYaUQjuSzjVgGZeP8IpJ70c5E7Z4L8juNvsZRIaXU0q4IF5OQfRbWaTWNDGC2OQI%2FmFkgsYK01yADRekPam6%2BxbNruTLb1P64FN59E%3D--h7%2BoNFxZhelGXsWB--IvscNL03R0p2RrRr6QD7tQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
       }
     },
     {
@@ -1126,11 +1151,11 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Origin": "http://evil.test",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+        "body": "authenticity_token=27Huk4c4TqUn4HgIaMikNtrkhv4MidpvPjmI233u6Lrznb5PcUc6huG8ramX5N56WqH_hKHUm9suzwK_PswO5w"
       },
       "response": {
         "status": 422,
@@ -1154,11 +1179,11 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Origin": "null",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+        "body": "authenticity_token=27Huk4c4TqUn4HgIaMikNtrkhv4MidpvPjmI233u6Lrznb5PcUc6huG8ramX5N56WqH_hKHUm9suzwK_PswO5w"
       },
       "response": {
         "status": 422,
@@ -1182,11 +1207,11 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Origin": "http://campfire.test",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+        "body": "authenticity_token=27Huk4c4TqUn4HgIaMikNtrkhv4MidpvPjmI233u6Lrznb5PcUc6huG8ramX5N56WqH_hKHUm9suzwK_PswO5w"
       },
       "response": {
         "status": 302,
@@ -1195,18 +1220,17 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
-          "_campfire_session=LgvuQW5cKBrk5Lkn74E%2Bf7cuZpPxiPC9D%2B2IytcLOQOZeFCYHul2KS8C%2B%2FRIC8VV3iTlXn7PMYUvVVMStiyPoLlroZOZzLrzfT2b7AdLby9%2F9S8om96Hc6T32ZPtt1DHDQkgxKfzmegHcMLS%2BLFK7ICc6ioDrHt0a%2FhFFK3yT0JKFdfikKseOQUFXR5FiKdSYE9VMqpCA2O%2BWqOvZHY3QMjQ6IJm3ewCiEaGl2EOVBJYn3AMi4IXOnyLsSMK4%2FmYec2nPl9PFM6uSx1AWXPuK%2BFapDQOhG3ssyCh7H992OEu1tpvlZPvqTPF%2B6fXh14%3D--jwoVfjSK55SLXalq--hkpH%2FFdSIrABZCEPCQjosA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=PRr8DXLhDJVcQ3t3BKDjJXiXNxG5cPUbxc14QnmMEMr3aSimGtlIL8%2FUcf%2FTEAiyoDoxUsUZ%2F70UXpx8rMRRLqRg%2F7BB2vEdzWOHpDUP83UdqLqBonebDXvOvM0cZd1eLsOXqZw%2FYeTDgbaov4H1UdnNLN2p0YB316aSlQOowfOlHoHrlIyiXcm9j1KBa0Q9FLt2gmQeSpP1hs5MUKXcUiWB6Hh21M6MxnDurlqN5VuXxLVxJCbAAts%2FDWLrIVTwIE%2FbIMrQO0%2B72tHNDIAkkZ5IIFsjGKUrB26Z1f9y2Y%2FF8QCjXuSj3v%2FSI4RsSVA%3D--ndMDywtdq3n6JbxN--mqqnyXaMZocihcZG9OT2JQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1222,8 +1246,8 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
-          "X-CSRF-Token": "N15QmmpvBd2xXzOERdmNT32gZ0enq6HNodcpsXkzVWQDW9IXBlPQw05_utX7pcNOLxys1m9sy73Ubq3I5YiivA",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
+          "X-CSRF-Token": "Z3OKAZCVYvew3unMHI3pCbKmZoF7KxHyCJGMW1OXz7ZTdgiM_Km36U_-YJ2i8acI4BqtELPse4J9KAgizyw4bg",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": ""
@@ -1235,18 +1259,17 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "no-cache",
-          "vary": "Accept-Encoding",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
-          "_campfire_session=h3Nkoios2QwV8vxPw31pQNbE9IZXa%2BChsUdtN1Zaom1EmfFQWakIi%2BnoDxpTltCJiQAjudJQ7brK0smZPRDjT8ljC%2FSm82sfvwe%2Btlq%2BSATfmVk3nfcdWJMZfJQrAcWgiCfoQjZX%2F0lyJ%2Bm7onZ2RH1jOtBKY3gcMpQRly%2BWUnDnaUD%2B5WPdFfUfUTE7iqimRCvnvNpX4Aeefu6UWBRoFGzX3NHe2itPKgW89sYXLkmG0kBq7%2BCzjWMtCDf0RGGKAc%2F6ncLvxnqliz%2FfGIBWSAQuEHpzBQH2pElXZS4Ga0Azxlsowpx042BnfnJNfao%3D--xrfY7bKImoUAu6ee--RX19t4fgzSwNAItsM1EdFA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=SR0QVl2SvfrsgO2%2FA%2FxK9fBjGHHzNy9p7J2Vas9HaOaxl%2FWAcVY2tQwmqHYr8evMBApK9IQ1hx1hsU%2FkA5GaER6BS7uHWCz29C1a0YyiqdM9c6pYObOiYkNULavU7W%2BmatMHALvfnTwPFEtfE9wf774mwn7o3sAbeN3DfN9xnH43zOqjdOcAyepNvpVSFW6QiCJ8PEeFGnXg6LHecN730gkcokB5CZO%2BKFDVJ0xkdatoXgOp8eFCZ0gPT8hPj3PHXQtuJ%2Frn4l%2FfnbVdtuCpWKquv9GmRROnWGJI2KU0DQJto0F7te31AjMdGQR%2BWiA%3D--3jLLbVGSdNnIe8qb--Vw6eapowEN%2BeTAGVb67uJg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1262,10 +1285,10 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+        "body": "authenticity_token=27Huk4c4TqUn4HgIaMikNtrkhv4MidpvPjmI233u6Lrznb5PcUc6huG8ramX5N56WqH_hKHUm9suzwK_PswO5w"
       },
       "response": {
         "status": 403,
@@ -1277,14 +1300,13 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax",
-          "_campfire_session=jguX2csJHROU5ajC4HWkZAe8XbX5GjgzvMlQia%2BWG7jnDZ6DXK0J4MLXYih1Qv6XzWMpVQ1orFfFP3p%2FrE7YTDSgEy3LQC375cws1frDwho5n8WDUeqfVuFvfHzvzYhXDg4EEJYDABxu5uHgOLwKq9AGKoY%2B6C%2FXbzf%2FfnU1mUFJsf%2FM7tZpZCqRiIQz92HHO%2F08BCMBix8vc4DxOMigG4I7y6hVCc2LL%2BAbqaWW%2F5IX3Yf12J9Hf4MU3hXXYjy09BkatUf%2Ba1niQLnXefPBwYjh1VPz1YiaPM6dPoPCZxHKXrsrmEPTczpPiJP1csc%3D--PEOsXCkSOoUNBqtw--UyHZ2b3WCEJJYIxSU0WUiA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--54d13656fb676179a6c63b1291dfa07c361a3423; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=sZWIPeVL7v2cjgTY%2BL29MOL1WYvMa98KH18lKR3OQ3pUkY3FKEDvxS8ZU0lzo6TCJDJsRy0B31V3dCvQeQPIR5wRyg6cVgI7uOqz4pChOaaNgsG9VlriEgqKVqOMMA8agmAsgYH%2BkLH2b3Br3wwfdytkHg5nYGdJoPkiRtNHXzMQyu%2Bwk8zlfYvx5PQIOgHXxNKjsC7GXp2AuQQr4AAdl67M4ljAQRuI00QYHikPHsbX4AXAT5xF7gWwm7eKOyyxx5rPg4CzlRc84%2F%2B%2BHYx7qBYXlKNL3BNqthXYpQyVrfAkI0gMyE4LpIHzrYVI8u4%3D--Aj9Gy9ZyZm%2BokCx%2F--b5M%2Fh3ZCEovHFAZsSdsJjw%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1300,8 +1322,8 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
-          "X-CSRF-Token": "N15QmmpvBd2xXzOERdmNT32gZ0enq6HNodcpsXkzVWQDW9IXBlPQw05_utX7pcNOLxys1m9sy73Ubq3I5YiivA",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
+          "X-CSRF-Token": "Z3OKAZCVYvew3unMHI3pCbKmZoF7KxHyCJGMW1OXz7ZTdgiM_Km36U_-YJ2i8acI4BqtELPse4J9KAgizyw4bg",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": "_method=patch&involvement=everything"
@@ -1328,8 +1350,8 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
-          "X-CSRF-Token": "N15QmmpvBd2xXzOERdmNT32gZ0enq6HNodcpsXkzVWQDW9IXBlPQw05_utX7pcNOLxys1m9sy73Ubq3I5YiivA",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
+          "X-CSRF-Token": "Z3OKAZCVYvew3unMHI3pCbKmZoF7KxHyCJGMW1OXz7ZTdgiM_Km36U_-YJ2i8acI4BqtELPse4J9KAgizyw4bg",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": "_method=patch&involvement=everything"
@@ -1356,21 +1378,21 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "_method=patch&authenticity_token=N3gqquNR1oo7ZqJ3p10Vf0jvNv2gcBvRJxwBagb0BcISdoUo7YJPkv0u3NCmaW2qpFWjtsUBaGqeuiW-4LG_EQ"
+        "body": "_method=patch&authenticity_token=qqRVR-ukBwIUXMUMYf3qSnli0vE5L1DlA60HIGUzal-PqvrF5XeeGtIUu6tgyZKfldhHulxeI166CyP0g3bQjA"
       },
       "response": {
-        "status": 422,
+        "status": 404,
         "headers": {
           "content-type": "text/html; charset=UTF-8",
           "content-encoding": "gzip",
           "vary": "Accept-Encoding"
         },
         "set_cookies": [],
-        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
-        "body_length": 5408
+        "body_sha256": "6e04b180174f49e36df7d4c24e65e0545575d68d69aadf094e4c697db299c477",
+        "body_length": 4237
       }
     },
     {
@@ -1398,7 +1420,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1433,7 +1454,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1453,11 +1473,11 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "X-Forwarded-For": "203.0.113.9",
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "authenticity_token=dx-onXjiEDcOTbFza2pLtpTcqZWBhYLD-JByPyY-OBpfM_hBjp1kFMgRZNKURjH6FJnQ7yzYw3foZvhbZRzeRw"
+        "body": "authenticity_token=27Huk4c4TqUn4HgIaMikNtrkhv4MidpvPjmI233u6Lrznb5PcUc6huG8ramX5N56WqH_hKHUm9suzwK_PswO5w"
       },
       "response": {
         "status": 429,
@@ -1469,13 +1489,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=VemFYhzLZH%2BxK0TzgyWg8K90yubA8hBWpzGABCDsA3Lmu7Bn%2FfmrUxT0NsC%2FYVUeTBDL7%2ButjU5fUBXv96H7UOqVfDZNX83PXVLhpCN7sNUdpjuLD69LRdJHFCKMF0QE0sPJc3jtEm%2F1PGzqyUvefcMRrPecn1k6fXnakt%2Bcn8i72x7g0wb4KGhialYuEsBtPMJopsExEvKiNndcuk%2BZ%2BLc2ldW2q7TVVeg5M1N%2F%2FkFQ04HGqKHEDR4mEPBTXpzd%2FrLsF2YU9m7I1OBYDgvyAKWYstc8kSnO82kmXAQAzZM8EmYFF4rakQt8U8TuBbA%3D--DKPEcQ9erlQmeaUE--e8lqrDgABmW3ZeSqqgdMdg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=EKk3%2FdBDbLmzBVk7U809TPAAyhX1b5FNDgN76Z16N8gTbyqtpnwQh6B2f61kF0rTJy8j%2BpUVGxz7bsOo%2BvZShd2%2B%2BtRxh2rojQm2VhBxV71D6CPqHn6atqI930DYXuSYEW7nWLigRk3jGpeu4wTYyoK1Z0KNfLRVaZv0yWeEdQowrkd3V6tKUDPD763DKlbKAolt9hqPIZJtXmwuiQ%2Fej8tNnLHM8H%2BOwHHChccrHH1Zwu%2FCm72hWHhlONPzIHY9tIzKkYHrxUqB0Wlp4FX7u1pcz6tlfLLds0JkAnLfBhKtk4cR68g2ag071acwVSM%3D--kO0jPz%2BxA%2FE6WpKM--8Q0Gt%2BV%2Ffru6DEM14o7obg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1506,13 +1525,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=ukHE5gqWjeQxRD%2F5Kz%2BxB2aawjvU2RdUWC%2BC2ZL1HTcuf4mWsVoeBxpwwwzvoWJYra%2BQLvwY4Jqh6Bw30jACFeqtZL%2BBp0WfljmnfSs27DS9%2Fd%2BT0xKdXojs6v7LAxIm1h8FFNNTAVcXNrIg7hHN3jDzJrKLJRHXSARhMpeqVOIT%2Bv1jEbUNGVaZcFfXdWdPrbD9rIVUl2hE9SvB%2F2rIY7Lj2DkhVVbj52sGrAcrA4ooc0uMPAQK5CFacPpBR%2FDeAZORGHYvL56QpNo2X7Ya8KVHjIPx%2BTyv05gGabKpJYw5xAVbGrlV9BJBcw%3D%3D--r58RzCLlaPYS14Jd--NWInMeEo92sKLJseIvbY9A%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=PLM6fDdIBXz551cKmScqLHvnpAK7BTsXBkWLcBd03%2BZTLDqTzQvNcLWPSxui4EjCKlBRIzFUXLKCA897WLK%2BU4DiotdxBrKA0QRV1hhTIXOZwb6ZIOGpI3KbcKgmGZpslKRCCV%2F3wJcpYWKN1ZLccpm6cKRw%2Bz6K6d8vK%2BMWo64xtDXgGvDJ3dzt3qoovu0unaaGHBE4ObX1qqXYQIG2fYrG8em9viiX7TSlWEf7P437ZRrMZdUmpWjZlb6H6hDJWz8s15d7hYjXXMact6%2FCJOWN5k2oeJVAsbiOF7uz%2BHrygiT3q5W225Kk3A%3D%3D--peqqfHpgE6PkvUNA--QL3lXErJFefw5cqDBgA%2Bcg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1543,7 +1561,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1579,13 +1596,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=iqN4NCAW2NgdIEgpfxHRsXRMViz72RuSEm06IegdjNa8F%2FNtl9qpOL1bG1NJ8CEeYeslLRmd5qmCM9I9DMgLnrqTXimYQm1sFD2BGmwtdBLH2yvpZPvhHhuj%2BM6rnkLC3M9ACrW%2BOqX4UngXBPINogEVk6x1MNnQD5lcblOLEQdIuMCvDc2sQVB%2FhZADmdKdyt6CXBPBUlTx%2BpSGQm%2BBPfPDGNW3yabdqptsVW08n5F1WoA4lM1XAf8uSLi0sOuSNkyWtOPqkhnhroAgZsHkD%2BZe9pPLScy%2Bvq%2FEoJkzcFJi%2BBSuU8HtDZTTpSe%2FJtDjNgTx9JjjA29q7i4Mn6RY--bOGoWJiWy%2F%2FXT8qL--hj55IN%2FjAx6Ci5U7QXsBRA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=O44u6qgPV9pG7mRsZWSeAJ3tLvoCDZPtb92JXFKTCCfxPnrT9lKWsF%2FD9u%2BWU2qRJhXqBrnCiOTA0C85THTuKedSzfOJJLMn7l71AETP00hX5AyQXLMwUTIWvFCYNnqmmwZKAKxbkW8kqxK99Pe2S7Ctc9u2To0rjcgilpHQ4NA6X22F1VcEkBZ8A37KWja22p2ZNo%2BmTeFh3od7lD2%2F7JcnFDYw0PmEuxBY7mGxnU9U1FDgk8Rl%2BejHa1IjdsoaYo9fEzWuGbxovRZQjl%2FNCvnPOmIR704OPfwLRRQjDHMPkZvtOw%2Brsky%2B5gQ3tlGcgKgHQ3pI%2B2KJ2FNLTZcT--wGktt01HlKXW0JTL--y1En0Dmt5KmUdCJ6aA6Cpg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1625,7 +1641,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96"
         },
         "body": null
       },
@@ -1640,13 +1656,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1662,7 +1677,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc"
         },
         "body": null
       },
@@ -1677,13 +1692,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--54d13656fb676179a6c63b1291dfa07c361a3423; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1712,7 +1726,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1746,7 +1759,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1780,7 +1792,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1809,21 +1820,18 @@
           "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
           "cache-control": "max-age=0, private, must-revalidate",
-          "vary": "Accept-Encoding",
+          "vary": "Accept,Accept-Encoding",
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin",
-          "etag": "W/\"46648389772e7b2906dfc0dad7d3f79f\""
+          "etag": "W/\"eaeaf60eeb4649d3919980e7fd8a844b\""
         },
-        "set_cookies": [
-          "_campfire_session=ksHJ7L6INx08rLUcSBNCO5%2B8rhAy%2Bawa7%2BIwsyIiCFCr3BJjFBbDOBHdGjn6yoaVsLFw6i97IqD5SceDn523T1khP9oh74ai%2BHRNRKYj64lECaWI5P4C1jmsabrzxZIa%2FLotLhJgHy0unkll1SlQJqKa6qOndn4qiOtTdCbdVJcfNHO2eJWwbvkknKl%2FEwS%2BwN7smy2obQkokDJ6tD6xMcUQnp46TKs1NZB7sPs%2BzHlok81yO82%2BDiCc88qtyQTYulzTp6JH9vCbtnKMOrLgXnFjusaoG3Bsy1mp3LCOTjVafHVA2ND4EVxDFroOmfY%3D--5VqEUJ5Z4EqjNUK1--pdj1aOuRx%2F1ZloHvEiDivA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
-        ],
-        "body_sha256": "46648389772e7b2906dfc0dad7d3f79fd466dc37e105f08b1723026f7236ad8e",
-        "body_length": 24960
+        "set_cookies": [],
+        "body_sha256": "eaeaf60eeb4649d3919980e7fd8a844b73c96776b63adb074441d4b8fc80e414",
+        "body_length": 24776
       }
     },
     {
@@ -1850,13 +1858,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=AOwy58vk8aX6b5u2jSrjza2Mv3v8v7IYiRHUvdrQ%2FqJHdaAxKJ6Zfpq8A7HtMMYPKxoE6e4v%2Bq8FlcQLaG4BGsv4AKIcnDfmZhQfzQOCytircZ%2BgXgWQv882C9CdKGTvYxTlRB8CGUrRZrSa8GnxDeQYnAgrD9DcQE%2B0KGDy88WsQX1nEhAkcLNu2Vc6mwEFK%2F7Oa0AlZUdcauJN6%2B4csKCD8xKONm9FsmO548fBbQ8gwta%2FTGYyKiIoaZUqKClndaz%2FoHhFYauQo%2FmN%2BXWN5p9BHhZgulMtlBDgjP%2FJzpqRlB9i4whKEbmSrQ%3D%3D--E5Qt52Jg7Dq47COO--3hz7uSwba2XHhetZZy7omg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=q1tmu4PWzrvdS%2BmQob%2FRYVVCjivjQB%2FYLozyBKJtdTHJj%2BeI1uyZGm8ZS1sCuIbhekkuk91yqsGLiVIv6OtpULCb6RRzVLBlQOHmaxKKoWuGCO%2BNsueJJKmVmliSTb3HWrhPhi7ZhXTq1bcvUXCC1q0oXS52UrYdt5uX0ZClygw5mRhh0xilF8hRQyQO1VJNc4ekz2%2BKwXrUxAU1Q1xCmlkJigOEYkN4tEuOsVOpdPg43ioI1H%2BW9ifQPWwHgyaMpn%2Fgyz58mzF0%2FQqOBAv29KBX0kVc9oKEDy9mTMqackffmG311GxRMjLG%2FA%3D%3D--yXJfKxM0Fn1FzrOL--WFnE17tEnkdy%2F7t2yIOczg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1885,7 +1892,6 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
@@ -1918,13 +1924,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=7hb%2FvIIum0S6BHmwoWrM7LBtFHi30mcrQx3OAVk6itAzcd3cENRK72Z%2BPq%2BktVUapj6LKJQqoq6wbSlZNXPc%2FVvChAayQjOZuh2sMQl6Qs%2BE52qwv%2BiLPvvxd6IH2b%2B0N9GRuCWxTRzy9foHpFSJ3DOUrhHYUps%2BnX%2B04NFhqCyevRmKmSIRGrWgaI9WcHLmNz2FajcL5FT0BYZENTgb0dGC32hDHDpiW%2FmfRdFdIh%2FwABu0x%2FsmNwaX5xKrWDXPBQpzhVJjognTBvrV8Gt061Ulw9lRJolBixsqZxEHsXF6Lf8oLmQ8k0hHDA%3D%3D--iM8XPNK2rcEvKh%2Fr--4S6UlfJi085X49v%2BFTymcg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=laAgrLX2nHXQNp50ltLEDm4K7jSXEbPidhiOgo9BjtVqISOd3oEdV6cUhLg4anyHduFE93WFIyWb4ZkaoemoYK%2BxQrtmaYsfapCQvR%2Bqfp%2FMZPq64qoCEtW8vSMxxOnXEwBsUHPDDq%2F8f%2F6ilLnYt87lVouaOzYC9bSKT68X3nCeSXsJSVoHaPtp7G5hQLw1hroS6FVkAt21EVHdX%2F618%2B7ddZ6UHzSs1fY5q0CgUGapSaq7IKX%2BuCiXn5slZ2xFLEsmBAsrCnHXGg8TbXPbxo0TURtcyzFctCLK0HmMBRj8F37mOBq%2F27GTIA%3D%3D--EenhVT3xt0gzdwSk--PZeVr1CI%2BsKmke9t574TMg%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1953,13 +1958,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=1y1qRypMXxBJWpTn4HTE4CH7iun2t9O3Xeb4YKzNmqxiyhse72%2BN5FLhdSo8hWrQMVTTDlx0xLVbJv9SK0det69JQRzMnkhY3qQk7%2FnKiCDy9SQ7ocCyBF2QV1gQwZA0vEaydirP8t1gUJGtX7pKAj5%2B9RDpZ66UlJBTQvRM3rGWVLvSTWGpEYO47tTWpz56AlP0RPURXd1Ed1lnbij%2FAy31wBXEv%2BWPZfLH9pGqWdpcffhJnl6kBej9%2B9t%2B5gXAQwj%2FKLyfvp0ohWVqmfo8xG7k4VjyBI9fMUbb3v4%2B9iZ6Y3dMnrJ6ypJcqg%3D%3D--%2B7zt6iDYcXGzDkjw--XUffZURz0aT1dFqL8dQ9Bg%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=57YYHEww5eRdXqGnBTLzkcr1RNYJ3ooo5NzomXU%2BGa7oiXE57bB8NMczB1fOzYAV1p5u9R6FakroQfdukHMayBm8vU22JjBHFbxZOUbMIGipMApb1jVMSkGnWhnQ5UcBL26vGlyhjn1A8KJOCcSLALT92Ur%2B16qmptPtnKy56sezpqjmvbY3QdrfV6X0wDcwqNu%2BeX8ntBgBfuXhSi%2FZNOFTsEHhn1%2FgwSFkKFnFMveJ3dFbatJNelB4uametb4V6cyIv%2BhqAarJKuqkYpPpxk3lF9OvZeUYbGfgTm9OfRekl0lGs73%2FOLiq7A%3D%3D--prwN%2B3iKaIc1Fh3l--xyM4o4EphxNnT9oF43hL7w%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -1988,13 +1992,12 @@
           "x-version": "parity",
           "x-rev": "parity",
           "x-frame-options": "SAMEORIGIN",
-          "x-xss-protection": "0",
           "x-content-type-options": "nosniff",
           "x-permitted-cross-domain-policies": "none",
           "referrer-policy": "strict-origin-when-cross-origin"
         },
         "set_cookies": [
-          "_campfire_session=ecvrzuRk7wZl0B1oBWA%2BWSKMQBGzLAVwY7AEe%2B7Le1EehXhW3i9hnUNVoFaZTjwNMWGqb1t%2FEoFpcML4ClpRAB4jZGqr0J4WCrCTteRe7KwhPEsfIlI34yqCY019jwoY6ExnX4jVITm0XVQOuEseFNk2nYXP9Q51RQ2VP6tu8mB8UmRteXdd1BCij4wtBMORDtEiJNIhG4YTLRFXITPqRssACixtfThjr7sIRFaL9uYdc6hi7q6NfhAformBWtJoR7KQaoSD6qxmAt1yiYk8nzLcv%2BATJrCYx4veQu2DLPVLmT4qYAdz3d0h%2Bg%3D%3D--30qwoXUKjv9SlGeN--m7P3Ike%2Bq%2BN%2Ffh2twohwnA%3D%3D; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; httponly; samesite=lax"
+          "_campfire_session=JANI%2B%2Fb1LUA1l09tAjXk6v%2FD9LEdDoRNv2sDa27TGc5iga6SxgNV0FzFx6anPMyPAr4ZDCnObGXgQvyDanSA%2FBnQ9bXdbbIKao0H37G7eRIuB3aNXAwIzz4hmsAEl9XpqC%2BeM9psP%2Fuh475MnoKHiFfYgDT3s5atTSIF4cz9UdHy%2BlqUMtdjLsvkPftpH1spFqkYtIcir3LsA9RfRZsZ85QSw6xX57z0YGchD681Jy0qAvqFg59yDSt0zuxB7CP86Cy19U0JWyOft2IjcpdIL%2FAr3yiLJhUDaeVQUH%2Bz6PE7%2FT8AC9psMIFr5Q%3D%3D--maBxIw%2F5eJdjvDfj--AYgakPS66M7dxw0mMzgUew%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
         ],
         "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_length": 0
@@ -2033,21 +2036,32 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--661cf3b84c9e2f8fbdf6921c334a05c28b48c224; _campfire_session=wNzw28PfttmF%2FzIeGAogUP4WoH2NhKU%2FsVr5lxojg20Z%2BMf2HWbo9qFJRjhltCzXiIUelPiMkxgXJXzQlCutAQQq%2FTTlH5OBaBuDP%2FBRXvCrQX7S0R9Fhi47Am%2Fuk2XCCVTEuCiowf78aFt6ihY3Loz90vgsldIXVxm5ioHl0MXfyZOJS1JsQGt19S8GmmhnCkPp0Elf3gh12znm7JwOZvOz8C8ii36dCU%2FkTNFk2JgsVnzt8uXL1ktcfmAekELUeHnq3qaJJKQor1uXOytUAEL%2FHJcH5TMmmw%3D%3D--cXiNP30aUQB0YvMD--Kc%2BbaA%2FHPYAcvzIUsBUvtg%3D%3D",
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--f6be2efd629dbf6b08451aed2f17f23356657f96; _campfire_session=aPUWs7r21M4o4jw%2By4XekN1Lf66TCorUI2X0UpGeBx1ndA7DV%2B6W%2BRb96%2FOOIfoxQBfS4qG3t%2FHI9YGZUTJHH1kNC5DDPhTlNg308GnnexZ3m4jVROj6m4EyIHZJKX7HsGFaLB8lIvBcS5Dr0CA6dmUbfQhs0IaxD7wlYrqwArZf1i0Sbb74PkUFLKAqmYKJAr0Rr1pjuKY%2BCGp9SoPIRBhZnoi2%2FEdfcMwi%2FnnQUbRCEWY88dv%2F8lROTo0WSyRDlHqd9BiR67QQVT2sa24Jds%2FsVN3ObdmU0w%3D%3D--7M2vZE6pc4rGpEep--8GUafP8JRj%2FDwoC9XrZxiQ%3D%3D",
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "body": ""
       },
       "response": {
-        "status": 422,
+        "status": 302,
         "headers": {
-          "content-type": "text/html; charset=UTF-8",
+          "location": "http://campfire.test/account/edit",
+          "content-type": "text/html; charset=utf-8",
           "content-encoding": "gzip",
-          "vary": "Accept-Encoding"
+          "cache-control": "no-cache",
+          "vary": "Sec-Fetch-Site,Accept-Encoding",
+          "x-version": "parity",
+          "x-rev": "parity",
+          "x-frame-options": "SAMEORIGIN",
+          "x-content-type-options": "nosniff",
+          "x-permitted-cross-domain-policies": "none",
+          "referrer-policy": "strict-origin-when-cross-origin"
         },
-        "set_cookies": [],
-        "body_sha256": "6333cb93c372a54db0c344c95b87e1d6205a87a585b55b84744f975de9573f61",
-        "body_length": 5408
+        "set_cookies": [
+          "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrRjRTbk01TkdaMFpWRTFRWFYwZGpKV2NrdHpTRFk0WXlJPSIsImV4cCI6IjIwNDYtMTAtMDlUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--5fe00058261d11e8c3a93a32a8422a480b8e96e7; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax",
+          "_campfire_session=gei0EWxwPIa4NGtwaSB8yN4DRmd8v2szV5TNBA0uMdMyV3kOrqDH4fAOFlNqZKm%2FyWszhl%2FIC2Ft7qGkxbANWoewWg%2F3wuj07c%2F8wHnmlfN63zdpXwqe%2B8VCr6oeB7vrSrnmN03sgglobfepJ5RbSDsXp8iZ0FYsa6KHPublrfUHCWUqnPyZAKgI%2FiJvklWrc9MIT0EAw01Z9kFyP58qfY5xmgPJ9F7kdXkiElIN9v%2Be8dYHmVxXLMIdjNk0Kh9RGLerc9Y9m%2BWilwn%2BkMpvLUw2CU8kgRPv%2F221xCpcaJIsIt7PKzMVIkWmnGxL3q0%3D--T3R0Y1%2BL%2BUCa3vdM--CyFnVhINAP9eXcvq%2FwzsQQ%3D%3D; path=/; expires=Tue, 09 Oct 2046 16:00:00 GMT; httponly; samesite=lax"
+        ],
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "body_length": 0
       }
     },
     {
@@ -2060,7 +2074,7 @@
           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMDMtMDJUMTY6MDA6MDAuMDAwWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--3dd43266ee5de63cbdee96de15fdfa2cd0ab8d3e"
+          "Cookie": "session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IklrdGxkbWx1VTJWemMybHZibFJ2YTJWdU1EQXdNREF3TVNJPSIsImV4cCI6IjIwNDYtMTAtMTJUMjI6MzE6MDAuNjg2WiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--784db6dc80db0aa3aadaaa07c31e992a853921cc"
         },
         "body": null
       },

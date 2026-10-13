@@ -25,12 +25,12 @@ require "action_controller/test_case"
 
 HOST = "campfire.test"
 APP_PORT = Integer(ENV.fetch("APP_PORT"))
-NOW = Time.now.utc
+NOW = ENV["TIME"] ? Time.iso8601(ENV["TIME"]).utc : Time.now.utc
 
 FIXTURES = [
   # Kevin, a member, signed in and active just now (no activity refresh).
-  "INSERT INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) " \
-    "VALUES (900001, 712064548, 'KevinSessionToken0000001', '198.51.100.7', 'curl/8.0', '2026-03-02 16:00:00', '2026-03-01 09:00:00', '2026-03-02 16:00:00')"
+  "INSERT OR REPLACE INTO sessions (id, user_id, token, ip_address, user_agent, last_active_at, created_at, updated_at) " \
+    "VALUES (900001, 712064548, 'KevinSessionToken0000001', '198.51.100.7', 'curl/8.0', '#{NOW.strftime("%Y-%m-%d %H:%M:%S")}', '#{(NOW - 86400).strftime("%Y-%m-%d %H:%M:%S")}', '#{NOW.strftime("%Y-%m-%d %H:%M:%S")}')"
 ]
 FIXTURES.each { |sql| ActiveRecord::Base.connection.execute(sql) }
 

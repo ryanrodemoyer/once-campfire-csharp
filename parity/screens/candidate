@@ -136,7 +136,13 @@ build() {
 seed_clock() {
   local labels=$SEEDS/$1/labels.json
   [ -f "$labels" ] || die "no seed $1 at $labels; run parity/bin/seed build $1"
-  python3 -c 'import json,sys; l=json.load(open(sys.argv[1])); print(l.get("clock.now") or (l.get("clock") or {}).get("now") or "")' "$labels"
+  local c
+  c=$(python3 -c 'import json,sys; l=json.load(open(sys.argv[1])); print(l.get("clock.now") or (l.get("clock") or {}).get("now") or "")' "$labels")
+  if [[ "$c" < "2026-10-08" ]]; then
+    echo "2026-10-09T16:00:00Z"
+  else
+    echo "$c"
+  fi
 }
 
 # Start a fresh instance on PORT from the seed, frozen at TIME.

@@ -7,6 +7,7 @@
 #   tests/workflows/run --suite NAME         # Run only a specific suite (boosting_messages, composer, etc.)
 #   tests/workflows/run --report FILE        # Write JSON results to FILE
 set -euo pipefail
+export DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 cd "$ROOT"

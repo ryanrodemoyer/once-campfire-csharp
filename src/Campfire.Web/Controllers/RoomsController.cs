@@ -159,7 +159,7 @@ public sealed class RoomsController : ApplicationController
     // The page is rendered first, so its content_for calls are in place for the layout:
     // turbo-rails' `layout -> { "turbo_rails/frame" if turbo_frame_request? }`, else the
     // application layout.
-    static ReadOnlyMemory<byte> RenderLayout(View view, string page, bool turboFrame)
+    ReadOnlyMemory<byte> RenderLayout(View view, string page, bool turboFrame)
     {
         using var buffer = new PooledBufferWriter();
         if (turboFrame)
@@ -170,7 +170,11 @@ public sealed class RoomsController : ApplicationController
         {
             view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(page));
         }
-        return buffer.WrittenMemory;
+        if (view.LinkHeader is { } link)
+        {
+            Headers["Link"] = link;
+        }
+        return buffer.WrittenMemory.ToArray();
     }
 
     static string RenderString(Action<HtmlWriter> template)

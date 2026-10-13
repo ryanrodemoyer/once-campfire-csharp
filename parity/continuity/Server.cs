@@ -14,6 +14,8 @@ using Campfire.Web.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
+Environment.SetEnvironmentVariable("DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "false");
+
 var port = args.Length > 0 ? int.Parse(args[0], System.Globalization.CultureInfo.InvariantCulture) : 3200;
 var dbPath = args.Length > 1 ? args[1] : "parity/.seed/default/db/production.sqlite3";
 var storagePath = args.Length > 2 ? args[2] : "parity/.seed/default/storage";

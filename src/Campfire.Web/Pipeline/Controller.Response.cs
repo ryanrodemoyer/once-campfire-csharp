@@ -224,11 +224,21 @@ public abstract partial class Controller
     /// <summary>A fresh response for a <c>rescue_from</c> handler.</summary>
     internal void ResetResponse()
     {
+        var xVersion = Headers["X-Version"];
+        var xRev = Headers["X-Rev"];
         body = null;
         streamBody = null;
         Status = 200;
         Headers.Clear();
         StartResponse();
+        if (xVersion is not null)
+        {
+            Headers["X-Version"] = xVersion;
+        }
+        if (xRev is not null)
+        {
+            Headers["X-Rev"] = xRev;
+        }
     }
 
     // ActionDispatch::Response.create: config.action_dispatch.default_headers (load_defaults 8.2).

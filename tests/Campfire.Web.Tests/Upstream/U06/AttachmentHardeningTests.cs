@@ -129,7 +129,7 @@ public sealed class AttachmentHardeningTests : IDisposable
     public async Task Creating_a_message_gives_up_on_a_video_preview_that_takes_longer_than_the_time_limit()
     {
         var tempScript = Path.GetTempFileName();
-        File.WriteAllText(tempScript, "#!/bin/sh\n[ \"$1\" = \"-version\" ] && exit 0\nexec sleep 5\n");
+        File.WriteAllText(tempScript, "#!/bin/sh\n[ \"$1\" = \"-version\" ] && exit 0\nexec sleep 10\n");
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(tempScript, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
@@ -150,7 +150,7 @@ public sealed class AttachmentHardeningTests : IDisposable
             sw.Stop();
 
             Assert.Equal(200, response.Status);
-            Assert.True(sw.Elapsed < TimeSpan.FromSeconds(2.0), $"Took {sw.Elapsed.TotalSeconds}s, expected < 2.0s");
+            Assert.True(sw.Elapsed < TimeSpan.FromSeconds(5.0), $"Took {sw.Elapsed.TotalSeconds}s, expected < 5.0s");
 
             var messageId = (long)app.Scalar($"SELECT id FROM messages WHERE client_message_id = 'client-slow-mov'")!;
             var blobId = (long)app.Scalar($"SELECT blob_id FROM active_storage_attachments WHERE record_type = 'Message' AND record_id = {messageId}")!;

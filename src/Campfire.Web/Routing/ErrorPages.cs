@@ -58,7 +58,7 @@ public sealed class ErrorPages(Func<int, byte[]?> publicPage)
     }
 
     static ErrorResponse Render(int status, string contentType, byte[] body) =>
-        new(status, $"{contentType}; charset=utf-8", body.Length, body);
+        new(status, $"{contentType}; charset=UTF-8", body.Length, body);
 
     // request.formats.first on the error request, which falls back to HTML when the Accept or
     // Content-Type header isn't a valid MIME type (fallback_to_html_format_if_invalid_mime_type).

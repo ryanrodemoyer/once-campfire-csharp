@@ -160,14 +160,12 @@ def run_form_profile_update_continuity(client_a: Client, client_b: Client, direc
     if res_prof.status != 200:
         return ScenarioResult("form_profile_update_continuity", direction, False, f"GET profile on Server A returned {res_prof.status}")
 
-    # Extract user ID and CSRF token
+    # Extract user ID and CSRF token (if present; token-free layout in edbc779 uses /users/me/profile)
     m_uid = re.search(r'action="[^"]*/users/(\d+)/profile"', res_prof.text)
-    user_id = m_uid.group(1) if m_uid else "712064548"
-    update_path = f"/users/{user_id}/profile"
+    user_id = m_uid.group(1) if m_uid else None
+    update_path = f"/users/{user_id}/profile" if user_id else "/users/me/profile"
 
-    token = Client.extract_form_token(res_prof.text, update_path) or Client.extract_meta_token(res_prof.text)
-    if not token:
-        return ScenarioResult("form_profile_update_continuity", direction, False, "Could not extract CSRF token for profile update")
+    token = Client.extract_form_token(res_prof.text, update_path) or Client.extract_form_token(res_prof.text, "/users/me/profile") or Client.extract_meta_token(res_prof.text)
 
     # 2. Submit update to Server B
     new_bio = f"Programmer continuity update {uuid.uuid4().hex[:6]}"

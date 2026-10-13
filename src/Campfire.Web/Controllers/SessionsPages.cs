@@ -40,7 +40,18 @@ static class SessionsPages
             var view = NewView(controller, session);
             var body = RenderString(w => template(view, session, w));
             var buffer = new ArrayBufferWriter<byte>();
-            view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(body));
+            if (controller.Request.IsTurboFrameRequest)
+            {
+                view.TurboRailsFrameLayout(new HtmlWriter(buffer), new SafeString(body));
+            }
+            else
+            {
+                view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(body));
+            }
+            if (view.LinkHeader is { } link)
+            {
+                controller.Headers["Link"] = link;
+            }
             return buffer.WrittenMemory;
         }).ConfigureAwait(false);
         controller.Render(page, MimeType.Html.Value, status);

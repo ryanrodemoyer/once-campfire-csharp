@@ -30,6 +30,8 @@ x-app: &app
   env_file: parity/.env.reference
   environment:
     FAKETIME: ${PARITY_FAKETIME:-}
+    DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE: "false"
+    DOTNET_USE_POLLING_FILE_WATCHER: "true"
   cpus: ${PARITY_CPUS:-2}
   depends_on:
     seed:

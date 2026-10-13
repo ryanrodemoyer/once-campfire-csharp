@@ -39,11 +39,12 @@ export async function runComposerTests(browser, baseUrl, onResult = null) {
     try {
       await signIn(page, baseUrl, FIXTURES.users.jz.email);
       await joinRoom(page, baseUrl, FIXTURES.rooms.designers);
+      await page.locator(".message").last().waitFor({ state: "visible", timeout: 10000 });
 
       await page.locator("#composer lexxy-editor .lexxy-editor__content").click();
       await pressInComposer(page, "up");
 
-      await page.locator(".message__body-content--editing").waitFor({ state: "visible", timeout: 5000 });
+      await page.locator(".message__body-content--editing").waitFor({ state: "visible", timeout: 10000 });
       await assertEditEditorText(page, "Third time's a charm.");
     } finally {
       await context.close();

@@ -15,10 +15,13 @@ using Campfire.RailsCompat.Crypto;
 using Campfire.Storage.Blobs;
 using Campfire.Web;
 using Campfire.Web.Assets;
+using Campfire.Web.Controllers;
 using Campfire.Web.Pipeline;
 using Campfire.Web.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+
+Environment.SetEnvironmentVariable("DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "false");
 
 var port = args.Length > 0 ? int.Parse(args[0], CultureInfo.InvariantCulture) : 3200;
 var dbPath = args.Length > 1 ? args[1] : "parity/.seed/default/db/production.sqlite3";
@@ -58,7 +61,7 @@ var cableServer = AppChannels.Register(
     database,
     keys).Build();
 
-var seams = new DomainSeams(cableServer, new NullJobs(), guard.RevokerFor(cableServer));
+var seams = new DomainSeams(cableServer, new WorkflowJobs(database, cableServer, clock), guard.RevokerFor(cableServer));
 
 var webApp = new WebApp
 {
@@ -107,7 +110,26 @@ sealed class OffsetClock(DateTimeOffset startedAt, DateTimeOffset virtualStart) 
     public override DateTimeOffset GetUtcNow() => virtualStart + (DateTimeOffset.UtcNow - startedAt);
 }
 
-sealed class NullJobs : IJobQueue
+sealed class WorkflowJobs(SqliteDatabase database, IBroadcaster broadcaster, TimeProvider clock) : IJobQueue
 {
-    public void Enqueue(Job job) => ArgumentNullException.ThrowIfNull(job);
+    readonly UnreadRoomJobs unreadJobs = new(database, broadcaster, clock);
+
+    public void Enqueue(Job job)
+    {
+        ArgumentNullException.ThrowIfNull(job);
+        if (job is BroadcastUnreadRoomJob unread)
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await unreadJobs.PerformAsync(unread, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Error performing unread room job: {ex}");
+                }
+            });
+        }
+    }
 }
