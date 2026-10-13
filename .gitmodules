@@ -4,3 +4,6 @@
 [submodule "reference-rust"]
 	path = reference-rust
 	url = https://github.com/basecamp/once-campfire-rust.git
+[submodule "bench/verification/checkout"]
+	path = bench/verification/checkout
+	url = https://github.com/basecamp/once-campfire-verification.git
