@@ -70,7 +70,8 @@ agents:
     # Out of usage balance (402): R04 moved to gemini, the benchmark chain to dspro.
     # Balance back: the page cache (U07), reviewed by claude, then the benchmarks on the shared
     # verification harness (B07). Q11 from gemini (out of quota), continuing its saved work.
-    queue: [U07, Q11, B07]
+    # Then performance round 2 (B08) on B07's harness.
+    queue: [U07, Q11, B07, B08]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
