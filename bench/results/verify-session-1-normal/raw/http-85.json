@@ -1,0 +1,25 @@
+{
+  "avg_bytes": 5895,
+  "conc": 4,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 7.227,
+    "mean_ms": 0.45,
+    "n": 17615,
+    "p50_ms": 0.409,
+    "p90_ms": 0.679,
+    "p99_ms": 1.022
+  },
+  "ok": 17615,
+  "path": "/users/me/sidebar",
+  "rps": 8805.3,
+  "secs": 2.0,
+  "statuses": {
+    "200": 17615
+  },
+  "validation": "route-contract-v1",
+  "generator_cpu_percent": 23.038608242643374
+}

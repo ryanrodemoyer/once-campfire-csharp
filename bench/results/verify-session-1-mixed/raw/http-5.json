@@ -1,0 +1,51 @@
+{
+  "avg_bytes": 5877,
+  "conc": 4,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 136.831,
+    "mean_ms": 2.08,
+    "n": 3839,
+    "p50_ms": 1.467,
+    "p90_ms": 2.739,
+    "p99_ms": 17.855
+  },
+  "ok": 3839,
+  "path": "/users/me/sidebar",
+  "profile": "mixed-read-write-v1",
+  "rps": 1917.5,
+  "secs": 2.0,
+  "statuses": {
+    "200": 3839
+  },
+  "validation": "route-contract-v1",
+  "writer": {
+    "avg_bytes": 2017,
+    "conc": 1,
+    "errors": 0,
+    "gzip": true,
+    "invalid_reasons": {},
+    "invalid_responses": 0,
+    "latency": {
+      "max_ms": 42.207,
+      "mean_ms": 19.55,
+      "n": 20,
+      "p50_ms": 18.495,
+      "p90_ms": 27.839,
+      "p99_ms": 42.207
+    },
+    "ok": 20,
+    "path": "POST /rooms/201306877/messages",
+    "rps": 9.9,
+    "secs": 2.02,
+    "statuses": {
+      "200": 20
+    },
+    "validation": "route-contract-v1"
+  },
+  "writer_rate_limit": 10,
+  "generator_cpu_percent": 8.235660621658779
+}

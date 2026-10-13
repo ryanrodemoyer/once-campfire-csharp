@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "verification_revision": "ec02debb3e44f40b8778a6a42db3c4515b2f9eaf",
+    "response_validation": "route-contract-v1",
+    "started_at": "2026-10-13T06:02:53Z",
+    "seed_sha256": "86a0a5ab3520ac7b1a4845a579863a1e90be90a18d6313700ed2dfcb877ce950",
+    "server_cpus": "8-11",
+    "client_cpus": "12-15",
+    "network": "host",
+    "gzip": true,
+    "duration": 8,
+    "concurrencies": "16",
+    "rounds": 3,
+    "loadgen_sha256": "6d46faf6bd409a28705678193422e0a3d69afb1c14fdafce03b6584cb8b17be1",
+    "routes": "room_show,messages_page,sidebar,search",
+    "profile": "mixed-read-write-v1",
+    "mixed_writer": {
+      "clients": 1,
+      "maximum_writes_per_second": 10,
+      "room": 201306877,
+      "catch_up": false
+    },
+    "images": {
+      "rails": "sha256:5fde961b71d4fa6da3757ae28972b7047a80c7bfffc07aef4cba8993695f02ee",
+      "csharp": "sha256:d3ec4d7203b512a50d221d7bb137b2676efb2b6e8e6898fa7bfb0b1701da94f1"
+    },
+    "image_labels": {
+      "rails": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "csharp": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      }
+    },
+    "source_revisions": {
+      "rails": {
+        "head": "edbc779f4dfc9b26c36310881711ddc976a9dfc8",
+        "dirty": false
+      },
+      "csharp": {
+        "head": "df6039cc01ff53a6152433c63fb9e27481968a0f",
+        "dirty": false
+      }
+    },
+    "preflight_only": false,
+    "topology": {
+      "rails": {
+        "http_workers": "3",
+        "threads": "5",
+        "jobs": "Redis/Resque",
+        "cable": "Action Cable",
+        "response_cache_mb": "64"
+      },
+      "csharp": {
+        "processes": 1,
+        "readers": "5",
+        "job_workers": "3",
+        "cable": "Kestrel WebSockets",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      }
+    },
+    "runtimes": {
+      "rails": "rails",
+      "csharp": "csharp"
+    },
+    "complete": true
+  },
+  "mixed_results": {
+    "rails": {
+      "room_show": {
+        "median_rps": 957.8,
+        "runs": [
+          925.0,
+          957.8,
+          1058.7
+        ]
+      },
+      "messages_page": {
+        "median_rps": 1356.2,
+        "runs": [
+          1273.6,
+          1356.2,
+          1449.4
+        ]
+      },
+      "sidebar": {
+        "median_rps": 2377.7,
+        "runs": [
+          2286.8,
+          2377.7,
+          2450.1
+        ]
+      },
+      "search": {
+        "median_rps": 1943.8,
+        "runs": [
+          1943.8,
+          1925.4,
+          2114.4
+        ]
+      }
+    },
+    "csharp": {
+      "room_show": {
+        "median_rps": 4753.5,
+        "runs": [
+          5116.7,
+          4753.5,
+          4534.4
+        ]
+      },
+      "messages_page": {
+        "median_rps": 7801.5,
+        "runs": [
+          7887.6,
+          7778.5,
+          7801.5
+        ]
+      },
+      "sidebar": {
+        "median_rps": 8937.4,
+        "runs": [
+          9124.2,
+          8935.5,
+          8937.4
+        ]
+      },
+      "search": {
+        "median_rps": 8590.6,
+        "runs": [
+          8726.3,
+          8590.6,
+          8344.1
+        ]
+      }
+    }
+  }
+}

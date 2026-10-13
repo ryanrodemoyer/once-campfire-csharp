@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "verification_revision": "ec02debb3e44f40b8778a6a42db3c4515b2f9eaf",
+    "response_validation": "route-contract-v1",
+    "started_at": "2026-10-13T05:52:41Z",
+    "seed_sha256": "86a0a5ab3520ac7b1a4845a579863a1e90be90a18d6313700ed2dfcb877ce950",
+    "server_cpus": "8-11",
+    "client_cpus": "12-15",
+    "network": "host",
+    "gzip": true,
+    "duration": 8,
+    "concurrencies": "16",
+    "rounds": 3,
+    "loadgen_sha256": "6d46faf6bd409a28705678193422e0a3d69afb1c14fdafce03b6584cb8b17be1",
+    "routes": "room_show,messages_page,sidebar,search,avatar,static_css,up,post_message",
+    "profile": "read-and-post-v1",
+    "mixed_writer": null,
+    "images": {
+      "rails": "sha256:5fde961b71d4fa6da3757ae28972b7047a80c7bfffc07aef4cba8993695f02ee",
+      "csharp": "sha256:d3ec4d7203b512a50d221d7bb137b2676efb2b6e8e6898fa7bfb0b1701da94f1"
+    },
+    "image_labels": {
+      "rails": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "csharp": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      }
+    },
+    "source_revisions": {
+      "rails": {
+        "head": "edbc779f4dfc9b26c36310881711ddc976a9dfc8",
+        "dirty": false
+      },
+      "csharp": {
+        "head": "df6039cc01ff53a6152433c63fb9e27481968a0f",
+        "dirty": false
+      }
+    },
+    "preflight_only": false,
+    "topology": {
+      "rails": {
+        "http_workers": "3",
+        "threads": "5",
+        "jobs": "Redis/Resque",
+        "cable": "Action Cable",
+        "response_cache_mb": "64"
+      },
+      "csharp": {
+        "processes": 1,
+        "readers": "5",
+        "job_workers": "3",
+        "cable": "Kestrel WebSockets",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      }
+    },
+    "runtimes": {
+      "rails": "rails",
+      "csharp": "csharp"
+    },
+    "complete": true
+  },
+  "results": {
+    "rails": {
+      "room_show": {
+        "median_rps": 2762.4,
+        "runs": [
+          2762.4,
+          2781.2,
+          2709.9
+        ]
+      },
+      "messages_page": {
+        "median_rps": 2572.7,
+        "runs": [
+          2513.5,
+          2572.7,
+          2793.6
+        ]
+      },
+      "sidebar": {
+        "median_rps": 2877.9,
+        "runs": [
+          2866.4,
+          2877.9,
+          3111.9
+        ]
+      },
+      "search": {
+        "median_rps": 3055.9,
+        "runs": [
+          2980.8,
+          3055.9,
+          3096.6
+        ]
+      },
+      "post_message": {
+        "median_rps": 249.1,
+        "runs": [
+          249.1,
+          248.7,
+          250.4
+        ]
+      }
+    },
+    "csharp": {
+      "room_show": {
+        "median_rps": 6279.5,
+        "runs": [
+          6279.5,
+          6185.7,
+          6320.3
+        ]
+      },
+      "messages_page": {
+        "median_rps": 8569.0,
+        "runs": [
+          8547.5,
+          8569.0,
+          8646.8
+        ]
+      },
+      "sidebar": {
+        "median_rps": 9228.9,
+        "runs": [
+          9128.1,
+          9277.3,
+          9228.9
+        ]
+      },
+      "search": {
+        "median_rps": 8837.3,
+        "runs": [
+          8786.7,
+          8837.3,
+          8854.6
+        ]
+      },
+      "post_message": {
+        "median_rps": 50.0,
+        "runs": [
+          51.2,
+          50.0,
+          50.0
+        ]
+      }
+    }
+  }
+}

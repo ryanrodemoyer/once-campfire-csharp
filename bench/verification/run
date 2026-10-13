@@ -1,0 +1,324 @@
+#!/usr/bin/env bash
+# Run basecamp/once-campfire-verification with a C# app, without editing the pinned checkout.
+#
+#   bench/verification/run prepare          runner image, loadgen, seed, migrated to edbc779
+#   bench/verification/run preflight        both apps boot and satisfy route contracts
+#   bench/verification/run bench PROFILE DIR
+#   bench/verification/run sessions         normal + mixed, then both again from scratch
+#
+# PROFILE is "normal" or "mixed". The normal profile is the harness default: 16 clients,
+# three alternating rounds, eight seconds. Mixed adds --mixed-write-rate 10.
+#
+# The host has no Ruby or sqlite3. bin/benchmark runs in campfire-b07-runner, pinned off
+# the app CPUs. That container starts the app containers on the host daemon. The load
+# generator is taskset to 12-15 inside the runner, which is allowed those CPUs.
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+VER=$ROOT/bench/verification
+CHECKOUT=$VER/checkout
+PATCH=$VER/csharp.patch
+PIN=ec02debb3e44f40b8778a6a42db3c4515b2f9eaf
+HARNESS=/tmp/b07-verification-harness
+SEED=$ROOT/tmp/b07-seed
+WORKSPACE=$ROOT/tmp/b07-workspace
+RUNNER_IMAGE=${RUNNER_IMAGE:-campfire-b07-runner}
+RAILS_IMAGE=${RAILS_IMAGE:-campfire-reference:app-edbc779}
+CSHARP_IMAGE=${CSHARP_IMAGE:-campfire-csharp:b07}
+LOADGEN=$CHECKOUT/loadgen/target/release/loadgen
+# App containers use 8-11. The runner may use every other logical CPU, including the
+# load generator's 12-15, and must not run on the app's CPUs.
+RUNNER_CPUS=${RUNNER_CPUS:-0-7,12-15}
+
+die() { echo "bench/verification: $*" >&2; exit 1; }
+log() { echo "bench/verification: $*" >&2; }
+
+need_pin() {
+  [ -d "$CHECKOUT/.git" ] || [ -f "$CHECKOUT/.git" ] || die "missing checkout; git submodule update --init bench/verification/checkout"
+  [ "$(git -C "$CHECKOUT" rev-parse HEAD)" = "$PIN" ] || die "checkout is $(git -C "$CHECKOUT" rev-parse HEAD), want $PIN"
+  [ -z "$(git -C "$CHECKOUT" status --porcelain)" ] || die "checkout is dirty; the patch is applied to a disposable copy, never here"
+}
+
+prepare_harness() {
+  need_pin
+  if git -C "$CHECKOUT" worktree list --porcelain | grep -Fxq "worktree $HARNESS"; then
+    git -C "$CHECKOUT" worktree remove --force "$HARNESS"
+  fi
+  rm -rf "$HARNESS"
+  git -C "$CHECKOUT" worktree prune
+  git -C "$CHECKOUT" worktree add --detach "$HARNESS" "$PIN"
+  git -C "$HARNESS" apply --check "$PATCH"
+  git -C "$HARNESS" apply "$PATCH"
+  [ -z "$(git -C "$CHECKOUT" status --porcelain)" ] || die "applying the patch touched the checkout"
+  [ "$(git -C "$HARNESS" rev-parse HEAD)" = "$PIN" ] || die "patched copy is not the pin"
+}
+
+prepare_workspace() {
+  mkdir -p "$WORKSPACE"
+  ln -sfn "$ROOT/reference" "$WORKSPACE/once-campfire"
+  ln -sfn "$ROOT" "$WORKSPACE/once-campfire-csharp"
+  [ "$(git -C "$WORKSPACE/once-campfire" rev-parse HEAD)" = "edbc779f4dfc9b26c36310881711ddc976a9dfc8" ] \
+    || die "Rails checkout is not edbc779"
+}
+
+build_runner() {
+  docker build -t "$RUNNER_IMAGE" -f "$VER/Dockerfile" "$VER"
+}
+
+build_loadgen() {
+  need_pin
+  cargo build --release --locked --manifest-path "$CHECKOUT/loadgen/Cargo.toml"
+  [ -x "$LOADGEN" ] || die "loadgen did not build"
+}
+
+# ruby in the runner. The working directory is the patched harness when it exists.
+in_runner() {
+  local work=$1
+  shift
+  docker run --rm --network host --cpuset-cpus "$RUNNER_CPUS" \
+    --user "$(id -u):$(id -g)" \
+    --group-add "$(stat -c %g /var/run/docker.sock)" \
+    -e HOME=/tmp \
+    -e DOCKER_BUILDKIT=1 \
+    -e GIT_CONFIG_COUNT=1 \
+    -e GIT_CONFIG_KEY_0=safe.directory \
+    -e GIT_CONFIG_VALUE_0='*' \
+    -e BENCH_ENV_FILE="${BENCH_ENV_FILE:-$SEED/reference.env}" \
+    -e RAILS_IMAGE="$RAILS_IMAGE" \
+    -e CSHARP_IMAGE="$CSHARP_IMAGE" \
+    -e LOADGEN="$LOADGEN" \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /usr/bin/docker:/usr/bin/docker:ro \
+    -v /tmp:/tmp \
+    -v /home/rodey/Code:/home/rodey/Code \
+    -w "$work" \
+    "$RUNNER_IMAGE" \
+    "$@"
+}
+
+# bin/seed's docker build runs whatever builder the CLI defaults to. Inside the
+# runner that is the legacy builder, which rejects the Rails Dockerfile's
+# COPY --chmod. Build the pinned 90b3300 image on the host, where BuildKit is
+# the default, and hand it to bin/seed with --image.
+build_reference_image() {
+  local rev=90b330024dec3e757c79b6a7e6568f93da8e3148
+  REF_IMAGE="once-campfire-verification:reference-${rev:0:7}"
+  if docker image inspect "$REF_IMAGE" >/dev/null 2>&1; then
+    local got
+    got=$(docker image inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$REF_IMAGE" | awk -F= '/^GIT_REVISION=/{print $2}')
+    if [ "$got" = "$rev" ]; then
+      log "reference image $REF_IMAGE already matches $rev"
+      return
+    fi
+    die "$REF_IMAGE exists but GIT_REVISION is '$got'"
+  fi
+  local src=$ROOT/tmp/b07-rails-reference
+  if [ ! -d "$src/.git" ]; then
+    log "cloning Rails $rev for the seed image"
+    git clone --no-checkout https://github.com/basecamp/once-campfire.git "$src"
+  fi
+  git -C "$src" checkout --detach "$rev"
+  [ "$(git -C "$src" rev-parse HEAD)" = "$rev" ] || die "Rails seed checkout is not $rev"
+  log "building $REF_IMAGE on the host"
+  docker build --build-arg APP_VERSION=verification --build-arg "GIT_REVISION=$rev" -t "$REF_IMAGE" "$src"
+}
+
+build_seed() {
+  if [ -f "$SEED/.migrated-edbc779" ]; then
+    log "seed already migrated ($SEED)"
+    return
+  fi
+  prepare_harness
+  build_reference_image
+  rm -rf "$SEED"
+  log "building the harness seed (Rails 90b3300 image $REF_IMAGE)"
+  in_runner "$HARNESS" ruby bin/seed --output "$SEED" --image "$REF_IMAGE"
+  log "migrating the seed with Rails edbc779 so C# can boot it"
+  docker run --rm --network host \
+    --user "$(id -u):$(id -g)" \
+    --env-file "$SEED/reference.env" \
+    -e RAILS_LOG_LEVEL=warn \
+    -v "$SEED/db:/rails/storage/db" \
+    -v "$SEED/storage:/rails/storage/files" \
+    --entrypoint sh \
+    "$RAILS_IMAGE" \
+    -eu -c 'env -u LD_PRELOAD redis-server --daemonize yes --save "" --appendonly no --logfile /dev/null --pidfile /tmp/b07-seed-redis.pid
+            bin/rails db:prepare'
+  in_runner "$HARNESS" sqlite3 "$SEED/db/production.sqlite3" "SELECT version FROM schema_migrations ORDER BY version;" \
+    > "$SEED/.migrated-edbc779"
+  log "seed schema_migrations:"
+  cat "$SEED/.migrated-edbc779" >&2
+}
+
+write_provenance() {
+  local out=$1
+  {
+    echo "recorded_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "uname: $(uname -a)"
+    echo "nproc: $(nproc)"
+    echo "governor: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo unknown)"
+    echo "--- lscpu ---"
+    lscpu
+    echo "--- thread siblings 8-11 and 12-15 ---"
+    for cpu in 8 9 10 11 12 13 14 15; do
+      echo "cpu$cpu $(cat /sys/devices/system/cpu/cpu$cpu/topology/thread_siblings_list)"
+    done
+    echo "--- mem ---"
+    awk '/MemTotal|MemAvailable|SwapTotal/ {print}' /proc/meminfo
+    echo "--- tools ---"
+    echo "dotnet: $(dotnet --version)"
+    echo "rustc: $(rustc --version)"
+    echo "cargo: $(cargo --version)"
+    echo "docker-server: $(docker version --format '{{.Server.Version}}')"
+    echo "ffprobe: $(ffprobe -version | head -1)"
+    in_runner "$HARNESS" ruby -v
+    in_runner "$HARNESS" sqlite3 -version
+    in_runner "$HARNESS" git --version
+    echo "--- source ---"
+    echo "csharp_head: $(git -C "$ROOT" rev-parse HEAD)"
+    echo "csharp_status: $(git -C "$ROOT" status --porcelain --untracked-files=no | tr '\n' ';')"
+    echo "rails_head: $(git -C "$ROOT/reference" rev-parse HEAD)"
+    echo "verification_head: $(git -C "$CHECKOUT" rev-parse HEAD)"
+    echo "patch_sha256: $(sha256sum "$PATCH" | awk '{print $1}')"
+    echo "loadgen_sha256: $(sha256sum "$LOADGEN" | awk '{print $1}')"
+    echo "seed_sha256: $(sha256sum "$SEED/db/production.sqlite3" | awk '{print $1}')"
+    echo "--- images ---"
+    echo "rails_image: $RAILS_IMAGE"
+    docker image inspect -f 'rails_id: {{.Id}}' "$RAILS_IMAGE"
+    docker image inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$RAILS_IMAGE" | awk -F= '/^(GIT_REVISION|APP_VERSION)=/'
+    echo "csharp_image: $CSHARP_IMAGE"
+    docker image inspect -f 'csharp_id: {{.Id}}' "$CSHARP_IMAGE"
+    docker image inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$CSHARP_IMAGE" | awk -F= '/^(GIT_REVISION|APP_VERSION|DOTNET_)/'
+    echo -n "csharp_binary_sha256: "
+    docker run --rm --entrypoint sha256sum "$CSHARP_IMAGE" /app/campfire
+    echo "runner_image: $RUNNER_IMAGE"
+    docker image inspect -f 'runner_id: {{.Id}}' "$RUNNER_IMAGE"
+    echo "runner_cpus: $RUNNER_CPUS"
+  } > "$out/provenance.txt"
+}
+
+wait_quiet() {
+  local waited=0 load
+  while [ "$waited" -lt 180 ]; do
+    load=$(awk '{print $1}' /proc/loadavg)
+    if awk -v load="$load" 'BEGIN { exit !(load+0 < 2.0) }'; then
+      log "load before run: $(cut -d' ' -f1-3 /proc/loadavg) (waited ${waited}s)"
+      return
+    fi
+    sleep 10
+    waited=$((waited + 10))
+  done
+  log "load still $(cut -d' ' -f1-3 /proc/loadavg) after ${waited}s"
+}
+
+stop_strays() {
+  # Leftover parity containers keep a Rails process on CPU. They are not the benchmark.
+  local name
+  for name in campfire-csharp-candidate-5111 campfire-reference-3100; do
+    if docker ps -q -f "name=^${name}$" | grep -q .; then
+      log "stopping leftover container $name"
+      docker stop "$name" >/dev/null
+    fi
+  done
+}
+
+bench_one() {
+  local profile=$1 output=$2
+  [ "$profile" = normal ] || [ "$profile" = mixed ] || die "profile must be normal or mixed"
+  [ ! -e "$output" ] || die "output already exists: $output"
+  [ -f "$SEED/.migrated-edbc779" ] || die "run prepare first"
+  [ -x "$LOADGEN" ] || die "run prepare first (loadgen)"
+  docker image inspect "$RAILS_IMAGE" >/dev/null
+  docker image inspect "$CSHARP_IMAGE" >/dev/null
+  docker image inspect "$RUNNER_IMAGE" >/dev/null
+  prepare_harness
+  prepare_workspace
+  # loadgen prints usage and exits 1 on --help. 125+ means docker or the dynamic linker failed.
+  set +e
+  in_runner "$HARNESS" "$LOADGEN" --help >/dev/null 2>&1
+  local help_status=$?
+  set -e
+  [ "$help_status" -eq 1 ] || die "loadgen did not start in the runner (exit $help_status, expected 1)"
+  local args=(ruby bin/benchmark
+    --apps rails,csharp
+    --workspace "$WORKSPACE"
+    --seed "$SEED"
+    --loadgen "$LOADGEN"
+    --output "$output"
+    --rounds 3
+    --duration 8
+    --concurrencies 16
+    --cpus 8-11
+    --client-cpus 12-15)
+  if [ "$profile" = mixed ]; then
+    args+=(--mixed-write-rate 10)
+  fi
+  wait_quiet
+  local loadlog
+  loadlog=$(mktemp)
+  (
+    while true; do
+      printf '%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(cat /proc/loadavg)"
+      sleep 5
+    done
+  ) > "$loadlog" &
+  local sampler=$!
+  set +e
+  in_runner "$HARNESS" "${args[@]}"
+  local status=$?
+  set -e
+  kill "$sampler" 2>/dev/null || true
+  wait "$sampler" 2>/dev/null || true
+  if [ -d "$output" ]; then
+    cp "$loadlog" "$output/loadavg.log"
+    write_provenance "$output"
+  fi
+  rm -f "$loadlog"
+  [ "$status" -eq 0 ] || die "$profile failed (exit $status); see $output"
+  local summary=$output/summary.json
+  [ "$profile" = mixed ] && summary=$output/mixed-summary.json
+  [ -f "$summary" ] || die "missing $summary"
+  python3 "$VER/summarize.py" "$output"
+}
+
+cmd=${1:-}
+case "$cmd" in
+  prepare)
+    build_runner
+    build_loadgen
+    build_seed
+    docker image inspect "$RAILS_IMAGE" >/dev/null || die "missing $RAILS_IMAGE"
+    docker image inspect "$CSHARP_IMAGE" >/dev/null || die "missing $CSHARP_IMAGE (docker build -t $CSHARP_IMAGE .)"
+    log "prepared"
+    ;;
+  preflight)
+    prepare_harness
+    prepare_workspace
+    rm -rf "$ROOT/tmp/b07-preflight"
+    in_runner "$HARNESS" ruby bin/benchmark \
+      --apps rails,csharp \
+      --workspace "$WORKSPACE" \
+      --seed "$SEED" \
+      --loadgen "$LOADGEN" \
+      --output "$ROOT/tmp/b07-preflight" \
+      --rounds 2 \
+      --preflight \
+      --cpus 8-11 \
+      --client-cpus 12-15
+    ;;
+  bench)
+    [ $# -eq 3 ] || die "usage: bench/verification/run bench normal|mixed OUTPUT_DIR"
+    stop_strays
+    bench_one "$2" "$3"
+    ;;
+  sessions)
+    stop_strays
+    bench_one normal "$ROOT/bench/results/verify-session-1-normal"
+    bench_one mixed "$ROOT/bench/results/verify-session-1-mixed"
+    bench_one normal "$ROOT/bench/results/verify-session-2-normal"
+    bench_one mixed "$ROOT/bench/results/verify-session-2-mixed"
+    ;;
+  *)
+    die "usage: bench/verification/run prepare|preflight|bench|sessions"
+    ;;
+esac

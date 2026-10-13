@@ -1,0 +1,29 @@
+--- a/bench/compare.rb
++++ b/bench/compare.rb
+@@ -29,7 +29,7 @@
+ end.parse!
+ raise "use at least two rounds" unless options[:rounds] >= 2
+ apps = options[:apps].split(",")
+-allowed = %w[rails django laravel express express-bun elixir go rust c cpp]
++allowed = %w[rails django laravel express express-bun elixir go rust c cpp csharp]
+ raise "apps must be nonempty, unique and supported" unless !apps.empty? && apps.uniq == apps && apps.all? { |app| allowed.include?(app) }
+ selected_routes = options[:routes].split(",")
+ raise "unknown or empty route selection" unless !selected_routes.empty? && (selected_routes - %w[room_show messages_page sidebar search avatar static_css up post_message]).empty?
+@@ -89,7 +89,7 @@
+     order = iteration.even? ? apps : apps.reverse
+     order.each do |app|
+       kind = runtimes.fetch(app)
+-      images = { "rails" => "once-campfire:app", "rust" => "campfire-rust:app", "elixir" => "campfire-elixir:app", "express-bun" => "once-campfire-express:bun" }
++      images = { "rails" => "once-campfire:app", "rust" => "campfire-rust:app", "elixir" => "campfire-elixir:app", "express-bun" => "once-campfire-express:bun", "csharp" => "campfire-csharp:app" }
+       image = ENV.fetch("#{env_name.(app)}_IMAGE", images.fetch(app, "once-campfire-#{app}:app"))
+       source = File.join(options[:workspace], kind == "rails" ? "once-campfire" : "once-campfire-#{kind}")
+       image_id = run("docker", "image", "inspect", "-f", "{{.Id}}", image).strip
+@@ -121,6 +121,8 @@
+       when "rails" then {http_workers: config.fetch("WEB_CONCURRENCY"), threads: config.fetch("RAILS_MAX_THREADS"), jobs: "Redis/Resque", cable: "Action Cable"}
+       when "rust" then {processes: 1, readers: config.fetch("RAILS_MAX_THREADS"), job_workers: config.fetch("JOB_CONCURRENCY"), cable: "native tokio", jobs: "in-process"}
+       when "go" then {processes: 1, cable: "native websocket", jobs: "in-process"}
++      # One Kestrel process. RAILS_MAX_THREADS is the SQLite reader pool and JOB_CONCURRENCY the in-process jobs (src/Campfire.Server/Cli/ServerSettings.cs), the same knobs Rust reads.
++      when "csharp" then {processes: 1, readers: config.fetch("RAILS_MAX_THREADS"), job_workers: config.fetch("JOB_CONCURRENCY"), cable: "Kestrel WebSockets", jobs: "in-process"}
+       when "elixir" then {processes: 1, runtime: "BEAM", jobs: "Redis/Resque", cable: "native"}
+       when "express" then {http_workers: config.fetch("WEB_WORKERS", "auto (cpuset)"), cable: "native ws with cluster IPC", jobs: "leased auxiliary SQLite"}
+       when "laravel" then {http: "FrankenPHP/Octane", jobs: "leased auxiliary SQLite", cable: "native ReactPHP"}

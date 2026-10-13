@@ -1,0 +1,94 @@
+recorded_at: 2026-10-13T06:17:46Z
+uname: Linux thoru 7.0.0-38-generic #38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+nproc: 16
+governor: powersave
+--- lscpu ---
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  16
+On-line CPU(s) list:                     0-15
+Vendor ID:                               GenuineIntel
+Model name:                              11th Gen Intel(R) Core(TM) i9-11900K @ 3.50GHz
+CPU family:                              6
+Model:                                   167
+Thread(s) per core:                      2
+Core(s) per socket:                      8
+Socket(s):                               1
+Stepping:                                1
+CPU(s) scaling MHz:                      90%
+CPU max MHz:                             5300.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                7008.00
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx avx512f avx512dq rdseed adx smap avx512ifma clflushopt intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+Virtualization:                          VT-x
+L1d cache:                               384 KiB (8 instances)
+L1i cache:                               256 KiB (8 instances)
+L2 cache:                                4 MiB (8 instances)
+L3 cache:                                16 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-15
+Vulnerability Gather data sampling:      Vulnerable
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; Enhanced IBRS
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+--- thread siblings 8-11 and 12-15 ---
+cpu8 0,8
+cpu9 1,9
+cpu10 2,10
+cpu11 3,11
+cpu12 4,12
+cpu13 5,13
+cpu14 6,14
+cpu15 7,15
+--- mem ---
+MemTotal:       131705748 kB
+MemAvailable:   122689404 kB
+SwapTotal:       8388604 kB
+--- tools ---
+dotnet: 10.0.112
+rustc: rustc 1.98.1 (48a229cea 2026-09-01)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+docker-server: 29.8.2
+ffprobe: ffprobe version 6.1.1-3ubuntu5+esm13 Copyright (c) 2007-2023 the FFmpeg developers
+ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [x86_64-linux]
+3.46.1 2024-08-13 09:16:08 c9c2ab54ba1f5f46360f1b4f35d849cd3f080e6fc2b6c60e91b16c63f69aalt1 (64-bit)
+git version 2.47.3
+--- source ---
+csharp_head: df6039cc01ff53a6152433c63fb9e27481968a0f
+csharp_status: 
+rails_head: edbc779f4dfc9b26c36310881711ddc976a9dfc8
+verification_head: ec02debb3e44f40b8778a6a42db3c4515b2f9eaf
+patch_sha256: 4b88655e8584cc323fe646434fe80f708ea71dc6d8c6316040d9f3b70588a9b5
+loadgen_sha256: 6d46faf6bd409a28705678193422e0a3d69afb1c14fdafce03b6584cb8b17be1
+seed_sha256: 86a0a5ab3520ac7b1a4845a579863a1e90be90a18d6313700ed2dfcb877ce950
+--- images ---
+rails_image: campfire-reference:app-edbc779
+rails_id: sha256:5fde961b71d4fa6da3757ae28972b7047a80c7bfffc07aef4cba8993695f02ee
+APP_VERSION=parity
+GIT_REVISION=edbc779f4dfc9b26c36310881711ddc976a9dfc8
+csharp_image: campfire-csharp:b07
+csharp_id: sha256:d3ec4d7203b512a50d221d7bb137b2676efb2b6e8e6898fa7bfb0b1701da94f1
+DOTNET_CLI_TELEMETRY_OPTOUT=1
+APP_VERSION=parity
+GIT_REVISION=31e411275c5f1fa29883791a6f17fa8481248ad6
+csharp_binary_sha256: 8ea5248282079734382061e05ed45323ce391b85761142a3fb50122c5959cd89  /app/campfire
+runner_image: campfire-b07-runner
+runner_id: sha256:b814657cbe4cddcb37acea6d95693c2dea1d7a240c7c9629f21b0de0485f9e61
+runner_cpus: 0-7,12-15
