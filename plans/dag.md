@@ -410,7 +410,6 @@ flowchart LR
   P04 --> B05
   B07 --> B05
   B08 --> B05
-  B09 --> B05
   Q11 --> B05
   Q13 --> B05
   P07 --> B05
@@ -445,7 +444,7 @@ flowchart LR
   B07 --> B09
   B05 --> X01
   X01 --> X02
-  linkStyle 0,6,22,23,25,70,79,83,107,115,136,146,174,178,223,224 stroke:#d6336c,stroke-width:3px
+  linkStyle 0,6,22,23,25,70,79,83,107,115,136,146,174,178,222,223 stroke:#d6336c,stroke-width:3px
   style M0 fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3
   style M1 fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3
   style M2 fill:transparent,stroke:#adb5bd,stroke-dasharray:4 3
@@ -457,7 +456,7 @@ flowchart LR
   classDef done fill:#d3f9d8,stroke:#2f9e44,color:#000
   class D04,D05,R03,S01,S02,W01,W02,W03,A01,M01,M02,M03,M04,M05,M08,VS01,B01,B06,B02,U07,B07,B08 bench
   class F01,F02,V03,R01,R02,R03,M02,M05,M06,I05,Q02,Q07,P05,B03,B05,X01,X02 critical
-  class F01,F02,F03,F04,V01,V02,V03,C01,C02,C03,C04,C05,C06,C07,D01,D02,D03,D04,D05,R01,R02,R03,R05,R04,S01,S05,S02,S03,S04,W01,W02,W03,W04,A01,A02,A03,A04,A05,A06,A07,A08,M01,M02,M03,M04,M05,M06,M07,M08,M09,M10,RT01,RT02,RT03,RT04,I01,I02,I03,I04,I05,P01,P05,P06,P02,P03,P04,Q01,Q02,Q03,Q04,Q05,Q06,Q07,Q08,Q09,Q10,VS01,B01,B06,B02,B03,B04,U01,U02,U03,U04,U06,U08,Q14,R06,P07,P08 done
+  class F01,F02,F03,F04,V01,V02,V03,C01,C02,C03,C04,C05,C06,C07,D01,D02,D03,D04,D05,R01,R02,R03,R05,R04,S01,S05,S02,S03,S04,W01,W02,W03,W04,A01,A02,A03,A04,A05,A06,A07,A08,M01,M02,M03,M04,M05,M06,M07,M08,M09,M10,RT01,RT02,RT03,RT04,I01,I02,I03,I04,I05,P01,P05,P06,P02,P03,P04,Q01,Q02,Q03,Q04,Q05,Q06,Q07,Q08,Q09,Q10,VS01,B01,B06,B02,B03,B04,U01,U02,U03,U04,U05,U06,U07,U08,Q14,Q15,R06,P07,P08 done
 ```
 
 ## Critical path
@@ -504,11 +503,11 @@ immediately. Real throughput will be lower: review, integration and rework aren'
 
 | Agents | Calendar days to finish | Peak parallel |
 |---:|---:|---:|
-| 1 | 10.5 | 1 |
-| 4 | 8.0 | 3 |
-| 8 | 8.0 | 3 |
-| 12 | 8.0 | 3 |
-| 16 | 8.0 | 3 |
+| 1 | 8.0 | 1 |
+| 4 | 6.0 | 3 |
+| 8 | 6.0 | 3 |
+| 12 | 6.0 | 3 |
+| 16 | 6.0 | 3 |
 
 Total work: 110.5 agent-days.
 
@@ -617,7 +616,7 @@ Total work: 110.5 agent-days.
 | `B04` | Runtime configuration matrix including Native AOT | B | M5 | M | `B02` `P01` `P05` |
 | `P06` | Deploy to a single Google Cloud VM | P | M4 | M | `P01` `P05` |
 | `Q10` | Finish the requests left on closed issues | Q | M4 | M | `P05` |
-| `B05` | Final benchmark on reference-class hardware | B | M5 | M | `B03` `B04` `B06` `Q04` `Q05` `Q07` `Q08` `P02` `P03` `P04` `B07` `B08` `B09` `Q11` `Q13` `P07` `P08` |
+| `B05` | Final benchmark on reference-class hardware | B | M5 | M | `B03` `B04` `B06` `Q04` `Q05` `Q07` `Q08` `P02` `P03` `P04` `B07` `B08` `Q11` `Q13` `P07` `P08` |
 | `X01` | README, known differences and implementation record | X | M5 | S | `B05` |
 | `X02` | Upstream PR and announcement | X | M5 | S | `X01` |
 

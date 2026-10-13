@@ -1371,7 +1371,7 @@ tasks:
     lane: B
     milestone: M5
     size: M
-    deps: [B03, B04, B06, Q04, Q05, Q07, Q08, P02, P03, P04, B07, B08, B09, Q11, Q13, P07, P08]
+    deps: [B03, B04, B06, Q04, Q05, Q07, Q08, P02, P03, P04, B07, B08, Q11, Q13, P07, P08]
     owns: [bench/results/final-*]
     refs: [README.md benchmark table]
     deliver: >
@@ -1746,6 +1746,8 @@ tasks:
       - Each kept change has before/after numbers on B07's harness and a green replay gate
       - plans/perf-log-2.md is a lab notebook written as the work happens, ending with a ranked summary and what is left
 
+  # Shelved 2026-10-12: deprioritized and no longer a dependency of B05, which publishes JIT
+  # numbers. Native AOT mostly changes startup and memory; take this up after B05 if wanted.
   - id: B09
     title: Native AOT build and runtime choice
     lane: B
