@@ -1,10 +1,10 @@
-namespace Campfire.Jobs.OpenGraph;
+namespace Campfire.RichText.Html;
 
 /// <summary>
 /// libxml2's <c>html40EntitiesTable</c>: the HTML 4.01 named character references plus <c>apos</c>,
 /// which its HTML parser decodes. Names are case-sensitive and need their <c>;</c>.
 /// </summary>
-static class Html4Entities
+public static class Html4Entities
 {
     public static readonly IReadOnlyDictionary<string, int> CodePoints = new Dictionary<string, int>(StringComparer.Ordinal)
     {

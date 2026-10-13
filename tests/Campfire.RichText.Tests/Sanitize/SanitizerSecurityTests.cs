@@ -67,6 +67,10 @@ public class SanitizerSecurityTests
     [InlineData("<div style=\"color: red; position: absolute;\">x</div>", "<div style=\"color:red;\">x</div>")]
     // Loofah allows display (ALLOWED_CSS_PROPERTIES); see Sanitize/Vectors/css_scrub.json
     [InlineData("<div style=\"background-color: #ff0000; display: none;\">x</div>", "<div style=\"background-color:#ff0000;display:none;\">x</div>")]
+    // scrub_css keeps a C0 control as a delimiter, and Attr#value= drops it (Rails::HTML5::SafeListSanitizer
+    // at edbc779; found by the Q12 fuzz run, plans/fuzz-run-2.md)
+    [InlineData("<div style=\"color: red\u000E\">x</div>", "<div style=\"color:red;\">x</div>")]
+    [InlineData("<div style=\"width: expr\u000Ession(aler>t('XSS'));\">x</div>", "<div style=\"width:expr;\">x</div>")]
     public void OnlyAllowlistedStylePropertiesSurvive(string input, string expected)
     {
         var sanitized = SafeListSanitizer.Sanitize(input, SafeList.ContentFilter);

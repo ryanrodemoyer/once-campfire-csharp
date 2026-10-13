@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using Campfire.RichText.Html;
 
 namespace Campfire.Jobs.OpenGraph;
 

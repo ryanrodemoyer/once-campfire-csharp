@@ -205,7 +205,12 @@ public static partial class AttachmentResolution
             return null;
         }
 
-        var host = context.RequestHost ?? "";
+        return AttributesFromNode(node, context.RequestHost ?? "");
+    }
+
+    /// <summary><c>attributes_from_node</c>: the embed's details, from Trix's attributes or Lexxy's content markup.</summary>
+    public static OpengraphEmbed AttributesFromNode(HtmlElement node, string host)
+    {
         if (!RubyText.IsBlank(node.GetAttribute("filename")))
         {
             // Trix serialized the embed's details as attributes of the node
@@ -221,16 +226,25 @@ public static partial class AttachmentResolution
     /// <summary><c>attributes_from_content</c>: the details Lexxy serializes as the embed's content markup.</summary>
     static OpengraphEmbed EmbedFromContent(string content, string host)
     {
-        var fragment = HtmlParser.ParseFragment(content);
-        var elements = fragment.Descendants().OfType<HtmlElement>().ToList();
+        var (href, image, title, description) = ContentDetails(content);
+        return new OpengraphEmbed(OpengraphEmbedUrl.WebUrl(href, host), OpengraphEmbedUrl.WebUrl(image, host), title, description);
+    }
+
+    /// <summary>
+    /// What <c>attributes_from_content</c> reads from the content markup before checking its URLs.
+    /// Rails parses it with <c>Nokogiri::HTML.fragment</c>, libxml2's legacy parser, not HTML5.
+    /// </summary>
+    public static (string? Href, string? Image, string? Title, string? Description) ContentDetails(string content)
+    {
+        var elements = LegacyHtmlParser.ParseFragment(content).Descendants().OfType<HtmlElement>().ToList();
         var title = elements.FirstOrDefault(e => RubyText.HasClass(e.GetAttribute("class"), "og-embed__title"));
         var link = title?.Descendants().OfType<HtmlElement>().FirstOrDefault(e => e.IsHtml("a"));
         var image = elements.FirstOrDefault(e => e.IsHtml("img") && HasAncestorWithClass(e, "og-embed__image"));
         var description = elements.FirstOrDefault(e => RubyText.HasClass(e.GetAttribute("class"), "og-embed__description"));
 
-        return new OpengraphEmbed(
-            OpengraphEmbedUrl.WebUrl(link?.GetAttribute("href"), host),
-            OpengraphEmbedUrl.WebUrl(image?.GetAttribute("src"), host),
+        return (
+            link?.GetAttribute("href"),
+            image?.GetAttribute("src"),
             (link ?? title) is { } named ? RubyString.Strip(named.TextContent) : null,
             description is null ? null : RubyString.Strip(description.TextContent));
     }

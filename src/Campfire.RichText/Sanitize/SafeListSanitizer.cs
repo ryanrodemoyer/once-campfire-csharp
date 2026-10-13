@@ -200,9 +200,16 @@ public static partial class SafeListSanitizer
     {
         if (element.GetAttribute("style") is { } style)
         {
-            element.SetAttribute("style", CssScrubber.Scrub(style));
+            element.SetAttribute("style", AssignedValue(CssScrubber.Scrub(style)));
         }
     }
+
+    // Nokogiri's Attr#value= goes through libxml2's entity encoding, which drops the C0 controls
+    // other than tab, newline and carriage return (scrub_css keeps them, as delimiters)
+    static string AssignedValue(string value) =>
+        value.Any(c => c < ' ' && c is not ('\t' or '\n' or '\r'))
+            ? new string([.. value.Where(c => c >= ' ' || c is '\t' or '\n' or '\r')])
+            : value;
 
     public static bool AllowedUri(string uri)
     {
@@ -436,7 +443,7 @@ public static partial class SafeListSanitizer
         }
 
         var str = trimmed.IsEmpty ? "0" : trimmed.ToString();
-        if (uint.TryParse(str, radix == 16 ? NumberStyles.HexNumber : NumberStyles.Integer, CultureInfo.InvariantCulture, out var code) &&
+        if (uint.TryParse(str, radix == 16 ? NumberStyles.AllowHexSpecifier : NumberStyles.None, CultureInfo.InvariantCulture, out var code) &&
             code < 0x10ffff && !char.IsSurrogate((char)(code <= 0xffff ? code : 0)))
         {
             try

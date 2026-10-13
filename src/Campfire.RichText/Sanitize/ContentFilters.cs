@@ -173,39 +173,9 @@ public static class ContentFilters
         }
     }
 
-    static string? GetSoloUnfurledUrl(HtmlElement node, string? requestHost)
-    {
-        // from_node uses filename.present?. A newline is blank, so the href is not read.
-        var filename = node.GetAttribute("filename");
-        if (!RubyText.IsBlank(filename))
-        {
-            return OpengraphEmbedUrl.WebUrl(node.GetAttribute("href"), requestHost);
-        }
-
-        var content = node.GetAttribute("content");
-        if (string.IsNullOrEmpty(content))
-        {
-            return null;
-        }
-
-        var fragment = HtmlParser.ParseFragment(content);
-        var title = fragment.Descendants().OfType<HtmlElement>()
-            .FirstOrDefault(e => HasClass(e, "og-embed__title"));
-
-        var link = title?.Descendants().OfType<HtmlElement>()
-            .FirstOrDefault(e => e.IsHtml("a"));
-
-        var href = link?.GetAttribute("href");
-        return OpengraphEmbedUrl.WebUrl(href, requestHost);
-    }
-
-    static bool HasClass(HtmlElement element, string className)
-    {
-        var cls = element.GetAttribute("class");
-        if (cls is null) return false;
-        var parts = cls.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return parts.Contains(className, StringComparer.Ordinal);
-    }
+    // OpengraphEmbed.from_node(node)&.href: the node matched the content type already
+    static string? GetSoloUnfurledUrl(HtmlElement node, string? requestHost) =>
+        AttachmentResolution.AttributesFromNode(node, requestHost ?? "").Href;
 
     /// <summary><c>normalize_tweet_url</c>: nil stays nil.</summary>
     public static string? NormalizeTweetUrl(string? url)
