@@ -1,0 +1,25 @@
+{
+  "avg_bytes": 2019,
+  "conc": 16,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 242.303,
+    "mean_ms": 64.12,
+    "n": 2001,
+    "p50_ms": 55.871,
+    "p90_ms": 113.215,
+    "p99_ms": 173.695
+  },
+  "ok": 2001,
+  "path": "POST /rooms/201306877/messages",
+  "rps": 248.5,
+  "secs": 8.05,
+  "statuses": {
+    "200": 2001
+  },
+  "validation": "route-contract-v1",
+  "generator_cpu_percent": 5.619508244485583
+}
