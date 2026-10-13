@@ -72,6 +72,9 @@ public static class RichTextPlainText
         // Lexxy's RemoteVideo
         RemoteVideo video => $"[{attachment.Caption ?? video.Filename ?? "Video"}]",
         BlobAttachable blob => $"[{attachment.Caption ?? blob.Filename}]",
+        // A located record that isn't a user (a Message, a Room) defines no representation of its
+        // own, so Attachment#to_plain_text is the caption
+        MissingAttachable { RenderModelId: not null } => attachment.Caption ?? "",
         // MissingAttachable#attachable_plain_text_representation ignores the caption (Rails main).
         MissingAttachable => "☒",
         _ => throw new InvalidOperationException($"Unknown attachable {attachment.Attachable}"),

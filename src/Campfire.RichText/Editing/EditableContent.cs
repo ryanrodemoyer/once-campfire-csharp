@@ -23,8 +23,10 @@ public static class EditableContent
     /// </exception>
     /// <exception cref="HtmlParseException">The body exceeds Gumbo's limits.</exception>
     public static string EditorValue(string? storedBody, RenderContext context) =>
-        // `ActionText::RichText.new(body:)` loads the editable body as a stored one is loaded
-        RichTextRenderer.ToEditorHtml(RichTextRenderer.Load(EditableBody(storedBody, context)), context);
+        // `ActionText::RichText.new(body:)` casts the editable body through the serialized
+        // attribute's coder, `Content.load(Content.dump(body))`: one more parse and serialization
+        // than loading it, which shows where they aren't idempotent (each adds a `</plaintext>`)
+        RichTextRenderer.ToEditorHtml(RichTextRenderer.Load(StoredBody(EditableBody(storedBody, context))), context);
 
     /// <summary>
     /// <c>editable_body(message).body_before_type_cast</c>: the stored markup as is, with every

@@ -134,7 +134,7 @@ public static class RichTextRenderer
             .ToList();
 
     static bool IsGalleryAttachment(HtmlElement element) =>
-        element.IsHtml(AttachmentResolution.TagName) && element.GetAttribute("presentation") == galleryPresentation;
+        element.Name == AttachmentResolution.TagName && element.GetAttribute("presentation") == galleryPresentation;
 
     // A + A: a gallery attachment whose previous element sibling is one too
     static bool FollowsGalleryAttachment(HtmlElement element)

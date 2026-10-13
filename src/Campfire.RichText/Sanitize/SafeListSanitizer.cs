@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 using Campfire.RichText.Html;
 
 namespace Campfire.RichText.Sanitize;
@@ -26,14 +25,6 @@ public static partial class SafeListSanitizer
     {
         "image/gif", "image/jpeg", "image/png", "text/css", "text/plain"
     };
-
-    static readonly HashSet<string> AllowedStyleProperties = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "color", "background-color"
-    };
-
-    [GeneratedRegex(@"\A(?:[a-z]+|#[0-9a-f]{3,8}|var\(\s*--[a-z0-9_-]+\s*\)|(?:rgb|rgba|hsl|hsla)\([0-9a-z.,%\s/+-]*\))\z", RegexOptions.IgnoreCase)]
-    private static partial Regex PlainColorRegex();
 
     /// <summary>
     /// Sanitizes HTML markup using the provided allowlist.
@@ -203,46 +194,14 @@ public static partial class SafeListSanitizer
         return sb.ToString();
     }
 
+    // PermitScrubber#scrub_css_attribute: Loofah's scrub_css on a style attribute, which stays even
+    // when nothing is left of it
     static void ScrubStyle(HtmlElement element)
     {
-        var style = element.GetAttribute("style");
-        if (style is null)
+        if (element.GetAttribute("style") is { } style)
         {
-            return;
+            element.SetAttribute("style", CssScrubber.Scrub(style));
         }
-
-        var parts = style.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var declarations = new List<(string Property, string Value)>();
-        foreach (var part in parts)
-        {
-            var colonIndex = part.IndexOf(':');
-            if (colonIndex >= 0)
-            {
-                var prop = part[..colonIndex].Trim().ToLowerInvariant();
-                var val = part[(colonIndex + 1)..].Trim();
-                declarations.Add((prop, val));
-            }
-        }
-
-        static bool IsAllowed((string Property, string Value) d)
-        {
-            if (d.Property == "white-space")
-            {
-                return d.Value is "normal" or "nowrap" or "pre" or "pre-wrap" or "pre-line";
-            }
-            return AllowedStyleProperties.Contains(d.Property) && PlainColorRegex().IsMatch(d.Value);
-        }
-
-        if (declarations.Count > 0 && declarations.All(IsAllowed))
-        {
-            // Format without spaces matching Loofah/Crass
-            var formatted = declarations.Select(d => $"{d.Property}:{d.Value};").ToArray();
-            element.SetAttribute("style", string.Concat(formatted));
-            return;
-        }
-
-        var kept = declarations.Where(IsAllowed).Select(d => $"{d.Property}:{d.Value};").ToArray();
-        element.SetAttribute("style", string.Concat(kept));
     }
 
     public static bool AllowedUri(string uri)

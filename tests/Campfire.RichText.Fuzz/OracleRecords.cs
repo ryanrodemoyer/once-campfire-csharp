@@ -82,12 +82,11 @@ public sealed class PortDatabase(SqliteDatabase database, KeyGenerator keys, Fun
     public PipelineOutputs Outputs(string body, string host) =>
         database.ReadAsync(session =>
         {
-            // A verified Message SGID renders messages/_message. The oracle's only message is the
-            // one whose body is `body`; its rich text row is not in the exported database.
+            // A verified Message SGID renders messages/_message
             var context = new RenderContext(
                 new DatabaseAttachables(session, keys, now()),
                 host,
-                (model, id, ctx) => PipelineOutputs.RenderLocatedMessage(session, keys, model, id, body, ctx));
+                (model, id, ctx) => PipelineOutputs.RenderLocatedMessage(session, keys, model, id, ctx));
             return PipelineOutputs.FromPort(body, context);
         }).GetAwaiter().GetResult();
 

@@ -65,7 +65,8 @@ public class SanitizerSecurityTests
     [InlineData("<div style=\"behavior: url(x.htc)\">x</div>", "<div style=\"\">x</div>")]
     [InlineData("<div style=\"width: expression(alert(1))\">x</div>", "<div style=\"\">x</div>")]
     [InlineData("<div style=\"color: red; position: absolute;\">x</div>", "<div style=\"color:red;\">x</div>")]
-    [InlineData("<div style=\"background-color: #ff0000; display: none;\">x</div>", "<div style=\"background-color:#ff0000;\">x</div>")]
+    // Loofah allows display (ALLOWED_CSS_PROPERTIES); see Sanitize/Vectors/css_scrub.json
+    [InlineData("<div style=\"background-color: #ff0000; display: none;\">x</div>", "<div style=\"background-color:#ff0000;display:none;\">x</div>")]
     public void OnlyAllowlistedStylePropertiesSurvive(string input, string expected)
     {
         var sanitized = SafeListSanitizer.Sanitize(input, SafeList.ContentFilter);

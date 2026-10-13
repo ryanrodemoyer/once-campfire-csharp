@@ -91,18 +91,6 @@ public sealed class MessageViews(KeyGenerator keys, Func<string, string> toPlain
         })];
     }
 
-    /// <summary>
-    /// <see cref="Load"/> for one message whose rich text body is <paramref name="body"/> rather
-    /// than the stored row. The differential fuzzer holds that body only in memory: the oracle
-    /// updates it in place and does not export <c>action_text_rich_texts</c>.
-    /// </summary>
-    public MessageView WithBody(SqliteSession session, Message message, string? body)
-    {
-        var loaded = Load(session, [message])[0];
-        var plain = PlainTextBody(body, loaded.Attachment);
-        return loaded with { Body = body, PlainTextBody = plain.Text, PlainTextFailed = plain.Failed };
-    }
-
     /// <summary>The user's fields as the partials read them.</summary>
     public MessageUser User(User user)
     {

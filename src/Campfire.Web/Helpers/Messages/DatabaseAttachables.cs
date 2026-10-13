@@ -61,10 +61,11 @@ public sealed class DatabaseAttachables(SqliteSession session, KeyGenerator keys
             return new SignedLookup.StoredBlob(new BlobAttachable(blob.Filename, blob.ByteSize, ext));
         }
 
-        // An existing Message renders messages/_message. A verified SGID for a missing one still
+        // Any other existing record is the attachable: a Message renders messages/_message, and
+        // its plain text, or a Room's, is the caption. A verified SGID for a missing one still
         // falls through to MissingAttachable, which asks the class for a partial and raises.
-        if (gid.ModelName == "Message" && !gid.Composite && RubyString.ToIChecked(gid.Id) is long messageId && messageId > 0
-            && Messages.Find(session, messageId) is not null)
+        if (OtherModels.TryGetValue(gid.ModelName, out var exists) && !gid.Composite
+            && RubyString.ToIChecked(gid.Id) is long recordId && recordId > 0 && exists(session, recordId))
         {
             return new SignedLookup.Record(gid.ModelName, gid.Id);
         }

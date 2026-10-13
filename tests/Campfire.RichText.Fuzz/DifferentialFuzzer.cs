@@ -16,8 +16,11 @@ public sealed record FuzzSettings(long Iterations, long Seed, int Workers, strin
 {
     public int BatchSize { get; init; } = 100;
 
-    /// <summary>How long the reference may take over one case before it's given up on.</summary>
-    public TimeSpan CaseTimeout { get; init; } = TimeSpan.FromMinutes(2);
+    /// <summary>
+    /// How long the reference may take over one case before it's given up on. At edbc779 a 900 KB
+    /// body of links takes it about 2.5 minutes on an idle CPU (auto_link, which the oracle runs twice).
+    /// </summary>
+    public TimeSpan CaseTimeout { get; init; } = TimeSpan.FromMinutes(10);
 }
 
 /// <summary>A case on which the port and the reference disagree, or whose presentation is unsafe.</summary>

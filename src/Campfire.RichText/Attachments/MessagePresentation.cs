@@ -24,8 +24,8 @@ public static class MessagePresentation
     /// <exception cref="HtmlParseException">The body exceeds Gumbo's limits.</exception>
     public static string Render(string body, RenderContext context)
     {
-        var filtered = ContentFilters.ApplyTextMessagePresentationFilters(body, context.RequestHost, context);
-        var rendered = RichTextRenderer.RenderWithLayout(RichTextRenderer.Wrap(filtered), context);
+        var filtered = ContentFilters.FilterTextMessagePresentation(body, context.RequestHost, context);
+        var rendered = RichTextRenderer.RenderWithLayout(filtered, context);
         return RailsAutoLink.Apply(rendered, SafeList.AutoLink);
     }
 

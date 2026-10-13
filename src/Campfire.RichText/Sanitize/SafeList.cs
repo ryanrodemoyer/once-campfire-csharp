@@ -30,7 +30,7 @@ public sealed class SafeList
 
     public static readonly string[] AttachmentAttributes =
     [
-        "sgid", "content-type", "url", "href", "filename", "filesize", "width", "height", "previewable", "presentation", "caption", "content"
+        "sgid", "content-type", "url", "href", "filename", "filesize", "width", "height", "previewable", "presentation", "caption", "alt", "content"
     ];
 
     public HashSet<string> Tags { get; }

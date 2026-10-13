@@ -1,0 +1,787 @@
+{
+  "versions": {
+    "ruby": "4.0.7",
+    "globalid": "1.4.0",
+    "uri": "1.1.1"
+  },
+  "cases": [
+    {
+      "gid": "gid://campfire/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://Campfire/User/1",
+      "app": "Campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp-fire/User/1",
+      "app": "camp-fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp.fire/User/1",
+      "app": "camp.fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp_fire/User/1",
+      "app": "camp_fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp~fire/User/1",
+      "app": "camp~fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp&ire/User/1",
+      "app": "camp&ire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp!fire/User/1",
+      "app": "camp!fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp$fire/User/1",
+      "app": "camp$fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp'fire/User/1",
+      "app": "camp'fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp(fire)/User/1",
+      "app": "camp(fire)",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp*fire/User/1",
+      "app": "camp*fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp+fire/User/1",
+      "app": "camp+fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp,fire/User/1",
+      "app": "camp,fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp;fire/User/1",
+      "app": "camp;fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp=fire/User/1",
+      "app": "camp=fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp%41fire/User/1",
+      "app": "camp%41fire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://camp%4/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp%zzfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp\"fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp<fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp>fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp\\fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp^fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp`fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp{fire}/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp|fire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://camp[fire]/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid:///User/1",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "gid://1.2.3.4/User/1",
+      "app": "1.2.3.4",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://999.1.1.1/User/1",
+      "app": "999.1.1.1",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://[::1]/User/1",
+      "app": "[::1]",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://[2001:db8::1]/User/1",
+      "app": "[2001:db8::1]",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://[v1.x]/User/1",
+      "app": "[v1.x]",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://[::1/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://[fire]/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://user@campfire/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://u:p@campfire/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://@campfire/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://us er@campfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://u%40@campfire/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://a@b@campfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire:/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire:80/User/1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire:abc/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire: 80/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://:80/User/1",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "gid://camp:fire:80/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire\n/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://\tcampfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1/2",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "gid": "gid://campfire/User//1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1/",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/",
+      "error": "URI::GID::MissingModelIdError"
+    },
+    {
+      "gid": "gid://campfire/User",
+      "error": "URI::GID::MissingModelIdError"
+    },
+    {
+      "gid": "gid://campfire/",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "gid://campfire",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "gid://campfire//User/1",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "gid://campfire/Rooms::Open/1",
+      "app": "campfire",
+      "model_name": "Rooms::Open",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1%2F2",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1/2"
+    },
+    {
+      "gid": "gid://campfire/User/a+b",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "a b"
+    },
+    {
+      "gid": "gid://campfire/User/%E2%9C%93",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "✓"
+    },
+    {
+      "gid": "gid://campfire/User/%zz",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/Us@er/1",
+      "app": "campfire",
+      "model_name": "Us@er",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1;x",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1;x"
+    },
+    {
+      "gid": "gid://campfire/User/1:2",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1:2"
+    },
+    {
+      "gid": "gid://campfire/User/[1]",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1 2",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1\"",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1%",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/(1)",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "(1)"
+    },
+    {
+      "gid": "gid://campfire/User/1!$&'*+,=",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1!$&'* ,="
+    },
+    {
+      "gid": "gid://campfire/User/1|2",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1^2",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1`",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1{}",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1\\2",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1<2>",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/U%73er/1",
+      "app": "campfire",
+      "model_name": "U%73er",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/~1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "~1"
+    },
+    {
+      "gid": "gid://campfire/User/1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    {
+      "gid": "gid://campfire/User/1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21",
+      "error": "URI::GID::InvalidModelIdError"
+    },
+    {
+      "gid": "gid://campfire/ /1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1\n",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User//",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": []
+    },
+    {
+      "gid": "gid://campfire/User///",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": []
+    },
+    {
+      "gid": "gid://campfire/User/%FF",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": {
+        "bytes": [
+          255
+        ]
+      }
+    },
+    {
+      "gid": "gid://campfire/User/%C3%A9",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "é"
+    },
+    {
+      "gid": "gid://campfire/User/1%00",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1\u0000"
+    },
+    {
+      "gid": "gid://campfire/User/1?expires_in",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a=b&c=d",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a b",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?x",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?<>",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?#",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1#",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1#frag",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1#fr ag",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1#a#b",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1#a?b/c",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1#<x>",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1?x#y",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?x?y",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1#%41",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1#%zz",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1?%zz",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1?%4z",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?%z4",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?%4",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?%",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a=%",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a=%2",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a=%ZZ&b",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1?&&",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?=",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a=b;c=d",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?%FF",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?a\tb",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1 ",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "GID://campfire/User/1",
+      "error": "URI::BadURIError"
+    },
+    {
+      "gid": "Gid://campfire/User/1",
+      "error": "URI::BadURIError"
+    },
+    {
+      "gid": "gid:campfire/User/1",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "gid:/campfire/User/1",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "http://campfire/User/1",
+      "error": "URI::BadURIError"
+    },
+    {
+      "gid": "gid://cämpfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/ü",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": " gid://campfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid:// campfire/User/1",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1\u0000",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/1\r\n",
+      "error": "URI::InvalidURIError"
+    },
+    {
+      "gid": "gid://campfire/User/0x1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "0x1"
+    },
+    {
+      "gid": "gid://campfire/User/-1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "-1"
+    },
+    {
+      "gid": "gid://campfire/User/1e3",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1e3"
+    },
+    {
+      "gid": "gid://campfire/::User/1",
+      "app": "campfire",
+      "model_name": "::User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User::/1",
+      "app": "campfire",
+      "model_name": "User::",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/user/1",
+      "app": "campfire",
+      "model_name": "user",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/1?expires_at=2099-01-01+00%3A00%3A00+UTC",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1"
+    },
+    {
+      "gid": "gid://campfire/User/%2F",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "/"
+    },
+    {
+      "gid": "gid://campfire/User/+",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": " "
+    },
+    {
+      "gid": "gid://campfire/User/%20",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": " "
+    },
+    {
+      "gid": "gid://campfire/User/1%2F",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "1/"
+    },
+    {
+      "gid": "gid://campfire/User/%2F1",
+      "app": "campfire",
+      "model_name": "User",
+      "model_id": "/1"
+    },
+    {
+      "gid": "gid",
+      "error": "URI::BadURIError"
+    },
+    {
+      "gid": "gid://",
+      "error": "URI::InvalidComponentError"
+    },
+    {
+      "gid": "",
+      "error": "URI::BadURIError"
+    }
+  ]
+}

@@ -59,6 +59,15 @@ connection.execute(
   [ "Message", message.id, "body", "", TIME.iso8601, TIME.iso8601 ])
 rich_text_id = ActiveRecord::Base.connection.select_value("SELECT id FROM action_text_rich_texts WHERE record_id = #{message.id}")
 
+# The message the "message" SGIDs locate. It isn't the fuzzed one, whose body would then render
+# itself until Ruby's stack gives out, at a depth no port can match. Campfire never mints a
+# Message SGID, so no real body can attach one.
+Message.insert!({ room_id: room.id, creator_id: users["david"].id, client_message_id: "located", created_at: TIME, updated_at: TIME })
+located = Message.find_by!(client_message_id: "located")
+connection.execute(
+  "INSERT INTO action_text_rich_texts (record_type, record_id, name, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+  [ "Message", located.id, "body", "<p>A <strong>located</strong> message</p>", TIME.iso8601, TIME.iso8601 ])
+
 def tampered(sgid) = "#{sgid.split("--").first}--invalid"
 
 def rails7_sgid(record)
@@ -92,12 +101,12 @@ end + [
   [ "room tampered", tampered(room.to_sgid(expires_in: nil, for: attachable).to_s) ],
   [ "room rails7", rails7_sgid(room) ],
   [ "room gid", room.to_gid.to_s ],
-  [ "message attachable", message.to_sgid(expires_in: nil, for: attachable).to_s ],
-  [ "message tampered", tampered(message.to_sgid(expires_in: nil, for: attachable).to_s) ],
-  [ "message gid", message.to_gid.to_s ]
+  [ "message attachable", located.to_sgid(expires_in: nil, for: attachable).to_s ],
+  [ "message tampered", tampered(located.to_sgid(expires_in: nil, for: attachable).to_s) ],
+  [ "message gid", located.to_gid.to_s ]
 ]
 
-rows = %w[ users rooms messages ].to_h { |table| [ table, ActiveRecord::Base.connection.select_all("SELECT * FROM #{table}").to_a ] }
+rows = %w[ users rooms messages action_text_rich_texts ].to_h { |table| [ table, ActiveRecord::Base.connection.select_all("SELECT * FROM #{table}").to_a ] }
 
 OUT.puts JSON.generate({
   "tables" => rows,

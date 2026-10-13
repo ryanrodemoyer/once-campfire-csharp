@@ -1,0 +1,839 @@
+{
+  "json": "2.21.2",
+  "cases": [
+    {
+      "input": "eyJfcmFpbHMiO/siZGF0YSI6MX0=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ':' after object key at line 1 column 10"
+    },
+    {
+      "input": "eyJhIjoxLCJiIjv7fQ==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "expected ':' after object key, got: ';�}' at line 1 column 11"
+    },
+    {
+      "input": "e/t9",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "expected object key, got '�}' at line 1 column 2"
+    },
+    {
+      "input": "eyJhIjoxLPt9",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "expected object key, got: '�}' at line 1 column 8"
+    },
+    {
+      "input": "eyJhIjox+30=",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "expected ',' or '}' after object value, got: '�}' at line 1 column 7"
+    },
+    {
+      "input": "eyJhIjoxIPt9",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "expected ',' or '}' after object value, got: '�}' at line 1 column 8"
+    },
+    {
+      "input": "eyD7fQ==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "expected object key, got '�}' at line 1 column 3"
+    },
+    {
+      "input": "eyJhIiD7fQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ':' after object key at line 1 column 6"
+    },
+    {
+      "input": "eyJhIg==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ':' after object key at line 1 column 5"
+    },
+    {
+      "input": "eyJhIjo=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input at line 1 column 6"
+    },
+    {
+      "input": "eyJhIjox",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ',' or '}' after object value, got: EOF at line 1 column 7"
+    },
+    {
+      "input": "eyJhIjoxLA==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected object key, got: EOF at line 1 column 8"
+    },
+    {
+      "input": "ew==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected object key, got EOF at line 1 column 2"
+    },
+    {
+      "input": "eyJhIjoxLCJiIg==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ':' after object key, got: EOF at line 1 column 11"
+    },
+    {
+      "input": "eyJhIjoxLCJhIjoyfQ==",
+      "ok": "{\"a\":2}"
+    },
+    {
+      "input": "eyJhIjp7ImIiOlsxLDIseyJjIjpudWxsfV19fQ==",
+      "ok": "{\"a\":{\"b\":[1,2,{\"c\":null}]}}"
+    },
+    {
+      "input": "eyJhIjoxLH0=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected object key, got: '}' at line 1 column 8"
+    },
+    {
+      "input": "eyx9",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected object key, got ',}' at line 1 column 2"
+    },
+    {
+      "input": "eyJhIjo6MX0=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: ':1}' at line 1 column 6"
+    },
+    {
+      "input": "eydhJzoxfQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected object key, got ''a':1}' at line 1 column 2"
+    },
+    {
+      "input": "WzH7XQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ',' or ']' after array value at line 1 column 3"
+    },
+    {
+      "input": "WzEs+10=",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "unexpected character: '�]' at line 1 column 4"
+    },
+    {
+      "input": "W/td",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "unexpected character: '�]' at line 1 column 2"
+    },
+    {
+      "input": "WzEsXQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: ']' at line 1 column 4"
+    },
+    {
+      "input": "Ww==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input at line 1 column 2"
+    },
+    {
+      "input": "WzE=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ',' or ']' after array value at line 1 column 3"
+    },
+    {
+      "input": "WzEs",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input at line 1 column 4"
+    },
+    {
+      "input": "W10=",
+      "ok": "[]"
+    },
+    {
+      "input": "WyBd",
+      "ok": "[]"
+    },
+    {
+      "input": "WzEgMl0=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ',' or ']' after array value at line 1 column 4"
+    },
+    {
+      "input": "+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: '' at line 1 column 1"
+    },
+    {
+      "input": "IPs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: '' at line 1 column 2"
+    },
+    {
+      "input": "Cvs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: '' at line 2 column 1"
+    },
+    {
+      "input": "ePs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: 'x' at line 1 column 1"
+    },
+    {
+      "input": "w6k=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: '' at line 1 column 1"
+    },
+    {
+      "input": "ww==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: '' at line 1 column 1"
+    },
+    {
+      "input": "YcOp",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: 'a' at line 1 column 1"
+    },
+    {
+      "input": "w6n7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected character: 'é' at line 1 column 1"
+    },
+    {
+      "input": "",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input at line 1 column 1"
+    },
+    {
+      "input": "bnVs+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'nul' at line 1 column 1"
+    },
+    {
+      "input": "bnVs",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'nul' at line 1 column 1"
+    },
+    {
+      "input": "bnVsbPs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 5"
+    },
+    {
+      "input": "bnVseA==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'nulx' at line 1 column 1"
+    },
+    {
+      "input": "dHJ1ZQ==",
+      "ok": "true"
+    },
+    {
+      "input": "dHJ1+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'tru' at line 1 column 1"
+    },
+    {
+      "input": "ZmFsc3n7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'falsy' at line 1 column 1"
+    },
+    {
+      "input": "Zg==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'f' at line 1 column 1"
+    },
+    {
+      "input": "Tvs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'N' at line 1 column 1"
+    },
+    {
+      "input": "TmFO",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'NaN' at line 1 column 1"
+    },
+    {
+      "input": "Sfs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'I' at line 1 column 1"
+    },
+    {
+      "input": "SW5maW5pdHk=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'Infinity' at line 1 column 1"
+    },
+    {
+      "input": "LUluZmluaXR5",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '-Infinity' at line 1 column 1"
+    },
+    {
+      "input": "W05hTl0=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token 'NaN]' at line 1 column 2"
+    },
+    {
+      "input": "Lfs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '-' at line 1 column 1"
+    },
+    {
+      "input": "LQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '-' at line 1 column 1"
+    },
+    {
+      "input": "MDH7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '01' at line 1 column 1"
+    },
+    {
+      "input": "MDE=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '01' at line 1 column 1"
+    },
+    {
+      "input": "LTAx",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '-01' at line 1 column 1"
+    },
+    {
+      "input": "MS77",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '1.' at line 1 column 1"
+    },
+    {
+      "input": "MS4=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '1.' at line 1 column 1"
+    },
+    {
+      "input": "MWX7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '1e' at line 1 column 1"
+    },
+    {
+      "input": "MWU=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '1e' at line 1 column 1"
+    },
+    {
+      "input": "MWUr",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '1e+' at line 1 column 1"
+    },
+    {
+      "input": "MUUrNQ==",
+      "ok": "100000.0"
+    },
+    {
+      "input": "LTA=",
+      "ok": "0"
+    },
+    {
+      "input": "MS41ZS0z",
+      "ok": "0.0015"
+    },
+    {
+      "input": "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM=",
+      "ok": "12345678901234567890123"
+    },
+    {
+      "input": "MXg=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'x' at line 1 column 2"
+    },
+    {
+      "input": "MSB4",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'x' at line 1 column 3"
+    },
+    {
+      "input": "WzAxXQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '01]' at line 1 column 2"
+    },
+    {
+      "input": "Wy1d",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '-]' at line 1 column 2"
+    },
+    {
+      "input": "WzEuXQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid number: '1.]' at line 1 column 2"
+    },
+    {
+      "input": "eyJhIjot+30=",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid number: '-�}' at line 1 column 6"
+    },
+    {
+      "input": "MSD7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "MSB4+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'x' at line 1 column 3"
+    },
+    {
+      "input": "MSB4w6k=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'x' at line 1 column 3"
+    },
+    {
+      "input": "MSB4ww==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'x' at line 1 column 3"
+    },
+    {
+      "input": "MSAA+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream  at line 1 column 3"
+    },
+    {
+      "input": "MQr7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 2 column 1"
+    },
+    {
+      "input": "e30g+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 4"
+    },
+    {
+      "input": "e319",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '}' at line 1 column 3"
+    },
+    {
+      "input": "MSBhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' at line 1 column 3"
+    },
+    {
+      "input": "MSBhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWH7YQ==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "unexpected token at end of stream 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa�a' at line 1 column 3"
+    },
+    {
+      "input": "MSBhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYfs=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' at line 1 column 3"
+    },
+    {
+      "input": "MSBhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhw6k=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' at line 1 column 3"
+    },
+    {
+      "input": "MSBhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWHDqcM=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' at line 1 column 3"
+    },
+    {
+      "input": "MSCpqQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "MSDDqak=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "MSDigg==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "MSDigqw=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "MSDwn5iA",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "MSDwn5g=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token at end of stream '' at line 1 column 3"
+    },
+    {
+      "input": "ImFiYw==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input, expected closing \" at line 1 column 5"
+    },
+    {
+      "input": "ImFiY1w=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input, expected closing \" at line 1 column 6"
+    },
+    {
+      "input": "ImFc+yI=",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid escape character in string: '\\�\"' at line 1 column 3"
+    },
+    {
+      "input": "ImFc+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input, expected closing \" at line 1 column 5"
+    },
+    {
+      "input": "ImFcdTEy+zQi",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "incomplete unicode character escape sequence at '\\u12�4\"' at line 1 column 3"
+    },
+    {
+      "input": "ImFcdTEyIg==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "incomplete unicode character escape sequence at '\\u12\"' at line 1 column 3"
+    },
+    {
+      "input": "ImFcdTEy",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input, expected closing \" at line 1 column 7"
+    },
+    {
+      "input": "ImFcdXp6enoi",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "incomplete unicode character escape sequence at '\\uzzzz\"' at line 1 column 3"
+    },
+    {
+      "input": "Ilx1ZDgwMPsi",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "incomplete surrogate pair at '\\ud800�\"' at line 1 column 2"
+    },
+    {
+      "input": "InhcdWQ4MDD7Ig==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "incomplete surrogate pair at 'x\\ud800�\"' at line 1 column 2"
+    },
+    {
+      "input": "Ilx1ZDgwMFx1MDA0Mfsi",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid surrogate pair at '\\ud800\\u0041�\"' at line 1 column 2"
+    },
+    {
+      "input": "Inlcblx1ZDgwMFx1MDA0Mfsi",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid surrogate pair at '\\ud800\\u0041�\"' at line 1 column 5"
+    },
+    {
+      "input": "Ilx1ZDgwMFx1ZGMwMCI=",
+      "ok": "\"𐀀\""
+    },
+    {
+      "input": "Ilx1ZGMwMCI=",
+      "ok": null
+    },
+    {
+      "input": "Ilx1ZDgwMCI=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "incomplete surrogate pair at '\\ud800\"' at line 1 column 2"
+    },
+    {
+      "input": "Ilx1MDAwMCI=",
+      "ok": "\"\\u0000\""
+    },
+    {
+      "input": "IvsBIg==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid ASCII control character in string: '\u0001\"' at line 1 column 3"
+    },
+    {
+      "input": "ImEB+yI=",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid ASCII control character in string: '\u0001�\"' at line 1 column 3"
+    },
+    {
+      "input": "ImFcbgH7Ig==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid ASCII control character in string: '\u0001�\"' at line 1 column 5"
+    },
+    {
+      "input": "ImFcCvsi",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "Invalid unescaped newline character (\\n) in string: '\\' at line 1 column 3"
+    },
+    {
+      "input": "ImFcAfsi",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid ASCII control character in string: '\\\u0001�\"' at line 1 column 3"
+    },
+    {
+      "input": "ImFcAPsi",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input, expected closing \" at line 1 column 7"
+    },
+    {
+      "input": "ImEA+yI=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid ASCII control character in string:  at line 1 column 3"
+    },
+    {
+      "input": "Igki",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid ASCII control character in string: \t\" at line 1 column 2"
+    },
+    {
+      "input": "ImFccSI=",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid escape character in string: '\\q\"' at line 1 column 3"
+    },
+    {
+      "input": "Ivsi",
+      "ok": null
+    },
+    {
+      "input": "eyL7IjoxfQ==",
+      "ok": null
+    },
+    {
+      "input": "IlwvXCJcXFxiXGZcblxyXHQi",
+      "ok": "\"/\\\"\\\\\\b\\f\\n\\r\\t\""
+    },
+    {
+      "input": "IlxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5ccfsi",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "invalid escape character in string: '\\q�\"' at line 1 column 42"
+    },
+    {
+      "input": "IlxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cdWQ4MDD7Ig==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "incomplete surrogate pair at '\\ud800�\"' at line 1 column 42"
+    },
+    {
+      "input": "ImFcXAEi",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "invalid ASCII control character in string: '\u0001\"' at line 1 column 5"
+    },
+    {
+      "input": "eyJhIjoifyJ9",
+      "ok": "{\"a\":\"\"}"
+    },
+    {
+      "input": "L3j7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token '/x' at line 1 column 1"
+    },
+    {
+      "input": "Lw==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token '/' at line 1 column 1"
+    },
+    {
+      "input": "Lyr7",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unterminated comment, expected closing '*/' at line 1 column 1"
+    },
+    {
+      "input": "LyogeCAq",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unterminated comment, expected closing '*/' at line 1 column 1"
+    },
+    {
+      "input": "Ly8g+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected end of input at line 1 column 5"
+    },
+    {
+      "input": "Ly94CjE=",
+      "ok": "1"
+    },
+    {
+      "input": "LypjKi97ImEiOjF9",
+      "ok": "{\"a\":1}"
+    },
+    {
+      "input": "ey8qYyovImEiLypkKi86LyplKi8xLypmKi99",
+      "ok": "{\"a\":1}"
+    },
+    {
+      "input": "WzEvKmMqLywyXQ==",
+      "ok": "[1,2]"
+    },
+    {
+      "input": "MSAv+w==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "unexpected token '/' at line 1 column 3"
+    },
+    {
+      "input": "MSAvL3g=",
+      "ok": "1"
+    },
+    {
+      "input": "eyJhIjoxL/t9",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "unexpected token '/�}' at line 1 column 7"
+    },
+    {
+      "input": "Wy/7XQ==",
+      "error": "JSON::ParserError",
+      "loggable": false,
+      "message": "unexpected token '/�]' at line 1 column 2"
+    },
+    {
+      "input": "W1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW11dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV0=",
+      "ok": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+    },
+    {
+      "input": "W1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tdXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXQ==",
+      "ok": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+    },
+    {
+      "input": "W1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1d",
+      "error": "JSON::NestingError",
+      "loggable": true,
+      "message": "nesting of 101 is too deep"
+    },
+    {
+      "input": "W1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1sxXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV0=",
+      "error": "JSON::NestingError",
+      "loggable": true,
+      "message": "nesting of 101 is too deep"
+    },
+    {
+      "input": "eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjoxfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fQ==",
+      "ok": "{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":{\"a\":1}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
+    },
+    {
+      "input": "eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOjF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fQ==",
+      "error": "JSON::NestingError",
+      "loggable": true,
+      "message": "nesting of 101 is too deep"
+    },
+    {
+      "input": "eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnsiYSI6eyJhIjp7ImEiOnt9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX0=",
+      "error": "JSON::NestingError",
+      "loggable": true,
+      "message": "nesting of 101 is too deep"
+    },
+    {
+      "input": "eyJfcmFpbHMiO/siZGF0YSI6ImdpZDovL2NhbXBmaXJlL1VzZXIvMj9leHBpcmVzX2luIiwicHVyIjoiYXR0YWNoYWJsZSJ9fQ==",
+      "error": "JSON::ParserError",
+      "loggable": true,
+      "message": "expected ':' after object key at line 1 column 10"
+    },
+    {
+      "input": "eyJfcmFpbHMiOnsiZGF0YSI6ImdpZDovL2NhbXBmaXJlL1VzZXIvMSIsInB1ciI6ImF0dGFjaGFibGUifX0=",
+      "ok": "{\"_rails\":{\"data\":\"gid://campfire/User/1\",\"pur\":\"attachable\"}}"
+    },
+    {
+      "input": "eyJfcmFpbHMiOm51bGx9",
+      "ok": "{\"_rails\":null}"
+    },
+    {
+      "input": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IngifX0=",
+      "ok": "{\"_rails\":{\"message\":\"x\"}}"
+    }
+  ]
+}

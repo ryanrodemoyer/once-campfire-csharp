@@ -22,25 +22,27 @@ public static class ContentFilters
     /// (both sides of <c>==</c>), which resolves every attachment. Callers that only compare
     /// sanitized markup omit it.
     /// </summary>
-    public static string ApplyTextMessagePresentationFilters(string html, string? requestHost = null, RenderContext? context = null)
-    {
-        if (context is not null)
-        {
-            _ = RichTextPlainText.ToPlainText(html, context);
-        }
+    public static string ApplyTextMessagePresentationFilters(string html, string? requestHost = null, RenderContext? context = null) =>
+        FilterTextMessagePresentation(html, requestHost, context).ToHtml();
 
+    /// <summary>
+    /// <see cref="ApplyTextMessagePresentationFilters"/> as the content it returns: SanitizeAttributes
+    /// returns a string, which <c>ActionText::Content::Filter.apply</c> parses again
+    /// (<c>Content.new(filter.apply, canonicalize: false)</c>, <c>reference/lib/rails_ext/filter.rb</c>).
+    /// </summary>
+    public static HtmlFragment FilterTextMessagePresentation(string html, string? requestHost = null, RenderContext? context = null)
+    {
         // String#strip, not Unicode trim: NBSP and the other Unicode spaces stay.
         if (string.IsNullOrEmpty(html) || RubyString.Strip(html).Length == 0)
         {
-            return string.Empty;
+            return RichTextRenderer.Wrap("");
         }
 
         var fragment = HtmlParser.ParseFragment(RubyString.Strip(html));
         CanonicalizeContent(fragment);
-        ApplyRemoveSoloUnfurledLinkText(fragment, requestHost);
+        ApplyRemoveSoloUnfurledLinkText(fragment, requestHost, context is null ? null : () => RichTextPlainText.ToPlainText(html, context));
         ApplySanitizeTags(fragment);
-        var sanitized = SafeListSanitizer.Sanitize(fragment.ToHtml(), SafeList.ContentFilter);
-        return RubyString.Strip(sanitized);
+        return RichTextRenderer.Wrap(SafeListSanitizer.Sanitize(fragment.ToHtml(), SafeList.ContentFilter));
     }
 
     /// <summary>
@@ -54,7 +56,7 @@ public static class ContentFilters
         // Attachment.fragment_by_minifying_attachments: clear the inner HTML of each attachment.
         // 2. Clear inner HTML of all action-text-attachment nodes
         var attachments = fragment.Descendants().OfType<HtmlElement>()
-            .Where(e => e.IsHtml("action-text-attachment"))
+            .Where(e => e.Name == AttachmentResolution.TagName)
             .ToList();
 
         foreach (var att in attachments)
@@ -66,7 +68,7 @@ public static class ContentFilters
         // div elements containing adjacent gallery attachments where all children are either
         // gallery attachments or whitespace text (newlines/spaces) are stripped of their attributes.
         static bool IsGalleryAttachment(HtmlNode node) =>
-            node is HtmlElement e && e.IsHtml("action-text-attachment") && e.GetAttribute("presentation") == "gallery";
+            node is HtmlElement e && e.Name == AttachmentResolution.TagName && e.GetAttribute("presentation") == "gallery";
 
         var divs = fragment.Descendants().OfType<HtmlElement>()
             .Where(e => e.IsHtml("div"))
@@ -93,7 +95,7 @@ public static class ContentFilters
         // MarkdownConversion.fragment_by_unwrapping_raw_markdown_tags: replace each
         // action-text-markdown element with its children, in document order.
         var markdown = fragment.Descendants().OfType<HtmlElement>()
-            .Where(e => e.IsHtml("action-text-markdown"))
+            .Where(e => e.Name == "action-text-markdown")
             .ToList();
         foreach (var node in markdown)
         {
@@ -101,34 +103,34 @@ public static class ContentFilters
         }
     }
 
-    public static void ApplyRemoveSoloUnfurledLinkText(HtmlFragment fragment, string? requestHost)
+    /// <summary>
+    /// <c>ContentFilters::RemoveSoloUnfurledLinkText</c>. <c>applicable?</c> normalizes both sides
+    /// of its <c>==</c> whatever the body holds, so the plain text is always computed and parsed
+    /// as a URI when it names a Twitter domain, and either can raise.
+    /// </summary>
+    /// <param name="fragment">The canonicalized content.</param>
+    /// <param name="requestHost">The request's host, which an embed's relative URL resolves against.</param>
+    /// <param name="contentPlainText">
+    /// <c>content.to_plain_text</c> with the app's attachables; without it, an approximation from
+    /// the markup alone, for callers that only compare sanitized markup.
+    /// </param>
+    public static void ApplyRemoveSoloUnfurledLinkText(HtmlFragment fragment, string? requestHost, Func<string>? contentPlainText = null)
     {
         var unfurledLinks = fragment.Descendants().OfType<HtmlElement>()
-            .Where(e => e.IsHtml("action-text-attachment") &&
+            .Where(e => e.Name == AttachmentResolution.TagName &&
                         e.GetAttribute("content-type") == "application/vnd.actiontext.opengraph-embed")
             .ToList();
 
-        if (unfurledLinks.Count != 1)
+        var soloUrl = unfurledLinks.Count == 1 ? GetSoloUnfurledUrl(unfurledLinks[0], requestHost) : null;
+        var normSolo = NormalizeTweetUrl(soloUrl);
+        var normPlain = NormalizeTweetUrl(contentPlainText is null ? ToPlainText(fragment) : contentPlainText());
+
+        if (normSolo is null || !string.Equals(normSolo, normPlain, StringComparison.Ordinal))
         {
             return;
         }
 
         var unfurl = unfurledLinks[0];
-        var soloUrl = GetSoloUnfurledUrl(unfurl, requestHost);
-        if (soloUrl is null)
-        {
-            return;
-        }
-
-        var plainText = ToPlainText(fragment);
-        var normSolo = NormalizeTweetUrl(soloUrl);
-        var normPlain = NormalizeTweetUrl(plainText);
-
-        if (!string.Equals(normSolo, normPlain, StringComparison.Ordinal))
-        {
-            return;
-        }
-
         var isTrixBody = fragment.Descendants().OfType<HtmlElement>().Any(e => e.IsHtml("div"));
         if (isTrixBody)
         {
@@ -149,7 +151,7 @@ public static class ContentFilters
             var paragraphs = fragment.Descendants().OfType<HtmlElement>().Where(e => e.IsHtml("p")).ToList();
             foreach (var p in paragraphs)
             {
-                var hasAttachment = p.Descendants().OfType<HtmlElement>().Any(e => e.IsHtml("action-text-attachment"));
+                var hasAttachment = p.Descendants().OfType<HtmlElement>().Any(e => e.Name == AttachmentResolution.TagName);
                 if (!hasAttachment)
                 {
                     p.Remove();
@@ -205,16 +207,11 @@ public static class ContentFilters
         return parts.Contains(className, StringComparer.Ordinal);
     }
 
-    public static string NormalizeTweetUrl(string? url)
+    /// <summary><c>normalize_tweet_url</c>: nil stays nil.</summary>
+    public static string? NormalizeTweetUrl(string? url)
     {
-        if (string.IsNullOrWhiteSpace(url))
-        {
-            return url ?? string.Empty;
-        }
-
-        var trimmed = RubyString.Strip(url);
-        var isTwitter = TwitterDomains.Any(d => trimmed.Contains(d, StringComparison.OrdinalIgnoreCase));
-        if (!isTwitter)
+        // twitter_url?: url.present? && TWITTER_DOMAINS.any? { |domain| url.strip.include?(domain) }
+        if (url is null || RubyText.IsBlank(url) || !TwitterDomains.Any(d => RubyString.Strip(url).Contains(d, StringComparison.Ordinal)))
         {
             return url;
         }
@@ -251,7 +248,7 @@ public static class ContentFilters
 
         // Attachments: opengraph embeds have empty plain text representation
         var attachments = copy.Descendants().OfType<HtmlElement>()
-            .Where(e => e.IsHtml("action-text-attachment"))
+            .Where(e => e.Name == AttachmentResolution.TagName)
             .ToList();
 
         foreach (var att in attachments)

@@ -7,7 +7,6 @@ using Campfire.RailsCompat.Crypto;
 using Campfire.RailsCompat.Ruby;
 using Campfire.RichText.Attachments;
 using Campfire.RichText.Editing;
-using Campfire.RichText.Html;
 using Campfire.RichText.PlainText;
 using Campfire.RichText.Sanitize;
 using Campfire.Vectors;
@@ -84,48 +83,27 @@ public sealed record PipelineOutputs(
 
     static readonly Lazy<AssetBundle> Assets = new(() => AssetBundle.Build(AssetSources.InRepository(VectorFiles.Root), DateTimeOffset.UnixEpoch));
 
-    // Ruby's VM stack gives up at about this many message partials (measured in the reference
-    // image). Gumbo's tree-depth limit stops the HTML sooner when each level is deep; this only
-    // keeps a shallow body from overflowing the C# stack past the point Rails can reach.
-    const int maxLocatedPartials = 100;
-
-    static readonly AsyncLocal<int> LocatedDepth = new();
-
     /// <summary>
-    /// <c>messages/_message</c> for a Message a signed GlobalID located. The body is the one the
-    /// fuzzer is rendering: the oracle writes it onto message 1 and does not export the rich text.
+    /// <c>messages/_message</c> for a Message a signed GlobalID located: the oracle's second
+    /// message, with its stored body.
     /// </summary>
-    public static string RenderLocatedMessage(SqliteSession session, KeyGenerator keys, string modelName, string modelId, string body, RenderContext context)
+    public static string RenderLocatedMessage(SqliteSession session, KeyGenerator keys, string modelName, string modelId, RenderContext context)
     {
         if (modelName != Message.ModelName || RubyString.ToIChecked(modelId) is not long id)
         {
             throw new RichTextRaisedException($"NoMethodError: undefined method 'to_partial_path' for class {modelName}");
         }
 
-        var depth = LocatedDepth.Value;
-        if (depth >= maxLocatedPartials)
-        {
-            throw new HtmlParseException(HtmlParseException.TreeTooDeep);
-        }
-
         var message = Messages.Find(session, id) ?? throw new RichTextRaisedException("ActiveRecord::RecordNotFound");
-        LocatedDepth.Value = depth + 1;
-        try
+        var loader = new MessageViews(keys, text => RichTextPlainText.ToPlainText(text, context));
+        var view = new View
         {
-            var loader = new MessageViews(keys, text => RichTextPlainText.ToPlainText(text, context));
-            var viewMessage = loader.WithBody(session, message, body);
-            var view = new View
-            {
-                Assets = Assets.Value,
-                Origin = new UrlBase("http", context.RequestHost ?? "example.com"),
-                RichTextContext = context,
-            };
-            return RubyValues.Render(View.Render(writer => view.MessagesMessage(writer, viewMessage))).ToString();
-        }
-        finally
-        {
-            LocatedDepth.Value = depth;
-        }
+            Assets = Assets.Value,
+            Origin = new UrlBase("http", context.RequestHost ?? "example.com"),
+            RichTextContext = context,
+        };
+        var viewMessage = loader.Load(session, [message])[0];
+        return RubyValues.Render(View.Render(writer => view.MessagesMessage(writer, viewMessage))).ToString();
     }
 
     /// <summary>What the port produces for <paramref name="body"/>, each output computed on its own as Rails does.</summary>
