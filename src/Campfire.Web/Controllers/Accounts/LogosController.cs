@@ -29,7 +29,7 @@ public sealed class AccountsLogosController : ApplicationController
         await c.WriteAsync(tx =>
         {
             var account = Accounts.First(tx.Session) ?? throw new InvalidOperationException("undefined method 'logo' for nil");
-            AccountsController.DetachLogo(tx, account.Id);
+            AccountsController.DetachLogo(tx, c.App.RequireSeams().Jobs, account.Id);
         });
         c.RedirectTo(Routes.EditAccountUrl(c.UrlBase));
     });

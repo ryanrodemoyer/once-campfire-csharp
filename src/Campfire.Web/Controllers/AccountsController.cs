@@ -1,3 +1,4 @@
+using Campfire.Data.Events;
 using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
@@ -78,6 +79,7 @@ public sealed class AccountsController : ApplicationController
         using var staged = logo?.Upload is { } upload ? app.RequireStorage().Stage(upload) : null;
         // The attachment's `before_validation` analysis (analyze: :immediately).
         staged?.AnalyzeWithoutSaving();
+        var jobs = app.RequireSeams().Jobs;
         await app.Database.WriteAsync(tx =>
         {
             var account = Accounts.First(tx.Session) ?? throw new InvalidOperationException("undefined method 'update!' for nil");
@@ -92,27 +94,29 @@ public sealed class AccountsController : ApplicationController
             if (staged is not null)
             {
                 var attached = BlobStorage.AttachOne(tx, staged, nameof(Account), accountId, AttachmentNames.Logo, now);
+                ActiveStoragePurge.Later(tx, jobs, attached.ReplacedBlobId);
                 if (!attached.Blob.IsAnalyzed)
                 {
-                    tx.AfterCommit(_ => app.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                    tx.AfterCommit(_ => jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
                 }
             }
             else if (logo is not null)
             {
-                DetachLogo(tx, accountId);
+                DetachLogo(tx, jobs, accountId);
             }
         }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
-    /// <c>Current.account.logo.destroy</c>: the attachment goes; its blob is left for
-    /// <c>ActiveStorage::PurgeJob</c>.
+    /// <c>Current.account.logo.destroy</c>: the attachment goes and its blob is purged later
+    /// (<c>has_one_attached :logo, dependent: :purge_later</c>).
     /// </summary>
-    internal static void DetachLogo(WriteTransaction tx, long accountId)
+    internal static void DetachLogo(WriteTransaction tx, IJobQueue jobs, long accountId)
     {
         if (BlobRecords.FindAttachment(tx.Session, nameof(Account), accountId, AttachmentNames.Logo) is { } attachment)
         {
             BlobRecords.DeleteAttachment(tx.Session, attachment.Id);
+            ActiveStoragePurge.Later(tx, jobs, attachment.BlobId);
         }
     }
 

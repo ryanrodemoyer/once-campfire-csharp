@@ -134,13 +134,16 @@ def main():
                 json.dump(report_data, f, indent=2)
         return 0 if ok else 1
 
-    # Live comparison between reference and candidate
-    print(f"== Running live cable replay between {args.reference} and {args.candidate}")
+    # Live comparison between reference and candidate. The frames come from the two servers.
+    print(f"== Running live cable comparison between {args.reference} and {args.candidate}")
     report_data["mode"] = "live"
     report_data["reference"] = args.reference
     report_data["candidate"] = args.candidate
 
-    ok, results = run_replay(args.channel)
+    from live import default_identity, run_live
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    email, password = default_identity(root)
+    ok, results = run_live(args.reference, args.candidate, email, password, args.channel)
     report_data["success"] = ok
     report_data["results"] = [
         {

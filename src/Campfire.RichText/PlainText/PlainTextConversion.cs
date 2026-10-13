@@ -44,7 +44,7 @@ public static class PlainTextConversion
     static string PlainTextFor(HtmlNode node, List<string> childValues) => node.NodeName switch
     {
         "script" or "style" or "unsupported" => "",
-        "h1" or "p" => PlainTextForBlock(childValues),
+        "h1" or "h2" or "h3" or "h4" or "h5" or "h6" or "p" => PlainTextForBlock(childValues),
         "ul" or "ol" => ListDepth(node) > 0 ? "\n" + PlainTextForBlock(childValues) : PlainTextForBlock(childValues),
         "br" => "\n",
         "text" => RemoveTrailingNewlines(node.TextContent),

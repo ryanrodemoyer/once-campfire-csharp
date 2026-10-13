@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Campfire.Web.Pipeline;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -62,7 +63,12 @@ public sealed class StaticFiles(AssetBundle bundle)
             context.Response.Headers[name] = value;
         }
 
-        await context.Response.Body.WriteAsync(response.Body, context.RequestAborted).ConfigureAwait(false);
+        // config.ru puts Rack::Deflater around Rails.application, and ActionDispatch::Static is
+        // inside that app, so a file response gains Vary: Accept-Encoding and, when the client
+        // prefers gzip, Content-Encoding. Thruster's own gzip skips bodies under 1024 bytes and
+        // leaves an already-encoded response alone (reference/config.ru).
+        var rackLength = context.Response.ContentLength;
+        await RackDeflater.SendAsync(context, response.Body, rackLength, context.Response.Body).ConfigureAwait(false);
         return true;
     }
 

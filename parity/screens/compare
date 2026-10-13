@@ -69,11 +69,42 @@ clock=${TIME:-$(seed_clock)}
 
 mkdir -p "$PARITY/out"
 
+# The seed signs transfer links at its own instant. Screen clocks are later than that pin, so
+# resign the non-expired links for this frozen clock before either server or the capture reads them.
+python3 "$PARITY/screens/refresh-transfer-labels.py" \
+  "$PARITY/.seed/$SEED/labels.json" "$clock" "$PARITY/.env.reference"
+
+# rooms/show/unrenderable_message renders a 500 on both sides (the message template calls
+# attributes on nil). The inventory's default expect_status is 200, which aborts the capture
+# before compare. The allowlist cannot cover a capture error, and screens.yml lives in the
+# reference-rust pin, so overlay expect_status here.
+INVENTORY=$PARITY/out/screens-inventory.yml
+python3 - "$CAPTURE_PARITY/screens.yml" "$INVENTORY" <<'PY'
+import sys
+src, dest = sys.argv[1:]
+text = open(src, encoding="utf-8").read()
+old = """- id: rooms/show/unrenderable_message
+  as: david
+  path: /rooms/{{rooms.broken}}
+  covers: [messages/_unrenderable]
+"""
+new = """- id: rooms/show/unrenderable_message
+  as: david
+  path: /rooms/{{rooms.broken}}
+  expect_status: 500
+  covers: [messages/_unrenderable]
+"""
+if old not in text:
+    raise SystemExit("screens/compare: unrenderable_message block not found in screens.yml")
+open(dest, "w", encoding="utf-8").write(text.replace(old, new, 1))
+PY
+
 # Build capture args. Use the C# project's seed directory (accessible inside Docker because run.sh
 # mounts both the C# and Rust project roots) and our allowlist.
 args=(
   --seed "$SEED" --time "$clock" --matrix "$MATRIX"
   --seed-dir "$PARITY/.seed"
+  --inventory "$INVENTORY"
   --expected "http://127.0.0.1:$REF_PORT" --actual "http://127.0.0.1:$CAND_PORT"
   --expected-name reference --actual-name candidate
   --isolated "$ISOLATED" --breakpoints "$BREAKPOINTS"
@@ -100,16 +131,23 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # Start the reset loop for mutating states.
-# The capture engine's isolatedUrl maps slot k to port P + 1000 * k.
-# Our candidate runs a fresh instance there, frozen at the seed instant.
-start_reset_loop "'$CANDIDATE' reset --port {port} --seed '$SEED' --time '$clock'"
+# The capture engine's isolatedUrl maps slot k to port P + 1000 * k, and it resets each target
+# on that target's port. A reference slot has to be the Rails image; a candidate slot the C# one.
+cache_env=()
+if [ -n "${CAMPFIRE_RESPONSE_CACHE_MB+x}" ]; then
+  cache_env=(-e "CAMPFIRE_RESPONSE_CACHE_MB=${CAMPFIRE_RESPONSE_CACHE_MB}")
+fi
+# CACHE_SIZE=0 keeps Thruster from storing a lost ActionController::Live Vary race on
+# public avatar and logo responses. The header is still sent (X-Cache: miss). The forwarder
+# retries those GETs until Sec-Fetch-Site is present. The candidate always sends it.
+start_reset_loop "if [ \"{target}\" = reference ]; then '$REFERENCE' down --port {port} >/dev/null 2>&1 || true; '$REFERENCE' up --seed '$SEED' --port {port} --time '$clock' --freeze -e CACHE_SIZE=0 ${cache_env[*]} >/dev/null; else '$CANDIDATE' reset --port {port} --seed '$SEED' --time '$clock' ${cache_env[*]} >/dev/null; fi"
 
 echo "screens/compare: reference :$REF_PORT vs candidate :$CAND_PORT (seed $SEED, clock frozen at $clock)" >&2
 
 # Start reference and candidate in parallel, both frozen at the seed instant
-"$REFERENCE" up --seed "$SEED" --port "$REF_PORT" --time "$clock" --freeze >/dev/null &
+"$REFERENCE" up --seed "$SEED" --port "$REF_PORT" --time "$clock" --freeze -e CACHE_SIZE=0 ${cache_env[@]+"${cache_env[@]}"} >/dev/null &
 ref_pid=$!
-"$CANDIDATE" up --seed "$SEED" --port "$CAND_PORT" --time "$clock" --freeze >/dev/null
+"$CANDIDATE" up --seed "$SEED" --port "$CAND_PORT" --time "$clock" --freeze ${cache_env[@]+"${cache_env[@]}"} >/dev/null
 wait "$ref_pid" || die "reference didn't come up"
 
 # Run the comparison inside the Playwright image

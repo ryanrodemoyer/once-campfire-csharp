@@ -52,45 +52,38 @@ public class RichTextSanitizeVectorTests
     [Fact]
     public void FilteredCorpusVectorsPass()
     {
-        var json = File.ReadAllText(ExpectedJsonPath);
-        using var doc = JsonDocument.Parse(json);
-        var root = doc.RootElement;
-
-        var cases = root.GetProperty("cases").EnumerateArray();
+        // Filtered HTML at this pin is tests/Campfire.RichText.Tests/Vectors/pin.json, which
+        // RichTextVectors merges over the reference-rust corpus.
         var tested = 0;
         var passed = 0;
 
         var failures = new List<string>();
 
-        foreach (var c in cases)
+        foreach (var c in Campfire.Vectors.RichTextVectors.File.Cases)
         {
-            var name = c.GetProperty("name").GetString()!;
-            var host = c.GetProperty("host").GetString()!;
-            var body = c.GetProperty("body").GetString()!;
-            var filteredProp = c.GetProperty("filtered");
-
-            if (filteredProp.TryGetProperty("ok", out var okProp))
+            if (c.Filtered.Raised)
             {
-                var expected = okProp.GetString()!;
-                try
-                {
-                    var actual = ContentFilters.ApplyTextMessagePresentationFilters(body, host);
-                    if (actual != expected)
-                    {
-                        failures.Add($"[{name}] expected:\n{expected}\nbut got:\n{actual}");
-                    }
-                    else
-                    {
-                        passed++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    failures.Add($"[{name}] threw {ex.GetType().Name}: {ex.Message}");
-                }
-
-                tested++;
+                continue;
             }
+            var expected = c.Filtered.Ok!;
+            try
+            {
+                var actual = ContentFilters.ApplyTextMessagePresentationFilters(c.Body, c.Host);
+                if (actual != expected)
+                {
+                    failures.Add($"[{c.Name}] expected:\n{expected}\nbut got:\n{actual}");
+                }
+                else
+                {
+                    passed++;
+                }
+            }
+            catch (Exception ex)
+            {
+                failures.Add($"[{c.Name}] threw {ex.GetType().Name}: {ex.Message}");
+            }
+
+            tested++;
         }
 
         if (failures.Count > 0)
@@ -98,7 +91,7 @@ public class RichTextSanitizeVectorTests
             Assert.Fail($"Failed {failures.Count} of {tested} cases:\n" + string.Join("\n---\n", failures));
         }
 
-        Assert.Equal(641, tested);
+        Assert.Equal(642, tested);
         Assert.Equal(tested, passed);
     }
 }

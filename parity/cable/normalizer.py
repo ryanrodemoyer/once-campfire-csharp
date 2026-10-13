@@ -57,7 +57,15 @@ def normalize_payload(data: Any) -> Any:
         except (json.JSONDecodeError, TypeError):
             return data.strip()
     elif isinstance(data, dict):
-        return {k: normalize_payload(v) for k, v in sorted(data.items())}
+        # `at` is the server clock. The two processes are driven one after the other, so the
+        # instants differ even when both clocks started together. roomId is the parity field.
+        out = {}
+        for key, value in sorted(data.items()):
+            if key == "at" and isinstance(value, (int, float)):
+                out[key] = "time"
+            else:
+                out[key] = normalize_payload(value)
+        return out
     elif isinstance(data, list):
         return [normalize_payload(x) for x in data]
     return data

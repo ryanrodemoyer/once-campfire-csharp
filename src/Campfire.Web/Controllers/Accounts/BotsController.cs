@@ -76,15 +76,17 @@ public sealed class AccountsBotsController : ApplicationController
         using var staged = avatar is null ? null : App.RequireStorage().Stage(avatar);
         // The attachment's `before_validation` analysis (analyze: :immediately).
         staged?.AnalyzeWithoutSaving();
+        var jobs = App.RequireSeams().Jobs;
         await WriteAsync(tx =>
         {
             var created = UserLifecycle.Create(tx, name!, emailAddress: null, passwordDigest: null, now, role: UserRole.Bot, bio: null, botToken: User.GenerateBotToken());
             if (staged is not null)
             {
                 var attached = BlobStorage.AttachOne(tx, staged, User.ModelName, created.Id, AttachmentNames.Avatar, now);
+                ActiveStoragePurge.Later(tx, jobs, attached.ReplacedBlobId);
                 if (!attached.Blob.IsAnalyzed)
                 {
-                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                    tx.AfterCommit(_ => jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
                 }
             }
             if (hasWebhook && webhookUrl is not null)
@@ -133,6 +135,7 @@ public sealed class AccountsBotsController : ApplicationController
         using var staged = avatar is null ? null : App.RequireStorage().Stage(avatar);
         // The attachment's `before_validation` analysis (analyze: :immediately).
         staged?.AnalyzeWithoutSaving();
+        var jobs = App.RequireSeams().Jobs;
         await WriteAsync(tx =>
         {
             if (!string.IsNullOrWhiteSpace(webhookUrl))
@@ -155,9 +158,10 @@ public sealed class AccountsBotsController : ApplicationController
             if (staged is not null)
             {
                 var attached = BlobStorage.AttachOne(tx, staged, User.ModelName, b.Id, AttachmentNames.Avatar, now);
+                ActiveStoragePurge.Later(tx, jobs, attached.ReplacedBlobId);
                 if (!attached.Blob.IsAnalyzed)
                 {
-                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                    tx.AfterCommit(_ => jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
                 }
             }
             return updated;

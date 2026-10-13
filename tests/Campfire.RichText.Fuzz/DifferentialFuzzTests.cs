@@ -38,10 +38,12 @@ public class DifferentialFuzzTests
     // edbc779 oracle can't render a located message yet; Q12 re-records the corpus.
     static readonly HashSet<long> StaleLocatedMessages = [2416, 22830, 22833, 49199, 89043];
 
-    // Recorded at 345e637, where the editor value was Lexxy's render_custom_attachments_in. At
-    // edbc779 it's to_editor_html through Lexxy's editor adapter (U05), which ReferenceCaseGateTests
-    // and EditableVectorTests check on every corpus body; Q12 re-records the corpus.
-    static readonly string[] StaleOutputs = ["editable"];
+    // Recorded at 345e637. At edbc779 the editor value is to_editor_html through Lexxy's adapter
+    // (U05), and plain text, presentation, mentions and filtered HTML follow Rails main's Action
+    // Text (Q11: h2–h6 are blocks, a missing attachable is ☒, a non-URL remote image is missing,
+    // Lexxy keeps figure[data-trix-attachment]). ReferenceCaseGateTests checks those outputs on
+    // every corpus body. Q12 re-records this corpus.
+    static readonly string[] StaleOutputs = ["editable", "presentation", "presentation_raised", "plain_text", "mentioned", "filtered"];
 
     [Fact]
     public void Recorded_cases_equal_the_references_outputs()

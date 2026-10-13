@@ -192,9 +192,10 @@ public static class RackDeflater
     /// <summary><c>Zlib.gzip</c> of <paramref name="body"/>, the bytes the page cache stores for a gzip negotiation.</summary>
     public static byte[] GzipBody(ReadOnlyMemory<byte> body)
     {
-        // A rented buffer avoids the MemoryStream's internal array resizes. The room page is
-        // 464 KB raw and ~44 KB compressed, so 65536 covers most responses.
-        var buffer = ArrayPool<byte>.Shared.Rent(Math.Max(65536, body.Length / 10));
+        // A rented buffer avoids the MemoryStream's internal array resizes. The stream is not
+        // expandable, so the rent has to cover a body that does not shrink: gzip of a PNG is
+        // slightly larger than the file. The room page is 464 KB raw and ~44 KB compressed.
+        var buffer = ArrayPool<byte>.Shared.Rent(Math.Max(256, body.Length + body.Length / 16 + 64));
         try
         {
             using var compressed = new MemoryStream(buffer);

@@ -102,11 +102,13 @@ up() {
   docker rm -f "$(container "$port")" >/dev/null 2>&1 || true
   rm -rf "$dir"; copy_seed_into "$seed" "$dir"
   local args=(); mapfile -t args < <(env_args)
+  # Publish Thruster's port (80), the same port parity/bin/reference publishes. Mapping 3000
+  # would skip Thruster, so screens would see gzip, Vary and X-Cache on the reference only.
   docker run -d --name "$(container "$port")" \
     --label parity.seed="$seed" --label parity.candidate.port="$port" --label parity.owner="$OWNER" \
     --cpus "${PARITY_CPUS:-2}" \
     --user "$(id -u):$(id -g)" \
-    -p "127.0.0.1:$port:3000" \
+    -p "127.0.0.1:$port:80" \
     "${args[@]}" \
     -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" \
     "$IMAGE" >/dev/null

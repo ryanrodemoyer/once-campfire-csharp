@@ -43,6 +43,10 @@ class TestNormalizer(unittest.TestCase):
         json_str = '{"b": 2, "a": 1}'
         self.assertEqual(dump.normalize_value("settings", json_str), '{"a":1,"b":2}')
 
+    def test_blob_key_is_a_length_mask(self):
+        self.assertEqual(dump.normalize_value("key", "uwzpkw0uafi6imszins4jo41a8k9"), "key:28")
+        self.assertEqual(dump.normalize_value("key", "f1cggm1e7klovpar0xtgeqx3o32d"), "key:28")
+
 
 class TestDatabaseDumpingAndDiffing(unittest.TestCase):
     def setUp(self):
@@ -107,6 +111,37 @@ class TestStorageTreeDumpingAndDiffing(unittest.TestCase):
         self.assertEqual(len(entries), 2)
         self.assertTrue(entries[0].startswith("path=aa/bb/file1.txt size=11 sha256="))
         self.assertTrue(entries[1].startswith("path=file2.txt size=11 sha256="))
+
+    def test_blob_key_paths_match_by_bytes(self):
+        body = b"hello world"
+
+        def write_tree(paths):
+            root = tempfile.mkdtemp()
+            for rel in paths:
+                full = os.path.join(root, rel)
+                os.makedirs(os.path.dirname(full), exist_ok=True)
+                with open(full, "wb") as handle:
+                    handle.write(body)
+            return root
+
+        left = write_tree([
+            "uw/zp/uwzpkw0uafi6imszins4jo41a8k9",
+            "f1/cg/f1cggm1e7klovpar0xtgeqx3o32d",
+        ])
+        right = write_tree([
+            "aa/bb/aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "zz/yy/zzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+        ])
+        try:
+            entries = dump.dump_storage_tree(left)
+            self.assertEqual(entries, dump.dump_storage_tree(right))
+            self.assertEqual(len(entries), 2)
+            self.assertTrue(entries[0].startswith("path=blob/"))
+            self.assertIn("/0 ", entries[0])
+            self.assertIn("/1 ", entries[1])
+        finally:
+            shutil.rmtree(left)
+            shutil.rmtree(right)
 
     def test_diff_storage_trees(self):
         t1 = dump.dump_storage_tree(self.tmp)

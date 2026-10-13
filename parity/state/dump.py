@@ -37,6 +37,8 @@ ORDER_BY = {
 }
 
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
+# Active Storage's disk service: aa/bb/<key>, key from generate_unique_secure_token.
+BLOB_KEY_PATH_RE = re.compile(r"^[0-9a-z]{2}/[0-9a-z]{2}/[0-9a-z]{20,}$")
 
 
 class DumpOptions:
@@ -58,6 +60,11 @@ def normalize_value(col_name, value, options=None):
     # Random tokens and join codes
     if col_name in ("bot_token", "token", "join_code") and isinstance(value, str):
         return f"random:{len(value)}"
+
+    # ActiveStorage::Blob.generate_unique_secure_token. Seed keys are the same length on both
+    # sides, so a length mask still compares them; a new upload's key is not the file.
+    if col_name == "key" and isinstance(value, str):
+        return f"key:{len(value)}"
 
     # Deactivated email addresses containing random UUIDs
     if col_name == "email_address" and isinstance(value, str) and "-deactivated-" in value:
@@ -125,7 +132,10 @@ def dump_database(db_path_or_conn, options=None, tables=None):
     close_when_done = False
 
     if isinstance(db_path_or_conn, (str, bytes, os.PathLike)):
-        conn = sqlite3.connect(f"file:{os.path.abspath(db_path_or_conn)}?immutable=1", uri=True)
+        path = os.path.abspath(db_path_or_conn)
+        # mode=ro reads the WAL. immutable=1 does not, and a FULL checkpoint from another
+        # connection is skipped while Rails still holds the writer (plans/upstream-sync.md, Q11).
+        conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
         close_when_done = True
     else:
         conn = db_path_or_conn
@@ -150,7 +160,7 @@ def dump_storage_tree(storage_dir, options=None):
     if not storage_dir or not os.path.isdir(storage_dir):
         return []
 
-    entries = []
+    raw = []
     storage_dir = os.path.abspath(storage_dir)
 
     for root, _, files in os.walk(storage_dir):
@@ -166,10 +176,22 @@ def dump_storage_tree(storage_dir, options=None):
                 with open(full_path, "rb") as fp:
                     while chunk := fp.read(65536):
                         h.update(chunk)
-                checksum = h.hexdigest()
-                entries.append(f"path={rel_path} size={size} sha256={checksum}")
+                raw.append((rel_path, size, h.hexdigest()))
             except (OSError, IOError):
                 continue
+
+    # The disk path embeds the blob key. Same bytes under two keys are the same file; duplicates
+    # of one hash keep an index so two copies are not collapsed into one entry.
+    blobs = sorted((item for item in raw if BLOB_KEY_PATH_RE.match(item[0])), key=lambda item: (item[2], item[1]))
+    counts = {}
+    entries = []
+    for _, size, checksum in blobs:
+        index = counts.get((checksum, size), 0)
+        counts[(checksum, size)] = index + 1
+        entries.append(f"path=blob/{checksum}/{index} size={size} sha256={checksum}")
+    for rel_path, size, checksum in raw:
+        if not BLOB_KEY_PATH_RE.match(rel_path):
+            entries.append(f"path={rel_path} size={size} sha256={checksum}")
 
     entries.sort()
     return entries

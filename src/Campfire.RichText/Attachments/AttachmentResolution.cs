@@ -23,6 +23,11 @@ public static partial class AttachmentResolution
     [GeneratedRegex("^image(/.+|$)", RegexOptions.Multiline)]
     private static partial Regex ImageContentType();
 
+    // ActionView::Helpers::AssetUrlHelper::URI_REGEXP. RemoteImage.from_node requires it, so a
+    // rooted path or a javascript: URL is not a remote image.
+    [GeneratedRegex("^[-a-z]+://|^(?:cid|data):|^//", RegexOptions.IgnoreCase | RegexOptions.Multiline)]
+    private static partial Regex RemoteUri();
+
     [GeneratedRegex("^video(/.+|$)", RegexOptions.Multiline)]
     private static partial Regex VideoContentType();
 
@@ -96,7 +101,9 @@ public static partial class AttachmentResolution
 
         if (node.GetAttribute("url") is { } url)
         {
-            if (ImageContentType().IsMatch(contentType ?? ""))
+            // RemoteImage.from_node also requires URI_REGEXP. A rooted path or javascript: URL
+            // is a missing attachable. Lexxy's RemoteVideo only requires a url.
+            if (ImageContentType().IsMatch(contentType ?? "") && RemoteUri().IsMatch(url))
             {
                 return new RemoteImage(url, node.GetAttribute("width"), node.GetAttribute("height"));
             }

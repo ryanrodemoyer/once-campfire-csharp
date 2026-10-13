@@ -21,6 +21,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 
 sys.dont_write_bytecode = True
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -236,6 +237,18 @@ def cmd_selftest(out=sys.stdout):
     return 0
 
 
+def _settled_diff(ref_dir, cand_dir, family_name, out, attempts=16, pause=1.0):
+    """Diff until the sides match or the job queue has had time to drain."""
+    state_diff = diff.diff_states(dump.dump_state(ref_dir), dump.dump_state(cand_dir))
+    for attempt in range(1, attempts):
+        if not state_diff.has_differences:
+            return state_diff
+        print(f"state still differs after {family_name}; waiting for jobs ({attempt})...", file=out)
+        time.sleep(pause)
+        state_diff = diff.diff_states(dump.dump_state(ref_dir), dump.dump_state(cand_dir))
+    return state_diff
+
+
 def cmd_replay(ref_url, cand_url, ref_storage=None, cand_storage=None, families=None, out=sys.stdout):
     """Run mutating replay families and diff state after every mutating scenario."""
     replay_dir = os.path.join(ROOT, "parity", "replay")
@@ -277,12 +290,18 @@ def cmd_replay(ref_url, cand_url, ref_storage=None, cand_storage=None, families=
         run.family = f.name
         f.fn(run)
 
-        # After the mutating family runs, diff the state if storage dirs exist
+        # After the mutating family runs, diff the state if storage dirs exist.
+        # Room::DestroyJob (and the other resque jobs) commit after the HTTP response,
+        # so an immediate dump can still see the row on the side whose job has not
+        # landed. Wait for the two databases to converge; a difference that remains is real.
         if ref_storage and cand_storage and os.path.isdir(ref_storage) and os.path.isdir(cand_storage):
             print(f"Diffing state after {f.name}...", file=out)
-            res = cmd_diff(ref_storage, cand_storage, out=out)
-            if res != 0:
+            state_diff = _settled_diff(ref_storage, cand_storage, f.name, out)
+            if state_diff.has_differences:
+                print(diff.format_diff(state_diff), file=out)
                 all_ok = False
+            else:
+                print(f"state matched after {f.name}", file=out)
         else:
             # Storage dirs not directly mounted on host (e.g. docker volumes)
             print(f"Completed scenario {f.name}", file=out)

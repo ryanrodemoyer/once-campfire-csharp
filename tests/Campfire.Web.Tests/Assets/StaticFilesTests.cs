@@ -125,6 +125,46 @@ public sealed class StaticFilesTests
     }
 
     [Fact]
+    public async Task A_gzip_request_is_deflated_like_rack()
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Method = "GET";
+        context.Request.Path = "/robots.txt";
+        context.Request.Headers.AcceptEncoding = "gzip";
+        context.Response.Body = new MemoryStream();
+
+        Assert.True(await Static.TryServeAsync(context));
+
+        Assert.Equal("gzip", context.Response.Headers.ContentEncoding.ToString());
+        Assert.Contains("Accept-Encoding", context.Response.Headers.Vary.ToString(), StringComparison.OrdinalIgnoreCase);
+        context.Response.Body.Position = 0;
+        using var gzip = new System.IO.Compression.GZipStream(context.Response.Body, System.IO.Compression.CompressionMode.Decompress, leaveOpen: true);
+        using var plain = new MemoryStream();
+        gzip.CopyTo(plain);
+        Assert.Equal(99, plain.Length);
+    }
+
+    [Fact]
+    public async Task An_incompressible_asset_gzips()
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Method = "GET";
+        context.Request.Path = "/assets/campfire-icon-3d9986c5.png";
+        context.Request.Headers.AcceptEncoding = "gzip";
+        context.Response.Body = new MemoryStream();
+
+        Assert.True(await Static.TryServeAsync(context));
+
+        Assert.Equal(200, context.Response.StatusCode);
+        Assert.Equal("gzip", context.Response.Headers.ContentEncoding.ToString());
+        context.Response.Body.Position = 0;
+        using var gzip = new System.IO.Compression.GZipStream(context.Response.Body, System.IO.Compression.CompressionMode.Decompress, leaveOpen: true);
+        using var plain = new MemoryStream();
+        gzip.CopyTo(plain);
+        Assert.Equal(110270, plain.Length);
+    }
+
+    [Fact]
     public async Task An_http_request_is_answered_with_the_static_response()
     {
         var context = new DefaultHttpContext();

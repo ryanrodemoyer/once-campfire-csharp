@@ -106,6 +106,7 @@ public sealed class UsersController : ApplicationController
         using var staged = avatar is null ? null : App.RequireStorage().Stage(avatar);
         // The attachment's `before_validation` analysis (analyze: :immediately).
         staged?.AnalyzeWithoutSaving();
+        var jobs = App.RequireSeams().Jobs;
         return await WriteAsync(tx =>
         {
             // users.name is NOT NULL: a missing name fails here, as ActiveRecord::NotNullViolation does.
@@ -113,9 +114,10 @@ public sealed class UsersController : ApplicationController
             if (staged is not null)
             {
                 var attached = BlobStorage.AttachOne(tx, staged, User.ModelName, created.Id, "avatar", now);
+                ActiveStoragePurge.Later(tx, jobs, attached.ReplacedBlobId);
                 if (!attached.Blob.IsAnalyzed)
                 {
-                    tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
+                    tx.AfterCommit(_ => jobs.Enqueue(new AnalyzeBlobJob(attached.Blob.Id)));
                 }
             }
             return created;

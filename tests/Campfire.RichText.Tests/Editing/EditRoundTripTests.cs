@@ -26,15 +26,21 @@ public class EditRoundTripTests
     /// Rails' own serialization drops a newline straight after <c>&lt;pre&gt;</c> or
     /// <c>&lt;textarea&gt;</c>, so its editor value already lacks it (see the case's <c>editable</c>
     /// vector) and the saved text differs from the original as it does in Rails.
+    /// <c>fuzz 331</c>: the editor closes the <c>h2</c> before the nested <c>h1</c>, and on Rails
+    /// main an <c>h2</c> is a block, so the saved plain text has a paragraph break the stored body
+    /// does not (<c>plain_text_conversion.rb</c>).
     /// </summary>
     static readonly HashSet<string> RailsDropsALeadingNewline = ["malformed pre newline"];
+
+    static readonly HashSet<string> EditorReserializesHeading = ["fuzz 331"];
 
     public static TheoryData<RichTextCase> EditableCases()
     {
         var data = new TheoryData<RichTextCase>();
         foreach (var vector in RichTextVectors.File.Cases)
         {
-            if (vector.Editable is { Raised: false, Ok: not null } && !vector.PlainText.Raised && !RailsDropsALeadingNewline.Contains(vector.Name))
+            if (vector.Editable is { Raised: false, Ok: not null } && !vector.PlainText.Raised
+                && !RailsDropsALeadingNewline.Contains(vector.Name) && !EditorReserializesHeading.Contains(vector.Name))
             {
                 data.Add(vector);
             }
@@ -46,10 +52,6 @@ public class EditRoundTripTests
     [MemberData(nameof(EditableCases))]
     public void Saving_an_untouched_edit_shows_and_indexes_what_the_reference_did(RichTextCase vector)
     {
-        if (RichTextVectors.KnownDifference(vector.Body) is { } known)
-        {
-            Assert.Skip(known);
-        }
         var context = VectorRecords.Context(vector.Host);
 
         var saved = EditableContent.StoredBody(PostedByEditor(EditableContent.EditorValue(vector.Body, context)));
@@ -61,7 +63,10 @@ public class EditRoundTripTests
     [Fact]
     public void Covers_every_editable_reference_case()
     {
-        Assert.Equal(555, EditableCases().Count + RailsDropsALeadingNewline.Count);
+        // Every editable body whose plain text does not raise, including the two excluded above.
+        // One more than the Rust pin: the Trix figure whose JSON is an Array no longer raises,
+        // because Lexxy's as_canonical leaves the figure in place.
+        Assert.Equal(556, EditableCases().Count + RailsDropsALeadingNewline.Count + EditorReserializesHeading.Count);
     }
 
     [Theory]

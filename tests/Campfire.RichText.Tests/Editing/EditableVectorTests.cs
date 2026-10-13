@@ -18,10 +18,6 @@ public class EditableVectorTests
     [MemberData(nameof(Cases))]
     public void Builds_each_editor_value_as_the_reference_does(RichTextCase vector)
     {
-        if (RichTextVectors.KnownDifference(vector.Body) is { } known)
-        {
-            Assert.Skip(known);
-        }
         var context = VectorRecords.Context(vector.Host);
         if (vector.Editable.Raised)
         {

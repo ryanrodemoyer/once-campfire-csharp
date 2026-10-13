@@ -269,7 +269,7 @@ public sealed partial class MessagesWriteController : ApplicationController
             Referrer = Referer,
             FormAuthenticityToken = forgeryProtection ? (action, method) => FormAuthenticityToken(action, method) : null,
             StreamKeys = App.Keys,
-            Flash = Flash,
+            LoadFlash = () => Flash,
             CurrentUser = new CurrentUser(user.Id, user.Name, user.CanAdminister()),
             CurrentAccount = account is null ? null : new CurrentAccount(account.CustomStyles, BlobRecords.FindAttachedBlob(session, "Account", account.Id, "logo") is not null, account.UpdatedAt),
             VapidPublicKey = App.VapidPublicKey,
@@ -281,11 +281,18 @@ public sealed partial class MessagesWriteController : ApplicationController
     }
 
     // The page is rendered first, so its content_for calls are in place for the layout.
-    static ReadOnlyMemory<byte> RenderLayout(View view, string page)
+    // MessagesController declares `layout false, only: :index`, which replaces the turbo-rails
+    // frame layout for show and edit: those stay in the application layout (the replay vectors).
+    ReadOnlyMemory<byte> RenderLayout(View view, string page)
     {
         using var buffer = new PooledBufferWriter();
         view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(page));
-        return buffer.WrittenMemory;
+        // stylesheet_link_tag records the preload Link header; the caller copies it onto the response.
+        if (view.LinkHeader is { } link)
+        {
+            Headers["Link"] = link;
+        }
+        return buffer.WrittenMemory.ToArray();
     }
 
     static string RenderString(Action<HtmlWriter> template)

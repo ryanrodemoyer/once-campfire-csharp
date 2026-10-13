@@ -16,11 +16,6 @@ public static class ContentFilters
 {
     private static readonly string[] TwitterDomains = ["x.com", "twitter.com"];
 
-    private static readonly System.Text.Json.JsonDocumentOptions JsonOptions = new()
-    {
-        CommentHandling = System.Text.Json.JsonCommentHandling.Skip
-    };
-
     /// <summary>
     /// <c>ContentFilters::TextMessagePresentationFilters.apply</c>. When <paramref name="context"/>
     /// is set, <c>RemoveSoloUnfurledLinkText#applicable?</c> has evaluated <c>content.to_plain_text</c>
@@ -49,109 +44,14 @@ public static class ContentFilters
     }
 
     /// <summary>
-    /// <c>ActionText::Content.new</c>'s canonicalization. When <paramref name="trixAttachables"/>
-    /// is set, each converted trix attachment is loaded with <c>Attachment.from_node</c> the way
-    /// <c>fragment_by_converting_trix_attachments</c> does, so a payload that raises there raises
-    /// <c>mentioned_users</c> too. Callers that only rewrite markup omit it: a raw
-    /// <c>action-text-attachment</c> is not loaded again.
+    /// <c>ActionText::Content#fragment_by_canonicalizing_content</c>. Campfire's editor is Lexxy,
+    /// whose <c>as_canonical</c> is the base editor's and leaves <c>figure[data-trix-attachment]</c>
+    /// in place. Only the Trix editor converts that selector. Then attachments are minified,
+    /// galleries canonicalized, and raw <c>action-text-markdown</c> tags unwrapped.
     /// </summary>
-    public static void CanonicalizeContent(HtmlFragment fragment, RenderContext? trixAttachables = null)
+    public static void CanonicalizeContent(HtmlFragment fragment)
     {
-        // 1. Convert trix attachments: [data-trix-attachment]
-        var trixNodes = fragment.Descendants().OfType<HtmlElement>()
-            .Where(e => e.HasAttribute("data-trix-attachment"))
-            .ToList();
-
-        foreach (var node in trixNodes)
-        {
-            var trixJson = node.GetAttribute("data-trix-attachment");
-            var trixAttrsJson = node.GetAttribute("data-trix-attributes");
-
-            var map = new Dictionary<string, string>();
-            foreach (var jsonStr in new[] { trixJson, trixAttrsJson })
-            {
-                if (string.IsNullOrWhiteSpace(jsonStr)) continue;
-                try
-                {
-                    using var doc = System.Text.Json.JsonDocument.Parse(jsonStr, JsonOptions);
-                    // nil and false become {}; any other non-Hash is truthy and `#merge` raises.
-                    if (doc.RootElement.ValueKind == System.Text.Json.JsonValueKind.Array)
-                    {
-                        throw new InvalidOperationException("undefined method 'merge' for an instance of Array");
-                    }
-                    if (doc.RootElement.ValueKind is not (System.Text.Json.JsonValueKind.Object or System.Text.Json.JsonValueKind.Null or System.Text.Json.JsonValueKind.False))
-                    {
-                        throw new InvalidOperationException("undefined method 'merge'");
-                    }
-                    if (doc.RootElement.ValueKind == System.Text.Json.JsonValueKind.Object)
-                    {
-                        foreach (var prop in doc.RootElement.EnumerateObject())
-                        {
-                            var val = prop.Value.ValueKind switch
-                            {
-                                System.Text.Json.JsonValueKind.Null => string.Empty,
-                                System.Text.Json.JsonValueKind.True => "true",
-                                System.Text.Json.JsonValueKind.False => "false",
-                                System.Text.Json.JsonValueKind.Number => prop.Value.GetRawText(),
-                                System.Text.Json.JsonValueKind.String => prop.Value.GetString()!,
-                                _ => prop.Value.GetRawText()
-                            };
-                            map[prop.Name] = val;
-                        }
-                    }
-                }
-                catch (System.Text.Json.JsonException)
-                {
-                    // Malformed JSON is treated as empty
-                }
-            }
-
-            var attPairs = new List<HtmlAttr>();
-            ReadOnlySpan<(string Trix, string Dashed)> trixAttrs =
-            [
-                ("sgid", "sgid"),
-                ("contentType", "content-type"),
-                ("url", "url"),
-                ("href", "href"),
-                ("filename", "filename"),
-                ("filesize", "filesize"),
-                ("width", "width"),
-                ("height", "height"),
-                ("previewable", "previewable"),
-                ("presentation", "presentation"),
-                ("caption", "caption"),
-                ("content", "content"),
-            ];
-
-            foreach (var (trix, dashed) in trixAttrs)
-            {
-                if (map.TryGetValue(trix, out var val))
-                {
-                    attPairs.Add(new HtmlAttr(dashed, val));
-                }
-            }
-
-            if (attPairs.Count == 0)
-            {
-                node.Remove();
-            }
-            else
-            {
-                var replacement = new HtmlElement("action-text-attachment", HtmlNamespace.Html);
-                foreach (var attr in attPairs)
-                {
-                    replacement.SetAttribute(attr.Name, attr.Value);
-                }
-                // from_attributes → from_node. The node's markup is what gets stored; the
-                // attachable is only resolved so a raising SGID fails the whole content.
-                if (trixAttachables is not null)
-                {
-                    _ = AttachmentResolution.AttachmentFromNode(replacement, trixAttachables);
-                }
-                node.Parent?.ReplaceChild(node, [replacement]);
-            }
-        }
-
+        // Attachment.fragment_by_minifying_attachments: clear the inner HTML of each attachment.
         // 2. Clear inner HTML of all action-text-attachment nodes
         var attachments = fragment.Descendants().OfType<HtmlElement>()
             .Where(e => e.IsHtml("action-text-attachment"))
@@ -188,6 +88,16 @@ public static class ContentFilters
             {
                 div.AttributeList.Clear();
             }
+        }
+
+        // MarkdownConversion.fragment_by_unwrapping_raw_markdown_tags: replace each
+        // action-text-markdown element with its children, in document order.
+        var markdown = fragment.Descendants().OfType<HtmlElement>()
+            .Where(e => e.IsHtml("action-text-markdown"))
+            .ToList();
+        foreach (var node in markdown)
+        {
+            node.Parent?.ReplaceChild(node, node.Children);
         }
     }
 

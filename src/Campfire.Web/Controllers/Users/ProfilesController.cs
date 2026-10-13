@@ -64,6 +64,7 @@ public sealed class UsersProfilesController : ApplicationController
         using var staged = avatar is AvatarChange.Upload upload ? App.RequireStorage().Stage(upload.File) : null;
         // The attachment's `before_validation` analysis (analyze: :immediately).
         staged?.AnalyzeWithoutSaving();
+        var jobs = App.RequireSeams().Jobs;
         await WriteAsync(tx =>
         {
             Users.Update(tx.Session, user, now,
@@ -76,20 +77,22 @@ public sealed class UsersProfilesController : ApplicationController
             {
                 case AvatarChange.Upload:
                     var attachedUpload = BlobStorage.AttachOne(tx, staged!, User.ModelName, user.Id, AttachmentNames.Avatar, now, Touch);
+                    ActiveStoragePurge.Later(tx, jobs, attachedUpload.ReplacedBlobId);
                     if (!attachedUpload.Blob.IsAnalyzed)
                     {
-                        tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attachedUpload.Blob.Id)));
+                        tx.AfterCommit(_ => jobs.Enqueue(new AnalyzeBlobJob(attachedUpload.Blob.Id)));
                     }
                     break;
                 case AvatarChange.Existing existing:
                     var attachedExisting = BlobStorage.AttachOne(tx, existing.Blob, User.ModelName, user.Id, AttachmentNames.Avatar, now, Touch);
+                    ActiveStoragePurge.Later(tx, jobs, attachedExisting.ReplacedBlobId);
                     if (!attachedExisting.Blob.IsAnalyzed)
                     {
-                        tx.AfterCommit(_ => App.RequireSeams().Jobs.Enqueue(new AnalyzeBlobJob(attachedExisting.Blob.Id)));
+                        tx.AfterCommit(_ => jobs.Enqueue(new AnalyzeBlobJob(attachedExisting.Blob.Id)));
                     }
                     break;
                 case AvatarChange.Remove:
-                    UsersAvatarsController.DetachAvatar(tx, user.Id, now);
+                    UsersAvatarsController.DetachAvatar(tx, jobs, user.Id, now);
                     break;
             }
         }).ConfigureAwait(false);

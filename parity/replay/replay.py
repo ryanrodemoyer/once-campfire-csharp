@@ -110,6 +110,17 @@ def is_deletion(cookie):
     return value == ""
 
 
+# ActionController::Live commits send_file before the after_action that appends Sec-Fetch-Site
+# to Vary. On that lost race Rack::Deflater leaves Vary: Accept-Encoding. Avatars and logos are
+# the live responses; retry until the header has the token the idle server usually sends.
+_LIVE_IMAGE = re.compile(r"^/(?:users/[^/]+/avatar|account/logo)$")
+
+
+def _live_image(method, path):
+    # AvatarsController includes ActionController::Live, so destroy's redirect races too.
+    return _LIVE_IMAGE.match(path.split("?", 1)[0]) is not None
+
+
 class Browser:
     """One server's user agent: a cookie jar and a client IP (Rails reads X-Forwarded-For from a
     local proxy, so rate limits and bans see it)."""
@@ -120,17 +131,23 @@ class Browser:
         self.ip = ip
 
     def request(self, method, path, body=None, headers=None):
-        conn = http.client.HTTPConnection(self.base.hostname, self.base.port or 80, timeout=60)
-        all_headers = {"Host": HOST, "User-Agent": UA, "X-Forwarded-For": self.ip, "Accept-Encoding": "identity"}
-        if self.cookies:
-            all_headers["Cookie"] = "; ".join(f"{k}={v}" for k, v in self.cookies.items())
-        all_headers.update(headers or {})
-        try:
-            conn.request(method, path, body=body, headers=all_headers)
-            response = conn.getresponse()
-            reply = Reply(response.status, response.getheaders(), response.read())
-        finally:
-            conn.close()
+        attempts = 12 if _live_image(method, path) else 1
+        reply = None
+        for attempt in range(attempts):
+            conn = http.client.HTTPConnection(self.base.hostname, self.base.port or 80, timeout=60)
+            all_headers = {"Host": HOST, "User-Agent": UA, "X-Forwarded-For": self.ip, "Accept-Encoding": "identity"}
+            if self.cookies:
+                all_headers["Cookie"] = "; ".join(f"{k}={v}" for k, v in self.cookies.items())
+            all_headers.update(headers or {})
+            try:
+                conn.request(method, path, body=body, headers=all_headers)
+                response = conn.getresponse()
+                reply = Reply(response.status, response.getheaders(), response.read())
+            finally:
+                conn.close()
+            vary = (reply.header("vary") or "").lower()
+            if reply.status not in (200, 302) or "sec-fetch-site" in vary or attempt == attempts - 1:
+                break
         for cookie in reply.set_cookies():
             name, value, _ = parse_cookie(cookie)
             if is_deletion(cookie):

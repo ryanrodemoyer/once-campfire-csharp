@@ -91,11 +91,10 @@ public sealed class MessagePusher(SqliteDatabase database, WebPushPool pool, Fun
         {
             return [];
         }
-        // Content.new canonicalizes trix attachments through Attachment.from_node before
-        // attachables re-reads them with Attachable.from_node. The first pass is what raises
-        // on a payload the strict locator would only reject.
+        // Content.new canonicalizes (minify, galleries, unwrap raw markdown). Lexxy's
+        // as_canonical leaves figure[data-trix-attachment] in place, so those are not attachments.
         var fragment = RichTextRenderer.Wrap(body);
-        ContentFilters.CanonicalizeContent(fragment, context);
+        ContentFilters.CanonicalizeContent(fragment);
         return [.. AttachmentResolution.AttachmentNodes(fragment)
             .Select(node => AttachmentResolution.ActionTextAttachableFromNode(node, context))
             .OfType<Mention>()

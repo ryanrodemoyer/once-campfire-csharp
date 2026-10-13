@@ -7,6 +7,7 @@ import os
 import select
 import socket
 import struct
+import time
 import urllib.parse
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -237,13 +238,16 @@ class RawWebSocketClient:
         if self.is_closed or not self.sock:
             return None
 
-        if timeout is not None:
-            self.sock.settimeout(timeout)
-        else:
-            self.sock.settimeout(self.timeout)
+        # Pings (opcode and {"type":"ping"}) must not extend the caller's wait.
+        # Action Cable pings every 3s, so a fresh timeout per ping never returns.
+        deadline = time.monotonic() + (self.timeout if timeout is None else timeout)
 
         fragments = bytearray()
         while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return None
+            self.sock.settimeout(remaining)
             try:
                 opcode, payload = self._read_frame()
             except (socket.timeout, TimeoutError):

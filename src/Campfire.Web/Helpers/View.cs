@@ -50,8 +50,27 @@ public partial class View
     /// <summary>The key generator <c>turbo_stream_from</c> signs stream names with.</summary>
     public KeyGenerator? StreamKeys { get; init; }
 
-    /// <summary>The request's flash, read by the layout.</summary>
-    public Flash Flash { get; init; } = Flash.FromSessionValue(null);
+    /// <summary>
+    /// The request's flash, read by the layout. Loaded on first read so a render that never
+    /// touches it leaves the session flash for the next request, matching
+    /// <c>ActionDispatch::Flash::RequestMethods#flash</c> (loaded only when accessed) and
+    /// <c>commit_flash</c> (a no-op until then). The turbo frame layout does not read it.
+    /// Assign <see cref="LoadFlash"/> to defer that load; assigning <see cref="Flash"/> directly
+    /// supplies the value, which tests do.
+    /// </summary>
+    public Flash Flash
+    {
+        get => flashValue ??= LoadFlash?.Invoke() ?? global::Campfire.RailsCompat.Session.Flash.FromSessionValue(null);
+        init => flashValue = value;
+    }
+
+    /// <summary>
+    /// Defers <see cref="Flash"/> until a template reads it. Controllers pass
+    /// <c>() =&gt; Flash</c> so constructing the view does not mark the session flash for discard.
+    /// </summary>
+    public Func<Flash>? LoadFlash { get; init; }
+
+    Flash? flashValue;
 
     /// <summary><c>Current.user</c>, or null when signed out.</summary>
     public CurrentUser? CurrentUser { get; init; }

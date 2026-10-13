@@ -89,7 +89,7 @@ public sealed class SearchesController : ApplicationController
             Referrer = Referer,
             FormAuthenticityToken = (action, method) => FormAuthenticityToken(action, method),
             StreamKeys = App.Keys,
-            Flash = Flash,
+            LoadFlash = () => Flash,
             CurrentUser = new CurrentUser(User.Id, User.Name, User.CanAdminister()),
             CurrentAccount = account is null ? null : new CurrentAccount(account.CustomStyles, BlobRecords.FindAttachedBlob(session, "Account", account.Id, "logo") is not null, account.UpdatedAt),
             VapidPublicKey = App.VapidPublicKey,
@@ -102,7 +102,7 @@ public sealed class SearchesController : ApplicationController
 
     RenderContext RichTextContext(SqliteSession session) => new(new DatabaseAttachables(session, App.Keys, Now), RequestUrl.Host);
 
-    static ReadOnlyMemory<byte> RenderLayout(View view, string page, bool turboFrame)
+    ReadOnlyMemory<byte> RenderLayout(View view, string page, bool turboFrame)
     {
         using var buffer = new PooledBufferWriter();
         if (turboFrame)
@@ -113,7 +113,12 @@ public sealed class SearchesController : ApplicationController
         {
             view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(page));
         }
-        return buffer.WrittenMemory;
+        // stylesheet_link_tag records the preload Link header; the caller copies it onto the response.
+        if (view.LinkHeader is { } link)
+        {
+            Headers["Link"] = link;
+        }
+        return buffer.WrittenMemory.ToArray();
     }
 
     static string RenderString(Action<HtmlWriter> template)

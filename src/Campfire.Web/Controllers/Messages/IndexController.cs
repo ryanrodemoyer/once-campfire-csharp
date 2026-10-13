@@ -110,7 +110,7 @@ public sealed class MessagesIndexController : ApplicationController
             Referrer = Referer,
             FormAuthenticityToken = (action, method) => FormAuthenticityToken(action, method),
             StreamKeys = App.Keys,
-            Flash = Flash,
+            LoadFlash = () => Flash,
             CurrentUser = new CurrentUser(user.Id, user.Name, user.CanAdminister()),
             CurrentAccount = account is null ? null : new CurrentAccount(account.CustomStyles, BlobRecords.FindAttachedBlob(session, "Account", account.Id, "logo") is not null, account.UpdatedAt),
             VapidPublicKey = App.VapidPublicKey,

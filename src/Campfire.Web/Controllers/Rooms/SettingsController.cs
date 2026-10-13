@@ -160,6 +160,11 @@ public abstract class RoomSettingsController : ApplicationController
             {
                 view.ApplicationLayout(new HtmlWriter(buffer), new SafeString(body));
             }
+            // stylesheet_link_tag records the preload Link header; the caller copies it onto the response.
+            if (view.LinkHeader is { } link)
+            {
+                Headers["Link"] = link;
+            }
             return buffer.WrittenMemory;
         }).ConfigureAwait(false);
         Render(page, MimeType.Html.Value);
@@ -180,7 +185,7 @@ public abstract class RoomSettingsController : ApplicationController
             Referrer = Referer,
             FormAuthenticityToken = forgeryProtection ? (action, method) => FormAuthenticityToken(action, method) : null,
             StreamKeys = App.Keys,
-            Flash = Flash,
+            LoadFlash = () => Flash,
             CurrentUser = new CurrentUser(user.Id, user.Name, user.CanAdminister()),
             CurrentAccount = account is null ? null : new CurrentAccount(account.CustomStyles, BlobRecords.FindAttachedBlob(session, "Account", account.Id, "logo") is not null, account.UpdatedAt),
             VapidPublicKey = App.VapidPublicKey,

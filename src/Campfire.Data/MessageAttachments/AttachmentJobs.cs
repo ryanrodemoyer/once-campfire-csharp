@@ -1,4 +1,5 @@
 using Campfire.Data.Events;
+using Campfire.Data.Sqlite;
 
 namespace Campfire.Data.MessageAttachments;
 
@@ -27,4 +28,23 @@ public sealed record PurgeBlobJob(long BlobId) : Job
     public override string ClassName => "ActiveStorage::PurgeJob";
 
     public override IReadOnlyList<long> ArgumentIds => [BlobId];
+}
+
+/// <summary>
+/// <c>blob.purge_later</c>, as <c>ActiveStorage::Attachment.after_destroy_commit
+/// :purge_dependent_blob_later</c> enqueues it when a <c>has_one_attached</c> attachment is
+/// destroyed or replaced (<c>dependent: :purge_later</c>). A null id is an attachment that was
+/// not there.
+/// </summary>
+public static class ActiveStoragePurge
+{
+    public static void Later(WriteTransaction tx, IJobQueue jobs, long? blobId)
+    {
+        ArgumentNullException.ThrowIfNull(tx);
+        ArgumentNullException.ThrowIfNull(jobs);
+        if (blobId is long id)
+        {
+            tx.AfterCommit(_ => jobs.Enqueue(new PurgeBlobJob(id)));
+        }
+    }
 }

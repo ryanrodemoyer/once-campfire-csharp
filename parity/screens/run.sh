@@ -44,10 +44,12 @@ run_in_image() {
       local image; image=$(docker_image)
       local name=parity-capture-$$-$RANDOM
       CAPTURE_CONTAINERS+=("$name" "$name-forward")
+      # forward-retry.mjs speaks the same socket protocol as capture/forward.ts and retries
+      # the ActionController::Live avatar/logo Vary race. See that file.
       docker run -d --rm --init --name "$name-forward" --network host -u "$(id -u):$(id -g)" \
         -v "$REFERENCE_RUST:$REFERENCE_RUST" -v "$CAMPFIRE_ROOT:$CAMPFIRE_ROOT" \
         --tmpfs "$CAPTURE_PARITY/node_modules" -w "$CAPTURE_PARITY" \
-        "$image" node capture/forward.ts "$socket" >/dev/null
+        "$image" node "$CAMPFIRE_ROOT/parity/screens/forward-retry.mjs" "$socket" >/dev/null
       wait_for_socket "$socket"
       docker run --rm --init --name "$name" --network none --ipc host \
         -u "$(id -u):$(id -g)" -e HOME=/tmp -e TZ=UTC -e CI="${CI:-}" -e PARITY_WORKERS="${PARITY_WORKERS:-}" \

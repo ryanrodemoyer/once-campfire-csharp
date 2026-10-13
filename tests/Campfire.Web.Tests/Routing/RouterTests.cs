@@ -37,7 +37,7 @@ public class RouterTests
             using var request = new RailsRequest(Request("GET", "/nope." + extension));
             var response = ReferencePages.For(sample.Status, request);
             Assert.Equal(expected, Encoding.UTF8.GetString(response.Body));
-            Assert.Equal($"{type}; charset=utf-8", response.ContentType);
+            Assert.Equal($"{type}; charset=UTF-8", response.ContentType);
             Assert.Equal(response.Body.Length, response.ContentLength);
         }
     }
@@ -51,19 +51,19 @@ public class RouterTests
         using var request = new RailsRequest(Request("GET", "/nope"));
         var response = ReferencePages.For(status, request);
         Assert.Equal(File.ReadAllBytes(Path.Combine(VectorFiles.Root, $"reference/public/{status}.html")), response.Body);
-        Assert.Equal("text/html; charset=utf-8", response.ContentType);
+        Assert.Equal("text/html; charset=UTF-8", response.ContentType);
     }
 
     [Fact]
     public void Statuses_without_a_page_are_empty_html_and_head_gets_no_body()
     {
         using var request = new RailsRequest(Request("GET", "/nope"));
-        Assert.Equal(new ErrorResponse(400, "text/html; charset=utf-8", 0, []), ReferencePages.For(400, request) with { Body = [] });
+        Assert.Equal(new ErrorResponse(400, "text/html; charset=UTF-8", 0, []), ReferencePages.For(400, request) with { Body = [] });
         Assert.Empty(ReferencePages.For(501, request).Body);
 
         using var head = new RailsRequest(Request("HEAD", "/nope.json"));
         var response = ReferencePages.For(404, head);
-        Assert.Equal(("application/json; charset=utf-8", 0L), (response.ContentType, response.ContentLength));
+        Assert.Equal(("application/json; charset=UTF-8", 0L), (response.ContentType, response.ContentLength));
     }
 
     [Fact]

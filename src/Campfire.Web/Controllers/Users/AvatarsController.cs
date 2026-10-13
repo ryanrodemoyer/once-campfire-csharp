@@ -1,3 +1,5 @@
+using Campfire.Data.Events;
+using Campfire.Data.MessageAttachments;
 using Campfire.Data.Queries;
 using Campfire.Data.Records;
 using Campfire.Data.Sqlite;
@@ -40,7 +42,7 @@ public sealed class UsersAvatarsController : ApplicationController
     public static readonly RequestDelegate Destroy = Action(Chain, async c =>
     {
         var user = c.Current.User ?? throw new InvalidOperationException("undefined method 'avatar' for nil");
-        await c.WriteAsync(tx => DetachAvatar(tx, user.Id, c.Now)).ConfigureAwait(false);
+        await c.WriteAsync(tx => DetachAvatar(tx, c.App.RequireSeams().Jobs, user.Id, c.Now)).ConfigureAwait(false);
         c.RedirectTo(Routes.UserProfileUrl(c.UrlBase));
     });
 
@@ -140,14 +142,15 @@ public sealed class UsersAvatarsController : ApplicationController
 
     /// <summary>
     /// <c>user.avatar.destroy</c>: the attachment goes and touches the user (<c>belongs_to :record,
-    /// touch: true</c>); its blob is left for <c>ActiveStorage::PurgeJob</c>. Nothing when there's
-    /// no avatar.
+    /// touch: true</c>), and its blob is purged later (<c>dependent: :purge_later</c>). Nothing
+    /// when there's no avatar.
     /// </summary>
-    internal static void DetachAvatar(WriteTransaction tx, long userId, DateTimeOffset now)
+    internal static void DetachAvatar(WriteTransaction tx, IJobQueue jobs, long userId, DateTimeOffset now)
     {
         if (BlobRecords.FindAttachment(tx.Session, User.ModelName, userId, AttachmentNames.Avatar) is { } attachment)
         {
             BlobRecords.DeleteAttachment(tx.Session, attachment.Id);
+            ActiveStoragePurge.Later(tx, jobs, attachment.BlobId);
             tx.Session.Execute("""UPDATE "users" SET "updated_at" = @now WHERE "users"."id" = @id""",
                 ("@now", ActiveRecordTime.ToDb(now)), ("@id", userId));
         }
