@@ -56,8 +56,8 @@ agents:
     # Q10 finishes fixes that agents requested on issues after those issues closed.
     # Batch 2: the upstream ports and gates, the verification harness and AOT; and, from claude,
     # forgery protection (U03), the page cache (U07) and perf round 2 (B08).
-    # Near its quota: U05 moved to claude. Q11 once U07 merges.
-    queue: [Q11]
+    # Out of quota for about 85 hours: Q11 moved to grok.
+    queue: []
 
   grok:
     model: Grok 4.7 (high)
@@ -69,8 +69,8 @@ agents:
     # of R04 went to dspro: a reviewer can't review its own work.
     # Out of usage balance (402): R04 moved to gemini, the benchmark chain to dspro.
     # Balance back: the page cache (U07), reviewed by claude, then the benchmarks on the shared
-    # verification harness (B07) once Q11 merges.
-    queue: [U07, B07]
+    # verification harness (B07). Q11 from gemini (out of quota), continuing its saved work.
+    queue: [U07, Q11, B07]
 
   glm:
     model: GLM 5.3 (high) via OpenCode
