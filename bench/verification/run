@@ -5,9 +5,16 @@
 #   bench/verification/run preflight        both apps boot and satisfy route contracts
 #   bench/verification/run bench PROFILE DIR
 #   bench/verification/run sessions         normal + mixed, then both again from scratch
+#   bench/verification/run ports            check out and build the other ports (ports.tsv)
 #
 # PROFILE is "normal" or "mixed". The normal profile is the harness default: 16 clients,
 # three alternating rounds, eight seconds. Mixed adds --mixed-write-rate 10.
+#
+# APPS picks what is measured, in harness order (default rails,csharp). Any app in
+# ports.tsv may be added, e.g. APPS=rails,csharp,rust,go,express. The harness runs one
+# app at a time on the same CPUs, alternating the order between rounds.
+# <APP>_BENCH_ENV (JSON) is merged into that app's environment by bench/compare.rb, e.g.
+# CSHARP_BENCH_ENV='{"CAMPFIRE_THRUSTER":"0"}'.
 #
 # The host has no Ruby or sqlite3. bin/benchmark runs in campfire-b07-runner, pinned off
 # the app CPUs. That container starts the app containers on the host daemon. The load
@@ -26,6 +33,12 @@ RUNNER_IMAGE=${RUNNER_IMAGE:-campfire-b07-runner}
 RAILS_IMAGE=${RAILS_IMAGE:-campfire-reference:app-edbc779}
 CSHARP_IMAGE=${CSHARP_IMAGE:-campfire-csharp:b07}
 LOADGEN=$CHECKOUT/loadgen/target/release/loadgen
+APPS=${APPS:-rails,csharp}
+# The checkout CSHARP_IMAGE was built from; the harness records its commit. Point it at a
+# worktree when measuring an image built from another branch.
+CSHARP_SOURCE=${CSHARP_SOURCE:-$ROOT}
+PORTS_FILE=$VER/ports.tsv
+PORTS_DIR=$ROOT/tmp/ports
 # App containers use 8-11. The runner may use every other logical CPU, including the
 # load generator's 12-15, and must not run on the app's CPUs.
 RUNNER_CPUS=${RUNNER_CPUS:-0-7,12-15}
@@ -41,6 +54,11 @@ need_pin() {
 
 prepare_harness() {
   need_pin
+  # Some apps (Laravel) write their storage as another user. The harness keeps those
+  # runtime copies under its tmp/, so clear it as root before removing the worktree.
+  if [ -d "$HARNESS/tmp" ]; then
+    docker run --rm -v "$HARNESS:/harness" --entrypoint rm "$RUNNER_IMAGE" -rf /harness/tmp
+  fi
   if git -C "$CHECKOUT" worktree list --porcelain | grep -Fxq "worktree $HARNESS"; then
     git -C "$CHECKOUT" worktree remove --force "$HARNESS"
   fi
@@ -56,9 +74,111 @@ prepare_harness() {
 prepare_workspace() {
   mkdir -p "$WORKSPACE"
   ln -sfn "$ROOT/reference" "$WORKSPACE/once-campfire"
-  ln -sfn "$ROOT" "$WORKSPACE/once-campfire-csharp"
+  ln -sfn "$CSHARP_SOURCE" "$WORKSPACE/once-campfire-csharp"
   [ "$(git -C "$WORKSPACE/once-campfire" rev-parse HEAD)" = "edbc779f4dfc9b26c36310881711ddc976a9dfc8" ] \
     || die "Rails checkout is not edbc779"
+  local app source
+  for app in $(other_apps); do
+    source=$PORTS_DIR/once-campfire-$app
+    [ "$(git -C "$source" rev-parse HEAD 2>/dev/null)" = "$(port_commit "$app")" ] \
+      || die "$app is not checked out at $(port_commit "$app"); run bench/verification/run ports"
+    ln -sfn "$source" "$WORKSPACE/once-campfire-$app"
+  done
+}
+
+# The apps in APPS other than Rails and C#: the ports listed in ports.tsv.
+other_apps() {
+  tr ',' '\n' <<<"$APPS" | grep -vx -e rails -e csharp || true
+}
+
+env_prefix() {
+  tr '[:lower:]-' '[:upper:]_' <<<"$1"
+}
+
+port_commit() {
+  local commit
+  commit=$(awk -F'\t' -v app="$1" '!/^#/ && $1 == app { print $3 }' "$PORTS_FILE")
+  [ -n "$commit" ] || die "$1 is not in $PORTS_FILE"
+  echo "$commit"
+}
+
+# The image the harness reads from RUST_IMAGE, GO_IMAGE and so on. One set in the
+# environment wins; otherwise the one `ports` builds for the pinned commit.
+port_image() {
+  local var
+  var=$(env_prefix "$1")_IMAGE
+  echo "${!var:-once-campfire-$1:$(port_commit "$1" | cut -c1-12)}"
+}
+
+# Check out each port at its pinned commit and build its production image. A port that
+# fails to build is reported at the end; the others are still built.
+build_ports() {
+  mkdir -p "$PORTS_DIR"
+  local app repo commit source image failed=()
+  while IFS=$'\t' read -r app repo commit; do
+    case "$app" in '' | '#'*) continue ;; esac
+    source=$PORTS_DIR/once-campfire-$app
+    [ -d "$source/.git" ] || git clone --no-checkout "$repo" "$source"
+    git -C "$source" fetch --quiet origin
+    git -C "$source" checkout --quiet --detach "$commit"
+    git -C "$source" submodule update --init --recursive --quiet
+    image=$(port_image "$app")
+    if docker image inspect "$image" >/dev/null 2>&1; then
+      log "$image already built"
+    elif [ "$app" = c ]; then
+      build_c_image "$source" "$image" || failed+=("$app")
+    elif [ "$app" = elixir ]; then
+      build_elixir_image "$source" "$image" "$commit" || failed+=("$app")
+    else
+      log "building $image"
+      docker build --build-arg "GIT_REVISION=$commit" -t "$image" "$source" || failed+=("$app")
+    fi
+  done <"$PORTS_FILE"
+  [ ${#failed[@]} -eq 0 ] || die "failed to build: ${failed[*]}"
+}
+
+# Elixir builds its native toolchain from Dockerfile.dev first, and copies Thruster out of
+# campfire-reference:app. On this host that tag is Rails edbc779, so both FROM names are
+# pointed at images built for this commit: the toolchain, and Rails at its own reference pin.
+build_elixir_image() {
+  local source=$1 image=$2 commit=$3
+  local toolchain=campfire-elixir:toolchain-${commit:0:12}
+  local reference
+  reference=campfire-reference:elixir-$(git -C "$source/reference" rev-parse --short=12 HEAD)
+  log "building $reference and $toolchain"
+  docker build --build-arg "GIT_REVISION=$(git -C "$source/reference" rev-parse HEAD)" \
+    -t "$reference" "$source/reference" || return 1
+  docker build -f "$source/Dockerfile.dev" -t "$toolchain" "$source" || return 1
+  log "building $image"
+  docker build --build-arg "GIT_REVISION=$commit" \
+    --build-context "campfire-reference:app=docker-image://$reference" \
+    --build-context "campfire-elixir:toolchain=docker-image://$toolchain" \
+    -t "$image" "$source"
+}
+
+# C has no Dockerfile. Its bench/run-c builds the binary on a Fedora host (`make bench`,
+# vendored libraries linked statically) and wraps it in bench/image/Dockerfile.c. Here the
+# binary is built in a Fedora container instead, without the Fil-C toolchain it doesn't need.
+build_c_image() {
+  local source=$1 image=$2
+  log "building the C binary in fedora:latest"
+  docker run --rm -v "$source:/src" -w /src -e HOME=/tmp fedora:latest bash -euc '
+    dnf -y -q install clang make cmake perl autoconf automake libtool pkgconf-pkg-config \
+      zlib-devel openssl git curl unzip python3 which diffutils patch xz tar >/dev/null
+    for script in vendor/scripts/*.sh; do
+      [ "$script" = vendor/scripts/filc.sh ] || bash "$script"
+    done
+    make deps-build
+    make bench
+    chown -R "$0" /src' "$(id -u):$(id -g)" || return 1
+  local context=$source/bench/.work/image
+  rm -rf "$context"
+  mkdir -p "$context/tests/fixtures"
+  cp "$source/build/bench/campfire" "$context/campfire" || return 1
+  cp -a "$source/tests/fixtures/assets" "$context/tests/fixtures/assets" || return 1
+  cp "$source/bench/image/entrypoint.sh" "$context/entrypoint.sh" || return 1
+  log "building $image"
+  docker build -f "$source/bench/image/Dockerfile.c" -t "$image" "$context"
 }
 
 build_runner() {
@@ -75,6 +195,15 @@ build_loadgen() {
 in_runner() {
   local work=$1
   shift
+  # Passed only when set: compare.rb cannot parse an empty <APP>_BENCH_ENV.
+  local extra=() app var
+  for app in $(tr ',' ' ' <<<"$APPS"); do
+    var=$(env_prefix "$app")_BENCH_ENV
+    [ -z "${!var:-}" ] || extra+=(-e "$var=${!var}")
+  done
+  for app in $(other_apps); do
+    extra+=(-e "$(env_prefix "$app")_IMAGE=$(port_image "$app")")
+  done
   docker run --rm --network host --cpuset-cpus "$RUNNER_CPUS" \
     --user "$(id -u):$(id -g)" \
     --group-add "$(stat -c %g /var/run/docker.sock)" \
@@ -87,6 +216,7 @@ in_runner() {
     -e RAILS_IMAGE="$RAILS_IMAGE" \
     -e CSHARP_IMAGE="$CSHARP_IMAGE" \
     -e LOADGEN="$LOADGEN" \
+    "${extra[@]}" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /usr/bin/docker:/usr/bin/docker:ro \
     -v /tmp:/tmp \
@@ -175,13 +305,14 @@ write_provenance() {
     in_runner "$HARNESS" sqlite3 -version
     in_runner "$HARNESS" git --version
     echo "--- source ---"
-    echo "csharp_head: $(git -C "$ROOT" rev-parse HEAD)"
-    echo "csharp_status: $(git -C "$ROOT" status --porcelain --untracked-files=no | tr '\n' ';')"
+    echo "csharp_head: $(git -C "$CSHARP_SOURCE" rev-parse HEAD)"
+    echo "csharp_status: $(git -C "$CSHARP_SOURCE" status --porcelain --untracked-files=no | tr '\n' ';')"
     echo "rails_head: $(git -C "$ROOT/reference" rev-parse HEAD)"
     echo "verification_head: $(git -C "$CHECKOUT" rev-parse HEAD)"
     echo "patch_sha256: $(sha256sum "$PATCH" | awk '{print $1}')"
     echo "loadgen_sha256: $(sha256sum "$LOADGEN" | awk '{print $1}')"
     echo "seed_sha256: $(sha256sum "$SEED/db/production.sqlite3" | awk '{print $1}')"
+    echo "apps: $APPS"
     echo "--- images ---"
     echo "rails_image: $RAILS_IMAGE"
     docker image inspect -f 'rails_id: {{.Id}}' "$RAILS_IMAGE"
@@ -191,6 +322,16 @@ write_provenance() {
     docker image inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$CSHARP_IMAGE" | awk -F= '/^(GIT_REVISION|APP_VERSION|DOTNET_)/'
     echo -n "csharp_binary_sha256: "
     docker run --rm --entrypoint sha256sum "$CSHARP_IMAGE" /app/campfire
+    local app var
+    for app in $(tr ',' ' ' <<<"$APPS"); do
+      var=$(env_prefix "$app")_BENCH_ENV
+      [ -z "${!var:-}" ] || echo "${app}_bench_env: ${!var}"
+    done
+    for app in $(other_apps); do
+      echo "${app}_head: $(git -C "$PORTS_DIR/once-campfire-$app" rev-parse HEAD)"
+      echo "${app}_image: $(port_image "$app")"
+      docker image inspect -f "${app}_id: {{.Id}}" "$(port_image "$app")"
+    done
     echo "runner_image: $RUNNER_IMAGE"
     docker image inspect -f 'runner_id: {{.Id}}' "$RUNNER_IMAGE"
     echo "runner_cpus: $RUNNER_CPUS"
@@ -231,6 +372,10 @@ bench_one() {
   docker image inspect "$RAILS_IMAGE" >/dev/null
   docker image inspect "$CSHARP_IMAGE" >/dev/null
   docker image inspect "$RUNNER_IMAGE" >/dev/null
+  local app
+  for app in $(other_apps); do
+    docker image inspect "$(port_image "$app")" >/dev/null || die "missing $(port_image "$app"); run bench/verification/run ports"
+  done
   prepare_harness
   prepare_workspace
   # loadgen prints usage and exits 1 on --help. 125+ means docker or the dynamic linker failed.
@@ -240,7 +385,7 @@ bench_one() {
   set -e
   [ "$help_status" -eq 1 ] || die "loadgen did not start in the runner (exit $help_status, expected 1)"
   local args=(ruby bin/benchmark
-    --apps rails,csharp
+    --apps "$APPS"
     --workspace "$WORKSPACE"
     --seed "$SEED"
     --loadgen "$LOADGEN"
@@ -296,7 +441,7 @@ case "$cmd" in
     prepare_workspace
     rm -rf "$ROOT/tmp/b07-preflight"
     in_runner "$HARNESS" ruby bin/benchmark \
-      --apps rails,csharp \
+      --apps "$APPS" \
       --workspace "$WORKSPACE" \
       --seed "$SEED" \
       --loadgen "$LOADGEN" \
@@ -311,6 +456,9 @@ case "$cmd" in
     stop_strays
     bench_one "$2" "$3"
     ;;
+  ports)
+    build_ports
+    ;;
   sessions)
     stop_strays
     bench_one normal "$ROOT/bench/results/verify-session-1-normal"
@@ -319,6 +467,6 @@ case "$cmd" in
     bench_one mixed "$ROOT/bench/results/verify-session-2-mixed"
     ;;
   *)
-    die "usage: bench/verification/run prepare|preflight|bench|sessions"
+    die "usage: bench/verification/run prepare|preflight|bench|sessions|ports"
     ;;
 esac

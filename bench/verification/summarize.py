@@ -13,6 +13,17 @@ LABELS = {
     "search": "Search",
     "post_message": "Post a message",
 }
+APP_LABELS = {
+    "rails": "Rails",
+    "csharp": "C#",
+    "rust": "Rust",
+    "go": "Go",
+    "express": "Express",
+    "elixir": "Elixir",
+    "django": "Django",
+    "laravel": "Laravel",
+    "c": "C",
+}
 
 
 def median(values):
@@ -84,8 +95,8 @@ def main(argv):
     directory = Path(argv[1])
     mixed, meta, key = load_summary(directory)
     routes = READS if mixed else READS + ["post_message"]
-    apps = meta["source_revisions"].keys()
-    if set(apps) != {"rails", "csharp"}:
+    apps = list(meta["source_revisions"].keys())
+    if "rails" not in apps or "csharp" not in apps:
         raise SystemExit(f"expected rails and csharp in one session, got {sorted(apps)}")
     print(f"profile: {meta['profile']}")
     print(f"seed: {meta['seed_sha256']}")
@@ -95,23 +106,60 @@ def main(argv):
     print(f"raw_samples: {files} validated_responses: {ok} errors: {errors} invalid: {invalid}")
     if errors or invalid:
         raise SystemExit("raw samples include errors or invalid responses")
-    header = "| Workload | Rails req/s | Rails p99 ms | C# req/s | C# p99 ms | C#/Rails |"
-    print(header)
+    cells = {
+        route: {app: route_cell(directory, app, route, key) for app in apps}
+        for route in routes
+    }
+    if set(apps) == {"rails", "csharp"}:
+        print_pair(routes, cells)
+    else:
+        print_ports(routes, apps, cells, meta["source_revisions"])
+
+
+def route_cell(directory, app, route, key):
+    rows = samples(directory, app, route, key)
+    rps = [row["rps"] for row in rows]
+    p99 = [row["latency"]["p99_ms"] for row in rows]
+    return median(rps), median(p99), min(rps), max(rps), rps
+
+
+def print_pair(routes, cells):
+    print("| Workload | Rails req/s | Rails p99 ms | C# req/s | C# p99 ms | C#/Rails |")
     print("|---|---:|---:|---:|---:|---:|")
     for route in routes:
-        cells = {}
-        for app in ("rails", "csharp"):
-            rows = samples(directory, app, route, key)
-            rps = [row["rps"] for row in rows]
-            p99 = [row["latency"]["p99_ms"] for row in rows]
-            cells[app] = (median(rps), median(p99), min(rps), max(rps), rps)
-        ratio = cells["csharp"][0] / cells["rails"][0]
+        rails, csharp = cells[route]["rails"], cells[route]["csharp"]
         print(
-            f"| {LABELS[route]} | {cells['rails'][0]:.1f} | {cells['rails'][1]:.3f} "
-            f"| {cells['csharp'][0]:.1f} | {cells['csharp'][1]:.3f} | {ratio:.3f} |"
+            f"| {LABELS[route]} | {rails[0]:.1f} | {rails[1]:.3f} "
+            f"| {csharp[0]:.1f} | {csharp[1]:.3f} | {csharp[0] / rails[0]:.3f} |"
         )
-        for app in ("rails", "csharp"):
-            median_rps, _, low, high, rps = cells[app]
+    print_spreads(routes, ["rails", "csharp"], cells)
+
+
+# One column per app in harness order: median req/s, then p99, then each app's multiple of Rails.
+def print_ports(routes, apps, cells, revisions):
+    names = [APP_LABELS.get(app, app) for app in apps]
+    for title, value in (("req/s", lambda cell: f"{cell[0]:,.0f}"), ("p99 ms", lambda cell: f"{cell[1]:.2f}")):
+        print(f"\n{title}\n")
+        print("| Workload | " + " | ".join(names) + " |")
+        print("|---|" + "---:|" * len(apps))
+        for route in routes:
+            print(f"| {LABELS[route]} | " + " | ".join(value(cells[route][app]) for app in apps) + " |")
+    print("\n× Rails req/s\n")
+    print("| Workload | " + " | ".join(names) + " |")
+    print("|---|" + "---:|" * len(apps))
+    for route in routes:
+        rails = cells[route]["rails"][0]
+        print(f"| {LABELS[route]} | " + " | ".join(f"{cells[route][app][0] / rails:.2f}" for app in apps) + " |")
+    print()
+    for app in apps:
+        print(f"  {app} {revisions[app]['head'][:12]}{' dirty' if revisions[app]['dirty'] else ''}")
+    print_spreads(routes, apps, cells)
+
+
+def print_spreads(routes, apps, cells):
+    for route in routes:
+        for app in apps:
+            median_rps, _, low, high, rps = cells[route][app]
             spread = (high - low) / median_rps if median_rps else 0
             print(f"  {app} {route} runs={rps} spread={(spread * 100):.2f}%")
 
