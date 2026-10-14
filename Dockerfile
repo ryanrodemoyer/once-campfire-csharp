@@ -97,13 +97,14 @@ WORKDIR /rails
 # HTTP_*_TIMEOUT, ... and their THRUSTER_ forms) means what it does in the reference image.
 #
 # CAMPFIRE_THRUSTER=0 (the port's own switch; the reference has none) runs `campfire server` alone,
-# listening on PORT (3000 unless set): no TLS, HTTP/2, X-Forwarded-* headers, public/ files or 502
-# page. It is for running behind another proxy, and for measuring the app without the proxy hop,
-# which costs about 0.5 to 0.8 ms of CPU per request (bench/README.md). Unset, nothing changes.
+# listening where Thruster would, on HTTP_PORT (80 unless set): no TLS, HTTP/2, X-Forwarded-*
+# headers, public/ files or 502 page. It is for running behind another proxy, and for measuring
+# the app without the proxy hop, which costs about 0.5 to 0.8 ms of CPU per request
+# (bench/README.md). Unset, nothing changes.
 COPY --chmod=755 <<'EOF' /rails/bin/boot
 #!/bin/sh
 if [ "${CAMPFIRE_THRUSTER:-1}" = "0" ]; then
-  exec /usr/local/bin/campfire server
+  PORT="${HTTP_PORT:-80}" exec /usr/local/bin/campfire server
 fi
 exec /usr/local/bin/thrust /usr/local/bin/campfire server
 EOF

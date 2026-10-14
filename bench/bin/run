@@ -193,9 +193,8 @@ start_app() {
   local t0; t0=$(date +%s.%N)
   # --network host: no docker-proxy between the load generator and the app. A front server
   # (Thruster) listens on HTTP_PORT and runs its app on TARGET_PORT, passing it as PORT; the C#
-  # image without Thruster (until P03) listens on PORT itself. The reference's Redis takes 6379.
+  # image with CAMPFIRE_THRUSTER=0 listens on HTTP_PORT itself. The reference's Redis takes 6379.
   local net=(--network host -e "HTTP_PORT=$PORT" -e "TARGET_PORT=$((PORT + 1))")
-  [ "$app" = csharp ] && net+=(-e "PORT=$PORT")
   docker run -d --name "$CONTAINER" --cpuset-cpus "$SERVER_CPUS" --user "$(id -u):$(id -g)" \
     "${net[@]}" "${args[@]}" \
     -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" \

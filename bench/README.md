@@ -33,7 +33,7 @@ third column measured on the same box.
 Both images start through `bin/boot`, so Thruster is in front of both apps and proxies every
 request. On this harness it costs about 0.5 to 0.8 ms of CPU per request, more than the C# app
 spends on a page, and caps proxied routes near 4,000 requests/s on four CPUs. To measure the C#
-app without that hop, start it alone on `PORT` (which the harness already sets for it):
+app without that hop, turn Thruster off; the app then listens on `HTTP_PORT`, where Thruster would:
 
 ```sh
 CSHARP_EXTRA_ENV="CAMPFIRE_THRUSTER=0" bench/bin/run --apps reference,csharp
