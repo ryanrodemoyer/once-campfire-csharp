@@ -4,7 +4,8 @@
 [basecamp/once-campfire-verification](https://github.com/basecamp/once-campfire-verification), the
 harness upstream uses for every port. One run measures Rails, C# and any of the other ports
 (Rust, Go, Express, Elixir, Django, Laravel, C) on the same seed, CPUs and response contracts, one
-app at a time. Published numbers are in [`RESULTS.md`](RESULTS.md); start with
+app at a time. Rails and C# are published in [`RESULTS.md`](RESULTS.md), and every port side by
+side in [`PORTS.md`](PORTS.md). Start with
 [`verification/README.md`](verification/README.md).
 
 The rest of this page describes `bench/bin/run`, the Rust port's own harness with a `csharp` app

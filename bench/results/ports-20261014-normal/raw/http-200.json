@@ -1,0 +1,25 @@
+{
+  "avg_bytes": 9448,
+  "conc": 16,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 8.295,
+    "mean_ms": 0.5,
+    "n": 255563,
+    "p50_ms": 0.356,
+    "p90_ms": 1.041,
+    "p99_ms": 2.157
+  },
+  "ok": 255563,
+  "path": "/searches?q=coffee",
+  "rps": 31942.7,
+  "secs": 8.0,
+  "statuses": {
+    "200": 255563
+  },
+  "validation": "route-contract-v1",
+  "generator_cpu_percent": 79.77565784883267
+}

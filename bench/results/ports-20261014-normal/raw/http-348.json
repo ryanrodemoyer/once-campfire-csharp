@@ -1,0 +1,25 @@
+{
+  "avg_bytes": 653,
+  "conc": 16,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 61.343,
+    "mean_ms": 37.39,
+    "n": 3427,
+    "p50_ms": 37.279,
+    "p90_ms": 42.975,
+    "p99_ms": 50.399
+  },
+  "ok": 3427,
+  "path": "/assets/_reset-9c3efd7b.css",
+  "rps": 427.4,
+  "secs": 8.02,
+  "statuses": {
+    "200": 3427
+  },
+  "validation": "route-contract-v1",
+  "generator_cpu_percent": 2.936602181908939
+}
