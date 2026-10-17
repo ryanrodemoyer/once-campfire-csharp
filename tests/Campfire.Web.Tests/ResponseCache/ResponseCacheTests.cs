@@ -17,18 +17,37 @@ public sealed class ResponseCacheTests : IDisposable
     public ResponseCacheTests()
     {
         Directory.CreateDirectory(directory);
-        database = Path.Combine(directory, "cache.sqlite3");
-        using (var connection = new SqliteConnection($"Data Source={database}"))
-        {
-            connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                PRAGMA journal_mode=WAL;
-                CREATE TABLE values_for_test (value TEXT);
-                """;
-            command.ExecuteNonQuery();
-        }
+        database = CreateDatabase("cache.sqlite3", "WAL");
         cache = new Campfire.Web.ResponseCache.ResponseCache(() => database) { BudgetOverride = 1024 };
+    }
+
+    [Fact]
+    public void A_wal_database_is_observed_through_its_wal_index_header()
+    {
+        Assert.NotNull(cache.Version());
+        Assert.True(cache.ObservesWalIndex);
+    }
+
+    // Each commit rewrites the WAL-index header, so each one moves the version, as data_version does.
+    // A rollback-journal database has no WAL index and observes data_version on pooled connections.
+    [Theory]
+    [InlineData("WAL")]
+    [InlineData("DELETE")]
+    public void Every_foreign_commit_moves_the_version(string journalMode)
+    {
+        var path = CreateDatabase($"every-commit-{journalMode}.sqlite3", journalMode);
+        var observed = new Campfire.Web.ResponseCache.ResponseCache(() => path) { BudgetOverride = 1024 };
+        var version = observed.Version();
+        Assert.Equal(journalMode == "WAL", observed.ObservesWalIndex);
+        for (var i = 0; i < 50; i++)
+        {
+            Assert.Equal(version, observed.Version());
+            Commit(path, "INSERT INTO values_for_test VALUES ('committed')");
+            var next = observed.Version();
+            Assert.NotEqual(version, next);
+            version = next;
+        }
+        observed.Clear();
     }
 
     [Fact]
@@ -43,6 +62,41 @@ public sealed class ResponseCacheTests : IDisposable
         Assert.Null(cache.Read("page", cache.Version()));
         cache.Write("page", cache.Version(), Entry("fresh"));
         Assert.Equal("fresh", Body(cache.Read("page", cache.Version())));
+    }
+
+    // Without a WAL index, concurrent callers each observe data_version on their own pooled
+    // connection. However many observers there are and whichever one a caller gets, a commit
+    // expires what came before it.
+    [Fact]
+    public async Task Every_pooled_observer_sees_a_foreign_commit()
+    {
+        UseRollbackJournal();
+        await Task.WhenAll(Enumerable.Range(0, 16).Select(_ => Task.Run(() => cache.Version(), TestContext.Current.CancellationToken)));
+        var before = cache.Version();
+        cache.Write("page", before, Entry("before"));
+
+        Commit("INSERT INTO values_for_test VALUES ('committed')");
+
+        var after = await Task.WhenAll(Enumerable.Range(0, 16).Select(_ => Task.Run(() => cache.Version(), TestContext.Current.CancellationToken)));
+        Assert.All(after, version => Assert.NotEqual(before, version));
+        Assert.Null(cache.Read("page", cache.Version()));
+    }
+
+    // data_version can't be compared across connections, so an observer opened after a commit
+    // must not take that commit's data_version as already seen.
+    [Fact]
+    public async Task A_new_observer_does_not_hide_a_commit_before_it_opened()
+    {
+        UseRollbackJournal();
+        var version = cache.Version();
+        cache.Write("page", version, Entry("before"));
+
+        Commit("INSERT INTO values_for_test VALUES ('committed')");
+        // Two at once: at least one of them opens a new observer.
+        var versions = await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => Task.Run(() => cache.Version(), TestContext.Current.CancellationToken)));
+
+        Assert.All(versions, current => Assert.NotEqual(version, current));
+        Assert.Null(cache.Read("page", version));
     }
 
     [Fact]
@@ -118,13 +172,33 @@ public sealed class ResponseCacheTests : IDisposable
         Directory.Delete(directory, recursive: true);
     }
 
-    void Commit(string sql)
+    void Commit(string sql) => Commit(database, sql);
+
+    static void Commit(string path, string sql)
     {
-        using var connection = new SqliteConnection($"Data Source={database}");
+        using var connection = new SqliteConnection($"Data Source={path}");
         connection.Open();
         using var command = connection.CreateCommand();
         command.CommandText = sql;
         command.ExecuteNonQuery();
+    }
+
+    string CreateDatabase(string name, string journalMode)
+    {
+        var path = Path.Combine(directory, name);
+        Commit(path, $"""
+            PRAGMA journal_mode={journalMode};
+            CREATE TABLE values_for_test (value TEXT);
+            """);
+        return path;
+    }
+
+    // Switch the fixture's database out of WAL mode, so the cache observes it through pooled connections.
+    void UseRollbackJournal()
+    {
+        cache.Clear();
+        SqliteConnection.ClearAllPools();
+        Commit("PRAGMA journal_mode=DELETE");
     }
 
     static CachedPage Entry(string body) => new(Encoding.UTF8.GetBytes(body), []);

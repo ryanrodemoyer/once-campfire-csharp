@@ -56,6 +56,34 @@ public sealed partial class PwaControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task A_rendered_body_reaches_the_client_whole_gzipped_and_not_for_head()
+    {
+        JsonNode Request(string method, string? acceptEncoding)
+        {
+            var request = new JsonObject { ["method"] = method, ["path"] = "/service-worker.js", ["remote_addr"] = "127.0.0.1", ["headers"] = new JsonObject() };
+            if (acceptEncoding is not null)
+            {
+                request["headers"]!["Accept-Encoding"] = acceptEncoding;
+            }
+            return request;
+        }
+
+        var plain = await SendAsync(Request("GET", null));
+        var gzip = await SendAsync(Request("GET", "gzip"));
+        var head = await SendAsync(Request("HEAD", null));
+
+        Assert.Equal(870, plain.BodyBytes.Length);
+        Assert.Equal(870, plain.Headers.ContentLength);
+        using var unzip = new System.IO.Compression.GZipStream(new MemoryStream(gzip.BodyBytes), System.IO.Compression.CompressionMode.Decompress);
+        using var unzipped = new MemoryStream();
+        await unzip.CopyToAsync(unzipped, TestContext.Current.CancellationToken);
+        Assert.Equal(plain.BodyBytes, unzipped.ToArray());
+        Assert.Equal("gzip", gzip.Headers.ContentEncoding.ToString());
+        Assert.Empty(head.BodyBytes);
+        Assert.Equal(plain.Headers.ETag.ToString(), head.Headers.ETag.ToString());
+    }
+
+    [Fact]
     public void The_vectors_cover_the_card()
     {
         var cases = Cases().ToDictionary(sample => sample["name"]!.GetValue<string>(), sample => sample["response"]!);

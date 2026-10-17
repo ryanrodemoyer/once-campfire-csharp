@@ -54,7 +54,14 @@ public abstract partial class Controller
         }
         else if (sendBody && Body.Length > 0)
         {
-            await response.Body.WriteAsync(Body, RequestAborted).ConfigureAwait(false);
+            if (output is not null)
+            {
+                output.Body = Body;
+            }
+            else
+            {
+                await response.Body.WriteAsync(Body, RequestAborted).ConfigureAwait(false);
+            }
         }
     }
 

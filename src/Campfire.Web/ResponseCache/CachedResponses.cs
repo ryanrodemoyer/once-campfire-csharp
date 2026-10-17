@@ -1,4 +1,6 @@
+using System.Buffers;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -184,42 +186,97 @@ public partial class ApplicationController
     {
         var user = Current.User ?? throw new InvalidOperationException("undefined method 'id' for nil");
         var session = Current.Session ?? throw new InvalidOperationException("undefined method 'token' for nil");
-        return string.Concat(
-            "[",
-            Json(ControllerPath), ",",
-            Json(RequestUrl.FullPath), ",",
-            Json(RequestUrl.BaseUrl), ",",
-            Json(UserAgent), ",",
-            Json(encoding), ",",
-            Json(Header("Accept")), ",",
-            Json(Header("Turbo-Frame")), ",",
-            Json("en"), ",",
-            user.Id.ToString(CultureInfo.InvariantCulture), ",",
-            Json(session.Token), ",",
-            Session.CanonicalHash(exceptCsrf: true), ",",
-            CookieKey(Cookies),
-            "]");
+        return BuildResponseCacheKey(
+            ControllerPath, RequestUrl.FullPath, RequestUrl.BaseUrl, UserAgent, encoding, Header("Accept"), Header("Turbo-Frame"),
+            user.Id, session.Token, Session.CanonicalHash(exceptCsrf: true), Cookies);
     }
 
-    static string CookieKey(CookieJar cookies)
+    /// <summary>
+    /// The key as one string, written into a stack buffer: it is built for every cacheable request,
+    /// and a string for each of its dozen pieces was a tenth of the bytes a room page allocated.
+    /// </summary>
+    internal static string BuildResponseCacheKey(
+        string? controllerPath, string? fullPath, string? baseUrl, string? userAgent, string encoding, string? accept, string? turboFrame,
+        long userId, string sessionToken, string sessionHash, CookieJar cookies)
     {
-        var builder = new StringBuilder("{");
-        var first = true;
-        foreach (var (name, value) in cookies.Entries.OrderBy(pair => pair.Key, StringComparer.Ordinal))
+        var key = new DefaultInterpolatedStringHandler(0, 0, CultureInfo.InvariantCulture, stackalloc char[1024]);
+        key.AppendLiteral("[");
+        AppendJson(ref key, controllerPath);
+        key.AppendLiteral(",");
+        AppendJson(ref key, fullPath);
+        key.AppendLiteral(",");
+        AppendJson(ref key, baseUrl);
+        key.AppendLiteral(",");
+        AppendJson(ref key, userAgent);
+        key.AppendLiteral(",");
+        AppendJson(ref key, encoding);
+        key.AppendLiteral(",");
+        AppendJson(ref key, accept);
+        key.AppendLiteral(",");
+        AppendJson(ref key, turboFrame);
+        key.AppendLiteral(",\"en\",");
+        key.AppendFormatted(userId);
+        key.AppendLiteral(",");
+        AppendJson(ref key, sessionToken);
+        key.AppendLiteral(",");
+        key.AppendLiteral(sessionHash);
+        key.AppendLiteral(",");
+        AppendCookieKey(ref key, cookies);
+        key.AppendLiteral("]");
+        return key.ToStringAndClear();
+    }
+
+    static void AppendCookieKey(ref DefaultInterpolatedStringHandler key, CookieJar cookies)
+    {
+        // Few cookies are left once the session's two are dropped (last_room, often alone), so they are ordered by
+        // looking rather than by a LINQ sort.
+        KeyValuePair<string, string>? only = null;
+        List<KeyValuePair<string, string>>? several = null;
+        foreach (var pair in cookies.Entries)
         {
-            if (name is "_campfire_session" or "session_token")
+            if (pair.Key is "_campfire_session" or "session_token")
             {
                 continue;
             }
-            if (!first)
+            if (several is not null)
             {
-                builder.Append(',');
+                several.Add(pair);
             }
-            first = false;
-            builder.Append(Json(name)).Append(':').Append(Json(value));
+            else if (only is { } first)
+            {
+                several = [first, pair];
+            }
+            else
+            {
+                only = pair;
+            }
         }
-        builder.Append('}');
-        return builder.ToString();
+
+        key.AppendLiteral("{");
+        if (several is not null)
+        {
+            several.Sort(static (x, y) => string.CompareOrdinal(x.Key, y.Key));
+            for (var i = 0; i < several.Count; i++)
+            {
+                AppendCookie(ref key, several[i], i == 0);
+            }
+        }
+        else if (only is { } single)
+        {
+            AppendCookie(ref key, single, first: true);
+        }
+        key.AppendLiteral("}");
+    }
+
+    static void AppendCookie(ref DefaultInterpolatedStringHandler key, KeyValuePair<string, string> pair, bool first)
+    {
+        if (!first)
+        {
+            key.AppendLiteral(",");
+        }
+        AppendJson(ref key, pair.Key);
+        key.AppendLiteral(":");
+        AppendJson(ref key, pair.Value);
     }
 
     static string MergeVary(string? vary)
@@ -260,7 +317,41 @@ public partial class ApplicationController
     /// stay raw: <c>config.load_defaults 8.2</c> sets <c>escape_js_separators_in_json</c> false
     /// (railties <c>configuration.rb</c>, copied onto <c>ActiveSupport</c> by its railtie).
     /// </summary>
-    internal static string Json(string? value) => value is null ? "null" : RailsJson.Encode(JsonValue.Create(value));
+    internal static string Json(string? value)
+    {
+        var json = new DefaultInterpolatedStringHandler(0, 0, null, stackalloc char[256]);
+        AppendJson(ref json, value);
+        return json.ToStringAndClear();
+    }
+
+    // What RailsJson escapes in a string: the quote, the backslash, every control character, and the three HTML ones.
+    static readonly SearchValues<char> JsonEscapes = SearchValues.Create(
+        string.Concat("\"\\<>&", string.Create(32, 0, static (span, _) =>
+        {
+            for (var i = 0; i < span.Length; i++)
+            {
+                span[i] = (char)i;
+            }
+        })));
+
+    static void AppendJson(ref DefaultInterpolatedStringHandler json, string? value)
+    {
+        if (value is null)
+        {
+            json.AppendLiteral("null");
+        }
+        else if (value.AsSpan().IndexOfAny(JsonEscapes) < 0)
+        {
+            // Nothing to escape, which is nearly always: the string between its quotes.
+            json.AppendLiteral("\"");
+            json.AppendFormatted(value);
+            json.AppendLiteral("\"");
+        }
+        else
+        {
+            json.AppendFormatted(RailsJson.Encode(JsonValue.Create(value)));
+        }
+    }
 
     static bool Present(string? value) => !string.IsNullOrEmpty(value);
 }

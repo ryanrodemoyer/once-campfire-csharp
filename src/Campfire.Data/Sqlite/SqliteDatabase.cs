@@ -63,6 +63,7 @@ public sealed class SqliteDatabase : IDisposable
         SqliteDatabase? database = null;
         try
         {
+            WriterCheckpointFallback.Enable(writerSession);
             if (options.Prepare)
             {
                 SchemaPreparer.Prepare(writerSession, options.Environment, options.Clock);
@@ -146,7 +147,6 @@ public sealed class SqliteDatabase : IDisposable
             while (writes.Reader.TryRead(out var write))
             {
                 write(writerSession);
-                WriterCheckpointFallback.CheckpointIfLarge(writerSession, Path);
             }
         }
     }

@@ -1,4 +1,6 @@
+using System.Buffers;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using Campfire.Data.Queries;
@@ -100,8 +102,7 @@ public static class RecordSnapshots
         var version = controller.RecordCacheVersion();
         var cache = controller.App.Responses;
         var store = controller.App.Fragments;
-        var key = string.Create(CultureInfo.InvariantCulture, $"membership/{userId}/{roomId}");
-        if (!Admits(cache, version, key, out var expanded))
+        if (!Admissible(cache, version) || ExpandMembership(version!, userId, roomId) is not { } expanded || !FitsKey(expanded))
         {
             return await controller.ReadAsync(session => LoadMembership(session, userId, roomId)).ConfigureAwait(false);
         }
@@ -124,9 +125,7 @@ public static class RecordSnapshots
         var version = (controller as ApplicationController)?.RecordCacheVersion();
         var cache = controller.App.Responses;
         var store = controller.App.Fragments;
-        var digest = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
-        var key = "session/" + digest;
-        if (!Admits(cache, version, key, out var expanded))
+        if (!Admissible(cache, version) || ExpandSession(version!, token) is not { } expanded || !FitsKey(expanded))
         {
             return await controller.ReadAsync(session => LoadSession(session, token)).ConfigureAwait(false);
         }
@@ -145,12 +144,75 @@ public static class RecordSnapshots
     static bool Admits(ResponseCache cache, CacheVersion? version, string key, out string expanded)
     {
         expanded = "";
-        if (version is null || cache.Budget <= 0 || FragmentStore.TransactionOpen)
+        if (!Admissible(cache, version))
         {
             return false;
         }
-        expanded = RecordCache.Expand(version, key);
-        return Encoding.UTF8.GetByteCount(expanded) <= ResponseCache.MaxKeyBytes;
+        expanded = RecordCache.Expand(version!, key);
+        return FitsKey(expanded);
+    }
+
+    static bool Admissible(ResponseCache cache, CacheVersion? version) =>
+        version is not null && cache.Budget > 0 && !FragmentStore.TransactionOpen;
+
+    static bool FitsKey(string expanded) => Encoding.UTF8.GetByteCount(expanded) <= ResponseCache.MaxKeyBytes;
+
+    const int stackBytes = 256;
+
+    /// <summary>
+    /// <see cref="RecordCache.Expand"/> of <c>"session/" + the token's SHA-256 in lowercase hex</c>, written in one buffer: it is
+    /// built on every signed-in request, and the byte array, the hash, the hex string and the two concatenations
+    /// each made a string of their own.
+    /// </summary>
+    internal static string ExpandSession(CacheVersion version, string token)
+    {
+        var maxBytes = Encoding.UTF8.GetMaxByteCount(token.Length);
+        byte[]? rented = null;
+        Span<byte> bytes = maxBytes <= stackBytes ? stackalloc byte[stackBytes] : (rented = ArrayPool<byte>.Shared.Rent(maxBytes));
+        try
+        {
+            var count = Encoding.UTF8.GetBytes(token, bytes);
+            Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+            SHA256.HashData(bytes[..count], hash);
+            Span<char> hex = stackalloc char[SHA256.HashSizeInBytes * 2];
+            Convert.TryToHexStringLower(hash, hex, out _);
+            var key = StartKey(version);
+            key.AppendLiteral("session/");
+            key.AppendFormatted(hex);
+            return key.ToStringAndClear();
+        }
+        finally
+        {
+            if (rented is not null)
+            {
+                ArrayPool<byte>.Shared.Return(rented);
+            }
+        }
+    }
+
+    /// <summary><see cref="RecordCache.Expand"/> of <c>membership/{userId}/{roomId}</c>.</summary>
+    internal static string ExpandMembership(CacheVersion version, long userId, long roomId)
+    {
+        var key = StartKey(version);
+        key.AppendLiteral("membership/");
+        key.AppendFormatted(userId);
+        key.AppendLiteral("/");
+        key.AppendFormatted(roomId);
+        return key.ToStringAndClear();
+    }
+
+    // "record-snapshot-v1", the version's three parts and a newline: what RecordCache.Expand puts before the key.
+    static DefaultInterpolatedStringHandler StartKey(CacheVersion version)
+    {
+        var key = new DefaultInterpolatedStringHandler(0, 0, CultureInfo.InvariantCulture);
+        key.AppendLiteral("record-snapshot-v1\n");
+        key.AppendFormatted(version.Database);
+        key.AppendLiteral("\n");
+        key.AppendFormatted(version.Namespace);
+        key.AppendLiteral("\n");
+        key.AppendFormatted(version.DataVersion);
+        key.AppendLiteral("\n");
+        return key;
     }
 
     static void Keep(FragmentStore store, string key, byte[] encoded)

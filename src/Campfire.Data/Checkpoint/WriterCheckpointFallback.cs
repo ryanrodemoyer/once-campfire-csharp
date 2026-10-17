@@ -4,21 +4,25 @@ namespace Campfire.Data.Checkpoint;
 
 // The writer's own PASSIVE checkpoint, for when the background contender (SqliteWalCheckpoint) can't
 // keep the WAL small. Under a steady stream of commits a contender's checkpoint never catches up
-// between two of them, so the WAL never restarts and keeps growing. Once the WAL passes SQLite's
-// default auto-checkpoint size, the writer checkpoints between commits: the work SQLite would have
-// done itself, and it lets the next transaction restart the WAL.
+// between two of them, so the WAL never restarts and keeps growing. The writer connection turns
+// SQLite's auto-checkpoint back on at its default of 1,000 pages: SQLite counts the frames in the
+// WAL on each commit and checkpoints only once there are that many, which lets the next transaction
+// restart the WAL. Every other connection keeps database.yml's wal_autocheckpoint = 0.
+//
+// It counts frames, not the WAL file's size: SQLite reuses the file from the start after a restart
+// and never shrinks it below journal_size_limit, so once the file passed the threshold, a size
+// check would checkpoint (and fsync) after every commit.
 public static class WriterCheckpointFallback
 {
-    // 1,000 pages of 4 KiB, SQLite's default wal_autocheckpoint.
-    public const long ThresholdBytes = 4 * 1024 * 1024;
+    // SQLite's default wal_autocheckpoint.
+    public const int Pages = 1000;
 
-    // Runs on the writer thread after each commit, so it only looks at the WAL's size.
-    public static void CheckpointIfLarge(SqliteSession writer, string databasePath)
+    // Pages of 4 KiB.
+    public const long ThresholdBytes = Pages * 4096L;
+
+    public static void Enable(SqliteSession writer)
     {
-        var wal = new FileInfo($"{databasePath}-wal");
-        if (wal.Exists && wal.Length > ThresholdBytes)
-        {
-            writer.Execute("PRAGMA wal_checkpoint(PASSIVE)");
-        }
+        ArgumentNullException.ThrowIfNull(writer);
+        writer.Execute($"PRAGMA wal_autocheckpoint = {Pages}");
     }
 }

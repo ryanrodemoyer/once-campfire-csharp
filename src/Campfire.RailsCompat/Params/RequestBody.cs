@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Text.RegularExpressions;
 
 namespace Campfire.RailsCompat.Params;
@@ -155,25 +156,35 @@ public static partial class RequestBody
         return false;
     }
 
-    // Reads the body, up to limit bytes: past that, either stop there or throw.
+    // Reads the body, up to limit bytes: past that, either stop there or throw. The chunk is
+    // pooled and the buffer made on the first byte, so an empty body (every GET) allocates nothing.
     static async Task<byte[]> ReadAllAsync(Stream body, int limit, bool tooLarge, CancellationToken cancellationToken)
     {
-        using var buffer = new MemoryStream();
-        var chunk = new byte[81920];
-        while (buffer.Length < limit)
+        var chunk = ArrayPool<byte>.Shared.Rent(81920);
+        try
         {
-            var read = await body.ReadAsync(chunk.AsMemory(0, (int)Math.Min(chunk.Length, limit - buffer.Length)), cancellationToken).ConfigureAwait(false);
-            if (read == 0)
+            MemoryStream? buffer = null;
+            while ((buffer?.Length ?? 0) < limit)
             {
-                return buffer.ToArray();
+                var length = (int)Math.Min(chunk.Length, limit - (buffer?.Length ?? 0));
+                var read = await body.ReadAsync(chunk.AsMemory(0, length), cancellationToken).ConfigureAwait(false);
+                if (read == 0)
+                {
+                    return buffer?.ToArray() ?? [];
+                }
+                buffer ??= new MemoryStream();
+                buffer.Write(chunk, 0, read);
             }
-            buffer.Write(chunk, 0, read);
+            if (tooLarge && await body.ReadAsync(chunk.AsMemory(0, 1), cancellationToken).ConfigureAwait(false) > 0)
+            {
+                throw new RequestBodyTooLargeException();
+            }
+            return buffer?.ToArray() ?? [];
         }
-        if (tooLarge && await body.ReadAsync(chunk.AsMemory(0, 1), cancellationToken).ConfigureAwait(false) > 0)
+        finally
         {
-            throw new RequestBodyTooLargeException();
+            ArrayPool<byte>.Shared.Return(chunk);
         }
-        return buffer.ToArray();
     }
 
     static readonly char[] RubyWhitespace = ['\0', '\t', '\n', '\v', '\f', '\r', ' '];

@@ -166,6 +166,7 @@ public sealed class AccountsBotsController : ApplicationController
             }
             return updated;
         }).ConfigureAwait(false);
+        App.Avatars.Evict(b.Id);
 
         RedirectTo(Routes.AccountBotsUrl(UrlBase));
     }

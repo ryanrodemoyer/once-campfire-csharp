@@ -38,13 +38,20 @@ public class SqliteDatabaseTests
         ["wal_autocheckpoint"] = 0,
     };
 
+    // The writer alone checkpoints at SQLite's default 1,000 pages (WriterCheckpointFallback; a
+    // known difference in README.md).
+    static readonly Dictionary<string, long> WriterPragmas = new(RailsPragmas)
+    {
+        ["wal_autocheckpoint"] = 1000,
+    };
+
     [Fact]
     public async Task Writer_and_readers_use_the_rails_connection_settings()
     {
         using var file = new TestDatabase();
         using var database = Open(file);
 
-        Assert.Equal(RailsPragmas, await database.WriteAsync(tx => Pragmas(tx.Session), Ct));
+        Assert.Equal(WriterPragmas, await database.WriteAsync(tx => Pragmas(tx.Session), Ct));
         Assert.Equal(RailsPragmas, await database.ReadAsync(Pragmas, Ct));
         Assert.Equal("wal", await database.ReadAsync(session => session.Scalar<string>("PRAGMA journal_mode"), Ct));
     }

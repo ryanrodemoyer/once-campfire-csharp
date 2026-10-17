@@ -55,10 +55,9 @@ public sealed class MessageEncryptor
             return null;
         }
         var plaintext = new byte[ciphertext.Length];
-        using var aes = new AesGcm(secret, authTagLength);
         try
         {
-            aes.Decrypt(iv, ciphertext, tag, plaintext);
+            ThreadContexts.AesGcm(secret, authTagLength).Decrypt(iv, ciphertext, tag, plaintext);
             return plaintext;
         }
         catch (AuthenticationTagMismatchException)
@@ -71,10 +70,7 @@ public sealed class MessageEncryptor
     {
         var ciphertext = new byte[plaintext.Length];
         var tag = new byte[authTagLength];
-        using (var aes = new AesGcm(secret, authTagLength))
-        {
-            aes.Encrypt(iv, plaintext, ciphertext, tag);
-        }
+        ThreadContexts.AesGcm(secret, authTagLength).Encrypt(iv, plaintext, ciphertext, tag);
         return $"{RubyBase64.StrictEncode(ciphertext)}--{RubyBase64.StrictEncode(iv)}--{RubyBase64.StrictEncode(tag)}";
     }
 

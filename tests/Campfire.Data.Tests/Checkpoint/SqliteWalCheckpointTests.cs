@@ -318,14 +318,12 @@ public class SqliteWalCheckpointTests
     {
         using var file = new TestDatabase();
         using var writer = OpenWalWriter(file);
-        using var session = new SqliteSession(writer, statementCacheCapacity: 8);
-        var mainBefore = new FileInfo(file.Path).Length;
-        InsertUntilWalExceeds(writer, WriterCheckpointFallback.ThresholdBytes);
-        Assert.Equal(mainBefore, new FileInfo(file.Path).Length);
+        WriterCheckpointFallback.Enable(new SqliteSession(writer, statementCacheCapacity: 8));
 
-        WriterCheckpointFallback.CheckpointIfLarge(session, file.Path);
+        var inserted = InsertUntilCheckpointed(writer, file);
 
-        Assert.True(new FileInfo(file.Path).Length > mainBefore, "expected the writer's checkpoint to copy WAL pages into the database");
+        Assert.True(inserted < 2 * WriterCheckpointFallback.Pages, $"no checkpoint after {inserted} commits");
+        Assert.InRange(WalSize(file.Path), WriterCheckpointFallback.ThresholdBytes, 2 * WriterCheckpointFallback.ThresholdBytes);
     }
 
     [Fact]
@@ -333,21 +331,44 @@ public class SqliteWalCheckpointTests
     {
         using var file = new TestDatabase();
         using var writer = OpenWalWriter(file);
-        using var session = new SqliteSession(writer, statementCacheCapacity: 8);
-        Insert(writer, "small");
+        WriterCheckpointFallback.Enable(new SqliteSession(writer, statementCacheCapacity: 8));
         var mainBefore = new FileInfo(file.Path).Length;
 
-        WriterCheckpointFallback.CheckpointIfLarge(session, file.Path);
+        Insert(writer, "small");
 
         Assert.Equal(mainBefore, new FileInfo(file.Path).Length);
     }
 
-    static void InsertUntilWalExceeds(SqliteConnection writer, long bytes)
+    // After a checkpoint the WAL file keeps its size and is reused from the start. Commits into
+    // the reused file must not each checkpoint again: that put two fsyncs on every write.
+    [Fact]
+    public void The_writer_does_not_checkpoint_every_commit_into_a_reused_WAL()
     {
-        for (var i = 0; WalSize(writer.DataSource) <= bytes; i++)
+        using var file = new TestDatabase();
+        using var writer = OpenWalWriter(file);
+        WriterCheckpointFallback.Enable(new SqliteSession(writer, statementCacheCapacity: 8));
+        InsertUntilCheckpointed(writer, file);
+        var mainBefore = new FileInfo(file.Path).Length;
+
+        for (var i = 0; i < 20; i++)
         {
-            Insert(writer, $"row-{i}-{new string('x', 1000)}");
+            Insert(writer, $"after-{i}-{new string('x', 1000)}");
         }
+
+        Assert.True(WalSize(file.Path) > WriterCheckpointFallback.ThresholdBytes, "expected the WAL file to keep its size");
+        Assert.Equal(mainBefore, new FileInfo(file.Path).Length);
+    }
+
+    // Inserts rows of about 1 KB until a commit checkpoints them into the database file.
+    static int InsertUntilCheckpointed(SqliteConnection writer, TestDatabase file)
+    {
+        var mainBefore = new FileInfo(file.Path).Length;
+        var inserted = 0;
+        while (new FileInfo(file.Path).Length == mainBefore && inserted < 4 * WriterCheckpointFallback.Pages)
+        {
+            Insert(writer, $"row-{inserted++}-{new string('x', 1000)}");
+        }
+        return inserted;
     }
 
     static SqliteWalCheckpoint Checkpointer(TestDatabase file) => new(file.Path, LockPath(file));

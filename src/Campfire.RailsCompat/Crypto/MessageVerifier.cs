@@ -134,9 +134,8 @@ public sealed class MessageVerifier(byte[] secret, MessageDigest digest, Message
     {
         var bytes = Encoding.UTF8.GetBytes(data);
         // Rails still signs cookies and app messages with HMAC-SHA1, so reading them needs it too.
-#pragma warning disable CA5350
-        var mac = digest == MessageDigest.Sha1 ? HMACSHA1.HashData(secret, bytes) : HMACSHA256.HashData(secret, bytes);
-#pragma warning restore CA5350
-        return Convert.ToHexStringLower(mac);
+        Span<byte> mac = stackalloc byte[HMACSHA256.HashSizeInBytes];
+        var length = ThreadContexts.Hmac(digest, secret, bytes, mac);
+        return Convert.ToHexStringLower(mac[..length]);
     }
 }
