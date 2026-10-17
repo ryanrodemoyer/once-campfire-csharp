@@ -1,0 +1,452 @@
+{
+  "metadata": {
+    "verification_revision": "ec02debb3e44f40b8778a6a42db3c4515b2f9eaf",
+    "response_validation": "route-contract-v1",
+    "started_at": "2026-10-14T03:05:55Z",
+    "seed_sha256": "d898aebf5b1159a315a75ff96259fdf272b45de525694e791262ae543f0bee97",
+    "server_cpus": "8-11",
+    "client_cpus": "12-15",
+    "network": "host",
+    "gzip": true,
+    "duration": 8,
+    "concurrencies": "16",
+    "rounds": 3,
+    "loadgen_sha256": "6d46faf6bd409a28705678193422e0a3d69afb1c14fdafce03b6584cb8b17be1",
+    "routes": "room_show,messages_page,sidebar,search",
+    "profile": "mixed-read-write-v1",
+    "mixed_writer": {
+      "clients": 1,
+      "maximum_writes_per_second": 10,
+      "room": 201306877,
+      "catch_up": false
+    },
+    "images": {
+      "rails": "sha256:5fde961b71d4fa6da3757ae28972b7047a80c7bfffc07aef4cba8993695f02ee",
+      "csharp": "sha256:0da5687ad203659174eb9cf879023a0b1e2d2d9e349de6e11492cd5de20a9f41",
+      "rust": "sha256:7eedd0d3baf430a88a8e204b4080dc27a22c265630a3db014bbe3d7fbb6d0e21",
+      "go": "sha256:b94a59bbf8d4a90a3eb86bb3a38e4881414df5aa586ce3b20952c0a5a3fdf774",
+      "express": "sha256:d8716140cfa8aed9c445023887b8f73ad8ee59ac2b1f971fd9cc6c8c20fe3ca9",
+      "django": "sha256:18ac763a219ac2e69de0d144cc5479fabccefe6b16718a6864361ca9c5bbb0a4",
+      "laravel": "sha256:7975bdef8d6e17d8e9c24478e868fc1fc60ce36b24fe853e01ae28f7c6f5749b",
+      "c": "sha256:a3fa73310e2aa96187940dcee11b9e76b293874ab31f3198f556f4e01bb7019c"
+    },
+    "image_labels": {
+      "rails": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "csharp": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "rust": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "go": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "express": {
+        "org.opencontainers.image.revision": "local"
+      },
+      "django": {
+        "org.opencontainers.image.revision": "local"
+      },
+      "laravel": {
+        "org.opencontainers.image.created": "2026-10-04T09:20:17Z",
+        "org.opencontainers.image.description": "The modern PHP app server",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.revision": "233f793654acf53be41385a4a29ac5e126cf6701",
+        "org.opencontainers.image.source": "https://github.com/php/frankenphp",
+        "org.opencontainers.image.title": "FrankenPHP",
+        "org.opencontainers.image.url": "https://frankenphp.dev",
+        "org.opencontainers.image.vendor": "Kévin Dunglas",
+        "org.opencontainers.image.version": "v1.13.0"
+      },
+      "c": {
+        "maintainer": "Clement Verna <cverna@fedoraproject.org>"
+      }
+    },
+    "source_revisions": {
+      "rails": {
+        "head": "edbc779f4dfc9b26c36310881711ddc976a9dfc8",
+        "dirty": false
+      },
+      "csharp": {
+        "head": "3fd196b25f2883d40388d42b612b32b9c048ae80",
+        "dirty": false
+      },
+      "rust": {
+        "head": "6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad",
+        "dirty": false
+      },
+      "go": {
+        "head": "c4ab53d00b0a19a55962e03d18057ca6c3da9437",
+        "dirty": false
+      },
+      "express": {
+        "head": "bb70a7d478160c016393d981e3538987247d3b3d",
+        "dirty": false
+      },
+      "django": {
+        "head": "ac50dacb2fe878d80b16c58895b2f06bb58b056d",
+        "dirty": false
+      },
+      "laravel": {
+        "head": "4093bf2de61d8e00816607f12c058dc218e1d20e",
+        "dirty": false
+      },
+      "c": {
+        "head": "873a51f523de5a0cc235884e5725cfb5521d2027",
+        "dirty": false
+      }
+    },
+    "preflight_only": false,
+    "topology": {
+      "rails": {
+        "http_workers": "3",
+        "threads": "5",
+        "jobs": "Redis/Resque",
+        "cable": "Action Cable",
+        "response_cache_mb": "64"
+      },
+      "csharp": {
+        "processes": 1,
+        "readers": "5",
+        "job_workers": "3",
+        "cable": "Kestrel WebSockets",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      },
+      "rust": {
+        "processes": 1,
+        "readers": "5",
+        "job_workers": "3",
+        "cable": "native tokio",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      },
+      "go": {
+        "processes": 1,
+        "cable": "native websocket",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      },
+      "express": {
+        "http_workers": "auto (cpuset)",
+        "cable": "native ws with cluster IPC",
+        "jobs": "leased auxiliary SQLite",
+        "response_cache_mb": "64"
+      },
+      "django": {
+        "http_workers": "1",
+        "runtime": "ASGI/Uvicorn",
+        "cable": "native",
+        "jobs": "leased auxiliary SQLite",
+        "response_cache_mb": "64"
+      },
+      "laravel": {
+        "http": "FrankenPHP/Octane",
+        "jobs": "leased auxiliary SQLite",
+        "cable": "native ReactPHP",
+        "response_cache_mb": "64"
+      },
+      "c": {
+        "processes": 1,
+        "http_loops": "affinity, capped at 4",
+        "cache_bytes": "67108864",
+        "jobs": "in-process"
+      }
+    },
+    "runtimes": {
+      "rails": "rails",
+      "csharp": "csharp",
+      "rust": "rust",
+      "go": "go",
+      "express": "express",
+      "django": "django",
+      "laravel": "laravel",
+      "c": "c"
+    },
+    "complete": true
+  },
+  "mixed_results": {
+    "rails": {
+      "room_show": {
+        "median_rps": 1023.8,
+        "runs": [
+          1023.8,
+          983.5,
+          1161.5
+        ]
+      },
+      "messages_page": {
+        "median_rps": 1270.9,
+        "runs": [
+          1266.2,
+          1270.9,
+          1380.7
+        ]
+      },
+      "sidebar": {
+        "median_rps": 2436.5,
+        "runs": [
+          2397.9,
+          2475.4,
+          2436.5
+        ]
+      },
+      "search": {
+        "median_rps": 2040.9,
+        "runs": [
+          2040.9,
+          1975.8,
+          2179.7
+        ]
+      }
+    },
+    "csharp": {
+      "room_show": {
+        "median_rps": 20676.8,
+        "runs": [
+          20676.8,
+          20327.0,
+          22056.9
+        ]
+      },
+      "messages_page": {
+        "median_rps": 46163.4,
+        "runs": [
+          44570.5,
+          46498.5,
+          46163.4
+        ]
+      },
+      "sidebar": {
+        "median_rps": 53223.0,
+        "runs": [
+          53223.0,
+          53740.5,
+          52545.6
+        ]
+      },
+      "search": {
+        "median_rps": 51349.8,
+        "runs": [
+          51575.6,
+          51349.8,
+          50618.4
+        ]
+      }
+    },
+    "rust": {
+      "room_show": {
+        "median_rps": 43190.5,
+        "runs": [
+          43284.5,
+          43038.2,
+          43190.5
+        ]
+      },
+      "messages_page": {
+        "median_rps": 42472.8,
+        "runs": [
+          42472.8,
+          42409.8,
+          42549.2
+        ]
+      },
+      "sidebar": {
+        "median_rps": 51308.1,
+        "runs": [
+          51506.3,
+          51308.1,
+          51178.1
+        ]
+      },
+      "search": {
+        "median_rps": 49602.2,
+        "runs": [
+          49983.5,
+          49390.5,
+          49602.2
+        ]
+      }
+    },
+    "go": {
+      "room_show": {
+        "median_rps": 26547.3,
+        "runs": [
+          26604.2,
+          26547.3,
+          26482.7
+        ]
+      },
+      "messages_page": {
+        "median_rps": 27634.0,
+        "runs": [
+          27632.4,
+          27675.0,
+          27634.0
+        ]
+      },
+      "sidebar": {
+        "median_rps": 33614.5,
+        "runs": [
+          33614.5,
+          33458.3,
+          33732.3
+        ]
+      },
+      "search": {
+        "median_rps": 32367.2,
+        "runs": [
+          32419.6,
+          32246.1,
+          32367.2
+        ]
+      }
+    },
+    "express": {
+      "room_show": {
+        "median_rps": 18009.9,
+        "runs": [
+          18556.0,
+          18009.9,
+          17960.7
+        ]
+      },
+      "messages_page": {
+        "median_rps": 30036.7,
+        "runs": [
+          30036.7,
+          30111.4,
+          29712.4
+        ]
+      },
+      "sidebar": {
+        "median_rps": 39576.8,
+        "runs": [
+          39576.8,
+          39616.2,
+          38429.4
+        ]
+      },
+      "search": {
+        "median_rps": 33772.4,
+        "runs": [
+          33672.9,
+          34482.7,
+          33772.4
+        ]
+      }
+    },
+    "django": {
+      "room_show": {
+        "median_rps": 46.0,
+        "runs": [
+          46.2,
+          46.0,
+          45.9
+        ]
+      },
+      "messages_page": {
+        "median_rps": 48.7,
+        "runs": [
+          48.7,
+          49.0,
+          47.2
+        ]
+      },
+      "sidebar": {
+        "median_rps": 189.0,
+        "runs": [
+          188.9,
+          189.0,
+          189.2
+        ]
+      },
+      "search": {
+        "median_rps": 90.9,
+        "runs": [
+          90.2,
+          91.4,
+          90.9
+        ]
+      }
+    },
+    "laravel": {
+      "room_show": {
+        "median_rps": 1333.7,
+        "runs": [
+          1294.7,
+          1349.9,
+          1333.7
+        ]
+      },
+      "messages_page": {
+        "median_rps": 1436.4,
+        "runs": [
+          1436.4,
+          1433.8,
+          1480.5
+        ]
+      },
+      "sidebar": {
+        "median_rps": 2990.2,
+        "runs": [
+          2994.7,
+          2990.2,
+          2969.6
+        ]
+      },
+      "search": {
+        "median_rps": 2392.1,
+        "runs": [
+          2385.1,
+          2392.1,
+          2401.2
+        ]
+      }
+    },
+    "c": {
+      "room_show": {
+        "median_rps": 68266.3,
+        "runs": [
+          67247.9,
+          79894.4,
+          68266.3
+        ]
+      },
+      "messages_page": {
+        "median_rps": 74694.0,
+        "runs": [
+          70264.4,
+          74694.0,
+          76064.9
+        ]
+      },
+      "sidebar": {
+        "median_rps": 82826.6,
+        "runs": [
+          82559.4,
+          82826.6,
+          82929.1
+        ]
+      },
+      "search": {
+        "median_rps": 83301.8,
+        "runs": [
+          79726.4,
+          83668.2,
+          83301.8
+        ]
+      }
+    }
+  }
+}

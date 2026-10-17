@@ -1,0 +1,51 @@
+{
+  "avg_bytes": 9534,
+  "conc": 4,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 13.487,
+    "mean_ms": 0.07,
+    "n": 105052,
+    "p50_ms": 0.068,
+    "p90_ms": 0.089,
+    "p99_ms": 0.125
+  },
+  "ok": 105052,
+  "path": "/searches?q=coffee",
+  "profile": "mixed-read-write-v1",
+  "rps": 52519.3,
+  "secs": 2.0,
+  "statuses": {
+    "200": 105052
+  },
+  "validation": "route-contract-v1",
+  "writer": {
+    "avg_bytes": 9305,
+    "conc": 1,
+    "errors": 0,
+    "gzip": true,
+    "invalid_reasons": {},
+    "invalid_responses": 0,
+    "latency": {
+      "max_ms": 7.551,
+      "mean_ms": 1.02,
+      "n": 20,
+      "p50_ms": 0.674,
+      "p90_ms": 0.809,
+      "p99_ms": 7.551
+    },
+    "ok": 20,
+    "path": "POST /rooms/201306877/messages",
+    "rps": 9.8,
+    "secs": 2.03,
+    "statuses": {
+      "200": 20
+    },
+    "validation": "route-contract-v1"
+  },
+  "writer_rate_limit": 10,
+  "generator_cpu_percent": 66.08983595462682
+}

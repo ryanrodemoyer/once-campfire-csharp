@@ -1,0 +1,12 @@
+# The other Campfire ports, measured beside Rails and C# on the shared harness.
+# One line per app: the harness's app name, the upstream repository, the commit measured.
+# `bench/verification/run ports` checks each out under tmp/ports/ and builds
+# once-campfire-<app>:<first 12 of the commit>. To move a port to its latest commit:
+#   gh api repos/basecamp/once-campfire-<app>/commits/HEAD -q .sha
+rust	https://github.com/basecamp/once-campfire-rust.git	6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad
+go	https://github.com/basecamp/once-campfire-go.git	c4ab53d00b0a19a55962e03d18057ca6c3da9437
+express	https://github.com/basecamp/once-campfire-express.git	bb70a7d478160c016393d981e3538987247d3b3d
+elixir	https://github.com/basecamp/once-campfire-elixir.git	58964cf8a8788b2a20c7bde16dae65b025812593
+django	https://github.com/basecamp/once-campfire-django.git	ac50dacb2fe878d80b16c58895b2f06bb58b056d
+laravel	https://github.com/basecamp/once-campfire-laravel.git	4093bf2de61d8e00816607f12c058dc218e1d20e
+c	https://github.com/basecamp/once-campfire-c.git	873a51f523de5a0cc235884e5725cfb5521d2027

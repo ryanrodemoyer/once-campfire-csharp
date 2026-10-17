@@ -1,0 +1,115 @@
+recorded_at: 2026-10-14T03:04:32Z
+uname: Linux thoru 7.0.0-38-generic #38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+nproc: 16
+governor: powersave
+--- lscpu ---
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  16
+On-line CPU(s) list:                     0-15
+Vendor ID:                               GenuineIntel
+Model name:                              11th Gen Intel(R) Core(TM) i9-11900K @ 3.50GHz
+CPU family:                              6
+Model:                                   167
+Thread(s) per core:                      2
+Core(s) per socket:                      8
+Socket(s):                               1
+Stepping:                                1
+CPU(s) scaling MHz:                      79%
+CPU max MHz:                             5300.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                7008.00
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx avx512f avx512dq rdseed adx smap avx512ifma clflushopt intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm md_clear flush_l1d arch_capabilities
+Virtualization:                          VT-x
+L1d cache:                               384 KiB (8 instances)
+L1i cache:                               256 KiB (8 instances)
+L2 cache:                                4 MiB (8 instances)
+L3 cache:                                16 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-15
+Vulnerability Gather data sampling:      Vulnerable
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; Enhanced IBRS
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+--- thread siblings 8-11 and 12-15 ---
+cpu8 0,8
+cpu9 1,9
+cpu10 2,10
+cpu11 3,11
+cpu12 4,12
+cpu13 5,13
+cpu14 6,14
+cpu15 7,15
+--- mem ---
+MemTotal:       131705744 kB
+MemAvailable:   124677760 kB
+SwapTotal:       8388604 kB
+--- tools ---
+dotnet: 10.0.112
+rustc: rustc 1.98.1 (48a229cea 2026-09-01)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+docker-server: 29.8.2
+ffprobe: ffprobe version 6.1.1-3ubuntu5+esm15 Copyright (c) 2007-2023 the FFmpeg developers
+ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [x86_64-linux]
+3.46.1 2024-08-13 09:16:08 c9c2ab54ba1f5f46360f1b4f35d849cd3f080e6fc2b6c60e91b16c63f69aalt1 (64-bit)
+git version 2.47.3
+--- source ---
+csharp_head: 3fd196b25f2883d40388d42b612b32b9c048ae80
+csharp_status: 
+rails_head: edbc779f4dfc9b26c36310881711ddc976a9dfc8
+verification_head: ec02debb3e44f40b8778a6a42db3c4515b2f9eaf
+patch_sha256: 4b88655e8584cc323fe646434fe80f708ea71dc6d8c6316040d9f3b70588a9b5
+loadgen_sha256: 6d46faf6bd409a28705678193422e0a3d69afb1c14fdafce03b6584cb8b17be1
+seed_sha256: d898aebf5b1159a315a75ff96259fdf272b45de525694e791262ae543f0bee97
+apps: rails,csharp,rust,go,express,django,laravel,c
+--- images ---
+rails_image: campfire-reference:app-edbc779
+rails_id: sha256:5fde961b71d4fa6da3757ae28972b7047a80c7bfffc07aef4cba8993695f02ee
+APP_VERSION=parity
+GIT_REVISION=edbc779f4dfc9b26c36310881711ddc976a9dfc8
+csharp_image: campfire-csharp:perf8
+csharp_id: sha256:0da5687ad203659174eb9cf879023a0b1e2d2d9e349de6e11492cd5de20a9f41
+DOTNET_CLI_TELEMETRY_OPTOUT=1
+DOTNET_GCDynamicAdaptationMode=0
+APP_VERSION=perf8
+GIT_REVISION=3fd196b25f2883d40388d42b612b32b9c048ae80
+csharp_binary_sha256: af3c42da1ed4b8c4aa36fd538c05cf0a7f53c9b6c24e0f294303e496243a07b2  /app/campfire
+csharp_bench_env: {"CAMPFIRE_THRUSTER":"0"}
+rust_head: 6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad
+rust_image: once-campfire-rust:6dae2fd3c1a2
+rust_id: sha256:7eedd0d3baf430a88a8e204b4080dc27a22c265630a3db014bbe3d7fbb6d0e21
+go_head: c4ab53d00b0a19a55962e03d18057ca6c3da9437
+go_image: once-campfire-go:c4ab53d00b0a
+go_id: sha256:b94a59bbf8d4a90a3eb86bb3a38e4881414df5aa586ce3b20952c0a5a3fdf774
+express_head: bb70a7d478160c016393d981e3538987247d3b3d
+express_image: once-campfire-express:bb70a7d47816
+express_id: sha256:d8716140cfa8aed9c445023887b8f73ad8ee59ac2b1f971fd9cc6c8c20fe3ca9
+django_head: ac50dacb2fe878d80b16c58895b2f06bb58b056d
+django_image: once-campfire-django:ac50dacb2fe8
+django_id: sha256:18ac763a219ac2e69de0d144cc5479fabccefe6b16718a6864361ca9c5bbb0a4
+laravel_head: 4093bf2de61d8e00816607f12c058dc218e1d20e
+laravel_image: once-campfire-laravel:4093bf2de61d
+laravel_id: sha256:7975bdef8d6e17d8e9c24478e868fc1fc60ce36b24fe853e01ae28f7c6f5749b
+c_head: 873a51f523de5a0cc235884e5725cfb5521d2027
+c_image: once-campfire-c:873a51f523de
+c_id: sha256:a3fa73310e2aa96187940dcee11b9e76b293874ab31f3198f556f4e01bb7019c
+runner_image: campfire-b07-runner
+runner_id: sha256:b7abed73e0ec72f904c9b999183851a2e7be2e254ff0506d000b9f84662b4b17
+runner_cpus: 0-7,12-15

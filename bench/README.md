@@ -1,10 +1,17 @@
 # Benchmarks
 
-The C# port is measured with the Rust port's harness, so its numbers line up with the published
-Rails, Go and Rust columns: the same seed (`parity/.seed/default`), the same load generator
-(`reference-rust/bench/loadgen`), CPU pinning, alternating sequential runs and the same suites.
-`bench/bin/run` is `reference-rust/bench/run` with a `csharp` app added and with every measured
-response first validated against Rails.
+**Every benchmark runs on the shared harness in [`verification/`](verification).** That is
+[basecamp/once-campfire-verification](https://github.com/basecamp/once-campfire-verification), the
+harness upstream uses for every port. One run measures Rails, C# and any of the other ports
+(Rust, Go, Express, Elixir, Django, Laravel, C) on the same seed, CPUs and response contracts, one
+app at a time. Rails and C# are published in [`RESULTS.md`](RESULTS.md), and every port side by
+side in [`PORTS.md`](PORTS.md). Start with
+[`verification/README.md`](verification/README.md).
+
+The rest of this page describes `bench/bin/run`, the Rust port's own harness with a `csharp` app
+added, which this repo used before B07. It is kept for its extra suites (c=1 and c=64 sweeps,
+cold start, memory, Action Cable fan-out, uploads). Don't compare its numbers with the shared
+harness's: the seed, route validation and suites differ.
 
 **No numbers are published before B07** (AGENTS.md). Runs before then are internal.
 
