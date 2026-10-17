@@ -126,6 +126,19 @@ exec /usr/local/bin/campfire backup
 EOF
 COPY --chmod=755 reference/hooks/post-restore /hooks/post-restore
 
+# The admin scripts reference/docs/self-hosting.md has people run, at the reference's paths:
+# `docker run --rm IMAGE script/admin/generate-secrets` (reference/script/admin/generate-secrets)
+# and `docker exec campfire script/admin/prepare-backup` (reference/script/admin/prepare-backup).
+COPY --chmod=755 <<'EOF' /rails/script/admin/generate-secrets
+#!/bin/sh
+exec /usr/local/bin/campfire generate-secrets
+EOF
+COPY --chmod=755 <<'EOF' /rails/script/admin/prepare-backup
+#!/bin/sh
+cd /rails
+exec /usr/local/bin/campfire backup
+EOF
+
 USER 1000:1000
 
 # Configure environment defaults. The HTTP_* timeouts are Thruster's, as in the reference.

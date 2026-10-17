@@ -4,13 +4,14 @@ using Campfire.Data.Sqlite;
 namespace Campfire.Server.Cli;
 
 /// <summary>
-/// <c>campfire [server|db:prepare|backup]</c>. <c>server</c> (the default) is the reference's
-/// <c>bin/start-app</c>: <c>db:prepare</c>, then the app. <c>backup</c> is
-/// <c>script/admin/prepare-backup</c>, which the ONCE pre-backup hook runs.
+/// <c>campfire [server|db:prepare|backup|generate-secrets]</c>. <c>server</c> (the default) is the
+/// reference's <c>bin/start-app</c>: <c>db:prepare</c>, then the app. <c>backup</c> is
+/// <c>script/admin/prepare-backup</c>, which the ONCE pre-backup hook runs, and
+/// <c>generate-secrets</c> is <c>script/admin/generate-secrets</c>.
 /// </summary>
 public static partial class Commands
 {
-    public const string Usage = "usage: campfire [server|db:prepare|backup] [server options]";
+    public const string Usage = "usage: campfire [server|db:prepare|backup|generate-secrets] [server options]";
 
     // sysexits.h EX_USAGE
     const int usageError = 64;
@@ -37,6 +38,12 @@ public static partial class Commands
                     return 0;
                 case "backup" when rest.Length == 0:
                     return RunBackup(settings, error);
+                case "generate-secrets" when rest.Length == 0:
+                    foreach (var line in GenerateSecrets.Lines())
+                    {
+                        await output.WriteLineAsync(line).ConfigureAwait(false);
+                    }
+                    return 0;
                 case "help" or "--help" or "-h":
                     await output.WriteLineAsync(Usage).ConfigureAwait(false);
                     return 0;
