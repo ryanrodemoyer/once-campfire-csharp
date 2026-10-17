@@ -75,22 +75,19 @@ public sealed class ResponseCache
 
     /// <summary>
     /// <c>budget</c>: <c>CAMPFIRE_RESPONSE_CACHE_MB</c> (default 64, <c>to_i</c> then at least 0)
-    /// mebibytes, read on every call. <see cref="BudgetOverride"/> replaces that, the way the
-    /// model tests stub <c>budget</c>.
+    /// mebibytes. <see cref="BudgetOverride"/> replaces that, the way the model tests stub <c>budget</c>.
     /// </summary>
-    public long Budget
-    {
-        get
-        {
-            if (BudgetOverride is long over)
-            {
-                return Math.Max(over, 0);
-            }
-            var raw = Environment.GetEnvironmentVariable("CAMPFIRE_RESPONSE_CACHE_MB");
-            var megabytes = raw is null ? 64 : RubyToI(raw);
-            return Math.Max(megabytes, 0) * 1024L * 1024L;
-        }
-    }
+    /// <remarks>
+    /// Rails reads <c>ENV</c> on every call. A running process's environment doesn't change (nothing here
+    /// sets this variable), and a lookup on each of the five or so calls a request makes was about 4%
+    /// of a busy room page's CPU, so the variable is read once.
+    /// </remarks>
+    public long Budget => BudgetOverride is long over ? Math.Max(over, 0) : EnvironmentBudget;
+
+    static readonly long EnvironmentBudget = ParseBudget(Environment.GetEnvironmentVariable("CAMPFIRE_RESPONSE_CACHE_MB"));
+
+    /// <summary>The bytes <c>CAMPFIRE_RESPONSE_CACHE_MB=<paramref name="raw"/></c> allows; unset is 64 MiB.</summary>
+    internal static long ParseBudget(string? raw) => Math.Max(raw is null ? 64 : RubyToI(raw), 0) * 1024L * 1024L;
 
     /// <summary><c>version</c>: the database path, this connection's namespace and <c>data_version</c>.</summary>
     public CacheVersion? Version()
