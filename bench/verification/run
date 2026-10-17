@@ -124,13 +124,14 @@ port_image() {
   echo "${!var:-once-campfire-$1:$(port_commit "$1" | cut -c1-12)}"
 }
 
-# Check out each port at its pinned commit and build its production image. A port that
-# fails to build is reported at the end; the others are still built.
+# Check out each port in APPS at its pinned commit and build its production image. A port
+# that fails to build is reported at the end; the others are still built.
 build_ports() {
   mkdir -p "$PORTS_DIR"
   local app repo commit source image failed=()
   while IFS=$'\t' read -r app repo commit; do
     case "$app" in '' | '#'*) continue ;; esac
+    other_apps | grep -qx "$app" || continue
     source=$PORTS_DIR/once-campfire-$app
     [ -d "$source/.git" ] || git clone --no-checkout "$repo" "$source"
     git -C "$source" fetch --quiet origin

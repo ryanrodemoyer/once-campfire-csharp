@@ -30,15 +30,15 @@ python3 bench/verification/summarize.py bench/results/verify-session-1-normal
 
 ### Every port on one run
 
-[`ports.tsv`](ports.tsv) pins the other ports to an upstream commit each. `run ports` checks them
-out under `tmp/ports/` and builds `once-campfire-<app>:<commit>`. Elixir's toolchain image and C's
+[`ports.tsv`](ports.tsv) pins the other ports to an upstream commit each. `run ports` checks out
+the ones named in `APPS` under `tmp/ports/` and builds `once-campfire-<app>:<commit>`. Elixir's toolchain image and C's
 binary (built in a Fedora container, as its `bench/run-c` does on a Fedora host) are built along
-the way. `APPS` then picks what is measured:
+the way. The same `APPS` then picks what is measured:
 
 ```sh
+export APPS=rails,csharp,rust,go,express,elixir,django,laravel,c
 bench/verification/run ports
-APPS=rails,csharp,rust,go,express,elixir,django,laravel,c \
-  CSHARP_BENCH_ENV='{"CAMPFIRE_THRUSTER":"0"}' \
+CSHARP_BENCH_ENV='{"CAMPFIRE_THRUSTER":"0"}' \
   bench/verification/run bench normal "$PWD/bench/results/<name>-normal"
 python3 bench/verification/summarize.py bench/results/<name>-normal
 ```
