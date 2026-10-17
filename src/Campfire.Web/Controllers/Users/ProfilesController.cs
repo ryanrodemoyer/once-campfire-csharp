@@ -96,6 +96,8 @@ public sealed class UsersProfilesController : ApplicationController
                     break;
             }
         }).ConfigureAwait(false);
+        // The initials and the avatar are the ones Thruster would have kept; this one is replaced at once.
+        App.Avatars.Evict(user.Id);
 
         RedirectTo(Routes.UserProfileUrl(UrlBase), notice: UpdateNotice());
     }

@@ -67,12 +67,19 @@ public sealed partial class WebApp
 
     ResponseCacheStore? responses;
     FragmentStore? fragments;
+    AvatarCache? avatars;
 
     /// <summary>The page cache for this database (reference/app/models/response_cache.rb). One per app, not per process.</summary>
     public ResponseCacheStore Responses => Share(ref responses, () => new ResponseCacheStore(() => Database.Path));
 
     /// <summary>The fragment and record-snapshot store (reference/app/models/fragment_cache.rb).</summary>
     public FragmentStore Fragments => Share(ref fragments, () => new FragmentStore(FragmentStore.DefaultBytes));
+
+    /// <summary>
+    /// The avatars, kept for the 30 minutes the reference lets them be cached
+    /// (reference/app/controllers/users/avatars_controller.rb), which in its image Thruster does.
+    /// </summary>
+    public AvatarCache Avatars => Share(ref avatars, () => new AvatarCache(Clock));
 
     /// <summary>One store even when two first requests arrive together. The loser is unused, so it never opens an observer.</summary>
     static T Share<T>(ref T? location, Func<T> create) where T : class
