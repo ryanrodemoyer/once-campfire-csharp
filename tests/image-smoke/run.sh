@@ -2,7 +2,8 @@
 # Builds the production image (the root Dockerfile), runs it the way the image runs by default
 # (bin/boot: Thruster in front of `campfire server`) on an empty storage directory, and drives it
 # with smoke.mjs: /up, first run, a room page, a message over /cable and an uploaded image's
-# thumbnail. Then it starts the image again with CAMPFIRE_THRUSTER=0 and checks that the app runs
+# thumbnail. It runs the admin scripts reference/docs/self-hosting.md names,
+# script/admin/generate-secrets and script/admin/prepare-backup. Then it starts the image again with CAMPFIRE_THRUSTER=0 and checks that the app runs
 # alone on HTTP_PORT. CI runs this in .github/workflows/image.yml.
 #
 #   tests/image-smoke/run.sh [IMAGE]
@@ -35,6 +36,17 @@ trap cleanup EXIT
 echo "== Building the production image: $image"
 docker build -t "$image" .
 
+echo "== Checking script/admin/generate-secrets prints the reference script's three lines"
+secrets=$(docker run --rm "$image" script/admin/generate-secrets)
+[ "$(wc -l <<<"$secrets")" -eq 3 ] &&
+  grep -qE '^SECRET_KEY_BASE=[0-9a-f]{128}$' <<<"$secrets" &&
+  grep -qE '^VAPID_PRIVATE_KEY=[A-Za-z0-9_-]{40,43}={0,2}$' <<<"$secrets" &&
+  grep -qE '^VAPID_PUBLIC_KEY=B[A-Za-z0-9_-]{86}=$' <<<"$secrets" || {
+  echo "unexpected script/admin/generate-secrets output:" >&2
+  echo "$secrets" >&2
+  exit 1
+}
+
 echo "== Starting it on empty storage"
 mkdir -p "$work/storage/db"
 # The container runs as uid 1000; the scratch storage must be writable by it.
@@ -56,6 +68,16 @@ grep -qF 'Now listening on: http://0.0.0.0:3000' <<<"$logs"
 
 echo "== Driving http://127.0.0.1:$port"
 node tests/image-smoke/smoke.mjs "http://127.0.0.1:$port"
+
+echo "== Checking script/admin/prepare-backup snapshots the database into storage/backups"
+docker exec "$name" script/admin/prepare-backup
+backup="$work/storage/backups/production.sqlite3"
+[ "$(head -c 15 "$backup")" = "SQLite format 3" ] || {
+  echo "storage/backups/production.sqlite3 is not an SQLite database" >&2
+  exit 1
+}
+# The account smoke.mjs created on first run is in the snapshot.
+grep -qaF "smoke@example.com" "$backup"
 
 echo "== Checking CAMPFIRE_THRUSTER=0 runs campfire server alone on HTTP_PORT"
 docker rm -f "$name" >/dev/null
