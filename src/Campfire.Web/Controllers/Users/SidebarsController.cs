@@ -95,7 +95,7 @@ public sealed class UsersSidebarsController : ApplicationController
             {
                 Headers["Link"] = link;
             }
-            return buffer.WrittenMemory;
+            return buffer.WrittenMemory.ToArray();
         }).ConfigureAwait(false);
         Render(page, MimeType.Html.Value);
     }

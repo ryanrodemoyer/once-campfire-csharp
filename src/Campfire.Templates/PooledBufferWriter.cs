@@ -18,13 +18,26 @@ public sealed class PooledBufferWriter : IBufferWriter<byte>, IDisposable
     byte[] buffer;
     int written;
 
+    /// <summary>
+    /// Overwrite what was written with 0xFF on <see cref="Dispose"/>. Tests turn this on, so that
+    /// anything still reading <see cref="WrittenMemory"/> after the buffer went back to the pool
+    /// sees invalid UTF-8 at once. In production it would instead race whichever request rents
+    /// the array next, and fail about once in 300,000 responses.
+    /// </summary>
+    public static bool PoisonOnDispose { get; set; }
+
     public PooledBufferWriter()
     {
         buffer = ArrayPool<byte>.Shared.Rent(initialCapacity);
     }
 
+    /// <summary>The bytes written so far. Valid until <see cref="Dispose"/>; copy them to keep them.</summary>
     public ReadOnlySpan<byte> WrittenSpan => buffer.AsSpan(0, written);
 
+    /// <summary>
+    /// The bytes written so far. Valid until <see cref="Dispose"/>: never return this from the
+    /// <c>using</c> scope that owns the writer. Return <c>WrittenMemory.ToArray()</c> instead.
+    /// </summary>
     public ReadOnlyMemory<byte> WrittenMemory => buffer.AsMemory(0, written);
 
     public void Advance(int count)
@@ -67,6 +80,10 @@ public sealed class PooledBufferWriter : IBufferWriter<byte>, IDisposable
     {
         if (buffer.Length > 0)
         {
+            if (PoisonOnDispose)
+            {
+                buffer.AsSpan(0, written).Fill(0xFF);
+            }
             ArrayPool<byte>.Shared.Return(buffer);
             buffer = [];
         }

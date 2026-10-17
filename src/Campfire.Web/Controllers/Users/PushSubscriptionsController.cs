@@ -207,7 +207,7 @@ public sealed class UsersPushSubscriptionsController : ApplicationController
         {
             Headers["Link"] = link;
         }
-        return buffer.WrittenMemory;
+        return buffer.WrittenMemory.ToArray();
     }
 
     static string RenderString(Action<HtmlWriter> template)
