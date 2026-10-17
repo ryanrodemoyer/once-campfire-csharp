@@ -18,7 +18,11 @@
 #
 # The host has no Ruby or sqlite3. bin/benchmark runs in campfire-b07-runner, pinned off
 # the app CPUs. That container starts the app containers on the host daemon. The load
-# generator is taskset to 12-15 inside the runner, which is allowed those CPUs.
+# generator is taskset to CLIENT_CPUS inside the runner, which is allowed those CPUs.
+#
+# APP_CPUS (default 8-11), CLIENT_CPUS (12-15) and RUNNER_CPUS (0-7,12-15) place the app, the
+# load generator and the runner. RUNNER_CPUS must include CLIENT_CPUS and leave out APP_CPUS. On
+# a VM with 11 cores and SMT off, for example: APP_CPUS=7-10 CLIENT_CPUS=3-6 RUNNER_CPUS=0-6.
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
@@ -39,8 +43,10 @@ APPS=${APPS:-rails,csharp}
 CSHARP_SOURCE=${CSHARP_SOURCE:-$ROOT}
 PORTS_FILE=$VER/ports.tsv
 PORTS_DIR=$ROOT/tmp/ports
-# App containers use 8-11. The runner may use every other logical CPU, including the
-# load generator's 12-15, and must not run on the app's CPUs.
+# App containers use APP_CPUS. The runner may use every other logical CPU, including the
+# load generator's CLIENT_CPUS, and must not run on the app's CPUs.
+APP_CPUS=${APP_CPUS:-8-11}
+CLIENT_CPUS=${CLIENT_CPUS:-12-15}
 RUNNER_CPUS=${RUNNER_CPUS:-0-7,12-15}
 
 die() { echo "bench/verification: $*" >&2; exit 1; }
@@ -89,6 +95,14 @@ prepare_workspace() {
 # The apps in APPS other than Rails and C#: the ports listed in ports.tsv.
 other_apps() {
   tr ',' '\n' <<<"$APPS" | grep -vx -e rails -e csharp || true
+}
+
+# "7-10,3" -> "7 8 9 10 3": the CPU numbers in a cpuset list.
+cpu_numbers() {
+  local part
+  for part in $(tr ',' ' ' <<<"$1"); do
+    if [[ $part == *-* ]]; then seq "${part%-*}" "${part#*-}"; else echo "$part"; fi
+  done | tr '\n' ' '
 }
 
 env_prefix() {
@@ -220,7 +234,7 @@ in_runner() {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /usr/bin/docker:/usr/bin/docker:ro \
     -v /tmp:/tmp \
-    -v /home/rodey/Code:/home/rodey/Code \
+    -v "$(dirname "$ROOT")":"$(dirname "$ROOT")" \
     -w "$work" \
     "$RUNNER_IMAGE" \
     "$@"
@@ -289,8 +303,8 @@ write_provenance() {
     echo "governor: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo unknown)"
     echo "--- lscpu ---"
     lscpu
-    echo "--- thread siblings 8-11 and 12-15 ---"
-    for cpu in 8 9 10 11 12 13 14 15; do
+    echo "--- thread siblings $APP_CPUS and $CLIENT_CPUS ---"
+    for cpu in $(cpu_numbers "$APP_CPUS,$CLIENT_CPUS"); do
       echo "cpu$cpu $(cat /sys/devices/system/cpu/cpu$cpu/topology/thread_siblings_list)"
     done
     echo "--- mem ---"
@@ -334,6 +348,8 @@ write_provenance() {
     done
     echo "runner_image: $RUNNER_IMAGE"
     docker image inspect -f 'runner_id: {{.Id}}' "$RUNNER_IMAGE"
+    echo "app_cpus: $APP_CPUS"
+    echo "client_cpus: $CLIENT_CPUS"
     echo "runner_cpus: $RUNNER_CPUS"
   } > "$out/provenance.txt"
 }
@@ -393,8 +409,8 @@ bench_one() {
     --rounds 3
     --duration 8
     --concurrencies 16
-    --cpus 8-11
-    --client-cpus 12-15)
+    --cpus "$APP_CPUS"
+    --client-cpus "$CLIENT_CPUS")
   if [ "$profile" = mixed ]; then
     args+=(--mixed-write-rate 10)
   fi
@@ -448,8 +464,8 @@ case "$cmd" in
       --output "$ROOT/tmp/b07-preflight" \
       --rounds 2 \
       --preflight \
-      --cpus 8-11 \
-      --client-cpus 12-15
+      --cpus "$APP_CPUS" \
+      --client-cpus "$CLIENT_CPUS"
     ;;
   bench)
     [ $# -eq 3 ] || die "usage: bench/verification/run bench normal|mixed OUTPUT_DIR"

@@ -43,7 +43,8 @@ APPS=rails,csharp,rust,go,express,elixir,django,laravel,c \
 python3 bench/verification/summarize.py bench/results/<name>-normal
 ```
 
-The harness still runs one app at a time on CPUs 8-11, alternating the order between rounds,
+The harness still runs one app at a time on `APP_CPUS` (8-11 unless set; see the top of `run`
+to place the app, the load generator and the runner on another machine), alternating the order between rounds,
 so a run takes about four minutes per app and profile. With more than Rails and C#,
 `summarize.py` prints requests per second, p99 and each app's multiple of Rails, one column per
 app. To move a port to its latest commit, edit its line in `ports.tsv` (the file says how).
