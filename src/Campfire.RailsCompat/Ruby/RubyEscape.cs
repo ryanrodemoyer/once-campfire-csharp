@@ -1,3 +1,5 @@
+using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Campfire.RailsCompat.Ruby;
@@ -42,39 +44,94 @@ public static class RubyEscape
     }
 
     /// <summary><c>CGI.escape</c>: everything but <c>A-Za-z0-9_.-~</c> is percent-encoded, a space as <c>+</c>.</summary>
-    public static string CgiEscape(string s) => PercentEncode(s, spaceAsPlus: true, keep: "_.-~");
+    public static string CgiEscape(string s) => PercentEncode(s, spaceAsPlus: true, UrlSafe);
 
     /// <summary>
     /// <c>ERB::Util.url_encode</c>: everything but <c>A-Za-z0-9_.-~</c> is percent-encoded, a space as
     /// <c>%20</c>. Addressable's <c>encode_component(s, UNRESERVED)</c> keeps the same set.
     /// </summary>
-    public static string UrlEncode(string s) => PercentEncode(s, spaceAsPlus: false, keep: "_.-~");
+    public static string UrlEncode(string s) => PercentEncode(s, spaceAsPlus: false, UrlSafe);
 
     /// <summary>
     /// <c>Rack::Utils.escape</c> (<c>URI.encode_www_form_component</c>): everything but
     /// <c>A-Za-z0-9*-._</c> is percent-encoded, a space as <c>+</c>. Cookie values are escaped this way.
     /// </summary>
-    public static string RackEscape(string s) => PercentEncode(s, spaceAsPlus: true, keep: "*-._");
+    public static string RackEscape(string s) => PercentEncode(s, spaceAsPlus: true, RackSafe);
 
-    static string PercentEncode(string s, bool spaceAsPlus, string keep)
+    /// <summary>Appends <see cref="RackEscape"/> of <paramref name="s"/> to <paramref name="handler"/>, without a string of its own.</summary>
+    internal static void AppendRackEscaped(ref DefaultInterpolatedStringHandler handler, string s)
     {
-        var builder = new StringBuilder(s.Length);
-        foreach (var b in Encoding.UTF8.GetBytes(s))
+        if (s.AsSpan().IndexOfAnyExcept(RackSafe) < 0)
         {
-            var c = (char)b;
-            if (char.IsAsciiLetterOrDigit(c) || keep.Contains(c, StringComparison.Ordinal))
+            handler.AppendFormatted(s);
+            return;
+        }
+        AppendPercentEncoded(ref handler, s, spaceAsPlus: true, RackSafe);
+    }
+
+    // The bytes that are kept as they are: ASCII letters and digits and these.
+    static readonly SearchValues<char> UrlSafe = SearchValues.Create("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-~");
+    static readonly SearchValues<char> RackSafe = SearchValues.Create("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*-._");
+
+    const int stackBytes = 256;
+    const int stackChars = 1024;
+    const int stageChars = 192;
+
+    static string PercentEncode(string s, bool spaceAsPlus, SearchValues<char> safe)
+    {
+        // Nothing needs escaping: the text is the string that came in.
+        if (s.AsSpan().IndexOfAnyExcept(safe) < 0)
+        {
+            return s;
+        }
+        var handler = new DefaultInterpolatedStringHandler(0, 0, null, stackalloc char[stackChars]);
+        AppendPercentEncoded(ref handler, s, spaceAsPlus, safe);
+        return handler.ToStringAndClear();
+    }
+
+    static void AppendPercentEncoded(ref DefaultInterpolatedStringHandler handler, string s, bool spaceAsPlus, SearchValues<char> safe)
+    {
+        var maxBytes = Encoding.UTF8.GetMaxByteCount(s.Length);
+        byte[]? rented = null;
+        Span<byte> bytes = maxBytes <= stackBytes ? stackalloc byte[stackBytes] : (rented = ArrayPool<byte>.Shared.Rent(maxBytes));
+        try
+        {
+            var count = Encoding.UTF8.GetBytes(s, bytes);
+            // Escaped text is built a stage at a time: one append to the handler for every 190 characters or so.
+            Span<char> stage = stackalloc char[stageChars];
+            var length = 0;
+            for (var i = 0; i < count; i++)
             {
-                builder.Append(c);
+                if (length > stageChars - 3)
+                {
+                    handler.AppendFormatted(stage[..length]);
+                    length = 0;
+                }
+                var b = bytes[i];
+                var c = (char)b;
+                if (safe.Contains(c))
+                {
+                    stage[length++] = c;
+                }
+                else if (c == ' ' && spaceAsPlus)
+                {
+                    stage[length++] = '+';
+                }
+                else
+                {
+                    stage[length++] = '%';
+                    stage[length++] = Hex[b >> 4];
+                    stage[length++] = Hex[b & 0xf];
+                }
             }
-            else if (c == ' ' && spaceAsPlus)
+            handler.AppendFormatted(stage[..length]);
+        }
+        finally
+        {
+            if (rented is not null)
             {
-                builder.Append('+');
-            }
-            else
-            {
-                builder.Append('%').Append(Hex[b >> 4]).Append(Hex[b & 0xf]);
+                ArrayPool<byte>.Shared.Return(rented);
             }
         }
-        return builder.ToString();
     }
 }
