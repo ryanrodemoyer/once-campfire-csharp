@@ -19,6 +19,9 @@ public sealed partial class RequestUrl
     readonly bool assumeSsl;
     string? scheme;
     string? rawHostWithPort;
+    string? host;
+    int? port;
+    string? baseUrl;
 
     public RequestUrl(HttpRequest request, bool assumeSsl = false)
     {
@@ -43,19 +46,10 @@ public sealed partial class RequestUrl
     public string RawHostWithPort => rawHostWithPort ??= ResolveRawHostWithPort();
 
     /// <summary><c>request.host</c>: <see cref="RawHostWithPort"/> without a trailing <c>:port</c>.</summary>
-    public string Host => TrailingPort().Replace(RawHostWithPort, "", 1);
+    public string Host => host ??= WithoutTrailingPort(RawHostWithPort);
 
     /// <summary><c>request.port</c>: the host's port, else the protocol's.</summary>
-    public int Port
-    {
-        get
-        {
-            var match = TrailingPort().Match(RawHostWithPort);
-            return match.Success && int.TryParse(match.Groups[1].ValueSpan, NumberStyles.None, CultureInfo.InvariantCulture, out var port)
-                ? port
-                : StandardPort;
-        }
-    }
+    public int Port => port ??= ResolvePort();
 
     public int StandardPort => IsSsl ? 443 : 80;
 
@@ -66,7 +60,7 @@ public sealed partial class RequestUrl
     public string HostWithPort => OptionalPort is { } port ? $"{Host}:{port.ToString(CultureInfo.InvariantCulture)}" : Host;
 
     /// <summary><c>request.base_url</c>, for example <c>http://campfire.test</c>.</summary>
-    public string BaseUrl => Protocol + HostWithPort;
+    public string BaseUrl => baseUrl ??= Protocol + HostWithPort;
 
     /// <summary>
     /// Rack's <c>fullpath</c>: the raw path (<c>SCRIPT_NAME</c> + <c>PATH_INFO</c>) and the query
@@ -156,8 +150,39 @@ public sealed partial class RequestUrl
 
     string? Header(string name) => request.Headers.TryGetValue(name, out var value) ? value.ToString() : null;
 
-    [GeneratedRegex(@":(\d+)$")]
-    private static partial Regex TrailingPort();
+    int ResolvePort() =>
+        TrailingPort(RawHostWithPort, out _, out var digits) && int.TryParse(digits, NumberStyles.None, CultureInfo.InvariantCulture, out var number)
+            ? number
+            : StandardPort;
+
+    static string WithoutTrailingPort(string rawHostWithPort) =>
+        TrailingPort(rawHostWithPort, out var colon, out var digits)
+            ? string.Concat(rawHostWithPort.AsSpan(0, colon), rawHostWithPort.AsSpan(colon + 1 + digits.Length))
+            : rawHostWithPort;
+
+    /// <summary>
+    /// What <c>/:(\d+)$/</c> finds in a host: a colon and the digits, any Unicode digit as <c>\d</c> is, that run to the end
+    /// of the string or to a final newline, where <c>$</c> also matches. The first such colon is the last one, so the
+    /// host is read from its end.
+    /// </summary>
+    static bool TrailingPort(string host, out int colon, out ReadOnlySpan<char> digits)
+    {
+        var end = host.Length > 0 && host[^1] == '\n' ? host.Length - 1 : host.Length;
+        var start = end;
+        while (start > 0 && char.IsDigit(host[start - 1]))
+        {
+            start--;
+        }
+        if (start < end && start > 0 && host[start - 1] == ':')
+        {
+            colon = start - 1;
+            digits = host.AsSpan(start, end - start);
+            return true;
+        }
+        colon = -1;
+        digits = default;
+        return false;
+    }
 
     [GeneratedRegex(@",\s?")]
     private static partial Regex ForwardedHostSeparator();
