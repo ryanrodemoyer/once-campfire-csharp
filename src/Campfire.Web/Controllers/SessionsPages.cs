@@ -52,7 +52,7 @@ static class SessionsPages
             {
                 controller.Headers["Link"] = link;
             }
-            return buffer.WrittenMemory;
+            return buffer.WrittenMemory.ToArray();
         }).ConfigureAwait(false);
         controller.Render(page, MimeType.Html.Value, status);
     }

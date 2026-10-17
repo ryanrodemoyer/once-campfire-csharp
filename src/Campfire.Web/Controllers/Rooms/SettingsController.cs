@@ -165,7 +165,7 @@ public abstract class RoomSettingsController : ApplicationController
             {
                 Headers["Link"] = link;
             }
-            return buffer.WrittenMemory;
+            return buffer.WrittenMemory.ToArray();
         }).ConfigureAwait(false);
         Render(page, MimeType.Html.Value);
     }
