@@ -1,4 +1,9 @@
-# Published benchmark
+# B07 development baseline
+
+**Superseded.** The published numbers are the final run in [`PORTS.md`](PORTS.md): every port, on a
+cloud VM, from `main` at `513ab6d`. This page is kept as the record of B07, the first validated
+Rails-vs-C# run, measured on a development desktop before any of the performance work. Its absolute
+numbers don't compare with `PORTS.md`.
 
 The headline is the C#/Rails ratio measured in the same session on this machine.
 It is not a comparison with numbers published from any other machine.

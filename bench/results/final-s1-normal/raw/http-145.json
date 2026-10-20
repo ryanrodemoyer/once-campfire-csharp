@@ -1,0 +1,25 @@
+{
+  "avg_bytes": 19523,
+  "conc": 4,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 20.831,
+    "mean_ms": 0.35,
+    "n": 22936,
+    "p50_ms": 0.24,
+    "p90_ms": 0.487,
+    "p99_ms": 1.219
+  },
+  "ok": 22936,
+  "path": "/rooms/486777696",
+  "rps": 11443.1,
+  "secs": 2.0,
+  "statuses": {
+    "200": 22936
+  },
+  "validation": "route-contract-v1",
+  "generator_cpu_percent": 23.3203589098526
+}

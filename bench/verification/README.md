@@ -20,7 +20,8 @@ and `edbc779` has three migrations after that pin, so `run prepare` then runs
 `bin/rails db:prepare` in the edbc779 image. Both measured apps boot that same migrated
 seed. Credentials stay in `tmp/b07-seed/` and are not committed.
 
-Published numbers are in [`../RESULTS.md`](../RESULTS.md).
+Published numbers are in [`../PORTS.md`](../PORTS.md). [`../RESULTS.md`](../RESULTS.md) keeps the
+first Rails-vs-C# run (B07) as a baseline.
 
 ### Without Thruster
 

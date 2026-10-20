@@ -4,8 +4,8 @@
 [basecamp/once-campfire-verification](https://github.com/basecamp/once-campfire-verification), the
 harness upstream uses for every port. One run measures Rails, C# and any of the other ports
 (Rust, Go, Express, Elixir, Django, Laravel, C) on the same seed, CPUs and response contracts, one
-app at a time. Rails and C# are published in [`RESULTS.md`](RESULTS.md), and every port side by
-side in [`PORTS.md`](PORTS.md). Start with
+app at a time. The published numbers, every port side by side, are in [`PORTS.md`](PORTS.md);
+[`RESULTS.md`](RESULTS.md) keeps the first Rails-vs-C# run (B07) as a baseline. Start with
 [`verification/README.md`](verification/README.md).
 
 The rest of this page describes `bench/bin/run`, the Rust port's own harness with a `csharp` app
@@ -99,7 +99,7 @@ is the full proof. B02 runs only once Q01 has passed for exactly the measured re
   Rails.
 
 Directories are named by task: `harness-*` (B06), `first-*` (B02), `runtime-*` (B04) and
-`verify-*` (B07, the published run; its tables are in `RESULTS.md`).
+`verify-*` (B07, the baseline in `RESULTS.md`). The published run is `final-*` (see `PORTS.md`).
 
 ## Tests
 
