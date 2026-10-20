@@ -36,7 +36,7 @@ WORKDIR /src
 
 COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
 COPY src src
-RUN --mount=type=cache,target=/root/.nuget/packages \
+RUN --mount=type=cache,target=/root/.nuget/packages,sharing=locked \
     rid=linux-$([ "$TARGETARCH" = arm64 ] && echo arm64 || echo x64) && \
     dotnet publish src/Campfire.Server/Campfire.Server.csproj -c Release -r "$rid" --self-contained \
       -p:DebugType=none -o /out/app && \
@@ -46,7 +46,7 @@ RUN --mount=type=cache,target=/root/.nuget/packages \
 # when given, makes every file's last-modified reproducible.
 COPY assets assets
 COPY reference reference
-RUN --mount=type=cache,target=/root/.nuget/packages \
+RUN --mount=type=cache,target=/root/.nuget/packages,sharing=locked \
     dotnet run assets/build-assets.cs -- /src /out/app/assets
 
 
