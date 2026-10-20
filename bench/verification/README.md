@@ -43,20 +43,21 @@ python3 bench/verification/summarize.py bench/results/verify-session-1-normal
 
 ### Every port on one run
 
-[`ports.tsv`](ports.tsv) pins the other ports to an upstream commit each. `run ports` checks them
-out under `tmp/ports/` and builds `once-campfire-<app>:<commit>`. Elixir's toolchain image and C's
+[`ports.tsv`](ports.tsv) pins the other ports to an upstream commit each. `run ports` checks out
+the ones named in `APPS` under `tmp/ports/` and builds `once-campfire-<app>:<commit>`. Elixir's toolchain image and C's
 binary (built in a Fedora container, as its `bench/run-c` does on a Fedora host) are built along
-the way. `APPS` then picks what is measured:
+the way. The same `APPS` then picks what is measured:
 
 ```sh
+export APPS=rails,csharp,rust,go,express,elixir,django,laravel,c
 bench/verification/run ports
-APPS=rails,csharp,rust,go,express,elixir,django,laravel,c \
-  CSHARP_BENCH_ENV='{"CAMPFIRE_THRUSTER":"0"}' \
+CSHARP_BENCH_ENV='{"CAMPFIRE_THRUSTER":"0"}' \
   bench/verification/run bench normal "$PWD/bench/results/<name>-normal"
 python3 bench/verification/summarize.py bench/results/<name>-normal
 ```
 
-The harness still runs one app at a time on CPUs 8-11, alternating the order between rounds,
+The harness still runs one app at a time on `APP_CPUS` (8-11 unless set; see the top of `run`
+to place the app, the load generator and the runner on another machine), alternating the order between rounds,
 so a run takes about four minutes per app and profile. With more than Rails and C#,
 `summarize.py` prints requests per second, p99 and each app's multiple of Rails, one column per
 app. To move a port to its latest commit, edit its line in `ports.tsv` (the file says how).
