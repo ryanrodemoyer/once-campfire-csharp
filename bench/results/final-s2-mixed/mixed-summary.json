@@ -1,0 +1,402 @@
+{
+  "metadata": {
+    "verification_revision": "ec02debb3e44f40b8778a6a42db3c4515b2f9eaf",
+    "response_validation": "route-contract-v1",
+    "started_at": "2026-10-17T21:42:39Z",
+    "seed_sha256": "6b967f4b6d060ccb57229c2a0add5b6c1680bf0bd873d672108094434095b790",
+    "server_cpus": "7-10",
+    "client_cpus": "3-6",
+    "network": "host",
+    "gzip": true,
+    "duration": 8,
+    "concurrencies": "16",
+    "rounds": 3,
+    "loadgen_sha256": "854a3edf878f8bb6dcc84edae592d75e3cf3b9b9ab3851b252d96b43da12c002",
+    "routes": "room_show,messages_page,sidebar,search",
+    "profile": "mixed-read-write-v1",
+    "mixed_writer": {
+      "clients": 1,
+      "maximum_writes_per_second": 10,
+      "room": 201306877,
+      "catch_up": false
+    },
+    "images": {
+      "rails": "sha256:1010822fdfc6f3a67d69420fdcf106f72d1c70c36187352cecffe5e78d0108e7",
+      "csharp": "sha256:0a755a24bdc8384011c0f5571bb1350af75c13227133b6da4d91860b743b336c",
+      "rust": "sha256:0372074fed22195247b06236da61c7607c293b2e8cf0dfe898320d9b08e02de7",
+      "go": "sha256:6eba5fe894f801bafa3e072f572401808931d8c9b340e23e926c25656aae6d29",
+      "express": "sha256:cc522d490dacd9b5840cc486dee29aa4bcacd754f17340941bcc2ecb81605702",
+      "laravel": "sha256:f312d714957ade4eb2f386743720e86ac364e19ca96c42b187537e6f518e870f",
+      "c": "sha256:eb8fedf412d56f19102fca03d395f35b6c3f192853731c79e9f32d43423d5a63"
+    },
+    "image_labels": {
+      "rails": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "csharp": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "rust": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "go": {
+        "org.opencontainers.image.description": "",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.source": ""
+      },
+      "express": {
+        "org.opencontainers.image.revision": "local"
+      },
+      "laravel": {
+        "org.opencontainers.image.created": "2026-10-04T09:20:17Z",
+        "org.opencontainers.image.description": "The modern PHP app server",
+        "org.opencontainers.image.licenses": "MIT",
+        "org.opencontainers.image.revision": "233f793654acf53be41385a4a29ac5e126cf6701",
+        "org.opencontainers.image.source": "https://github.com/php/frankenphp",
+        "org.opencontainers.image.title": "FrankenPHP",
+        "org.opencontainers.image.url": "https://frankenphp.dev",
+        "org.opencontainers.image.vendor": "Kévin Dunglas",
+        "org.opencontainers.image.version": "v1.13.0"
+      },
+      "c": {
+        "maintainer": "Clement Verna <cverna@fedoraproject.org>"
+      }
+    },
+    "source_revisions": {
+      "rails": {
+        "head": "edbc779f4dfc9b26c36310881711ddc976a9dfc8",
+        "dirty": false
+      },
+      "csharp": {
+        "head": "513ab6d6c9e954f3d6ad2e3ddf87438c538b2a79",
+        "dirty": false
+      },
+      "rust": {
+        "head": "6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad",
+        "dirty": false
+      },
+      "go": {
+        "head": "c4ab53d00b0a19a55962e03d18057ca6c3da9437",
+        "dirty": false
+      },
+      "express": {
+        "head": "bb70a7d478160c016393d981e3538987247d3b3d",
+        "dirty": false
+      },
+      "laravel": {
+        "head": "4093bf2de61d8e00816607f12c058dc218e1d20e",
+        "dirty": false
+      },
+      "c": {
+        "head": "873a51f523de5a0cc235884e5725cfb5521d2027",
+        "dirty": false
+      }
+    },
+    "preflight_only": false,
+    "topology": {
+      "rails": {
+        "http_workers": "3",
+        "threads": "5",
+        "jobs": "Redis/Resque",
+        "cable": "Action Cable",
+        "response_cache_mb": "64"
+      },
+      "csharp": {
+        "processes": 1,
+        "readers": "5",
+        "job_workers": "3",
+        "cable": "Kestrel WebSockets",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      },
+      "rust": {
+        "processes": 1,
+        "readers": "5",
+        "job_workers": "3",
+        "cable": "native tokio",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      },
+      "go": {
+        "processes": 1,
+        "cable": "native websocket",
+        "jobs": "in-process",
+        "response_cache_mb": "64"
+      },
+      "express": {
+        "http_workers": "auto (cpuset)",
+        "cable": "native ws with cluster IPC",
+        "jobs": "leased auxiliary SQLite",
+        "response_cache_mb": "64"
+      },
+      "laravel": {
+        "http": "FrankenPHP/Octane",
+        "jobs": "leased auxiliary SQLite",
+        "cable": "native ReactPHP",
+        "response_cache_mb": "64"
+      },
+      "c": {
+        "processes": 1,
+        "http_loops": "affinity, capped at 4",
+        "cache_bytes": "67108864",
+        "jobs": "in-process"
+      }
+    },
+    "runtimes": {
+      "rails": "rails",
+      "csharp": "csharp",
+      "rust": "rust",
+      "go": "go",
+      "express": "express",
+      "laravel": "laravel",
+      "c": "c"
+    },
+    "complete": true
+  },
+  "mixed_results": {
+    "rails": {
+      "room_show": {
+        "median_rps": 800.5,
+        "runs": [
+          875.6,
+          759.4,
+          800.5
+        ]
+      },
+      "messages_page": {
+        "median_rps": 925.2,
+        "runs": [
+          917.4,
+          925.2,
+          992.0
+        ]
+      },
+      "sidebar": {
+        "median_rps": 2011.8,
+        "runs": [
+          1983.7,
+          2024.8,
+          2011.8
+        ]
+      },
+      "search": {
+        "median_rps": 1726.2,
+        "runs": [
+          1743.7,
+          1726.2,
+          1668.0
+        ]
+      }
+    },
+    "csharp": {
+      "room_show": {
+        "median_rps": 13094.0,
+        "runs": [
+          14119.1,
+          13094.0,
+          13064.1
+        ]
+      },
+      "messages_page": {
+        "median_rps": 54587.3,
+        "runs": [
+          55150.8,
+          53507.6,
+          54587.3
+        ]
+      },
+      "sidebar": {
+        "median_rps": 74270.2,
+        "runs": [
+          74270.2,
+          75513.5,
+          73919.0
+        ]
+      },
+      "search": {
+        "median_rps": 67739.2,
+        "runs": [
+          67739.2,
+          68140.5,
+          66891.8
+        ]
+      }
+    },
+    "rust": {
+      "room_show": {
+        "median_rps": 37952.1,
+        "runs": [
+          37952.1,
+          38120.9,
+          37799.7
+        ]
+      },
+      "messages_page": {
+        "median_rps": 36106.1,
+        "runs": [
+          35982.4,
+          36197.0,
+          36106.1
+        ]
+      },
+      "sidebar": {
+        "median_rps": 47811.1,
+        "runs": [
+          47646.8,
+          47851.5,
+          47811.1
+        ]
+      },
+      "search": {
+        "median_rps": 45764.6,
+        "runs": [
+          45714.5,
+          46003.4,
+          45764.6
+        ]
+      }
+    },
+    "go": {
+      "room_show": {
+        "median_rps": 24041.7,
+        "runs": [
+          23953.8,
+          24511.5,
+          24041.7
+        ]
+      },
+      "messages_page": {
+        "median_rps": 25618.6,
+        "runs": [
+          24909.1,
+          25634.4,
+          25618.6
+        ]
+      },
+      "sidebar": {
+        "median_rps": 34185.6,
+        "runs": [
+          33806.1,
+          34185.6,
+          34536.8
+        ]
+      },
+      "search": {
+        "median_rps": 32704.2,
+        "runs": [
+          32185.1,
+          32839.2,
+          32704.2
+        ]
+      }
+    },
+    "express": {
+      "room_show": {
+        "median_rps": 16328.8,
+        "runs": [
+          16919.5,
+          16118.3,
+          16328.8
+        ]
+      },
+      "messages_page": {
+        "median_rps": 35974.6,
+        "runs": [
+          36241.0,
+          35974.6,
+          35971.5
+        ]
+      },
+      "sidebar": {
+        "median_rps": 49636.3,
+        "runs": [
+          50036.3,
+          49636.3,
+          47284.5
+        ]
+      },
+      "search": {
+        "median_rps": 42623.7,
+        "runs": [
+          41215.5,
+          42623.7,
+          42976.3
+        ]
+      }
+    },
+    "laravel": {
+      "room_show": {
+        "median_rps": 374.3,
+        "runs": [
+          374.3,
+          338.9,
+          411.1
+        ]
+      },
+      "messages_page": {
+        "median_rps": 704.6,
+        "runs": [
+          704.6,
+          698.5,
+          706.7
+        ]
+      },
+      "sidebar": {
+        "median_rps": 1990.9,
+        "runs": [
+          1980.2,
+          1990.9,
+          2016.4
+        ]
+      },
+      "search": {
+        "median_rps": 1530.8,
+        "runs": [
+          1515.1,
+          1536.4,
+          1530.8
+        ]
+      }
+    },
+    "c": {
+      "room_show": {
+        "median_rps": 51280.9,
+        "runs": [
+          51280.9,
+          52764.7,
+          50949.4
+        ]
+      },
+      "messages_page": {
+        "median_rps": 54554.9,
+        "runs": [
+          55462.8,
+          53369.4,
+          54554.9
+        ]
+      },
+      "sidebar": {
+        "median_rps": 62520.8,
+        "runs": [
+          62520.8,
+          62187.5,
+          63094.6
+        ]
+      },
+      "search": {
+        "median_rps": 59690.2,
+        "runs": [
+          59690.2,
+          58337.0,
+          60125.8
+        ]
+      }
+    }
+  }
+}

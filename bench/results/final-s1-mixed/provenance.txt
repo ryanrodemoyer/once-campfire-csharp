@@ -1,0 +1,112 @@
+recorded_at: 2026-10-17T21:06:42Z
+uname: Linux cf-bench.us-central1-a.c.gen-lang-client-0314891623.internal 7.0.0-1014-gcp #14~24.04.1-Ubuntu SMP PREEMPT Thu Sep 17 19:52:35 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+nproc: 11
+governor: unknown
+--- lscpu ---
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           52 bits physical, 57 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  11
+On-line CPU(s) list:                     0-10
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Xeon(R) Platinum 8481C CPU @ 2.70GHz
+CPU family:                              6
+Model:                                   143
+Thread(s) per core:                      1
+Core(s) per socket:                      11
+Socket(s):                               1
+Stepping:                                8
+BogoMIPS:                                5399.99
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch ssbd ibrs ibpb stibp ibrs_enhanced fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rtm avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx_vnni avx512_bf16 arat avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid cldemote movdiri movdir64b fsrm md_clear serialize tsxldtrk amx_bf16 avx512_fp16 amx_tile amx_int8 arch_capabilities
+Hypervisor vendor:                       KVM
+Virtualization type:                     full
+L1d cache:                               528 KiB (11 instances)
+L1i cache:                               352 KiB (11 instances)
+L2 cache:                                22 MiB (11 instances)
+L3 cache:                                105 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-10
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Not affected
+--- thread siblings 7-10 and 3-6 ---
+cpu7 7
+cpu8 8
+cpu9 9
+cpu10 10
+cpu3 3
+cpu4 4
+cpu5 5
+cpu6 6
+--- mem ---
+MemTotal:       90609844 kB
+MemAvailable:   88602328 kB
+SwapTotal:             0 kB
+--- tools ---
+dotnet: 
+rustc: rustc 1.99.1 (58cf8f9c3 2026-10-13)
+cargo: cargo 1.99.1 (5f94df478 2026-08-27)
+docker-server: 29.1.3
+ffprobe: ffprobe version 6.1.1-3ubuntu5 Copyright (c) 2007-2023 the FFmpeg developers
+ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [x86_64-linux]
+3.46.1 2024-08-13 09:16:08 c9c2ab54ba1f5f46360f1b4f35d849cd3f080e6fc2b6c60e91b16c63f69aalt1 (64-bit)
+git version 2.47.3
+--- source ---
+csharp_head: 513ab6d6c9e954f3d6ad2e3ddf87438c538b2a79
+csharp_status: 
+rails_head: edbc779f4dfc9b26c36310881711ddc976a9dfc8
+verification_head: ec02debb3e44f40b8778a6a42db3c4515b2f9eaf
+patch_sha256: 4b88655e8584cc323fe646434fe80f708ea71dc6d8c6316040d9f3b70588a9b5
+loadgen_sha256: 854a3edf878f8bb6dcc84edae592d75e3cf3b9b9ab3851b252d96b43da12c002
+seed_sha256: 6b967f4b6d060ccb57229c2a0add5b6c1680bf0bd873d672108094434095b790
+apps: rails,csharp,rust,go,express,laravel,c
+--- images ---
+rails_image: campfire-reference:app-edbc779
+rails_id: sha256:1010822fdfc6f3a67d69420fdcf106f72d1c70c36187352cecffe5e78d0108e7
+APP_VERSION=parity
+GIT_REVISION=edbc779f4dfc9b26c36310881711ddc976a9dfc8
+csharp_image: campfire-csharp:final
+csharp_id: sha256:0a755a24bdc8384011c0f5571bb1350af75c13227133b6da4d91860b743b336c
+DOTNET_CLI_TELEMETRY_OPTOUT=1
+DOTNET_GCDynamicAdaptationMode=0
+APP_VERSION=513ab6d
+GIT_REVISION=513ab6d6c9e954f3d6ad2e3ddf87438c538b2a79
+csharp_binary_sha256: af3c42da1ed4b8c4aa36fd538c05cf0a7f53c9b6c24e0f294303e496243a07b2  /app/campfire
+csharp_bench_env: {"CAMPFIRE_THRUSTER":"0"}
+rust_head: 6dae2fd3c1a2dce61ca11beb731bcce2b42b67ad
+rust_image: once-campfire-rust:6dae2fd3c1a2
+rust_id: sha256:0372074fed22195247b06236da61c7607c293b2e8cf0dfe898320d9b08e02de7
+go_head: c4ab53d00b0a19a55962e03d18057ca6c3da9437
+go_image: once-campfire-go:c4ab53d00b0a
+go_id: sha256:6eba5fe894f801bafa3e072f572401808931d8c9b340e23e926c25656aae6d29
+express_head: bb70a7d478160c016393d981e3538987247d3b3d
+express_image: once-campfire-express:bb70a7d47816
+express_id: sha256:cc522d490dacd9b5840cc486dee29aa4bcacd754f17340941bcc2ecb81605702
+laravel_head: 4093bf2de61d8e00816607f12c058dc218e1d20e
+laravel_image: once-campfire-laravel:4093bf2de61d
+laravel_id: sha256:f312d714957ade4eb2f386743720e86ac364e19ca96c42b187537e6f518e870f
+c_head: 873a51f523de5a0cc235884e5725cfb5521d2027
+c_image: once-campfire-c:873a51f523de
+c_id: sha256:eb8fedf412d56f19102fca03d395f35b6c3f192853731c79e9f32d43423d5a63
+runner_image: campfire-b07-runner
+runner_id: sha256:4f6cb01238c70a232a21abab4f24d04d1460efb492d2f2629e879fa418533b15
+app_cpus: 7-10
+client_cpus: 3-6
+runner_cpus: 0-6

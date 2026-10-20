@@ -1,0 +1,25 @@
+{
+  "avg_bytes": 73,
+  "conc": 4,
+  "errors": 0,
+  "gzip": true,
+  "invalid_reasons": {},
+  "invalid_responses": 0,
+  "latency": {
+    "max_ms": 4.179,
+    "mean_ms": 0.15,
+    "n": 51628,
+    "p50_ms": 0.13,
+    "p90_ms": 0.278,
+    "p99_ms": 0.344
+  },
+  "ok": 51628,
+  "path": "/up",
+  "rps": 25810.5,
+  "secs": 2.0,
+  "statuses": {
+    "200": 51628
+  },
+  "validation": "route-contract-v1",
+  "generator_cpu_percent": 42.96695104404447
+}
